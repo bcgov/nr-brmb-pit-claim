@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.mapper.ClaimMapper">
+
+	<resultMap id="ClaimDtoMap" type="ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimDto">
+		<id property="colId" column="COL_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="claimNumber" column="CLAIM_NUMBER" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="claimStatusCode" column="CLAIM_STATUS_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="submittedByUserid" column="SUBMITTED_BY_USERID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="submittedByName" column="SUBMITTED_BY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="submittedByDate" column="SUBMITTED_BY_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="recommendedByUserid" column="RECOMMENDED_BY_USERID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="recommendedByName" column="RECOMMENDED_BY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="recommendedByDate" column="RECOMMENDED_BY_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="approvedByUserid" column="APPROVED_BY_USERID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="approvedByName" column="APPROVED_BY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="approvedByDate" column="APPROVED_BY_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="hasChequeReqInd" column="HAS_CHEQUE_REQ_IND" javaType="java.lang.Boolean" jdbcType="VARCHAR" />
+		<result property="ippId" column="IPP_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="commodityCoverageCode" column="COMMODITY_COVERAGE_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="cropCommodityId" column="CROP_COMMODITY_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="iplId" column="IPL_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="policyNumber" column="POLICY_NUMBER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="insurancePlanId" column="INSURANCE_PLAN_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="cropYear" column="CROP_YEAR" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="contractId" column="CONTRACT_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="igId" column="IG_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="growerName" column="GROWER_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="claimDataSyncTransDate" column="CLAIM_DATA_SYNC_TRANS_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="policyDataSyncTransDate" column="POLICY_DATA_SYNC_TRANS_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="growerDataSyncTransDate" column="GROWER_DATA_SYNC_TRANS_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+
+		<!-- These are used for the claims list -->
+		<result property="claimGrowerName" column="CLAIM_GROWER_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="calculationGrowerName" column="CALCULATION_GROWER_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="planName" column="PLAN_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="commodityName" column="COMMODITY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="cropCoverage" column="CROP_COVERAGE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="claimCalculationGuid" column="CLAIM_CALCULATION_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="calculationVersion" column="CALCULATION_VERSION" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="calculationStatusCode" column="CALCULATION_STATUS_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="calculationStatus" column="CALCULATION_STATUS" javaType="java.lang.String" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT  T.COL_ID, 
+				T.CLAIM_NUMBER, 
+				T.CLAIM_STATUS_CODE, 
+				T.SUBMITTED_BY_USERID,
+				T.SUBMITTED_BY_NAME,
+				T.SUBMITTED_BY_DATE,
+				T.RECOMMENDED_BY_USERID,
+				T.RECOMMENDED_BY_NAME,
+				T.RECOMMENDED_BY_DATE,
+				T.APPROVED_BY_USERID,
+				T.APPROVED_BY_NAME,
+				T.APPROVED_BY_DATE,
+				T.HAS_CHEQUE_REQ_IND,
+				T.IPP_ID, 
+				T.COMMODITY_COVERAGE_CODE, 
+				T.CROP_COMMODITY_ID, 
+				T.IPL_ID, 
+				T.POLICY_NUMBER, 
+				T.INSURANCE_PLAN_ID, 
+				T.CROP_YEAR, 
+				T.CONTRACT_ID, 
+				T.IG_ID, 
+				T.GROWER_NAME, 
+				T.CLAIM_DATA_SYNC_TRANS_DATE, 
+				T.POLICY_DATA_SYNC_TRANS_DATE, 
+				T.GROWER_DATA_SYNC_TRANS_DATE, 
+				T.CREATE_USER, 
+				T.CREATE_DATE, 
+				T.UPDATE_USER, 
+				T.UPDATE_DATE 
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM T
+		WHERE T.COL_ID = #{colId}
+	</select>
+	
+	<select id="selectByClaimNumber" resultMap="ClaimDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM T
+		WHERE T.CLAIM_NUMBER = #{claimNumber}
+	</select>
+	
+	<insert id="insert">
+
+		INSERT INTO CLAIM (
+			COL_ID,
+			CLAIM_NUMBER,
+			CLAIM_STATUS_CODE,
+			SUBMITTED_BY_USERID,
+			SUBMITTED_BY_NAME,
+			SUBMITTED_BY_DATE,
+			RECOMMENDED_BY_USERID,
+			RECOMMENDED_BY_NAME,
+			RECOMMENDED_BY_DATE,
+			APPROVED_BY_USERID,
+			APPROVED_BY_NAME,
+			APPROVED_BY_DATE,
+			HAS_CHEQUE_REQ_IND,
+			IPP_ID,
+			COMMODITY_COVERAGE_CODE,
+			CROP_COMMODITY_ID,
+			IPL_ID,
+			POLICY_NUMBER,
+			INSURANCE_PLAN_ID,
+			CROP_YEAR,
+			CONTRACT_ID,
+			IG_ID,
+			GROWER_NAME,
+			CLAIM_DATA_SYNC_TRANS_DATE, 
+			POLICY_DATA_SYNC_TRANS_DATE, 
+			GROWER_DATA_SYNC_TRANS_DATE, 
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		) 
+		VALUES (
+			#{dto.colId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.claimNumber, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.claimStatusCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.submittedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.submittedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.submittedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.recommendedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.recommendedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.recommendedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.approvedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.approvedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.approvedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.hasChequeReqInd, javaType=java.lang.Boolean , jdbcType=VARCHAR, mode=IN},
+			#{dto.ippId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.commodityCoverageCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.iplId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.policyNumber, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.insurancePlanId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.cropYear, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.contractId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.igId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.growerName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.claimDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN},
+			#{dto.policyDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN},
+			#{dto.growerDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN},
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE CLAIM
+		SET 
+			CLAIM_STATUS_CODE = #{dto.claimStatusCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			SUBMITTED_BY_USERID = #{dto.submittedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			SUBMITTED_BY_NAME = #{dto.submittedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			SUBMITTED_BY_DATE = #{dto.submittedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			RECOMMENDED_BY_USERID = #{dto.recommendedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			RECOMMENDED_BY_NAME = #{dto.recommendedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			RECOMMENDED_BY_DATE = #{dto.recommendedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			APPROVED_BY_USERID = #{dto.approvedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			APPROVED_BY_NAME = #{dto.approvedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			APPROVED_BY_DATE = #{dto.approvedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			HAS_CHEQUE_REQ_IND = #{dto.hasChequeReqInd, javaType=java.lang.Boolean , jdbcType=VARCHAR, mode=IN},
+			IPP_ID = #{dto.ippId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			COMMODITY_COVERAGE_CODE = #{dto.commodityCoverageCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			CROP_COMMODITY_ID = #{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			IPL_ID = #{dto.iplId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			POLICY_NUMBER = #{dto.policyNumber, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			INSURANCE_PLAN_ID = #{dto.insurancePlanId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			CROP_YEAR = #{dto.cropYear, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			CONTRACT_ID = #{dto.contractId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			IG_ID = #{dto.igId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			GROWER_NAME = #{dto.growerName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			CLAIM_DATA_SYNC_TRANS_DATE = #{dto.claimDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			POLICY_DATA_SYNC_TRANS_DATE = #{dto.policyDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			GROWER_DATA_SYNC_TRANS_DATE = #{dto.growerDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE COL_ID = #{colId}
+	</update> 
+
+	<update id="updateClaimData">
+		UPDATE CLAIM
+		SET 
+			CLAIM_STATUS_CODE = #{dto.claimStatusCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			SUBMITTED_BY_USERID = #{dto.submittedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			SUBMITTED_BY_NAME = #{dto.submittedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			SUBMITTED_BY_DATE = #{dto.submittedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			RECOMMENDED_BY_USERID = #{dto.recommendedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			RECOMMENDED_BY_NAME = #{dto.recommendedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			RECOMMENDED_BY_DATE = #{dto.recommendedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			APPROVED_BY_USERID = #{dto.approvedByUserid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			APPROVED_BY_NAME = #{dto.approvedByName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			APPROVED_BY_DATE = #{dto.approvedByDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			HAS_CHEQUE_REQ_IND = #{dto.hasChequeReqInd, javaType=java.lang.Boolean , jdbcType=VARCHAR, mode=IN},
+			CLAIM_DATA_SYNC_TRANS_DATE = #{dto.claimDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE COL_ID = #{colId}
+		 
+	</update> 
+	
+	<update id="updatePolicyData">
+		UPDATE CLAIM
+		SET 
+			IG_ID = #{dto.igId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			GROWER_NAME = #{dto.growerName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			POLICY_DATA_SYNC_TRANS_DATE = #{dto.policyDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE IPL_ID = #{iplId}
+		 AND POLICY_DATA_SYNC_TRANS_DATE <![CDATA[ < ]]> #{dto.policyDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}
+		 AND IG_ID <![CDATA[ <> ]]> #{dto.igId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}
+	</update> 
+
+	<update id="updateGrowerData">
+		UPDATE CLAIM
+		SET 
+			GROWER_NAME = #{dto.growerName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			GROWER_DATA_SYNC_TRANS_DATE = #{dto.growerDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE IG_ID = #{igId}
+		 AND GROWER_DATA_SYNC_TRANS_DATE <![CDATA[ < ]]> #{dto.growerDataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}
+		 AND GROWER_NAME <![CDATA[ <> ]]> #{dto.growerName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM CLAIM WHERE COL_ID = #{colId}
+	</delete>
+	
+	<select id="selectAll" resultMap="ClaimDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM T
+	</select>	
+
+	<select id="selectCount" resultType="int">  
+		SELECT COUNT(C.CLAIM_NUMBER)
+	    FROM CLAIM C
+	    LEFT JOIN CLAIM_CALCULATION CC ON CC.CLAIM_NUMBER = C.CLAIM_NUMBER
+		<include refid="selectWhereClause"/>
+	</select> 
+	
+	
+	<select id="select" resultMap="ClaimDtoMap">
+	    SELECT C.CLAIM_NUMBER,
+	           C.POLICY_NUMBER,
+	           C.GROWER_NAME AS CLAIM_GROWER_NAME,
+	           C.CLAIM_STATUS_CODE,
+	           CC.GROWER_NAME AS CALCULATION_GROWER_NAME,
+	           I.INSURANCE_PLAN_NAME AS PLAN_NAME,
+	           CRPT.COMMODITY_NAME,
+	           COV.DESCRIPTION AS CROP_COVERAGE,
+	           COV.COMMODITY_COVERAGE_CODE,
+	           CC.CLAIM_CALCULATION_GUID,
+	           CC.CALCULATION_VERSION,
+	           CC.CALCULATION_STATUS_CODE,
+	           S.DESCRIPTION AS CALCULATION_STATUS
+	    FROM CLAIM C
+	    JOIN INSURANCE_PLAN I ON I.INSURANCE_PLAN_ID = C.INSURANCE_PLAN_ID
+	    JOIN CROP_COMMODITY CRPT ON CRPT.CROP_COMMODITY_ID = C.CROP_COMMODITY_ID
+	    JOIN COMMODITY_COVERAGE_CODE COV ON COV.COMMODITY_COVERAGE_CODE = C.COMMODITY_COVERAGE_CODE
+	    LEFT JOIN CLAIM_CALCULATION CC ON CC.CLAIM_NUMBER = C.CLAIM_NUMBER
+	    LEFT JOIN CALCULATION_STATUS_CODE S ON S.CALCULATION_STATUS_CODE = CC.CALCULATION_STATUS_CODE
+		<include refid="selectWhereClause"/>	
+		<include refid="selectOrderBy"/>
+		
+		<if test="offset != null and pageRowCount != null">
+		    OFFSET #{offset, javaType=java.lang.Integer, jdbcType=INTEGER, mode=IN} ROWS
+		    FETCH NEXT #{pageRowCount, javaType=java.lang.Integer, jdbcType=INTEGER, mode=IN} ROWS ONLY
+		</if>
+
+	</select>
+	
+	<sql id="selectWhereClause">
+	  
+	  WHERE 1 = 1
+	
+	  <if test="claimNumber != null">
+		AND C.CLAIM_NUMBER = #{claimNumber}
+	  </if>
+	  <if test="policyNumber != null">
+		AND C.POLICY_NUMBER like #{policyNumber}
+	  </if>
+	  <if test="calculationStatusCode != null">
+		AND CC.CALCULATION_STATUS_CODE = #{calculationStatusCode}
+	  </if>
+	</sql>	
+
+	<sql id="selectOrderBy">
+		${orderBy}
+	</sql>	  	
+	
+</mapper>

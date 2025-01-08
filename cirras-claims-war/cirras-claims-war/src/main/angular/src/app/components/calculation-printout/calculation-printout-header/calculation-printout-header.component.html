@@ -1,0 +1,36 @@
+
+<div class="print-page-break-inside">
+  <div style="text-align: center; font-weight: bold;">
+    {{ deleteDuplicateWords( calculationDetail.commodityName.toUpperCase() + ' ' + calculationDetail.coverageName.toUpperCase()) | uppercase }} LOSS CLAIM
+  </div>
+  <div class="ccc-row-group printout-border" style="border-top: 2px #000; border-style: solid none; padding-left: 5px; padding-right: 5px; padding-top: 0px; margin-top: 0px; margin-bottom: 0px; padding-bottom: 0px;">
+    <div class="ccc-row" style="height: 10px !important;">
+      <span class="ccc-col-left" style="padding-top: 0px;">{{ calculationDetail.growerName }}</span>
+      <span class="ccc-col-right" style="padding-top: 0px;">Grower: {{ calculationDetail.growerNumber }} </span>
+    </div>
+    <div class="ccc-row" style="height: 15px !important;">
+      <span class="ccc-col-left">{{ calculationDetail.growerAddressLine1 }} {{ calculationDetail.growerAddressLine2 }} </span>
+      <span class="ccc-col-right">Policy: {{ calculationDetail.policyNumber }} </span>
+    </div>
+    <div class="ccc-row">
+      <span class="ccc-col-left">{{ calculationDetail.growerCity }}, {{ calculationDetail.growerProvince }}, {{ calculationDetail.growerPostalCode }}</span>
+      <span class="ccc-col-right">Claim: {{ calculationDetail.claimNumber }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="print-page-break-inside">
+  <div class="ccc-row-group" style="padding-left: 0px; margin-top: 5px; margin-bottom: 10px;">
+    <div class="ccc-row">
+      <span class="ccc-col-left3">
+        <span style="font-weight: bold;">CLAIM DETAILS</span>
+      </span>
+      <span class="ccc-col-left3" style="text-align: right;">
+        <span class="ccc-col-right">
+          Primary Peril: {{ getPerilCode(calculationDetail.primaryPerilCode) }}<br/>
+          Secondary Peril: {{ getPerilCode(calculationDetail.secondaryPerilCode) }}
+        </span>
+      </span>
+    </div>
+  </div>
+</div>

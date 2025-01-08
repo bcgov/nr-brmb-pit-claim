@@ -1,0 +1,15 @@
+@import '../../../styles/variables';
+
+.calculation-detail{
+  .header-status-indicator{
+    &.ACTIVE {
+      color: $colour-green;
+      border-color: $colour-green;;
+    }
+
+    &.INACTIVE {
+      color: $colour-red;
+      border-color: $colour-red;;
+    }
+  }
+}

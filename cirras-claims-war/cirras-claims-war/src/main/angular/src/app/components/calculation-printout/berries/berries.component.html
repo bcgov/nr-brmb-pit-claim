@@ -1,0 +1,140 @@
+
+<cirras-calculation-printout-logo></cirras-calculation-printout-logo>
+
+<table id="outbox-table" *ngIf="calculationDetail">
+  
+  <tbody>
+    <tr id="outbox-tr">
+      <td id="outbox-td">
+        <div class="page" style="line-height: 1.3; margin-top: 0px; padding-top: 0px;">
+
+          <cirras-calculation-printout-header 
+            [calculationDetail]="calculationDetail"
+          ></cirras-calculation-printout-header>
+          
+              <div class="print-page-break-inside">
+                <div style="padding-left: 10px; font-weight: bold;"><span>Quantity Coverage</span><span style="float: right; padding-right: 15px; font-size: 12px;">From Statement of Premiums and Coverages</span></div>
+                <div style="margin-left: 10px; margin-bottom: 20px; margin-right: 10px; margin-top: 3px; padding: 0px; border-radius: 0px; border: none">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td class="td-abc-label">A</td>
+                        <td style="padding-left: 10px;" colspan="2">Probable Yield (lbs)</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.totalProbableYield | number:'1.0-0' }}</td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">B</td>
+                        <td  style="padding-left: 10px;" colspan="2">Deductible</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.deductibleLevel }}%</td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">C</td>   
+                        <td colspan="2"><span style="padding-left: 10px;">Production Guarantee (lbs)</span>
+                            <span style="float: right; padding-right: 10px; letter-spacing: 3px;">A x (100 - B)</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.productionGuarantee | number:'1.0-0'  }} </td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">D</td>
+                        <td style="padding-left: 20px;">Declared Acres </td>                        
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.declaredAcres | number:'1.2-2'  }} </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;"></td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">E</td>
+                        <td style="padding-left: 20px;">Confirmed Acres </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.confirmedAcres | number:'1.2-2'  }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;"></td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">F</td>
+                        <td>
+                          <span style="padding-left: 20px;">Adjustment Factor</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">E / D (max.1)</span>
+                        </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.adjustmentFactor | number:'1.2-2'  }} </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;"></td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">G</td>
+                        <td colspan="2"><span style="padding-left: 10px;">Adjusted Production Guarantee (lbs)</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">C x F</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.adjustedProductionGuarantee | number:'1.0-0'  }} </td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">H</td>
+                        <td colspan="2"><span style="padding-left: 10px;">Insurable Value / lb</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;"></span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.insurableValueSelected | number:'1.4-4' }}</td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">I</td>
+                        <td colspan="2"><span style="padding-left: 10px;">Coverage Value</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">G x H</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ makeDollarsRounded(calculationDetail.claimCalculationBerries.coverageAmountAdjusted ) }}</td>
+                      </tr> 
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+          
+              
+
+
+              <div class="print-page-break-inside">
+                <div style="padding-left: 10px; font-weight: bold;"><span>Yield Loss Determination</span></div>
+                <div style="margin-left: 10px; margin-bottom: 20px; margin-right: 10px; margin-top: 3px; padding: 0px; border-radius: 0px; border: none">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td class="td-abc-label">J</td>
+                        <td style="padding-left: 10px;" colspan="2"> {{ getLineJText() }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ getLineJYield() | number:'1.0-0'  }} </td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">K</td>
+                        <td><span style="padding-left: 10px;">Plus Assessment</span>
+                        </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.yieldAssessment | number:'1.0-0'  }} </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;"></td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">L</td>
+                        <td colspan="2"><span style="padding-left: 10px;">Total Yield for Claim Calculation (lbs)</span>
+                            <span style="float: right; padding-right: 10px; letter-spacing: 3px;">J + K</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.totalYieldForCalculation | number:'1.0-0'  }} </td>
+                      </tr>
+                      <tr>
+                        <td class="td-abc-label">M</td>
+                        <td colspan="2"><span style="padding-left: 10px;">Yield Loss Eligible for Claim (lbs)</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">G - L</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationBerries.yieldLossEligible | number:'1.0-0'  }} </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="print-page-break-inside">
+                <div style="padding-left: 10px; font-weight: bold;">Claim Determination</div>
+                <div style="margin-left: 10px; margin-bottom: 20px; margin-right: 10px; margin-top: 3px; padding: 0px; border-radius: 0px; border: none">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td class="td-abc-label">E</td>
+                        <td><span style="padding-left: 10px;">Quantity Loss Claim</span><span style="float: right; padding-right: 10px; letter-spacing: 3px;">C - D</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.totalClaimAmount | currency }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>    
+              </div>
+              
+              <cirras-calculation-printout-footer 
+              [calculationDetail]="calculationDetail"
+            ></cirras-calculation-printout-footer>
+         
+      </div>
+    </td>
+  </tr>
+</tbody>
+</table>

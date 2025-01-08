@@ -1,0 +1,352 @@
+        <div class="cirras-claims-base-container page-width-container desktop">
+          <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
+
+            <cirras-calculation-detail-header 
+            [claimCalculationGuid]="claimCalculationGuid"
+            [calculationDetail]="calculationDetail"
+            [calculationComment]="calculationComment"
+          ></cirras-calculation-detail-header>
+
+          <form [formGroup]="getViewModel().formGroup">
+              <div class="ccc-row-group ccc-row-group-bordered">
+                <label>Claims Details</label>
+                <div class="ccc-row">
+                  <span class="ccc-col-left">
+                    State: {{ calculationDetail.claimStatusCode }}  
+                    <br /> <br />
+                    Submitted By: 
+                      <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">
+                        {{ calculationDetail.submittedByName }}
+                      </span>
+                    <br/><br />
+                    Submitted Date: 
+                      <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">                       
+                       {{ calculationDetail.submittedByDate | date:'yyyy-MM-dd' }}  
+                      </span>  
+                    <br/><br />
+                  </span>
+                  <span class="ccc-col-right">
+                    Primary Peril:
+                    <mat-form-field appearance="fill">
+                      <mat-select formControlName="primaryPerilCode" required >
+                        <mat-option>(None)</mat-option>
+                        <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-error *ngIf="getViewModel().formGroup.get('primaryPerilCode').hasError('required')">{{ERROR_MESSAGES.required()}}</mat-error>
+                  </span>
+                </div>
+                <div class="ccc-row">
+                  <span class="ccc-col-left">                    
+                      Recommended By: {{ calculationDetail.recommendedByName }}
+                      <br/><br />
+                      Recommended Date: {{ calculationDetail.recommendedByDate | date:'yyyy-MM-dd' }}      
+                      <br/><br />
+                      Approved By: {{ calculationDetail.approvedByName }}
+                      <br/><br />
+                  </span>
+                  <span class="ccc-col-right">
+                      Secondary Peril:
+                      <mat-form-field appearance="fill">
+                        <mat-select formControlName="secondaryPerilCode" >
+                            <mat-option>(None)</mat-option>
+                            <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
+                            >{{ option.description }}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                  </span>
+                </div>
+                <div class="ccc-row">
+                  <span class="ccc-col-left">                    
+                      Approved Date: {{ calculationDetail.approvedByDate | date:'yyyy-MM-dd' }}                   
+                  </span>
+                  <span class="ccc-col-right">                      
+                  </span>
+                </div>
+              </div>
+
+              <div class="ccc-row-group ccc-row-group-bordered">
+                <label>Quantity Coverage</label>
+                <div class="ccc-container ccc-coverage">
+                  <div>
+                    <span class="ccc-expression">A</span> Coverage Value
+                  </div>
+                  <div class="ccc-border-right">
+                  </div>
+                  <div class="ccc-right">
+                     {{ calculationDetail.claimCalculationGrapes.coverageAmount | currency }}
+                     <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncCoverageAmount" style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span>
+                  </div>
+                  <div class="ccc-border-bottom">
+                    <span class="ccc-expression">B</span> Less Assessment for
+                  </div>
+                  <div class="ccc-border-right ccc-fill">
+                    <mat-form-field appearance="fill">
+                      <input matInput formControlName="coverageAssessedReason" maxlength="1000">
+                    </mat-form-field>
+                  </div>
+                  <div class="ccc-fill ccc-number">
+                    <mat-form-field appearance="fill">
+                      <input matInput formControlName="coverageAmountAssessed" (keypress)="numberOnly($event)" maxlength="10">
+                    </mat-form-field>
+                  </div>
+                  <div>
+                    <span class="ccc-expression">C</span> Adjusted Coverage Value
+                  </div>
+                  <div class="ccc-border-right ccc-right">
+                    <span class="ccc-expression">A - B</span>
+                  </div>
+                  <div class="ccc-right ccc-fill ccc-number">                 
+                    <mat-form-field appearance="fill">
+                      <input matInput formControlName="coverageAmountAdjusted" readonly>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="ccc-row-group ccc-row-group-bordered">
+                <label>Purchase Info</label>
+                <div class="ccc-container ccc-purchase">
+                  <div>
+                    Selected Insurable Value:
+                  </div>
+                  <div class="ccc-right">
+                    {{ calculationDetail.claimCalculationGrapes.insurableValueSelected | number:'1.4-4' }}
+                    <span #el matTooltip="Selected Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncInsurableValueSelected" style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span>
+                  </div>
+                  <div></div>
+                  <div>
+                    100% Insurable Value:
+                  </div>
+                  <div class="ccc-right">
+                    {{ calculationDetail.claimCalculationGrapes.insurableValueHundredPercent | number:'1.4-4' }}
+                    <span #el matTooltip="100% Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncInsurableValueHundredPct" style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span>                    
+                  </div>
+                  <div></div>
+                  <div>
+                    Total Coverage Dollars:
+                  </div>
+                  <div class="ccc-right">
+                    {{ calculationDetail.claimCalculationGrapes.coverageAmount | currency }}
+                    <span #el matTooltip="Total Coverage Dollars don't math  with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncCoverageAmount" style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span>                                        
+                  </div>
+                  <div></div>
+                </div>
+              </div>
+              <div class="ccc-row-group ccc-row-group-bordered" *ngIf="calculationDetail.isOutOfSyncVarietyAdded">
+                <div class="ccc-row">
+                    <span class="ccc-col-left">
+                      Variety added in CIRRAS       
+                      <span #el matTooltip="Variety added in CIRRAS">                    
+                        <mat-icon [ngStyle]="{'color':'orange', 'vertical-align': 'bottom'}">warning</mat-icon>
+                      </span>
+                  </span>
+                </div>
+              </div>
+              <div class="ccc-row-group ccc-row-group-bordered">
+                <label>Value Loss Determination</label>
+                  <div class="ccc-container" [ngStyle]="setStyles()" *ngIf="getViewModel().formGroup.controls.varieties.controls"> 
+                     <div></div>
+                    <div class="ccc-justify-center">
+                      <span class="ccc-expression">1</span>
+                    </div>
+                    <div class="ccc-justify-center">
+                      <span class="ccc-expression">2</span>
+                    </div>
+                    <div></div>
+                    <div *ngIf="isWineGrape()"></div>  
+
+                    <div *ngIf="isWineGrape()"></div>
+
+                    <div class="ccc-justify-center">
+                      <span class="ccc-expression">3</span>
+                    </div>
+                    <div class="ccc-justify-center">
+                      <span class="ccc-expression">(1+2)&times;3</span>
+                    </div> 
+                    <div class="ccc-border-right ccc-header ccc-justify-left">
+                        Variety
+                    </div>
+                    <div class="ccc-border-right ccc-header ccc-justify-center">
+                        Yield
+                    </div>
+                    <div style="grid-column-start: 3; grid-column-end: 5" class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-center">
+                        Assessments
+                    </div>
+                    <div class="ccc-border-right ccc-header ccc-justify-center" *ngIf="isWineGrape()">
+                        Avg Price                                             
+                    </div>
+                    <div class="ccc-border-right ccc-header ccc-justify-center" *ngIf="isWineGrape()">
+                      Avg Price<br />Override                                          
+                    </div>
+                    <div class="ccc-border-right ccc-header ccc-justify-center">
+                        Insurable
+                    </div>
+                    <div class="ccc-header ccc-justify-center">
+                        Total
+                    </div>                    
+                    <div class="ccc-border-right ccc-border-bottom">
+                    </div>
+                    <div class="ccc-border-right ccc-border-bottom ccc-justify-center">
+                        (lbs)
+                    </div>
+                    <div class="ccc-border-right ccc-border-bottom ccc-justify-center">
+                        (lbs)
+                    </div>
+                    <div class="ccc-border-right ccc-border-bottom ccc-header ccc-justify-center">
+                        Reason
+                    </div>
+                    <div class="ccc-border-right ccc-border-bottom ccc-justify-center"  *ngIf="isWineGrape()">
+                        ($/lb)                       
+                    </div>
+                    <div class="ccc-border-right ccc-border-bottom ccc-justify-center">
+                        ($/lb)
+                    </div>
+                    <div class="ccc-border-right  ccc-border-bottom"></div> 
+                    <div *ngIf="isWineGrape()" class="ccc-border-bottom"></div> 
+
+                    <div *ngFor="let v of getViewModel().formGroup.controls.varieties.controls"
+                        [formGroup]="v"
+                        style="display:contents">
+
+                        <div class="ccc-border-right left-justified">
+                            
+                              {{ getCropVarietyCode( v.value.cropVarietyId ) }}
+
+                              <span #el matTooltip="Variety removed in CIRRAS"
+                                    *ngIf="v.value.isOutOfSyncVarietyRemoved"> 
+                                <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                              </span>     
+                          
+                        </div>
+                        <div class="ccc-border-right ccc-fill ccc-number">
+                            <mat-form-field appearance="fill">
+                                <input matInput formControlName="yieldActual" (keypress)="numberOnly($event)" maxlength="12">
+                            </mat-form-field>
+                        </div>
+                        <div class="ccc-border-right ccc-fill ccc-number">
+                            <mat-form-field appearance="fill">
+                                <input matInput formControlName="yieldAssessed" (keypress)="numberOnly($event)" maxlength="10">
+                            </mat-form-field>
+                        </div>
+                        <div class="ccc-border-right ccc-fill">
+                            <mat-form-field appearance="fill">
+                                <input matInput formControlName="yieldAssessedReason" maxlength="1000">
+                            </mat-form-field>
+                        </div>
+                        <div class="ccc-border-right ccc-justify-right " *ngIf="isWineGrape()"> 
+                          
+                            {{ v.value.averagePrice | number:'1.4-4' }}
+                          
+                          <span #el matTooltip="Average Price doesn't match CIRRAS"
+                                *ngIf="v.value.isOutOfSyncAvgPrice"> 
+                            <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                          </span>                 
+                        </div>                        
+                        
+                        <div class="ccc-border-right ccc-fill"  *ngIf="isWineGrape()">
+                          <mat-form-field appearance="fill">
+                            <input matInput formControlName="averagePriceOverride" (keypress)="numberOnly($event)" maxlength="10">
+                          </mat-form-field> 
+                        </div>
+
+                        <div class="ccc-border-right ccc-justify-right ">
+                            {{ v.value.insurableValue | number:'1.4-4' }}
+                        </div>
+                        <div class="ccc-number">                            
+                            <mat-form-field appearance="fill">
+                              <input matInput formControlName="varietyProductionValue" readonly>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                
+                  </div>
+              </div>
+              <div class="ccc-row-group ccc-row-group-bordered">
+                <div class="ccc-row">
+                    <span class="ccc-col-left">
+                        <span class="ccc-expression">D</span>Production Value for Claim Calculation
+                    </span>
+                    <span class="ccc-col-right">
+                      <span class="ccc-note">Sum of the above: </span>
+                      
+                        <mat-form-field appearance="fill">
+                          <input style="text-align: right;" matInput formControlName="totalProductionValue" readonly>
+                        </mat-form-field>
+                      
+                    </span>
+                </div>
+              </div>
+              <div class="ccc-row-group ccc-row-group-bordered">
+                  <div class="ccc-row">
+                      <span class="ccc-col-left">
+                          <span class="ccc-expression">E</span>Quantity Loss Claim
+                      </span>
+                      <span class="ccc-col-right">
+                          <span class="ccc-expression">C - D</span>
+                          <mat-form-field appearance="fill">
+                            <input style="text-align: right;" matInput formControlName="totalClaimAmount" readonly>
+                          </mat-form-field>
+
+                          <span #el matTooltip="The Quantity Loss Claim amount cannot be higher than the Adjusted Coverage Value" *ngIf="isClaimTotalHigh" style="margin-left: 10px;">
+                            <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                          </span>
+
+                      </span>
+                  </div>
+              </div>
+              <div class="ccc-row-group ccc-row-group-bordered">
+                  <label>Comments</label>
+                  <div class="ccc-entire">
+                      <mat-form-field appearance="fill">
+                          <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()">{{ calculationDetail.calculationComment }} </textarea>
+                      </mat-form-field>
+                  </div>
+              </div>
+              <div class="ccc-row-group">
+                <div class="ccc-row">
+                  <span class="ccc-col-left">
+                    <button mat-raised-button color="primary" 
+                      (click)="onCancel()"
+                    ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload</button>
+                  </span>
+
+                  <span class="ccc-col-right">
+                    <button mat-raised-button color="primary"
+                      *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
+                      (click)="onSubmit()"
+                    ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
+                    &nbsp;
+                    <button mat-raised-button color="primary"
+                    *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
+                      (click)="onReopen()"
+                    ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
+                    &nbsp;
+                    <button mat-raised-button color="primary"
+                        *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT'"
+                        (click)="onSave(false)"
+                    ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
+                    &nbsp;
+                    <button mat-raised-button color="primary"
+                        *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT'"
+                        (click)="onSave(true)"
+                    ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
+                    &nbsp;
+                    <button mat-raised-button color="primary"
+                      *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
+                        (click)="onPrint()"
+                    ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
+                  </span>                  
+                  
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>

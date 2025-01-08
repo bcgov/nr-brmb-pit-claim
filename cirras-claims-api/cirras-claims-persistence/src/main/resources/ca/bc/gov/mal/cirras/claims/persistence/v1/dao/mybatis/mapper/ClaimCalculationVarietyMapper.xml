@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.mapper.ClaimCalculationVarietyMapper">
+
+	<resultMap id="ClaimCalculationVarietyDtoMap" type="ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationVarietyDto">
+		<id property="claimCalculationVarietyGuid" column="CLAIM_CALCULATION_VARIETY_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		
+		<result property="claimCalculationGuid" column="CLAIM_CALCULATION_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="cropVarietyId" column="CROP_VARIETY_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="revisionCount" column="REVISION_COUNT" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="averagePrice" column="AVERAGE_PRICE" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="averagePriceOverride" column="AVERAGE_PRICE_OVERRIDE" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="averagePriceFinal" column="AVERAGE_PRICE_FINAL" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="insurableValue" column="INSURABLE_VALUE" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="yieldAssessedReason" column="YIELD_ASSESSED_REASON" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="yieldAssessed" column="YIELD_ASSESSED" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="yieldTotal" column="YIELD_TOTAL" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="yieldActual" column="YIELD_ACTUAL" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="varietyProductionValue" column="VARIETY_PRODUCTION_VALUE" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+
+		<!-- column of a joined table -->
+		<result property="varietyName" column="VARIETY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT T.CLAIM_CALCULATION_VARIETY_GUID,
+		       T.CLAIM_CALCULATION_GUID,
+		       T.CROP_VARIETY_ID,
+		       T.REVISION_COUNT,
+		       T.AVERAGE_PRICE,
+		       T.AVERAGE_PRICE_OVERRIDE,
+			   T.AVERAGE_PRICE_FINAL,
+		       T.INSURABLE_VALUE,
+		       T.YIELD_ASSESSED_REASON,
+		       T.YIELD_ASSESSED,
+		       T.YIELD_TOTAL,
+		       T.YIELD_ACTUAL,
+		       T.VARIETY_PRODUCTION_VALUE,
+		       T.CREATE_USER,
+		       T.CREATE_DATE,
+		       T.UPDATE_USER,
+		       T.UPDATE_DATE
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimCalculationVarietyDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_VARIETY T
+		WHERE T.CLAIM_CALCULATION_VARIETY_GUID = #{claimCalculationVarietyGuid}
+	</select>
+	
+	<insert id="insert">
+		<selectKey keyProperty="claimCalculationVarietyGuid" resultType="java.lang.String" order="BEFORE"> 
+			select replace(cast(gen_random_uuid() as text), '-', '')
+		</selectKey>
+
+
+		INSERT INTO CLAIM_CALCULATION_VARIETY (
+			CLAIM_CALCULATION_VARIETY_GUID, 
+			CLAIM_CALCULATION_GUID, 
+			CROP_VARIETY_ID, 
+			REVISION_COUNT, 
+			AVERAGE_PRICE,
+			AVERAGE_PRICE_OVERRIDE,
+			AVERAGE_PRICE_FINAL,
+			INSURABLE_VALUE, 
+			YIELD_ASSESSED_REASON, 
+			YIELD_ASSESSED, 
+			YIELD_TOTAL, 
+			YIELD_ACTUAL, 
+			VARIETY_PRODUCTION_VALUE, 
+			CREATE_USER, 
+			CREATE_DATE, 
+			UPDATE_USER, 
+			UPDATE_DATE
+		) VALUES (
+		   	#{claimCalculationVarietyGuid},
+			#{dto.claimCalculationGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.cropVarietyId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			1,
+			#{dto.averagePrice, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.averagePriceOverride, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.averagePriceFinal, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.yieldAssessedReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.yieldAssessed, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.yieldTotal, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.yieldActual, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.varietyProductionValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE CLAIM_CALCULATION_VARIETY
+		SET 
+			REVISION_COUNT = REVISION_COUNT + 1,
+			AVERAGE_PRICE = #{dto.averagePrice, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			AVERAGE_PRICE_OVERRIDE = #{dto.averagePriceOverride, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			AVERAGE_PRICE_FINAL = #{dto.averagePriceFinal, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			INSURABLE_VALUE = #{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			YIELD_ASSESSED_REASON = #{dto.yieldAssessedReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			YIELD_ASSESSED = #{dto.yieldAssessed, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			YIELD_TOTAL = #{dto.yieldTotal, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			YIELD_ACTUAL = #{dto.yieldActual, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			VARIETY_PRODUCTION_VALUE = #{dto.varietyProductionValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE CLAIM_CALCULATION_VARIETY_GUID = #{claimCalculationVarietyGuid}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM CLAIM_CALCULATION_VARIETY WHERE CLAIM_CALCULATION_VARIETY_GUID = #{claimCalculationVarietyGuid}
+	</delete>
+	
+	<delete id="deleteForClaim">
+		DELETE FROM CLAIM_CALCULATION_VARIETY WHERE CLAIM_CALCULATION_GUID = #{claimCalculationGuid}
+	</delete>
+	
+	<select id="select" resultMap="ClaimCalculationVarietyDtoMap">  
+		<include refid="selectColumns"/>
+		, V.VARIETY_NAME 
+		FROM CLAIM_CALCULATION_VARIETY T
+		JOIN CROP_VARIETY V ON V.CROP_VARIETY_ID = T.CROP_VARIETY_ID
+		WHERE T.CLAIM_CALCULATION_GUID =#{claimCalculationGuid}
+		ORDER BY V.VARIETY_NAME
+	</select> 
+
+	<select id="selectAll" resultMap="ClaimCalculationVarietyDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_VARIETY T
+	</select>	
+	
+</mapper>

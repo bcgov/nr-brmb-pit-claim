@@ -1,0 +1,164 @@
+<base-wrapper [errorState]="errorState">
+    <div class="cirras-claims-base-container page-width-container desktop">
+        <div class="cirras-claims-base personnel flex-y">
+            <div class="cirras-claims-header-bar flex-y-fixed">
+                <h1>Claims</h1>
+                <div class="summary-buttons">
+                    <div class="spinner-header" *ngIf="isLoading">
+                        <mat-spinner [diameter]="30"></mat-spinner>
+                    </div>
+                </div>
+            </div>
+            <div class="table-search-header flex-y-fixed">
+              <div class="search-and-filters">
+                  <div class="field search-input">
+                      <mat-label class="label">Search Claims</mat-label>
+                      <input class="search-input" aria-label="Claims Number" (keypress)="numberOnly($event)" [(ngModel)]="searchClaimsNumber" (ngModelChange)="searchTextUpdated()">
+                      <button matSuffix mat-icon-button class="input-clear-button" *ngIf="searchClaimsNumber"
+                              aria-label="Clear" (click)="searchClaimsNumber=undefined;searchTextUpdated(); $event.stopPropagation()"
+                              matTooltip="Clear">
+                          <mat-icon>close</mat-icon>
+                      </button>
+                  </div>
+                  <div class="field search-input">
+                    <mat-label class="label">Search Policies</mat-label>
+                    <input class="search-input" aria-label="Policy Number" [(ngModel)]="searchPolicyNumber" (ngModelChange)="searchTextUpdated()">
+                    <button matSuffix mat-icon-button class="input-clear-button" *ngIf="searchPolicyNumber"
+                            aria-label="Clear" (click)="searchPolicyNumber=undefined;searchTextUpdated(); $event.stopPropagation()"
+                            matTooltip="Clear">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                  </div>                  
+                  <div class="field">
+                      <mat-label class="label">Calculation Status</mat-label>
+                      <select appWFSingleSelect appWFPlaceholder="All"
+                              class="select-selectedCalculationStatusCode"
+                              aria-label="Calculation Status"
+                              [options]="calculationStatusOptions"
+                              [selected]="selectedCalculationStatusCode"
+                              (updated)="selectFilterUpdated('selectedCalculationStatusCode', $event)">
+                          <option value="">
+                              <span class="placeholder">All</span>
+                          </option>
+                          <option *ngFor="let option of calculationStatusOptions" value="{{option.code}}">
+                              <span>{{option.description}}</span>
+                          </option>
+                      </select>
+                  </div>
+
+                  <div class="field">
+                      <button mat-raised-button color="primary" (click)="clearSearchAndFilters()"><mat-icon svgIcon="filter-cancel"></mat-icon>Clear</button>
+                  </div>
+              </div>                
+            </div>    
+            <div class="table-wrapper flex-y-fixed" style="color:red;" *ngIf="!isSearchValid()" >Please enter a valid Claim Number (Integer)</div> 
+            
+            <div class="table-wrapper flex-y-grow">
+              <table *ngIf="collectionData && collectionData.length" mat-table [dataSource]="collectionData | paginate:config" matSort
+                       [matSortActive]="this.searchState.sortParam"
+                       [matSortDirection]="this.searchState.sortDirection.toLowerCase()"
+                       (matSortChange)="sortData($event)">
+
+                       <ng-container matColumnDef="version">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Version</th>
+                        <td mat-cell *matCellDef="let item">
+
+                            <span #el [matTooltip]="getElementInnerText(el)" *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.CREATE_CALCULATION) && item.calculationVersion == 'NEW'">
+                                <a [routerLink]="[ '/calculation-detail', item.claimNumber, '' ]">
+                                    New
+                                </a>
+                            </span>
+                            <span #el [matTooltip]="getElementInnerText(el)" *ngIf="item.calculationVersion.substr(0,1) == 'V'">
+                                <a [routerLink]="[ '/calculation-detail', item.claimNumber, item.claimCalculationGuid ]">
+                                    {{item.calculationVersion}}
+                                </a>
+                            </span>
+                            <span #el [matTooltip]="getElementInnerText(el)" *ngIf="item.calculationVersion == 'Not Supported'">
+                                {{item.calculationVersion}}
+                            </span>
+                            <span #el matTooltip="Claim status should be OPEN to create a new calculation" *ngIf="item.calculationVersion == 'NotAllowed'">
+                                <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                            </span>
+
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="calculationStatus">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Calculation Status</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.calculationStatusCode}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="claimNumber">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Claim Number</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.claimNumber}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="policyNumber">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Policy Number</th>
+                      <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.policyNumber}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="planName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Plan</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.insurancePlanName}}</span></td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="commodityName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Commodity</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.commodityName}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="coverageName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Coverage</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.coverageName}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="growerName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Grower Name</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.growerName}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="claimStatusCode">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                      <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.claimStatusDescription}}</span></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="claimType">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                        <td mat-cell *matCellDef="let item"><span #el [matTooltip]="getElementInnerText(el)">{{item.claimType}}</span></td>
+                    </ng-container>  
+
+                    <tr mat-header-row *matHeaderRowDef="columnsToDisplay;sticky:true"></tr>
+                    <tr mat-row *matRowDef="let item; columns: columnsToDisplay"></tr>
+                </table>
+            </div>
+
+            <div class="bottom-summary flex-y-fixed">
+                <div class="showing-summary">{{summaryString}}</div>
+                <pagination-controls *ngIf="collectionData && collectionData.length>0" [id]="config.id"
+                                     [maxSize]="5"
+                                     [responsive]="false"
+                                     [directionLinks]="true"
+                                     [previousLabel]="paginatorLabels.previousLabel"
+                                     [nextLabel]="paginatorLabels.nextLabel"
+                                     [autoHide]="false"
+                                     (pageChange)="onPageChange($event)"></pagination-controls>
+                <div class="show-entries-info">
+                                <span>
+                                    Show
+                                </span>
+                    <select appWFSingleSelect appWFPlaceholder="Select..."
+                            aria-label="Show entries"
+                            [selected]="showEntriesSelection"
+                            [options]="showEntriesOptions"
+                            (updated)="selectShowEntriesUpdated('showEntriesSelection', $event)">
+                        <option *ngFor="let option of showEntriesOptions" value="{{option.value}}">
+                            <span>{{option.label}}</span>
+                        </option>
+                    </select>
+                    <span>entries</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</base-wrapper>

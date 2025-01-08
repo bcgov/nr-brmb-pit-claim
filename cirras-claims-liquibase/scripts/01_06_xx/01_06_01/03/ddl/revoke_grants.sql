@@ -1,0 +1,1 @@
+revoke app_cccs_user from proxy_cccs;

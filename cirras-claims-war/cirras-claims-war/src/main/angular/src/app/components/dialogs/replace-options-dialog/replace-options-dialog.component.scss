@@ -1,0 +1,52 @@
+@import 'src/styles/variables';
+
+.dialog-form {
+    //font-family: Roboto, 'Helvetica Neue', sans-serif;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+  
+    .title-row.form-row {
+      background-color: rgba(200, 200, 200, .60);
+      padding: .5rem 1rem 0;
+    }
+  
+    .form-row {
+      display: flex;
+      justify-content: stretch;
+      padding: 0 1rem;
+  
+      .field,
+      .field .mat-mdc-form-field {
+        width: 100%;
+  
+        span {
+          font-size: medium;
+        }
+        .uppercase{
+          text-transform: uppercase;
+        }
+      }
+    }
+  
+    .mat-mdc-dialog-content {
+      margin: 0;
+      padding: 0.5rem;
+      min-height: 4rem;
+    }
+  
+    .mat-mdc-radio-button {
+      padding-right: .5rem;
+    }
+  
+    .date-picker-input {
+      display: flex;
+    }
+  
+    .dialog-controls {
+      align-self: flex-end;
+      padding: .5rem 1rem 1rem;
+    }
+
+  }
+  

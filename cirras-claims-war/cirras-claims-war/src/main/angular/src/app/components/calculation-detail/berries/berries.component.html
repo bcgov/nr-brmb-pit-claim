@@ -1,0 +1,355 @@
+<div class="cirras-claims-base-container page-width-container desktop">
+  <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
+
+
+    <cirras-calculation-detail-header 
+      [claimCalculationGuid]="claimCalculationGuid"
+      [calculationDetail]="calculationDetail"
+      [calculationComment]="calculationComment"
+    ></cirras-calculation-detail-header>
+
+  <form [formGroup]="getViewModel().formGroup">
+    
+      <div class="ccc-row-group ccc-row-group-bordered">
+        <label>Claims Details</label>
+        <div class="ccc-row">
+          <span class="ccc-col-left">
+            State: {{ calculationDetail.claimStatusCode }}  
+            <br /> <br />
+            Submitted By: 
+              <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">
+                {{ calculationDetail.submittedByName }}
+              </span>
+            <br/><br />
+            Submitted Date: 
+              <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">                       
+               {{ calculationDetail.submittedByDate | date:'yyyy-MM-dd' }}  
+              </span>  
+            <br/><br />
+          </span>
+          <span class="ccc-col-right">
+            Primary Peril:
+            <mat-form-field appearance="fill">
+              <mat-select formControlName="primaryPerilCode" required >
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error *ngIf="getViewModel().formGroup.get('primaryPerilCode').hasError('required')">{{ERROR_MESSAGES.required()}}</mat-error>
+          </span>
+        </div>
+        <div class="ccc-row">
+          <span class="ccc-col-left">                    
+              Recommended By: {{ calculationDetail.recommendedByName }}
+              <br/><br />
+              Recommended Date: {{ calculationDetail.recommendedByDate | date:'yyyy-MM-dd' }}      
+              <br/><br />
+              Approved By: {{ calculationDetail.approvedByName }}
+              <br/><br />
+          </span>
+          <span class="ccc-col-right">
+              Secondary Peril:
+              <mat-form-field appearance="fill">
+                <mat-select formControlName="secondaryPerilCode" >
+                    <mat-option>(None)</mat-option>
+                    <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
+                    >{{ option.description }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+          </span>
+        </div>
+        <div class="ccc-row">
+          <span class="ccc-col-left">                    
+              Approved Date: {{ calculationDetail.approvedByDate | date:'yyyy-MM-dd' }}                   
+          </span>
+          <span class="ccc-col-right">                      
+          </span>
+        </div>
+      </div>
+
+      <div class="ccc-row-group ccc-row-group-bordered">
+        <label>Quantity Coverage</label>
+        <div class="ccc-container ccc-coverage">
+          <div>
+            <span class="ccc-expression">A</span> Probable Yield (lbs)
+          </div>
+          <div class="ccc-border-right">
+          </div>
+          <div class="ccc-right"> 
+             {{ calculationDetail.claimCalculationBerries.totalProbableYield |  number:'1.0-0' }}
+             <span #el matTooltip="Probable Yield doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncTotalProbableYield" style="margin-left: 10px;">
+              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>
+          </div>
+
+          <div>
+            <span class="ccc-expression">B</span> Deductible
+          </div>
+          <div class="ccc-border-right">
+          </div>
+          <div class="ccc-right"> 
+            {{ calculationDetail.claimCalculationBerries.deductibleLevel }}%
+            <span #el matTooltip="Deductible level doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncDeductibleLevel" style="margin-left: 10px;">
+             <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+           </span>
+         </div>         
+         <div>
+          <span class="ccc-expression">C</span> Production Guarantee (lbs)
+         </div>
+         <div class="ccc-border-right ccc-right">
+           <span class="ccc-expression">A x (100 - B)</span>
+         </div>
+         <div class="ccc-right"> 
+           {{ calculationDetail.claimCalculationBerries.productionGuarantee | number:'1.0-0'  }} 
+           <span #el matTooltip="Production Guarantee doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncProductionGuarantee" style="margin-left: 10px;">
+             <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+           </span>
+         </div>
+         <div>
+           <span class="ccc-expression">D</span> Declared Acres
+         </div>
+         <div class="ccc-border-right">
+         </div>
+         <div class="ccc-right"> 
+           {{ calculationDetail.claimCalculationBerries.declaredAcres | number:'1.2-2'  }} 
+            <span #el matTooltip="Declared Acres doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncDeclaredAcres" style="margin-left: 10px;">
+             <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+           </span>
+         </div>
+         <div>
+           <span class="ccc-expression">E</span> Confirmed Acres
+         </div>
+         <div class="ccc-border-right ccc-right">
+         </div>
+         <div class="ccc-right ccc-fill ccc-number">              
+           <mat-form-field appearance="fill">
+             <input matInput formControlName="confirmedAcres" (keypress)="numberOnly($event)" maxlength="10">
+           </mat-form-field>
+         </div>
+          <div>
+            <span class="ccc-expression">F</span> Adjustment Factor
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">E / D (max. 1)</span>
+          </div>
+          <div class="ccc-right">
+             {{ adjustmentFactor | number:'1.2-2' }}
+          </div> 
+          <div>
+            <span class="ccc-expression">G</span> Adjusted Production Guarantee (lbs)
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">C x F</span>
+          </div>
+          <div class="ccc-right">
+             {{ adjustedProductionGuarantee | number:'1.0-0' }}
+          </div>                    
+          <div>
+            <span class="ccc-expression">H</span> Insurable Value / lb
+          </div>
+          <div class="ccc-border-right ccc-right">
+          </div>
+          <div class="ccc-right">
+             {{ calculationDetail.claimCalculationBerries.insurableValueSelected | number:'1.4-4' }}
+             <span #el matTooltip="Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncInsurableValueSelected" style="margin-left: 10px;">
+              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>
+          </div>
+          <div>
+            <span class="ccc-expression"> </span> 100% Insurable Value / lb
+          </div>
+          <div class="ccc-border-right ccc-right">
+          </div>
+          <div class="ccc-right">
+            {{ calculationDetail.claimCalculationBerries.insurableValueHundredPercent | number:'1.4-4' }}     
+            <span #el matTooltip=" 100% Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncInsurableValueHundredPct" style="margin-left: 10px;">
+              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>       
+          </div>
+          <div>
+            <span class="ccc-expression">I</span> Coverage Value
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">G x H</span>
+          </div>
+          <div class="ccc-right">
+             {{ makeDollarsRounded(coverageAmountAdjusted ) }}
+          </div>
+        </div>
+      </div>
+
+
+      <div class="ccc-row-group ccc-row-group-bordered">
+        <label>Yield Determination</label>
+        <div class="ccc-container ccc-coverage">
+          <div>
+            <span class="ccc-expression">1</span> Harvested Yield (lbs)
+          </div>
+          <div class="ccc-border-right ccc-right">
+          </div>
+          <div class="ccc-right ccc-fill ccc-number">               
+            <mat-form-field appearance="fill">
+              <input matInput formControlName="harvestedYield" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
+          </div>
+          <div>
+            <span class="ccc-expression">2</span> Appraised Yield (lbs)
+          </div>
+          <div class="ccc-border-right ccc-right">
+          </div>
+          <div class="ccc-right ccc-fill ccc-number">           
+            <mat-form-field appearance="fill">
+              <input matInput formControlName="appraisedYield" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
+          </div>
+          <div>
+            <span class="ccc-expression">3</span> Abandoned Yield (lbs)
+          </div>
+          <div class="ccc-border-right ccc-right">
+          </div>
+          <div class="ccc-right ccc-fill ccc-number">              
+            <mat-form-field appearance="fill">
+              <input matInput formControlName="abandonedYield" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
+          </div>
+          <div>
+            <span class="ccc-expression">4</span> Total Yield From Declaration of Production (DoP)
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">1 + 2 + 3</span>
+          </div>
+          <div class="ccc-right"> 
+            {{ totalYieldFromDop | number:'1.0-0' }}           
+         </div>        
+         <div>
+          <span class="ccc-expression">5</span> Total Yield from Adjuster Estimates
+        </div>
+        <div class="ccc-border-right ccc-right">
+        </div>
+        <div class="ccc-right ccc-fill ccc-number">              
+          <mat-form-field appearance="fill">
+            <input matInput formControlName="totalYieldFromAdjuster" (keypress)="numberOnly($event)" maxlength="14">
+          </mat-form-field>
+        </div>
+
+        </div>
+      </div>
+
+      <div class="ccc-row-group ccc-row-group-bordered">
+        <label>Yield Loss Determination</label>
+        <div class="ccc-container ccc-coverage">
+          <div>
+            <span class="ccc-expression">J</span> {{ lineJtext }}
+          </div>
+          <div class="ccc-border-right">
+          </div>
+          <div class="ccc-right"> 
+             {{estimatedYieldFromAdjuster | number:'1.0-0' }}             
+          </div>
+
+          <div>
+            <span class="ccc-expression">K</span> Plus Assessment (lbs)
+          </div>
+          <div class="ccc-border-right">            
+          </div>
+          <div class="ccc-fill ccc-number">  
+            <mat-form-field appearance="fill">
+              <input matInput formControlName="yieldAssessment" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
+          </div>
+          <div>
+            <span class="ccc-expression">L</span> Total Yield for Claim Calculation (lbs)
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">J + K</span>
+          </div>
+          <div class="ccc-right">             
+            {{ totalYieldForCalculation | number:'1.0-0' }}    
+          </div>
+          <div>
+            <span class="ccc-expression">M</span> Yield Loss Eligible for Claim (lbs)
+          </div>
+          <div class="ccc-border-right ccc-right" >
+            <span class="ccc-expression">G - L</span>
+          </div>
+          <div class="ccc-right"> 
+            {{ yieldLossEligible | number:'1.0-0' }}    
+          </div>
+
+        </div>
+      </div>
+
+      <div class="ccc-row-group ccc-row-group-bordered">
+        <label>Claim Determination</label>
+        <div class="ccc-container ccc-coverage">
+
+          <div>
+            <span class="ccc-expression">N</span> Quantity Loss Claim
+          </div>
+          <div class="ccc-border-right ccc-right ">
+            <span class="ccc-expression">H x M</span>
+          </div>
+          <div class="ccc-right"> 
+            {{ totalClaimAmount | currency }}    
+            <span #el matTooltip="The Quantity Loss Claim amount cannot be higher than the Coverage Value" *ngIf="isClaimTotalHigh" style="margin-left: 10px;">
+              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+
+
+      
+      <div class="ccc-row-group ccc-row-group-bordered">
+          <label>Comments</label>
+          <div class="ccc-entire">
+              <mat-form-field appearance="fill">
+                  <textarea 
+                    matInput 
+                    formControlName="calculationComment" 
+                    rows="4" 
+                    maxlength="1000"
+                    (keyup)="setComment()">{{ calculationDetail.calculationComment }} </textarea>
+              </mat-form-field>
+          </div>
+      </div>
+      <div class="ccc-row-group">
+        <div class="ccc-row">
+          <span class="ccc-col-left">
+            <button mat-raised-button color="primary" 
+                (click)="onCancel()"
+            ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload </button>
+          </span>
+
+          <span class="ccc-col-right">
+            <button mat-raised-button color="primary"
+              *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton()"
+              (click)="onSubmit()"
+            ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
+            &nbsp;
+            <button mat-raised-button color="primary"
+            *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
+              (click)="onReopen()"
+            ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
+            &nbsp;
+            <button mat-raised-button color="primary"
+              *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT'"
+              (click)="onSave(false)"
+            ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
+            &nbsp;
+            <button mat-raised-button color="primary"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT'"
+                (click)="onSave(true)"
+            ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
+            &nbsp;
+            <button mat-raised-button color="primary"
+              *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
+                (click)="onPrint()"
+            ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
+          </span>                  
+          
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

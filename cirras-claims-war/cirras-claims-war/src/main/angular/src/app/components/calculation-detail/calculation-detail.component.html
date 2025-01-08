@@ -1,0 +1,67 @@
+<base-wrapper [errorState]="errorState">
+<!-- GRAPES -->
+  <cirras-claims-calculation-detail-grapes  
+    *ngIf=" calculationDetail && (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+  ></cirras-claims-calculation-detail-grapes>
+
+  <cirras-calculation-printout 
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid &&
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout> 
+
+  <!-- BLUEBERRIES QUANTITY LOSS -->
+  <cirras-claims-calculation-detail-berries  
+    *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQNT'"
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+  ></cirras-claims-calculation-detail-berries>
+
+  <cirras-calculation-printout-berries 
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid && 
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQNT'"
+    [calculationDetail]="calculationDetail"> 
+  </cirras-calculation-printout-berries>
+
+  <!-- BLUEBERRIES PLANT LOSS -->
+  <cirras-calculation-detail-berries-plant  
+    *ngIf=" calculationDetail &&  
+            (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+            (calculationDetail.insuredByMeasurementType).toUpperCase() === 'UNITS'"
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+  ></cirras-calculation-detail-berries-plant>
+
+  <cirras-calculation-printout-berries-plant
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid &&  
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+          (calculationDetail.insuredByMeasurementType).toUpperCase() === 'UNITS'"
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout-berries-plant> 
+
+  <!-- STRAWBERRIES PLANT LOSS -->
+  <cirras-calculation-detail-strawberries-plant
+    *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+            (calculationDetail.insuredByMeasurementType).toUpperCase() === 'ACRES'"
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+  ></cirras-calculation-detail-strawberries-plant>
+
+  <cirras-calculation-printout-strawberries-plant
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid && 
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+          (calculationDetail.insuredByMeasurementType).toUpperCase() === 'ACRES'"
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout-strawberries-plant> 
+
+</base-wrapper>
