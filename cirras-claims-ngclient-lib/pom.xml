@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ca.bc.gov.mal.cirras.claims</groupId>
+    <artifactId>cirras-claims-ngclient-lib-parent</artifactId>
+    <version>1.6.3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>cirras-claims-ngclient-lib-parent</name>
+    <modules>
+        <module>cirras-claims-ngclient-lib</module>
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-source-version>1.8</java-source-version>
+        <java-target-version>1.8</java-target-version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+        <dependency>
+            <groupId>ca.bc.gov.mal.cirras.claims</groupId>
+            <artifactId>cirras-claims-api-rest-endpoints</artifactId>
+            <version>1.6.3-SNAPSHOT</version>
+            <type>json</type>
+            <classifier>swagger</classifier>
+
+        </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

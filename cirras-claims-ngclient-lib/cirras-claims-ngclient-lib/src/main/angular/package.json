@@ -1,0 +1,32 @@
+{
+  "name": "cirras-claims-api",
+  "version": "1.6.3-SNAPSHOT",
+  "scripts": {
+    "version-now": "node -pe 'require(\"projects/cirras-claims-api/package.json\").version'",
+    "version-rc": "cd projects/cirras-claims-api && npm version prerelease --preid=rc",
+    "version-patch": "cd projects/cirras-claims-api && npm version patch",
+    "version-minor": "cd projects/cirras-claims-api && npm version minor",
+    "version-major": "cd projects/cirras-claims-api && npm version major",
+    "generate": "java -jar src/openapi/openapi-generator-cli.jar generate -i src/swagger/swagger.json -g typescript-angular -c src/swagger/swagger-config.json -o projects/cirras-claims-api/generated 2>&1",
+    "build": "ng build --configuration production cirras-claims-api",
+    "publish-lib": "cd dist/cirras-claims-api && npm publish --loglevel silly",
+    "version-maven": "cross-env npm version $mvn_prj_vrsn.$jenkins_build --prefix=projects/cirras-claims-api --allow-same-version",
+    "mavenbuild": "npm run version-maven && npm run generate && npm run build && npm run publish-lib"
+  },
+  "private": true,
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^18.2.8",
+    "@angular/cli": "^18.2.8",
+    "@angular/common": "^18.2.8",
+    "@angular/compiler": "^18.2.8",
+    "@angular/compiler-cli": "^18.2.8",
+    "@angular/core": "^18.2.8",
+    "cross-env": "^7.0.2",
+    "ng-packagr": "^18.0.0",
+    "rxjs": "7.8.1",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "zone.js": "~0.14.10"
+  }
+}

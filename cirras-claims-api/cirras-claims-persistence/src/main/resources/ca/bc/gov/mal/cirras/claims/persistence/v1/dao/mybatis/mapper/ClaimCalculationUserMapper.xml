@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.mapper.ClaimCalculationUserMapper">
+
+	<resultMap id="ClaimCalculationUserDtoMap" type="ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationUserDto">
+		<id property="claimCalculationUserGuid" column="CLAIM_CALCULATION_USER_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		
+		<result property="loginUserGuid" column="LOGIN_USER_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="loginUserId" column="LOGIN_USER_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="loginUserType" column="LOGIN_USER_TYPE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="givenName" column="GIVEN_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="familyName" column="FAMILY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT T.CLAIM_CALCULATION_USER_GUID,
+		       T.LOGIN_USER_GUID,
+		       T.LOGIN_USER_ID,
+		       T.LOGIN_USER_TYPE,
+		       T.GIVEN_NAME,
+		       T.FAMILY_NAME,
+		       T.CREATE_USER,
+		       T.CREATE_DATE,
+		       T.UPDATE_USER,
+		       T.UPDATE_DATE
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimCalculationUserDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_USER T
+		WHERE T.CLAIM_CALCULATION_USER_GUID = #{claimCalculationUserGuid}
+	</select>
+
+	<select id="getByLoginUserGuid" resultMap="ClaimCalculationUserDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_USER T
+		WHERE T.LOGIN_USER_GUID = #{loginUserGuid}
+	</select>
+	
+	<insert id="insert">
+		<selectKey keyProperty="claimCalculationUserGuid" resultType="java.lang.String" order="BEFORE"> 
+			select replace(cast(gen_random_uuid() as text), '-', '')
+		</selectKey>
+
+
+		INSERT INTO CLAIM_CALCULATION_USER (
+			CLAIM_CALCULATION_USER_GUID,
+			LOGIN_USER_GUID,
+			LOGIN_USER_ID,
+			LOGIN_USER_TYPE,
+			GIVEN_NAME,
+			FAMILY_NAME,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		) VALUES (
+		   	#{claimCalculationUserGuid},
+			#{dto.loginUserGuid, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			#{dto.loginUserId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			#{dto.loginUserType, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			#{dto.givenName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			#{dto.familyName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE CLAIM_CALCULATION_USER
+		SET GIVEN_NAME = #{dto.givenName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			FAMILY_NAME = #{dto.familyName, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE CLAIM_CALCULATION_USER_GUID = #{claimCalculationUserGuid}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM CLAIM_CALCULATION_USER WHERE CLAIM_CALCULATION_USER_GUID = #{claimCalculationUserGuid}
+	</delete>
+	
+</mapper>

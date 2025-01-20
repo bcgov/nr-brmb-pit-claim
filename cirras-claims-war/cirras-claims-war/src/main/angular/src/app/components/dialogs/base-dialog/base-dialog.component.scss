@@ -1,0 +1,87 @@
+@import 'src/styles/variables';
+
+::ng-deep .mat-mdc-dialog-container {
+  font-size: $font-size;
+  padding: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  min-width: 450px;
+
+  h1:not(.not-dialog-title-bar) {
+    background-color: $colour-header-background;
+    color: $colour-white;
+    padding: var(--cirras-claims-gutter-space);
+    cursor: pointer;
+    margin: 0;
+    font-weight: normal;
+    display: flex;
+
+    .spinner-header{
+      margin-left: var(--cirras-claims-gutter-space);
+      color: $colour-white;
+
+      .mat-mdc-progress-spinner circle, .mat-mdc-progress-spinner circle {
+        stroke: $colour-white;
+      }
+    }
+  }
+  //
+  //::ng-deep .mat-dialog-actions button:last-child {
+  //  margin-right: 8px;
+  //}
+
+  ::ng-deep .mat-mdc-dialog-actions {
+    margin: 0;
+    background-color: #F2F2F2;
+    border-top: solid 1px $colour-light-grey;
+    padding: var(--cirras-claims-gutter-space);
+  }
+
+  ::ng-deep .desktop .mat-mdc-dialog-content.no-scroll {
+    overflow-y: hidden;
+  }
+
+  ::ng-deep .mat-mdc-dialog-content {
+    padding: var(--cirras-claims-gutter-space);
+    margin: 0;
+  }
+}
+
+::ng-deep .cdk-overlay-container.mobile .cdk-overlay-pane {
+  width: unset !important; //mobile dialog unset width
+
+  ::ng-deep .mat-mdc-dialog-container {
+    //height: calc(var(--vh, 1vh) * 100) !important;
+    //width: calc(var(--vw, 1vw) * 100) !important;
+    min-width: unset !important;
+    //max-height: calc(var(--vh, 1vh) * 100) !important;
+
+    .mobile {
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      min-width: unset !important;
+      height: calc(var(--vh, 1vh) * 100 - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px) !important;
+      width: calc(var(--vw, 1vw) * 100 - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+    }
+
+    h1 {
+      padding: 8px;
+    }
+
+    ::ng-deep .mat-mdc-dialog-actions {
+      //position: absolute;
+      //width: calc(var(--vw, 1vw) * 100 - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+      bottom: 0;
+      max-height: 68px;
+      max-width: 100%;
+    }
+
+    ::ng-deep .mat-mdc-dialog-content {
+      max-height: unset;
+      overflow-y: auto !important;
+      height: calc(var(--vh, 1vh) * 100 - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 135px);
+      width: calc(var(--vw, 1vw) * 100 - env(safe-area-inset-left) - env(safe-area-inset-right) - 2 * var(--cirras-claims-gutter-space));
+    }
+  }
+
+}
+

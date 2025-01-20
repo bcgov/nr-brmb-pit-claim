@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.mapper.ClaimCalculationPlantUnitsMapper">
+
+	<resultMap id="ClaimCalculationPlantUnitsDtoMap" type="ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto">
+		<id property="claimCalcPlantUnitsGuid" column="CLAIM_CALC_PLANT_UNITS_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="claimCalculationGuid" column="CLAIM_CALCULATION_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="insuredUnits" column="INSURED_UNITS" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="lessAdjustmentReason" column="LESS_ADJUSTMENT_REASON" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="lessAdjustmentUnits" column="LESS_ADJUSTMENT_UNITS" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="adjustedUnits" column="ADJUSTED_UNITS" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="deductibleLevel" column="DEDUCTIBLE_LEVEL" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="deductibleUnits" column="DEDUCTIBLE_UNITS" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="totalCoverageUnits" column="TOTAL_COVERAGE_UNITS" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="insurableValue" column="INSURABLE_VALUE" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="coverageAmount" column="COVERAGE_AMOUNT" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="damagedUnits" column="DAMAGED_UNITS" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="lessAssessmentReason" column="LESS_ASSESSMENT_REASON" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="lessAssessmentUnits" column="LESS_ASSESSMENT_UNITS" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="totalDamagedUnits" column="TOTAL_DAMAGED_UNITS" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="revisionCount" column="REVISION_COUNT" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT	T.CLAIM_CALC_PLANT_UNITS_GUID, 
+				T.CLAIM_CALCULATION_GUID, 
+				T.INSURED_UNITS, 
+				T.LESS_ADJUSTMENT_REASON, 
+				T.LESS_ADJUSTMENT_UNITS, 
+				T.ADJUSTED_UNITS, 
+				T.DEDUCTIBLE_LEVEL, 
+				T.DEDUCTIBLE_UNITS, 
+				T.TOTAL_COVERAGE_UNITS, 
+				T.INSURABLE_VALUE, 
+				T.COVERAGE_AMOUNT, 
+				T.DAMAGED_UNITS, 
+				T.LESS_ASSESSMENT_REASON, 
+				T.LESS_ASSESSMENT_UNITS, 
+				T.TOTAL_DAMAGED_UNITS, 
+				T.REVISION_COUNT, 
+				T.CREATE_USER, 
+				T.CREATE_DATE, 
+				T.UPDATE_USER, 
+				T.UPDATE_DATE 
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimCalculationPlantUnitsDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_PLANT_UNITS T
+		WHERE T.CLAIM_CALC_PLANT_UNITS_GUID = #{claimCalcPlantUnitsGuid}
+	</select>
+	
+	<select id="select" resultMap="ClaimCalculationPlantUnitsDtoMap">  
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_PLANT_UNITS T
+		WHERE T.CLAIM_CALCULATION_GUID =#{claimCalculationGuid}
+	</select> 
+	
+	<insert id="insert">
+		<selectKey keyProperty="claimCalcPlantUnitsGuid" resultType="java.lang.String" order="BEFORE"> 
+			select replace(cast(gen_random_uuid() as text), '-', '')
+		</selectKey>
+
+		INSERT INTO CLAIM_CALCULATION_PLANT_UNITS (
+			CLAIM_CALC_PLANT_UNITS_GUID,
+			CLAIM_CALCULATION_GUID,
+			INSURED_UNITS,
+			LESS_ADJUSTMENT_REASON,
+			LESS_ADJUSTMENT_UNITS,
+			ADJUSTED_UNITS,
+			DEDUCTIBLE_LEVEL,
+			DEDUCTIBLE_UNITS,
+			TOTAL_COVERAGE_UNITS,
+			INSURABLE_VALUE,
+			COVERAGE_AMOUNT,
+			DAMAGED_UNITS,
+			LESS_ASSESSMENT_REASON,
+			LESS_ASSESSMENT_UNITS,
+			TOTAL_DAMAGED_UNITS,
+			REVISION_COUNT,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		) VALUES (
+		   	#{claimCalcPlantUnitsGuid},
+			#{dto.claimCalculationGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.insuredUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.lessAdjustmentReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.lessAdjustmentUnits, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.adjustedUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.deductibleLevel, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.deductibleUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.totalCoverageUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.coverageAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.damagedUnits, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.lessAssessmentReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.lessAssessmentUnits, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.totalDamagedUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			1,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE CLAIM_CALCULATION_PLANT_UNITS
+		SET 
+			INSURED_UNITS = #{dto.insuredUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			LESS_ADJUSTMENT_REASON = #{dto.lessAdjustmentReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			LESS_ADJUSTMENT_UNITS = #{dto.lessAdjustmentUnits, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			ADJUSTED_UNITS = #{dto.adjustedUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			DEDUCTIBLE_LEVEL = #{dto.deductibleLevel, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			DEDUCTIBLE_UNITS = #{dto.deductibleUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			TOTAL_COVERAGE_UNITS = #{dto.totalCoverageUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			INSURABLE_VALUE = #{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			COVERAGE_AMOUNT = #{dto.coverageAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			DAMAGED_UNITS = #{dto.damagedUnits, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			LESS_ASSESSMENT_REASON = #{dto.lessAssessmentReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			LESS_ASSESSMENT_UNITS = #{dto.lessAssessmentUnits, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			TOTAL_DAMAGED_UNITS = #{dto.totalDamagedUnits, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			REVISION_COUNT = REVISION_COUNT + 1,
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE CLAIM_CALC_PLANT_UNITS_GUID = #{claimCalcPlantUnitsGuid}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM CLAIM_CALCULATION_PLANT_UNITS WHERE CLAIM_CALC_PLANT_UNITS_GUID = #{claimCalcPlantUnitsGuid}
+	</delete>
+	
+	<delete id="deleteForClaim">
+		DELETE FROM CLAIM_CALCULATION_PLANT_UNITS WHERE CLAIM_CALCULATION_GUID = #{claimCalculationGuid}
+	</delete>
+
+	<select id="selectAll" resultMap="ClaimCalculationPlantUnitsDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_PLANT_UNITS T
+	</select>	
+	
+</mapper>

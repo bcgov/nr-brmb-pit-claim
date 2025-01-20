@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "cirras-claims-api": {
+      "root": "projects/cirras-claims-api",
+      "sourceRoot": "projects/cirras-claims-api/generated",
+      "projectType": "library",
+      "prefix": "cirras",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/cirras-claims-api/tsconfig.lib.json",
+            "project": "projects/cirras-claims-api/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/cirras-claims-api/ng-package.prod.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}

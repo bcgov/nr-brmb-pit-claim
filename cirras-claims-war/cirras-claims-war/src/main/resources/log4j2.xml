@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+	<Appenders>
+	 	<RollingFile name="file"
+			fileName="${logging.home.dir}${file.separator}CIRRAS${file.separator}cirras-claims-war.log"
+			filePattern="${logging.home.dir}${file.separator}CIRRAS${file.separator}cirras-claims-war.%d.log.gz"
+            immediateFlush="false">
+	    	<PatternLayout pattern="[%d] [%-5p] [%F:%L] %m%n"/>
+	        <Policies>
+	        	<TimeBasedTriggeringPolicy />
+	    	</Policies>
+	    </RollingFile>
+	</Appenders>
+	<Loggers>
+	    <Root level="debug">
+	        <AppenderRef ref="file"/>
+	    </Root>
+		<Logger name="ca.bc.gov" level="debug">
+	        <AppenderRef ref="file"/>
+	    </Logger>
+	 </Loggers>  
+
+</Configuration>

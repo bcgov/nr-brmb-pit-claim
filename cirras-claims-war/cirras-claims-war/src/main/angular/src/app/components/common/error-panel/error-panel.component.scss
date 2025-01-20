@@ -1,0 +1,89 @@
+@import 'src/styles/variables';
+
+mat-card.error-panel {
+    font-size: $font-size;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 8px;
+    border-radius: 0;
+
+    .failed-precondition {
+        display: flex;
+        align-items: center;
+
+        mat-radio-button {
+            margin-left: 0;
+            padding: 2px 0;
+        }
+
+        ::ng-deep .mat-mdc-dialog-actions {
+            background-color: transparent;
+            border-top: none;
+        }
+    }
+
+    mat-card-header.warnings {
+        background-color: $colour-warnings;
+    }
+
+    mat-card-header {
+        background-color: $colour-errors;
+        color: $colour-white;
+        padding: 0.16px var(--wf1-gutter-space);
+        text-transform: uppercase;
+        cursor: pointer;
+        display: block;
+
+        .mat-mdc-card-title {
+            margin-bottom: 0;
+            font-size: 13px;
+        }
+
+        ::ng-deep .mat-mdc-card-header-text {
+            margin: 0 8px;
+
+            .mat-mdc-card-title {
+                font-family: $font-family-main;
+                font-weight: $font-weight-emphasis-more;
+            }
+        }
+    }
+
+    mat-card-content {
+        padding: 8px 0;
+    }
+
+    .footer {
+        text-align: right;
+        padding: var(--wf1-gutter-space);
+    }
+
+    .validation-messages {
+        display: block;
+        margin: 0;
+        font-family: $font-family-main;
+
+        .info-message {
+            background-color: $colour-white;
+            color: $colour-green;
+        }
+
+        .warning-message {
+            background-color: $colour-white;
+            color: $colour-yellow;
+        }
+
+        .error-message {
+            background-color: $colour-white;
+            color: $colour-errors;
+
+            span {
+                word-break: break-word;
+            }
+        }
+    }
+
+}
