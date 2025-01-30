@@ -14,4 +14,3 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.crop_commodity TO "app_ccs_rest_prox
 GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.crop_variety TO "app_ccs_rest_proxy";
 GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.insurance_plan TO "app_ccs_rest_proxy";
 GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.peril_code TO "app_ccs_rest_proxy";
-GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.process_failovr_ownership TO "app_ccs_rest_proxy";

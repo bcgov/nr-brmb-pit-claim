@@ -9,7 +9,7 @@ CREATE DATABASE "pitcc${ENV}"
     CONNECTION LIMIT = -1;
 
 COMMENT ON DATABASE "pitcc${ENV}"
-    IS 'pitcc${ENV} database containing schemas used by production insurance applications and services.';
+    IS 'pitcc${ENV} database containing schemas used by Production Insurance Claims Calculator.';
 
 GRANT TEMPORARY, CONNECT ON DATABASE "pitcc${ENV}" TO PUBLIC;
 
