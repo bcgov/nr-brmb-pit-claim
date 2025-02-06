@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>ca.bc.gov.mal.cirras.claims</groupId>
-		<artifactId>cirras-claims-war-parent</artifactId>
-		<version>1.6.0-SNAPSHOT</version>
+		<groupId>ca.bc.gov.mal.pit.claim</groupId>
+		<artifactId>pit-claim-war-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>cirras-claims-ear</artifactId>
+	<artifactId>pit-claim-ear</artifactId>
 	<packaging>ear</packaging>
-	<name>cirras-claims-ear</name>
+	<name>pit-claim-ear</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
 
 		<dependency>
-			<groupId>ca.bc.gov.mal.cirras.claims</groupId>
-			<artifactId>cirras-claims-war</artifactId>
+			<groupId>ca.bc.gov.mal.pit.claim</groupId>
+			<artifactId>pit-claim-war</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
@@ -27,12 +27,12 @@
 				<version>2.8</version>
 				<configuration>
 					<version>1.4</version>
-					<applicationName>cirras-claims-ear</applicationName>
+					<applicationName>pit-claim-ear</applicationName>
 					<fileNameMapping>no-version</fileNameMapping>
 					<modules>
 						<webModule>
-							<groupId>ca.bc.gov.mal.cirras.claims</groupId>
-							<artifactId>cirras-claims-war</artifactId>
+							<groupId>ca.bc.gov.mal.pit.claim</groupId>
+							<artifactId>pit-claim-war</artifactId>
 							<contextRoot>cccs</contextRoot>
 						</webModule>
 					</modules>

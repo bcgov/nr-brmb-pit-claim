@@ -3,20 +3,31 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ca.bc.gov.mal.cirras.claims</groupId>
-	<artifactId>cirras-claims-war-parent</artifactId>
-	<version>1.6.0-SNAPSHOT</version>
+	<groupId>ca.bc.gov.mal.pit.claim</groupId>
+	<artifactId>pit-claim-war-parent</artifactId>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>cirras-claims-war-parent</name>
+	<name>pit-claim-war-parent</name>
 	<modules>
-		<module>cirras-claims-ear</module>
-		<module>cirras-claims-war</module>
+		<module>pit-claim-ear</module>
+		<module>pit-claim-war</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java-source-version>1.8</java-source-version>
 		<java-target-version>1.8</java-target-version>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>openshift-releases</id>
+			<url>${RELEASE_URL}</url>
+		</repository>
+		<snapshotRepository>
+			<id>openshift-snapshots</id>
+			<url>${SNAPSHOT_URL}</url>
+		</snapshotRepository>
+	</distributionManagement>
  
 	<dependencyManagement>
 		<dependencies>
