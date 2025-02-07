@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
-@ComponentScan("ca.bc.gov.mal.cirras.claims.web.controller")
+@ComponentScan("ca.bc.gov.mal.pit.claim.web.controller")
 @Import({
         PropertiesSpringConfig.class,
         SecuritySpringConfig.class

@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.authentication.WebadeOauth2AuthenticationProvider;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
@@ -40,7 +40,7 @@ public class SecuritySpringConfig extends WebSecurityConfigurerAdapter  {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecuritySpringConfig.class);
 
-	private static final String DefaultScopes = "CIRRAS_CLAIMS.*";
+	private static final String DefaultScopes = "PIT_CLAIM.*";
 
 	@Autowired
 	@Qualifier("tokenService")
@@ -92,7 +92,7 @@ public class SecuritySpringConfig extends WebSecurityConfigurerAdapter  {
 		BasicAuthenticationEntryPoint result;
 
 		result = new BasicAuthenticationEntryPoint();
-		result.setRealmName("cirras-claims-ui-war");
+		result.setRealmName("pit-claim-ui-war");
 
 		return result;
 	}

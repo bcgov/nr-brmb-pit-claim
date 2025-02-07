@@ -1,6 +1,6 @@
 {
   "application": {
-    "acronym": "CIRRAS-CLAIMS",
+    "acronym": "PIT-CLAIM",
     "version": "1.5.0-SNAPSHOT",
     "baseUrl": "http://localhost:11200/",
     "environment": "LOCAL",

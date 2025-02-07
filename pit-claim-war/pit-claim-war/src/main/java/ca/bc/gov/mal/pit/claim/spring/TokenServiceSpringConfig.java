@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.impl.TokenServiceImpl;
@@ -21,7 +21,7 @@ public class TokenServiceSpringConfig  {
 		logger.info(">TokenServiceSpringConfig");
 	}
 
-	@Value("${webade-oauth2.cirras-claims-ui.client.secret}")
+	@Value("${webade-oauth2.pit-claim-ui.client.secret}")
 	private String webadeOauth2ClientSecret;
 
 	@Value("${webade-oauth2.check.token.v2.url}")
@@ -35,7 +35,7 @@ public class TokenServiceSpringConfig  {
 		TokenServiceImpl result;
 
 		result = new TokenServiceImpl(
-				"CIRRAS_CLAIMS_UI",
+				"PIT_CLAIM_UI",
 				webadeOauth2ClientSecret,
 				webadeOauth2CheckTokenUrl,
 				webadeOauth2TokenUrl);

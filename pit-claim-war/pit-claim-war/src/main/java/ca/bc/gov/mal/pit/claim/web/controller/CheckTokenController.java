@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.web.controller;
+package ca.bc.gov.mal.pit.claim.web.controller;
 
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.CheckedToken;

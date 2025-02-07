@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.util;
+package ca.bc.gov.mal.pit.claim.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

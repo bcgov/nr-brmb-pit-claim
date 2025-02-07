@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CIRRAS Claims Token Refresh</title>
+    <title>PIT Claim Token Refresh</title>
     <script>
         var hash = window.location.hash;
         if (hash && hash.indexOf('access_token') > -1) {
@@ -33,7 +33,7 @@
                     token_type: parameterMap.token_type
                 }
 
-                window.localStorage.setItem("cirras-claims-token", JSON.stringify(token));
+                window.localStorage.setItem("pit-claim-token", JSON.stringify(token));
                 self.close();
             }
         }

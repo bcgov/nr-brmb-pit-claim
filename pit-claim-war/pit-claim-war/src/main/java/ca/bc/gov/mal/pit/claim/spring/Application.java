@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;

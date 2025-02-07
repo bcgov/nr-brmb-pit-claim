@@ -1,4 +1,4 @@
-package ca.bc.gov.mal.cirras.claims.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
 import ca.bc.gov.webade.spring.bootstrap.BootstrapPropertiesFactory;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import java.util.Properties;
 public class PropertiesSpringConfig {
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesSpringConfig.class);
 
-	private static final String APP_ACRONYM = "CIRRAS_CLAIMS";
+	private static final String APP_ACRONYM = "PIT_CLAIM";
 	
 	public PropertiesSpringConfig() {
 		logger.info("<PropertiesSpringConfig");

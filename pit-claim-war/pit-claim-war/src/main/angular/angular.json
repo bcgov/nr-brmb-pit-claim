@@ -3,11 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "cirras-claims": {
+    "pit-claim": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
-      "prefix": "cirras",
+      "prefix": "pit",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
@@ -25,7 +25,7 @@
               "angular2-uuid",
               "vanilla-text-mask"
            ],
-            "outputPath": "dist/cirras-claims",
+            "outputPath": "dist/pit-claim",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -98,18 +98,18 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "port": 11200,
-            "buildTarget": "cirras-claims:build"
+            "buildTarget": "pit-claim:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "cirras-claims:build:production"
+              "buildTarget": "pit-claim:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "cirras-claims:build"
+            "buildTarget": "pit-claim:build"
           }
         },
         "test": {

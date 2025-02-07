@@ -1,6 +1,6 @@
-package ca.bc.gov.mal.cirras.claims.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
-import ca.bc.gov.mal.cirras.claims.util.ChainedAuthorizationRestTemplate;
+import ca.bc.gov.mal.pit.claim.util.ChainedAuthorizationRestTemplate;
 import ca.bc.gov.webade.rest.client.v1.WebADEService;
 import ca.bc.gov.webade.rest.client.v1.impl.WebADEServiceImpl;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class WebadeUserServiceSpringConfig {
 		logger.debug(">WebadeUserServiceSpringConfig");
 	}
 
-	@Value("${webade-oauth2.cirras-claims-ui.client.secret}")
+	@Value("${webade-oauth2.pit-claim-ui.client.secret}")
 	private String webadeOauth2ClientSecret;
 
 	@Value("${webade-oauth2.token.url}")

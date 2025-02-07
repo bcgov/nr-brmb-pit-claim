@@ -1,6 +1,6 @@
 {
-  "name": "CIRRAS_CLAIMS",
-  "short_name": "CIRRAS_CLAIMS",
+  "name": "PIT_CLAIM",
+  "short_name": "PIT_CLAIM",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

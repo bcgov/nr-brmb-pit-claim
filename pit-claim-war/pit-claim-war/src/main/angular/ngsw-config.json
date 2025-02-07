@@ -25,7 +25,7 @@
   "dataGroups": [{
     "name": "code-tables",
     "urls": [
-      "/cirras-claims-api/codeTables"
+      "/pit-claim-api/codeTables"
     ],
     "cacheConfig": {
       "strategy": "freshness",
