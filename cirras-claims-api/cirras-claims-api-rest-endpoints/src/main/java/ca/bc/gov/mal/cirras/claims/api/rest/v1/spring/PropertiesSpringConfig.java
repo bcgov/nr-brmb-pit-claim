@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import javax.sql.DataSource;
+//import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+//import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
-import ca.bc.gov.webade.spring.bootstrap.BootstrapPropertiesFactory;
+//import ca.bc.gov.webade.spring.bootstrap.BootstrapPropertiesFactory;
 
 @Configuration
 public class PropertiesSpringConfig {
@@ -28,34 +28,36 @@ public class PropertiesSpringConfig {
 		logger.info(">PropertiesSpringConfig");
 	}
 
-	@Bean
-	public static DataSource bootstrapDataSource() {
-		DataSource result;
-		
-		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-	    dsLookup.setResourceRef(true);
-	    result = dsLookup.getDataSource("java:comp/env/jdbc/webade_bootstrap");
-	    
-	    return result;
-	}
-	
-	@Bean
-	public static BootstrapPropertiesFactory bootstrapPropertiesFactory() {
-		BootstrapPropertiesFactory result;
-		
-		result = new BootstrapPropertiesFactory(bootstrapDataSource());
-		
-		return result;
-	}
-
-	@Bean
-	public static Properties bootstrapProperties() throws SQLException {
-		Properties result;
-		
-		result = bootstrapPropertiesFactory().getApplicationProperties("CIRRAS_CLAIMS", "bootstrap-config");
-		
-		return result;
-	}
+	// Removed because will not be used in openshift
+	//
+	//	@Bean
+	//	public static DataSource bootstrapDataSource() {
+	//		DataSource result;
+	//		
+	//		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+	//	    dsLookup.setResourceRef(true);
+	//	    result = dsLookup.getDataSource("java:comp/env/jdbc/webade_bootstrap");
+	//	    
+	//	    return result;
+	//	}
+	//	
+	//	@Bean
+	//	public static BootstrapPropertiesFactory bootstrapPropertiesFactory() {
+	//		BootstrapPropertiesFactory result;
+	//		
+	//		result = new BootstrapPropertiesFactory(bootstrapDataSource());
+	//		
+	//		return result;
+	//	}
+	//
+	//	@Bean
+	//	public static Properties bootstrapProperties() throws SQLException {
+	//		Properties result;
+	//		
+	//		result = bootstrapPropertiesFactory().getApplicationProperties("CIRRAS_CLAIMS", "bootstrap-config");
+	//		
+	//		return result;
+	//	}
 
 	@Bean
 	public static Properties applicationProperties() throws IOException, SQLException {
@@ -63,7 +65,7 @@ public class PropertiesSpringConfig {
 		
 		PropertiesFactoryBean propertiesFactory = new PropertiesFactoryBean();
 		propertiesFactory.setLocalOverride(true);
-		propertiesFactory.setPropertiesArray(bootstrapProperties());
+//		propertiesFactory.setPropertiesArray(bootstrapProperties());
 		propertiesFactory.setLocation(new ClassPathResource("static.properties"));
 		propertiesFactory.afterPropertiesSet();
 		

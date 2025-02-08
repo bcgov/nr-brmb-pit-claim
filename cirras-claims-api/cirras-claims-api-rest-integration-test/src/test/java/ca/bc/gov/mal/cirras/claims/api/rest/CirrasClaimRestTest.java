@@ -71,7 +71,7 @@ public class CirrasClaimRestTest {
 		properties = (Properties) applicationContext.getBean("applicationProperties");
 
 		String testClientId = properties.getProperty("test.client.id");
-		String authorizeUrl = properties.getProperty("webade-oauth2.authorize.url");
+		String authorizeUrl = properties.getProperty("WEBADE_OAUTH2_AUTHORIZE_URL");
 		String restContext = properties.getProperty("context.cirras-claims-rest");
 		
 		String governmentUserGuid = properties.getProperty("government.user.guid");
