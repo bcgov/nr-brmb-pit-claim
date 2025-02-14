@@ -21,13 +21,13 @@ public class TokenServiceSpringConfig  {
 		logger.info(">TokenServiceSpringConfig");
 	}
 
-	@Value("${webade-oauth2.pit-claim-ui.client.secret}")
+	@Value("#{systemEnvironment['WEBADE_CIRRAS_CLAIMS_UI_SECRET']}")
 	private String webadeOauth2ClientSecret;
 
-	@Value("${webade-oauth2.check.token.v2.url}")
+	@Value("#{systemEnvironment['WEBADE_CHECK_TOKEN_URL']}")
 	private String webadeOauth2CheckTokenUrl;
 
-	@Value("${webade-oauth2.token.url}")
+	@Value("#{systemEnvironment['WEBADE_GET_TOKEN_URL']}")
 	private String webadeOauth2TokenUrl;
 
 	@Bean
@@ -35,7 +35,7 @@ public class TokenServiceSpringConfig  {
 		TokenServiceImpl result;
 
 		result = new TokenServiceImpl(
-				"PIT_CLAIM_UI",
+				"CIRRAS_CLAIMS_UI",
 				webadeOauth2ClientSecret,
 				webadeOauth2CheckTokenUrl,
 				webadeOauth2TokenUrl);

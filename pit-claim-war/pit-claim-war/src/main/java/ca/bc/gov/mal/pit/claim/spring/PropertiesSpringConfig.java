@@ -1,6 +1,5 @@
 package ca.bc.gov.mal.pit.claim.spring;
 
-import ca.bc.gov.webade.spring.bootstrap.BootstrapPropertiesFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -19,50 +18,10 @@ import java.util.Properties;
 public class PropertiesSpringConfig {
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesSpringConfig.class);
 
-	private static final String APP_ACRONYM = "PIT_CLAIM";
-	
 	public PropertiesSpringConfig() {
 		logger.info("<PropertiesSpringConfig");
 		
 		logger.info(">PropertiesSpringConfig");
-	}
-
-	@Bean
-	public static DataSource bootstrapDataSource() {
-		DataSource result;
-		
-		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-	    dsLookup.setResourceRef(true);
-	    result = dsLookup.getDataSource("java:comp/env/jdbc/webade_bootstrap");
-	    
-	    return result;
-	}
-	
-	@Bean
-	public static BootstrapPropertiesFactory bootstrapPropertiesFactory() {
-		BootstrapPropertiesFactory result;
-		
-		result = new BootstrapPropertiesFactory(bootstrapDataSource());
-		
-		return result;
-	}
-
-	@Bean
-	public static Properties bootstrapProperties() throws SQLException {
-		Properties result;
-		
-		result = bootstrapPropertiesFactory().getApplicationProperties(APP_ACRONYM, "bootstrap-config");
-		
-		return result;
-	}
-	
-	@Bean
-	public static Properties appConfigProperties() throws SQLException {
-		Properties result;
-		
-		result = bootstrapPropertiesFactory().getApplicationProperties(APP_ACRONYM, "app-config");
-		
-		return result;
 	}
 
 	@Bean
@@ -71,7 +30,6 @@ public class PropertiesSpringConfig {
 		
 		PropertiesFactoryBean propertiesFactory = new PropertiesFactoryBean();
 		propertiesFactory.setLocalOverride(true);
-		propertiesFactory.setPropertiesArray(bootstrapProperties(), appConfigProperties());
 		propertiesFactory.setLocation(new ClassPathResource("static.properties"));
 		propertiesFactory.afterPropertiesSet();
 		

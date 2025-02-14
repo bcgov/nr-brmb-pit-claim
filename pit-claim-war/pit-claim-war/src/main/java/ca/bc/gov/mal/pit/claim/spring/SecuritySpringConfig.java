@@ -33,8 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 @Configuration
 @EnableWebSecurity(debug = false)
 @Import({
-	TokenServiceSpringConfig.class,
-	WebadeUserServiceSpringConfig.class
+	TokenServiceSpringConfig.class
 })
 public class SecuritySpringConfig extends WebSecurityConfigurerAdapter  {
 
@@ -46,7 +45,7 @@ public class SecuritySpringConfig extends WebSecurityConfigurerAdapter  {
 	@Qualifier("tokenService")
 	TokenService tokenService;
 
-	@Value("${webade-oauth2.token.url}")
+	@Value("#{systemEnvironment['WEBADE_GET_TOKEN_URL']}")
 	private String webadeOauth2TokenUrl;
 
 

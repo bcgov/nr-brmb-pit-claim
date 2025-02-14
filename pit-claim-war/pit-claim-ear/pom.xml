@@ -33,7 +33,7 @@
 						<webModule>
 							<groupId>ca.bc.gov.mal.pit.claim</groupId>
 							<artifactId>pit-claim-war</artifactId>
-							<contextRoot>cccs</contextRoot>
+							<contextRoot>ccs</contextRoot>
 						</webModule>
 					</modules>
 				</configuration>
