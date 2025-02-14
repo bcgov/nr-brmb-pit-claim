@@ -31,7 +31,9 @@ import ca.bc.gov.mal.cirras.claims.service.api.v1.spring.ServiceApiSpringConfig;
 	ResourceFactorySpringConfig.class,
 	CodeEndpointsSpringConfig.class,
 	SecuritySpringConfig.class,
-	CirrasPolicyServiceSpringConfig.class
+	CirrasPolicyServiceSpringConfig.class,
+	WebConfig.class,
+	CorsFilter.class
 })
 public class EndpointsSpringConfig {
 
