@@ -39,7 +39,7 @@ public class SecuritySpringConfig extends WebSecurityConfigurerAdapter  {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecuritySpringConfig.class);
 
-	private static final String DefaultScopes = "PIT_CLAIM.*";
+	private static final String DefaultScopes = "CIRRAS_CLAIMS.*";
 
 	@Autowired
 	@Qualifier("tokenService")
