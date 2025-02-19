@@ -1,0 +1,16 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: pit-claim-ui-route-#{ENV}#
+  namespace: '#{NAMESPACE}#'
+  labels: {}
+spec:
+  to:
+    kind: Service
+    name: pit-claim-ui-service-#{ENV}#
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+    destinationCACertificate: ''
+  port:
+    targetPort: #{TOMCAT_PORT}#
