@@ -1,0 +1,16 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: cirras-claims-api-route-#{ENV}#
+  namespace: '#{NAMESPACE}#'
+  labels: {}
+spec:
+  to:
+    kind: Service
+    name: cirras-claims-api-service-#{ENV}#
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+    destinationCACertificate: ''
+  port:
+    targetPort: #{TOMCAT_PORT}#

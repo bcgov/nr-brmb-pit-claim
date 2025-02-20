@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cirras-claims-api-service-#{ENV}#
+  namespace: '#{NAMESPACE}#'
+spec:
+  selector:
+    app: cirras-claims-api-#{ENV}#
+  ports:
+    - protocol: TCP
+      port: #{TOMCAT_PORT}#
+      targetPort: #{TOMCAT_PORT}#
