@@ -8,9 +8,11 @@ imagePullPolicy: IfNotPresent
 
 instances:
   name: ha # high availability
-  replicas: #{DB_REPLICAS}#
+  replicas: 1
+  #  replicas: #{DB_REPLICAS}#
   dataVolumeClaimSpec:
-    storage: #{DB_STORAGE}#
+    storage: 500Mi
+    #    storage: #{DB_STORAGE}#
     storageClassName: netapp-block-standard
   # Note: using New York time zone to match existing deployment - otherwise, would use either local time or PST
   env:
@@ -55,15 +57,17 @@ pgBackRest:
       differential: 0 8 * * 1-6
       incremental: 0 0,4,12,16,20 * * *
     schedulesOffset:
-      full: 0 10 * * 0
-      differential: 0 10 * * 1-6
-      incremental: 0 2,6,14,18,22 * * *
+      full: 0 10 * 12 0
+      differential: 0 10 * 12 1-6
+      incremental: 0 2,6,14,18,22 * 12 *
     volume:
       accessModes: "ReadWriteOnce"
       storageClassName: netapp-file-backup
-      storage: #{DB_BACKUP_VOLUME_SIZE}#
+      storage: 400Mi
+      #      storage: #{DB_BACKUP_VOLUME_SIZE}#
     configuration:
-      secretName: "#{S3_ENVIRONMENT}#-postgres-s3-secret"
+      secretName: "dev-postgres-s3-secret"
+      #      secretName: "#{S3_ENVIRONMENT}#-postgres-s3-secret"
     s3:
       bucket: "pit#{S3_ENVIRONMENT}#"
       endpoint: "nrs.objectstore.gov.bc.ca"
@@ -98,7 +102,8 @@ patroni:
 proxy:
   pgBouncer:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
-    replicas: #{BOUNCER_REPLICAS}#
+    replicas: 1
+    #    replicas: #{BOUNCER_REPLICAS}#
     requests:
       cpu: 1m
       memory: 64Mi
