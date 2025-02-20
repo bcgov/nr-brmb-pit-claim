@@ -1,0 +1,42 @@
+name: Build .war and npm files
+
+on:
+  workflow_dispatch:
+    inputs:
+      TAG:
+          required: true
+          type: string
+          description: Additional tag to apply to images being built
+          default: latest
+
+jobs:
+  
+
+  build-claims-api:
+    uses: ./.github/workflows/build-package.yml
+    secrets: inherit
+    with:
+      TAG: ${{ inputs.tag }}
+      ENVIRONMENT: DEV
+      MICROSERVICE_NAME: cirras-claims-api
+      JAVA_VERSION: 17
+
+  build-and-upload-npm-modules:
+    uses: ./.github/workflows/build-npm.yml
+    secrets: inherit
+    needs: build-claims-api
+    with:
+      ENVIRONMENT: DEV
+      MICROSERVICE_NAME: cirras-claims-ngclient-lib
+      API_TARGET: cirras-claims-api
+      SWAGGER_TARGET_PATH: cirras-claims-ngclient-lib/cirras-claims-ngclient-lib/src/main/angular/src/swagger/swagger.json
+      NPM_ARTIFACT_PATH: \@cirras/cirras-claims-api/-/@cirras
+
+  build-claim-war:
+    uses: ./.github/workflows/build-package.yml
+    secrets: inherit
+    needs: build-and-upload-npm-modules
+    with:
+      TAG: ${{ inputs.tag }}
+      ENVIRONMENT: DEV
+      MICROSERVICE_NAME: pit-claim-war
