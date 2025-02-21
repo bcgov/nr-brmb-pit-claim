@@ -10,7 +10,7 @@ instances:
   name: ha # high availability
   replicas: 1
   dataVolumeClaimSpec:
-    storage: 500Mi
+    storage: #{DB_STORAGE}#
     storageClassName: netapp-block-standard
   # Note: using New York time zone to match existing deployment - otherwise, would use either local time or PST
   env:
@@ -61,7 +61,7 @@ pgBackRest:
     volume:
       accessModes: "ReadWriteOnce"
       storageClassName: netapp-file-backup
-      storage: 200Mi
+      storage: #{DB_BACKUP_VOLUME_SIZE}#
     configuration:
       secretName: "dev-postgres-s3-secret"
     s3:
