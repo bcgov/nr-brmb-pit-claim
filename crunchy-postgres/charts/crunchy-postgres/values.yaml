@@ -8,7 +8,7 @@ imagePullPolicy: IfNotPresent
 
 instances:
   name: ha # high availability
-  replicas: 1
+  replicas: #{DB_REPLICAS}#
   dataVolumeClaimSpec:
     storage: #{DB_STORAGE}#
     storageClassName: netapp-block-standard
@@ -98,7 +98,7 @@ patroni:
 proxy:
   pgBouncer:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
-    replicas: 1
+    replicas: #{BOUNCER_REPLICAS}#
     requests:
       cpu: 1m
       memory: 64Mi
