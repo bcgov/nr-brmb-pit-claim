@@ -1,6 +1,6 @@
 {
   "name": "cirras-claims-api",
-  "version": "1.6.3-SNAPSHOT",
+  "version": "2.0.0-SNAPSHOT",
   "scripts": {
     "version-now": "node -pe 'require(\"projects/cirras-claims-api/package.json\").version'",
     "version-rc": "cd projects/cirras-claims-api && npm version prerelease --preid=rc",
