@@ -2,6 +2,7 @@ package ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.impl;
 
 import java.net.URI;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -11,12 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
 import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
 import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
 import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
 import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
+import ca.bc.gov.nrs.wfone.common.utils.HttpServletRequestHolder;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.SyncClaimEndpoint;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.security.Scopes;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.SyncClaimRsrc;
@@ -111,6 +114,8 @@ public class SyncClaimEndpointImpl extends BaseEndpointsImpl implements SyncClai
 
 			EntityTag currentTag = EntityTag.valueOf(currentSyncClaim.getQuotedETag());
 
+			logger.info("updateSyncClaim: Received Resource etag: " + resource.getQuotedETag());
+
 			ResponseBuilder responseBuilder = this.evaluatePreconditions(currentTag);
 
 			if (responseBuilder == null) {
@@ -201,4 +206,32 @@ public class SyncClaimEndpointImpl extends BaseEndpointsImpl implements SyncClai
 		return response;
 	}
 
+	@Override
+	protected ResponseBuilder evaluatePreconditions(EntityTag eTag) {
+		logger.info("> evaluatePreconditions: Resource ETag " + eTag.getValue());
+
+		// Check for weak eTag, then ignore
+		HttpServletRequest httpServletRequest = HttpServletRequestHolder.getHttpServletRequest();
+		
+		String requestIfMatch = httpServletRequest.getHeader(HeaderConstants.IF_MATCH_HEADER);
+		logger.info("> evaluatePreconditions: Raw If-Match Header: " + requestIfMatch);
+		
+		EntityTag requestETag = EntityTag.valueOf(requestIfMatch);
+		logger.info("> evaluatePreconditions: Request ETag " + requestETag.getValue());
+		logger.info("> evaluatePreconditions: request ETag weak? " + requestETag.isWeak());
+
+		// Check request.getValue against etag.getValue. DO NOT remove W\, as its removed by creating the
+		// EntityTag object
+		if (requestETag.isWeak() && requestETag.getValue().equals(eTag.getValue())) {
+			// If this etag is weak, strip the W/ and check as if it's strong
+			// If the request eTag and the resource eTag match, we can
+			// assume preconditions on the check are met
+			return null;
+		} else {
+			// otherwise, return a proper check
+			return super.evaluatePreconditions(eTag);
+		}
+	}
+	
+	
 }
