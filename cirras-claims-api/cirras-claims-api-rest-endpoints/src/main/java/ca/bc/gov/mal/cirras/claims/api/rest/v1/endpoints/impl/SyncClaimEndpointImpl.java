@@ -114,8 +114,6 @@ public class SyncClaimEndpointImpl extends BaseEndpointsImpl implements SyncClai
 
 			EntityTag currentTag = EntityTag.valueOf(currentSyncClaim.getQuotedETag());
 
-			logger.info("updateSyncClaim: Received Resource etag: " + resource.getQuotedETag());
-
 			ResponseBuilder responseBuilder = this.evaluatePreconditions(currentTag);
 
 			if (responseBuilder == null) {
@@ -209,29 +207,35 @@ public class SyncClaimEndpointImpl extends BaseEndpointsImpl implements SyncClai
 	@Override
 	protected ResponseBuilder evaluatePreconditions(EntityTag eTag) {
 		logger.info("> evaluatePreconditions: Resource ETag " + eTag.getValue());
-
-		// Check for weak eTag, then ignore
+		
 		HttpServletRequest httpServletRequest = HttpServletRequestHolder.getHttpServletRequest();
+		if ( httpServletRequest != null ) {
 		
-		String requestIfMatch = httpServletRequest.getHeader(HeaderConstants.IF_MATCH_HEADER);
-		logger.info("> evaluatePreconditions: Raw If-Match Header: " + requestIfMatch);
-		
-		EntityTag requestETag = EntityTag.valueOf(requestIfMatch);
-		logger.info("> evaluatePreconditions: Request ETag " + requestETag.getValue());
-		logger.info("> evaluatePreconditions: request ETag weak? " + requestETag.isWeak());
-
-		// Check request.getValue against etag.getValue. DO NOT remove W\, as its removed by creating the
-		// EntityTag object
-		if (requestETag.isWeak() && requestETag.getValue().equals(eTag.getValue())) {
-			// If this etag is weak, strip the W/ and check as if it's strong
-			// If the request eTag and the resource eTag match, we can
-			// assume preconditions on the check are met
-			return null;
-		} else {
-			// otherwise, return a proper check
-			return super.evaluatePreconditions(eTag);
-		}
-	}
+			String requestIfMatch = httpServletRequest.getHeader(HeaderConstants.IF_MATCH_HEADER);
+			logger.info("> evaluatePreconditions: Raw If-Match Header: " + requestIfMatch);
 	
+			if ( requestIfMatch != null && requestIfMatch.length() > 2 && requestIfMatch.startsWith("\"") && requestIfMatch.endsWith("\"") ) {
+				// EntityTag cannot correctly parse a weak etag that is also surrounded by double-quotes, so remove them.
+				String unquotedEtagValue = requestIfMatch.substring(1, requestIfMatch.length() - 1);
+				EntityTag requestETag = EntityTag.valueOf(unquotedEtagValue);
+				
+				logger.info("> evaluatePreconditions: Request ETag " + requestETag.getValue());
+				
+				if (requestETag.getValue().equals(eTag.getValue())) {
+					// If the request eTag and the resource eTag match, regardless of whether they are weak or strong, we can
+					// assume preconditions on the check are met.
+					logger.info("> evaluatePreconditions: etags matched.");
+					return null;
+				}
+			}
+
+		} else {
+			// Probably can't happen.
+			logger.warn("> evaluatePreconditions: could not retrieve httpServletRequest");
+		}
+
+		// otherwise, fall back to regular check.
+		return super.evaluatePreconditions(eTag);
+	}
 	
 }
