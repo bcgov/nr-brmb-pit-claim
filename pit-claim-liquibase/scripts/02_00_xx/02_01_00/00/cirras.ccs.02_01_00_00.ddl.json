@@ -1,0 +1,8 @@
+
+{
+    "databaseChangeLog": [
+		{ "changeSet": {"author":"mhostettler","id":"3","changes": [
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.insert.claim_calculation_grain_unseeded.sql"}}
+		] } }
+    ]
+}
