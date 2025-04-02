@@ -77,6 +77,68 @@ public class ClaimEndpointTest extends EndpointsTest {
 	}
 	
 	@Test
+	public void testGetInsertUpdateDeleteGrainUnseededClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGetInsertUpdateDeleteGrainUnseededClaim()");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+        String claimNumber = "37155";//????? (claims with calculations); 37155 (claim without calculation)
+		String policyNumber = null;//"145110-24";
+		Integer pageNumber = 0;
+		Integer pageRowCount = 100;
+		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
+		
+		
+		if(searchResults.getCollection().size() > 0) {
+		
+			ClaimRsrc claimRsrc = searchResults.getCollection().get(0);
+			//Only works if there is no calculation yet
+			ClaimCalculationRsrc claimCalculationRsrc = service.getClaim(claimRsrc);
+	
+			Assert.assertNotNull(claimCalculationRsrc);
+			Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainUnseeded());
+			
+//			claimCalculationRsrc.getClaimCalculationGrainUnseeded().setCoverageAmountAssessed(99000.5);
+//			claimCalculationRsrc.getClaimCalculationGrainUnseeded().setCoverageAssessedReason("test");
+			
+			//Create new calculation
+//			ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+//
+//			Assert.assertNotNull(createdCalculation);
+//			Assert.assertNotNull(createdCalculation.getClaimCalculationGrainUnseeded());
+
+//			Assert.assertEquals("InsurableValueSelected", claimCalculationRsrc.getClaimCalculationGrapes().getInsurableValueSelected(), createdCalculation.getClaimCalculationGrapes().getInsurableValueSelected());
+//			Assert.assertEquals("InsurableValueHundredPercent", claimCalculationRsrc.getClaimCalculationGrapes().getInsurableValueHundredPercent(), createdCalculation.getClaimCalculationGrapes().getInsurableValueHundredPercent());
+//			Assert.assertEquals("CoverageAmount", claimCalculationRsrc.getClaimCalculationGrapes().getCoverageAmount(), createdCalculation.getClaimCalculationGrapes().getCoverageAmount());
+//			Assert.assertEquals("CoverageAmountAssessed", claimCalculationRsrc.getClaimCalculationGrapes().getCoverageAmountAssessed(), createdCalculation.getClaimCalculationGrapes().getCoverageAmountAssessed());
+//			Assert.assertEquals("CoverageAssessedReason", claimCalculationRsrc.getClaimCalculationGrapes().getCoverageAssessedReason(), createdCalculation.getClaimCalculationGrapes().getCoverageAssessedReason());
+//
+//			//update calculation
+//			createdCalculation.getClaimCalculationGrapes().setInsurableValueSelected(1.5);
+//			createdCalculation.getClaimCalculationGrapes().setInsurableValueHundredPercent(2.8230);
+//			createdCalculation.getClaimCalculationGrapes().setCoverageAmount((double)100001);
+//			createdCalculation.getClaimCalculationGrapes().setCoverageAmountAssessed(99001.5);
+//			createdCalculation.getClaimCalculationGrapes().setCoverageAssessedReason("test 2");
+//			
+//			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
+//
+//			Assert.assertEquals("InsurableValueSelected", createdCalculation.getClaimCalculationGrapes().getInsurableValueSelected(), updatedCalculation.getClaimCalculationGrapes().getInsurableValueSelected());
+//			Assert.assertEquals("InsurableValueHundredPercent", createdCalculation.getClaimCalculationGrapes().getInsurableValueHundredPercent(), updatedCalculation.getClaimCalculationGrapes().getInsurableValueHundredPercent());
+//			Assert.assertEquals("CoverageAmount", createdCalculation.getClaimCalculationGrapes().getCoverageAmount(), updatedCalculation.getClaimCalculationGrapes().getCoverageAmount());
+//			Assert.assertEquals("CoverageAmountAssessed", createdCalculation.getClaimCalculationGrapes().getCoverageAmountAssessed(), updatedCalculation.getClaimCalculationGrapes().getCoverageAmountAssessed());
+//			Assert.assertEquals("CoverageAssessedReason", createdCalculation.getClaimCalculationGrapes().getCoverageAssessedReason(), updatedCalculation.getClaimCalculationGrapes().getCoverageAssessedReason());
+//
+//			//Delete calculation
+//			service.deleteClaimCalculation(updatedCalculation);
+		}
+
+		logger.debug(">testGetInsertUpdateDeleteGrainUnseededClaim()");
+	}	
+	
+	@Test
 	public void testGetInsertUpdateDeleteGrapesClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
 		logger.debug("<testGetInsertUpdateDeleteGrapesClaim()");
 		
