@@ -47,6 +47,7 @@ import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyServiceExcep
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.ValidationException;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductListRsrc;
+import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.nrs.wfone.common.model.Message;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
@@ -249,17 +250,25 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			}
 			
 			
+			ProductRsrc productRsrc = null;
+			
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 				
-//				ProductListRsrc productListRsrc = getCirrasClaimProducts(policyClaimRsrc.getPurchaseId().toString());
-//				if (productListRsrc == null) {
-//					throw new NotFoundException("no product found for " + claimNumber);
-//				}
+				ProductListRsrc productListRsrc = getCirrasClaimProducts(
+														policyClaimRsrc.getInsurancePolicyId().toString(), 
+														true,
+														policyClaimRsrc.getPurchaseId().toString(),
+														null);
+				if (productListRsrc == null) {
+					throw new NotFoundException("no product found for " + claimNumber);
+				}
+				
+				productRsrc = productListRsrc.getCollection().get(0);
 			}
 
 			// Convert InsuranceClaimRsrc to ClaimCalculation
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, context, authentication);
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, context, authentication);
 
 			result.setCalculationVersion(new Integer(nextVersionNumber));
 			result.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
@@ -529,7 +538,11 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 						
-//						ProductListRsrc productListRsrc = getCirrasClaimProducts(policyClaimRsrc.getPurchaseId().toString());
+//						ProductListRsrc productListRsrc = getCirrasClaimProducts(
+//								policyClaimRsrc.getInsurancePolicyId().toString(), 
+//								true,
+//								policyClaimRsrc.getPurchaseId().toString(),
+//								null);
 //						if (productListRsrc == null) {
 //							throw new NotFoundException("no product found for " + claimNumber);
 //						}
@@ -617,10 +630,19 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	}
 
 	// Returns a product from cirras for a claim number/product purchase
-	private ProductListRsrc getCirrasClaimProducts(String purchaseId) throws CirrasPolicyServiceException {
+	private ProductListRsrc getCirrasClaimProducts(
+			String insurancePolicyId, 
+			Boolean includeProductDetails, 
+			String purchaseId, 
+			String commodityCoverageCode) throws CirrasPolicyServiceException {
+
 		EndpointsRsrc policyTopLevelEndpoints = cirrasPolicyService.getTopLevelEndpoints();
-		//TODO: Change to IPP ID
-		ProductListRsrc productListRsrc = cirrasPolicyService.getProducts(policyTopLevelEndpoints, purchaseId);
+		ProductListRsrc productListRsrc = cirrasPolicyService.getProducts(
+										policyTopLevelEndpoints, 
+										insurancePolicyId, 
+										Boolean.toString(includeProductDetails), 
+										purchaseId, 
+										commodityCoverageCode);
 			
 		return productListRsrc;
 	}
@@ -909,17 +931,23 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		} else if (updateType.equals(ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString())) {
 
+			ProductRsrc productRsrc = null;
+
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 				
-//				ProductListRsrc productListRsrc = getCirrasClaimProducts(policyClaimRsrc.getPurchaseId().toString());
+//				ProductListRsrc productListRsrc = getCirrasClaimProducts(
+//						policyClaimRsrc.getInsurancePolicyId().toString(), 
+//						true,
+//						policyClaimRsrc.getPurchaseId().toString(),
+//						null);
 //				if (productListRsrc == null) {
 //					throw new NotFoundException("no product found for " + claimNumber);
 //				}
 			}			
 			
 			// Replacement is based on the current claim and policy data in CIRRAS
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, factoryContext, authentication);
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, factoryContext, authentication);
 
 		}
 

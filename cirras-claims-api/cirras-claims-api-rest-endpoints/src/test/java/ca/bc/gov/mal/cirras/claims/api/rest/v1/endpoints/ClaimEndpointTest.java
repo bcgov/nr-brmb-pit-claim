@@ -101,6 +101,10 @@ public class ClaimEndpointTest extends EndpointsTest {
 			Assert.assertNotNull(claimCalculationRsrc);
 			Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainUnseeded());
 			
+			//IV: 60
+			//deductible level: 20
+			//Acres: 1835
+			
 //			claimCalculationRsrc.getClaimCalculationGrainUnseeded().setCoverageAmountAssessed(99000.5);
 //			claimCalculationRsrc.getClaimCalculationGrainUnseeded().setCoverageAssessedReason("test");
 			

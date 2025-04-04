@@ -20,6 +20,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationVarietyDto;
+import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 
 public interface ClaimCalculationFactory {
 
@@ -65,6 +66,7 @@ public interface ClaimCalculationFactory {
 	
 	public ClaimCalculation getCalculationFromClaim(
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
+			ProductRsrc productRsrc, 
 			FactoryContext context, 
 			WebAdeAuthentication authentication
 		) throws FactoryException;

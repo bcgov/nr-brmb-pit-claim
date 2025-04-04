@@ -40,6 +40,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationVarietyDto;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.model.factory.ClaimCalculationFactory;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
+import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
 
 public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements ClaimCalculationFactory {
@@ -101,7 +102,9 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 	@Override
 	public ClaimCalculation getCalculationFromClaim(ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
-			FactoryContext context, WebAdeAuthentication authentication) throws FactoryException {
+			ProductRsrc productRsrc, 
+			FactoryContext context, 
+			WebAdeAuthentication authentication) throws FactoryException {
 
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
@@ -148,7 +151,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		// Add a grain unseeded object if the insurance plan is grain and coverage is unseeded
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-			resource.setClaimCalculationGrainUnseeded(createClaimCalculationGrainUnseededFromClaim(claim));
+			resource.setClaimCalculationGrainUnseeded(createClaimCalculationGrainUnseededFromClaim(productRsrc));
 		}
 
 		String eTag = getEtag(resource);
@@ -417,13 +420,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	}
 
 	private ClaimCalculationGrainUnseeded createClaimCalculationGrainUnseededFromClaim(
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim) {
+			ProductRsrc productRsrc) {
 		ClaimCalculationGrainUnseeded model = new ClaimCalculationGrainUnseeded();
 
-		//TODO MH: Set values from purchase and claim 
-//		model.setInsuredAcres(product);
-//		model.setDeductibleLevel(product);
-//		model.setInsurableValue(product);
+		model.setInsuredAcres(productRsrc.getAcres());
+		model.setDeductibleLevel(productRsrc.getDeductibleLevel());
+		model.setInsurableValue(productRsrc.getUnseededSelectedInsurableValue());
 
 		return model;
 	}
