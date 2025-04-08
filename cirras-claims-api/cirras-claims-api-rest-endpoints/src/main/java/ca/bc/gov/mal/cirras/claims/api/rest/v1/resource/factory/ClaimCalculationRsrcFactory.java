@@ -41,6 +41,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationVarietyDto
 import ca.bc.gov.mal.cirras.claims.service.api.v1.model.factory.ClaimCalculationFactory;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
+import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
 
 public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements ClaimCalculationFactory {
@@ -170,7 +171,9 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	// Updates only the manually refreshed fields from the Claim.
 	@Override
 	public void updateCalculationFromClaim(ClaimCalculation claimCalculation,
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim) {
+			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
+			Product product
+	) {
 
 		// Update ClaimCalculation fields
 		claimCalculation.setGrowerNumber(claim.getGrowerNumber());
@@ -213,8 +216,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		// Add a grain unseeded object if the insurance plan is grain and coverage is unseeded
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-			//TODO MH: Add product instead of claim object
-			updateClaimCalculationGrainUnseededFromClaim(claimCalculation, claim);
+			updateClaimCalculationGrainUnseededFromClaim(claimCalculation, claim, product);
 		}
 
 	}
@@ -312,12 +314,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	}
 
 	private void updateClaimCalculationGrainUnseededFromClaim(ClaimCalculation claimCalculation,
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim) {
+			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim, 
+			Product product) {
 
-		//TODO MH: Instead of claim object, use new product object
-//		claimCalculation.getClaimCalculationGrainUnseeded().setInsuredAcres(product);
-//		claimCalculation.getClaimCalculationGrainUnseeded().setDeductibleLevel(product);
-//		claimCalculation.getClaimCalculationGrainUnseeded().setInsurableValue(product);
+		claimCalculation.getClaimCalculationGrainUnseeded().setInsuredAcres(product.getAcres());
+		claimCalculation.getClaimCalculationGrainUnseeded().setDeductibleLevel(product.getDeductibleLevel());
+		claimCalculation.getClaimCalculationGrainUnseeded().setInsurableValue(product.getUnseededSelectedInsurableValue());
 
 	}
 	

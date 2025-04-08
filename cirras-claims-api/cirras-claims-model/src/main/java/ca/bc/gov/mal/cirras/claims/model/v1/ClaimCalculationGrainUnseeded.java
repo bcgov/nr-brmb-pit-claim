@@ -23,7 +23,9 @@ public class ClaimCalculationGrainUnseeded implements Serializable {
 	private Double eligibleUnseededAcres;
 
 	// Out of sync flags
-	// TODO
+	private Boolean isOutOfSyncInsuredAcres;
+	private Boolean isOutOfSyncDeductibleLevel;
+	private Boolean isOutOfSyncInsurableValue;
 	
 	public String getClaimCalculationGrainUnseededGuid() {
 		return claimCalculationGrainUnseededGuid;
@@ -127,6 +129,30 @@ public class ClaimCalculationGrainUnseeded implements Serializable {
 
 	public void setEligibleUnseededAcres(Double eligibleUnseededAcres) {
 		this.eligibleUnseededAcres = eligibleUnseededAcres;
+	}
+
+	public Boolean getIsOutOfSyncInsuredAcres() {
+		return isOutOfSyncInsuredAcres;
+	}
+
+	public void setIsOutOfSyncInsuredAcres(Boolean isOutOfSyncInsuredAcres) {
+		this.isOutOfSyncInsuredAcres = isOutOfSyncInsuredAcres;
+	}
+
+	public Boolean getIsOutOfSyncDeductibleLevel() {
+		return isOutOfSyncDeductibleLevel;
+	}
+
+	public void setIsOutOfSyncDeductibleLevel(Boolean isOutOfSyncDeductibleLevel) {
+		this.isOutOfSyncDeductibleLevel = isOutOfSyncDeductibleLevel;
+	}
+
+	public Boolean getIsOutOfSyncInsurableValue() {
+		return isOutOfSyncInsurableValue;
+	}
+
+	public void setIsOutOfSyncInsurableValue(Boolean isOutOfSyncInsurableValue) {
+		this.isOutOfSyncInsurableValue = isOutOfSyncInsurableValue;
 	}
 		
 }
