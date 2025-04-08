@@ -1076,7 +1076,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		grainUnseeded.setAdjustedAcres(adjustedAcres);
 		
 		//Deductible Acres: Adjusted Acres * Deductible %
-		Double deductibleAcres = adjustedAcres * (notNull(grainUnseeded.getDeductibleLevel(), 0)/100);
+		Double deductibleAcres = adjustedAcres * (notNull((double)grainUnseeded.getDeductibleLevel(), (double)0)/(double)100);
 		grainUnseeded.setDeductibleAcres(deductibleAcres);
 		
 		//Max Number of Eligible Acres: Adjusted Acres - Deductible Acres
