@@ -139,6 +139,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.berries = dto.berries;
 		this.claimCalculationPlantUnitsDto = dto.claimCalculationPlantUnitsDto;
 		this.claimCalculationPlantAcresDto = dto.claimCalculationPlantAcresDto;
+		this.claimCalculationGrainUnseededDto = dto.claimCalculationGrainUnseededDto;
 		
 		this.varieties = new ArrayList<ClaimCalculationVarietyDto>();
 		
