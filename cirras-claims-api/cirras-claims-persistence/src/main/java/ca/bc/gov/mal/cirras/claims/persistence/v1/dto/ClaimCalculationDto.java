@@ -136,10 +136,26 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.updateClaimCalcUserName = dto.updateClaimCalcUserName;
 		this.updateUser = dto.updateUser;
 		this.updateDate = dto.updateDate;
-		this.berries = dto.berries;
-		this.claimCalculationPlantUnitsDto = dto.claimCalculationPlantUnitsDto;
-		this.claimCalculationPlantAcresDto = dto.claimCalculationPlantAcresDto;
-		this.claimCalculationGrainUnseededDto = dto.claimCalculationGrainUnseededDto;
+
+		if ( dto.berries != null) {
+			this.berries = dto.berries.copy();
+		}
+		
+		if ( dto.claimCalculationPlantUnitsDto != null) {
+			this.claimCalculationPlantUnitsDto = dto.claimCalculationPlantUnitsDto.copy();
+		}
+		
+		if ( dto.claimCalculationPlantAcresDto != null) {
+			this.claimCalculationPlantAcresDto = dto.claimCalculationPlantAcresDto.copy();
+		}
+		
+		if ( dto.claimCalculationGrainUnseededDto != null) {
+			this.claimCalculationGrainUnseededDto = dto.claimCalculationGrainUnseededDto.copy();
+		}
+		
+		if ( dto.claimCalculationGrapesDto != null) {
+			this.claimCalculationGrapesDto = dto.claimCalculationGrapesDto.copy();
+		}
 		
 		this.varieties = new ArrayList<ClaimCalculationVarietyDto>();
 		
