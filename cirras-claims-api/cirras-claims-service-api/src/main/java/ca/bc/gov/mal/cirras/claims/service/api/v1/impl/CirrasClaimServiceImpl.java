@@ -18,6 +18,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantUnits;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrapesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantAcresDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantUnitsDao;
@@ -26,6 +27,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationUserDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainUnseededDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto;
@@ -43,6 +45,8 @@ import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyServiceException;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.ValidationException;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
+import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductListRsrc;
+import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.nrs.wfone.common.model.Message;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
@@ -84,6 +88,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	private ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao;
 	private ClaimCalculationPlantAcresDao claimCalculationPlantAcresDao;
 	private ClaimCalculationGrapesDao claimCalculationGrapesDao;
+	private ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao;
 	private ClaimCalculationUserDao claimCalculationUserDao;
 	private ClaimDao claimDao;
 
@@ -143,6 +148,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 	public void setClaimCalculationGrapesDao(ClaimCalculationGrapesDao claimCalculationGrapesDao) {
 		this.claimCalculationGrapesDao = claimCalculationGrapesDao;
+	}
+
+	public void setClaimCalculationGrainUnseededDao(ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao) {
+		this.claimCalculationGrainUnseededDao = claimCalculationGrainUnseededDao;
 	}
 
 	public void setClaimCalculationPlantUnitsDao(ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao) {
@@ -238,9 +247,27 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							"Claim: " + claimNumber + " needs to be in status Open to add a calculation");
 				}
 			}
+			
+			
+			ProductRsrc productRsrc = null;
+			
+			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				
+				ProductListRsrc productListRsrc = getCirrasClaimProducts(
+														policyClaimRsrc.getInsurancePolicyId().toString(), 
+														true,
+														policyClaimRsrc.getPurchaseId().toString(),
+														null);
+				if (productListRsrc == null) {
+					throw new NotFoundException("no product found for " + claimNumber);
+				}
+				
+				productRsrc = productListRsrc.getCollection().get(0);
+			}
 
 			// Convert InsuranceClaimRsrc to ClaimCalculation
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, context, authentication);
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, context, authentication);
 
 			result.setCalculationVersion(new Integer(nextVersionNumber));
 			result.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
@@ -338,6 +365,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		// Insert Plant by Acres data
 		createPlantAcres(claimCalculation, userId, claimCalculationGuid);
+		
+		// Insert Grain Unseeded data
+		createGrainUnseeded(claimCalculation, userId, claimCalculationGuid);
 	}
 
 	private void createPlantAcres(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
@@ -379,6 +409,22 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			dtoGrapes.setClaimCalculationGrapesGuid(null);
 			dtoGrapes.setClaimCalculationGuid(claimCalculationGuid);
 			claimCalculationGrapesDao.insert(dtoGrapes, userId);
+		}
+	}
+
+	private void createGrainUnseeded(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Unseeded Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				
+			ClaimCalculationGrainUnseededDto dtoGrapes = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainUnseeded());
+
+			dtoGrapes.setClaimCalculationGrainUnseededGuid(null);
+			dtoGrapes.setClaimCalculationGuid(claimCalculationGuid);
+			claimCalculationGrainUnseededDao.insert(dtoGrapes, userId);
 		}
 	}
 	
@@ -459,7 +505,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				//Logging error
 				logger.info("getCirrasClaim Error when getting a claim from CIRRAS: " + e);
 			}
-
+			
 			if(policyClaimRsrc != null) {
 				//Save claim status before it's reset in cirrasDataSyncService.syncClaimData
 				String prevClaimStatus = result.getCalculationStatusCode();
@@ -488,6 +534,19 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				if (!ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(result.getCalculationStatusCode())
 						&& !ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString().equals(result.getCalculationStatusCode())) {
 	
+					if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+						
+//						ProductListRsrc productListRsrc = getCirrasClaimProducts(
+//								policyClaimRsrc.getInsurancePolicyId().toString(), 
+//								true,
+//								policyClaimRsrc.getPurchaseId().toString(),
+//								null);
+//						if (productListRsrc == null) {
+//							throw new NotFoundException("no product found for " + claimNumber);
+//						}
+					}					
+					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
 						refreshManualClaimData(result, policyClaimRsrc);
 					}
@@ -551,6 +610,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			ClaimCalculationPlantAcresDto plantAcresDto = claimCalculationPlantAcresDao.select(claimCalculationGuid);
 			dto.setClaimCalculationPlantAcres(plantAcresDto);
 		}
+		
+		// Get Grain Unseeded
+		if(dto.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) 
+				&& dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+			ClaimCalculationGrainUnseededDto grainUnseededDto = claimCalculationGrainUnseededDao.select(claimCalculationGuid);
+			dto.setClaimCalculationGrainUnseeded(grainUnseededDto);
+		}
 	}
 
 	// Returns a claim from cirras for a claim number
@@ -562,6 +628,24 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		return policyClaimRsrc;
 	}
 
+	// Returns a product from cirras for a claim number/product purchase
+	private ProductListRsrc getCirrasClaimProducts(
+			String insurancePolicyId, 
+			Boolean includeProductDetails, 
+			String purchaseId, 
+			String commodityCoverageCode) throws CirrasPolicyServiceException {
+
+		EndpointsRsrc policyTopLevelEndpoints = cirrasPolicyService.getTopLevelEndpoints();
+		ProductListRsrc productListRsrc = cirrasPolicyService.getProducts(
+										policyTopLevelEndpoints, 
+										insurancePolicyId, 
+										Boolean.toString(includeProductDetails), 
+										purchaseId, 
+										commodityCoverageCode);
+			
+		return productListRsrc;
+	}
+	
 	// Updates fields in claimCalculation from insuranceClaim that are only updated
 	// when the user requests a Refresh.
 	private void refreshManualClaimData(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim)
@@ -693,6 +777,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		// Update Plant By Acres
 		updatePlantAcres(claimCalculation, userId);
+		
+		// Update Grain Unseeded
+		updateGrainUnseededQuantity(claimCalculation, userId);
 	}
 
 	private void updatePlantAcres(ClaimCalculation claimCalculation, String userId)
@@ -734,6 +821,20 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			claimCalculationFactory.updateDto(dtoGrapes, claimCalculation.getClaimCalculationGrapes());
 
 			claimCalculationGrapesDao.update(dtoGrapes, userId);
+		}
+	}
+	
+	private void updateGrainUnseededQuantity(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Unseeded Data
+		//
+		if (claimCalculation.getClaimCalculationGrainUnseeded() != null) {
+			ClaimCalculationGrainUnseededDto dtoGrainUnseeded = claimCalculationGrainUnseededDao.fetch(claimCalculation.getClaimCalculationGrainUnseeded().getClaimCalculationGrainUnseededGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainUnseeded, claimCalculation.getClaimCalculationGrainUnseeded());
+
+			claimCalculationGrainUnseededDao.update(dtoGrainUnseeded, userId);
 		}
 	}
 	
@@ -829,8 +930,23 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		} else if (updateType.equals(ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString())) {
 
+			ProductRsrc productRsrc = null;
+
+			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				
+//				ProductListRsrc productListRsrc = getCirrasClaimProducts(
+//						policyClaimRsrc.getInsurancePolicyId().toString(), 
+//						true,
+//						policyClaimRsrc.getPurchaseId().toString(),
+//						null);
+//				if (productListRsrc == null) {
+//					throw new NotFoundException("no product found for " + claimNumber);
+//				}
+			}			
+			
 			// Replacement is based on the current claim and policy data in CIRRAS
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, factoryContext, authentication);
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, factoryContext, authentication);
 
 		}
 
