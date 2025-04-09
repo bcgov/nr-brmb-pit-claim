@@ -30,7 +30,6 @@ public class OutOfSync {
 			return;
 		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-			// TODO: Should it still calculate out of sync flags for the claim?
 			logger.warn("<product was null. Out of sync flags not set.");
 			return;
 		}
