@@ -5,8 +5,9 @@ import { BaseComponent } from '../../common/base/base.component';
 import { GrainUnseededComponentModel } from './grain-unseeded.component.model';
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
-import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { makeNumberOnly } from 'src/app/utils';
+import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
+import { CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeNumberOnly } from 'src/app/utils';
+import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 
 @Component({
   selector: 'calculation-detail-grain-unseeded',
@@ -84,8 +85,9 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
           this.viewModel.formGroup.controls.lessAssessmentAcres.setValue( this.calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres ) 
           this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
   
-          // TODO 
-          // this.enableDisableFormControls();
+          this.calculateValues()
+
+          this.enableDisableFormControls();
         }
     }
     
@@ -154,4 +156,149 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
     setComment() {
       this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
     }
+
+    enableDisableFormControls() {
+      if(this.calculationDetail){
+  
+        if(this.calculationDetail.calculationStatusCode == CALCULATION_STATUS_CODE.DRAFT){
+          this.viewModel.formGroup.controls.primaryPerilCode.enable();
+          this.viewModel.formGroup.controls.lessAdjustmentAcres.enable();
+          this.viewModel.formGroup.controls.unseededAcres.enable();
+          this.viewModel.formGroup.controls.lessAssessmentAcres.enable();
+  
+        } else {
+          this.viewModel.formGroup.controls.primaryPerilCode.disable();
+          this.viewModel.formGroup.controls.lessAdjustmentAcres.disable();
+          this.viewModel.formGroup.controls.unseededAcres.disable();
+          this.viewModel.formGroup.controls.lessAssessmentAcres.disable();
+        }
+      }
+    }
+    
+
+      onSave(saveCommentsOnly:boolean) {
+          const  updatedClaim = this.getUpdatedClaim(saveCommentsOnly);
+          if (this.isFormValid(updatedClaim) )  {
+    
+              this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+              this.doSyncClaimsCodeTables();
+          }
+      }
+    
+      getUpdatedClaim(saveCommentsOnly:boolean) {
+          // making a deep copy here
+          let updatedCalculation = JSON.parse(JSON.stringify(this.calculationDetail));
+    
+          if (saveCommentsOnly) {
+    
+              updatedCalculation.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+    
+          } else {
+            // user fields
+            updatedCalculation.primaryPerilCode = this.viewModel.formGroup.controls.primaryPerilCode.value
+    
+            updatedCalculation.claimCalculationGrainUnseeded.lessAdjustmentAcres = this.viewModel.formGroup.controls.lessAdjustmentAcres.value ? parseFloat(this.viewModel.formGroup.controls.lessAdjustmentAcres.value) : null
+    
+            updatedCalculation.claimCalculationGrainUnseeded.unseededAcres = this.viewModel.formGroup.controls.unseededAcres.value ? parseFloat(this.viewModel.formGroup.controls.unseededAcres.value) : null
+    
+            updatedCalculation.claimCalculationGrainUnseeded.lessAssessmentAcres = this.viewModel.formGroup.controls.lessAssessmentAcres.value ? parseFloat(this.viewModel.formGroup.controls.lessAssessmentAcres.value) : null
+            
+            updatedCalculation.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+          }
+    
+          return updatedCalculation
+      }
+    
+      isFormValid (claimForm: vmCalculation) { 
+    
+          if (!claimForm.primaryPerilCode )  {
+    
+              displayErrorMessage(this.snackbarService, "Please choose a primary peril")
+              return false
+    
+          }     
+          
+          return true
+    
+      }
+    
+      doSyncClaimsCodeTables(){
+        this.store.dispatch(syncClaimsCodeTables());
+      }
+    
+      // TODO
+      // onPrint() {
+      //   const originalTitle = this.titleService.getTitle()
+    
+      //   const title = getPrintTitle(this.calculationDetail.commodityName, 
+      //                               this.calculationDetail.coverageName, 
+      //                               this.calculationDetail.claimNumber,
+      //                               this.calculationDetail.policyNumber,
+      //                               this.calculationDetail.growerNumber)
+    
+    
+      //   this.titleService.setTitle(title);
+    
+      //   window.print()
+    
+      //   this.titleService.setTitle(originalTitle);
+      // }
+    
+      onSubmit() {
+          let  updatedClaim = this.getUpdatedClaim(false);
+    
+          if (this.isFormValid(updatedClaim) )  {
+    
+              updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.SUBMITTED;
+              this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, CALCULATION_UPDATE_TYPE.SUBMIT))
+    
+          }
+      }
+    
+      onReopen() {
+        const  updatedClaim = this.getUpdatedClaim(true);
+        if (this.isFormValid(updatedClaim) )  {
+    
+            updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.DRAFT;
+            this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+            this.doSyncClaimsCodeTables();
+        }
+      }
+    
+      showReopenButton() {
+    
+          //Allow to reopen a calculation if the claim has been amended and is in status In Progress
+          // and the calculation is in status submitted
+          if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.SUBMITTED && 
+              this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && 
+              this.calculationDetail.currentHasChequeReqInd == true){
+              return true
+          } else {
+            return false
+          }
+      }
+    
+      showSubmitButton() {
+    
+        if (this.calculationDetail.isOutOfSync == null) {
+            return false
+        }
+    
+        if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
+            (
+              (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
+              || 
+              (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
+            )
+        ) {
+    
+              return true
+    
+        } else {
+    
+          return false
+        }
+        
+      }
+    
 }

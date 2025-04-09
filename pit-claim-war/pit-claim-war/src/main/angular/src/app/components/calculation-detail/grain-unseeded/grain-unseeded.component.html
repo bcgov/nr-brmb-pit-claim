@@ -223,7 +223,7 @@
               ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload</button>
             </span>
   
-            <!-- <span class="ccc-col-right">
+            <span class="ccc-col-right">
               <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
                 (click)="onSubmit()"
@@ -244,11 +244,11 @@
                   (click)="onSave(true)"
               ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
               &nbsp;
-              <button mat-raised-button color="primary"
+              <!-- <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
                   (click)="onPrint()"
-              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
-            </span>                   -->
+              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button> -->
+            </span>                  
             
           </div>
         </div>
