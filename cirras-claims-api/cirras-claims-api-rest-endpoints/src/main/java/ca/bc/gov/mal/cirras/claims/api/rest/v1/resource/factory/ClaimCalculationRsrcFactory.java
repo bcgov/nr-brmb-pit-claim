@@ -216,7 +216,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		// Add a grain unseeded object if the insurance plan is grain and coverage is unseeded
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-			updateClaimCalculationGrainUnseededFromClaim(claimCalculation, claim, product);
+			updateClaimCalculationGrainUnseededFromClaim(claimCalculation, product);
 		}
 
 	}
@@ -313,9 +313,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 	}
 
-	private void updateClaimCalculationGrainUnseededFromClaim(ClaimCalculation claimCalculation,
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim, 
-			Product product) {
+	private void updateClaimCalculationGrainUnseededFromClaim(ClaimCalculation claimCalculation, Product product) {
 
 		claimCalculation.getClaimCalculationGrainUnseeded().setInsuredAcres(product.getAcres());
 		claimCalculation.getClaimCalculationGrainUnseeded().setDeductibleLevel(product.getDeductibleLevel());

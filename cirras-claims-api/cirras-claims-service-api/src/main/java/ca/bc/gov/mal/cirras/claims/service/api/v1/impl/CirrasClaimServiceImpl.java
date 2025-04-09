@@ -541,7 +541,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 
 						try { 
-							// TODO: Should this be called at the same time as getCirrasClaim()?
 							ProductListRsrc productListRsrc = getCirrasClaimProducts(
 									policyClaimRsrc.getInsurancePolicyId().toString(), 
 									true,
@@ -553,7 +552,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							}
 						
 						} catch ( CirrasPolicyServiceException e) {
-							// TODO: Should this fail instead?
+							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if policyProductRsrc is null.
 							logger.error("getCirrasClaimProducts: Error when getting product " + policyClaimRsrc.getPurchaseId() + " from CIRRAS for Claim Number " + policyClaimRsrc.getClaimNumber() + ": " + e);
 						}
 					}
@@ -665,8 +664,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		if (claimCalculation == null || insuranceClaim == null) {
 			throw new ServiceException("Unable to refresh Claim data. Claim or Claim Calculation was not loaded.");
-		} else if (product == null && insuranceClaim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-				&& insuranceClaim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 			throw new ServiceException("Unable to refresh Claim data. Product was not loaded.");
 		}
 		
