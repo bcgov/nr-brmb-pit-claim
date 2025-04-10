@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrapesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantAcresDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantUnitsDao;
@@ -36,6 +37,7 @@ public class CirrasServiceHelper {
 	private ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao;
 	private ClaimCalculationPlantAcresDao claimCalculationPlantAcresDao;
 	private ClaimCalculationGrapesDao claimCalculationGrapesDao;
+	private ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao;
 	private ClaimCalculationUserDao claimCalculationUserDao;
 
 	public void setClaimCalculationDao(ClaimCalculationDao claimCalculationDao) {
@@ -52,6 +54,10 @@ public class CirrasServiceHelper {
 
 	public void setClaimCalculationGrapesDao(ClaimCalculationGrapesDao claimCalculationGrapesDao) {
 		this.claimCalculationGrapesDao = claimCalculationGrapesDao;
+	}
+	
+	public void setClaimCalculationGrainUnseededDao(ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao) {
+		this.claimCalculationGrainUnseededDao = claimCalculationGrainUnseededDao;
 	}
 
 	public void setClaimCalculationPlantUnitsDao(ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao) {
@@ -154,7 +160,7 @@ public class CirrasServiceHelper {
 			claimCalculationBerriesDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationPlantUnitsDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationPlantAcresDao.deleteForClaim(claimCalculationGuid);
-
+			claimCalculationGrainUnseededDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationDao.delete(claimCalculationGuid);
 
 		} catch (IntegrityConstraintViolatedDaoException e) {

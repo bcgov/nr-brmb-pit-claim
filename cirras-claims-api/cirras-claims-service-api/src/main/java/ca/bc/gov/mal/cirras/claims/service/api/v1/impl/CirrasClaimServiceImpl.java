@@ -12,6 +12,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.Claim;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimList;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationList;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantAcres;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantUnits;
@@ -315,7 +316,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			Integer claimNumber = dto.getClaimNumber();
 			int nextVersionNumber = GetNextVersionNumberForClaim(claimNumber);
 
-			dto.setCalculationVersion(new Integer(nextVersionNumber));
+			dto.setCalculationVersion(nextVersionNumber);
 			dto.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
 			dto.setClaimCalculationGuid(null);
 
@@ -1059,9 +1060,44 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			} else if(claimCalculation.getInsuredByMeasurementType().equalsIgnoreCase(ClaimsServiceEnums.InsuredByMeasurementType.ACRES.toString())) {
 				calculateTotalsPlantAcres(claimCalculation);
 			}
+		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+			// Calculate totals for Grain Unseeded
+			calculateTotalsGrainUnseeded(claimCalculation);
 		}
 	}
 
+	private void calculateTotalsGrainUnseeded(ClaimCalculation claimCalculation) {
+		ClaimCalculationGrainUnseeded grainUnseeded = claimCalculation.getClaimCalculationGrainUnseeded();
+		
+		//Adjusted Acres: Total Acres Insured - Less Adjustment Acres
+		//0 if negative
+		Double adjustedAcres = Math.max(0, (notNull(grainUnseeded.getInsuredAcres(), (double)0) - notNull(grainUnseeded.getLessAdjustmentAcres(), (double)0)));
+		grainUnseeded.setAdjustedAcres(adjustedAcres);
+		
+		//Deductible Acres: Adjusted Acres * Deductible %
+		Double deductibleAcres = adjustedAcres * (notNull((double)grainUnseeded.getDeductibleLevel(), (double)0)/(double)100);
+		grainUnseeded.setDeductibleAcres(deductibleAcres);
+		
+		//Max Number of Eligible Acres: Adjusted Acres - Deductible Acres
+		Double maxEligibleAcres = adjustedAcres - deductibleAcres;
+		grainUnseeded.setMaxEligibleAcres(maxEligibleAcres);
+		
+		//Coverage Value: Max Number of Eligible Acres * Insured Value per Acre
+		Double coverageValue = maxEligibleAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
+		grainUnseeded.setCoverageValue(coverageValue);
+		
+		//Eligible Unseeded Acres: Unseeded Acres - Less Assessment - Less Deductible Acres
+		//0 if negative
+		Double eligibleUnseededAcres =  Math.max(0, (notNull(grainUnseeded.getUnseededAcres(), (double)0) - notNull(grainUnseeded.getLessAssessmentAcres(), (double)0) - deductibleAcres));
+		grainUnseeded.setEligibleUnseededAcres(eligibleUnseededAcres);
+		
+		//Plant Loss Claim: Eligible Unseeded Acres * Insured Value per Acre 
+		Double totalClaimAmount = eligibleUnseededAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
+		claimCalculation.setTotalClaimAmount(totalClaimAmount);
+		
+	}
+	
 	private void calculateTotalsPlantUnits(ClaimCalculation claimCalculation) {
 		ClaimCalculationPlantUnits plantUnits = claimCalculation.getClaimCalculationPlantUnits();
 		

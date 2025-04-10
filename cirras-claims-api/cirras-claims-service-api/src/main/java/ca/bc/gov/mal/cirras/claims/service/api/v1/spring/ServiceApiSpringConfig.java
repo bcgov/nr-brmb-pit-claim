@@ -77,6 +77,7 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationPlantUnitsDao(persistenceSpringConfig.claimCalculationPlantUnitsDao());
 		result.setClaimCalculationPlantAcresDao(persistenceSpringConfig.claimCalculationPlantAcresDao());
 		result.setClaimCalculationGrapesDao(persistenceSpringConfig.claimCalculationGrapesDao());
+		result.setClaimCalculationGrainUnseededDao(persistenceSpringConfig.claimCalculationGrainUnseededDao());
 		result.setClaimCalculationUserDao(persistenceSpringConfig.claimCalculationUserDao());
 		
 		return result;

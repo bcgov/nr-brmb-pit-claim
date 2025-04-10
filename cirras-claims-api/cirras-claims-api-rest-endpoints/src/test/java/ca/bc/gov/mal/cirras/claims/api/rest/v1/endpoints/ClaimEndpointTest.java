@@ -1,5 +1,6 @@
 package ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +12,14 @@ import ca.bc.gov.mal.cirras.claims.api.rest.client.v1.CirrasClaimServiceExceptio
 import ca.bc.gov.mal.cirras.claims.api.rest.client.v1.ValidationException;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.security.Scopes;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.EndpointsRsrc;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationListRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimListRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.test.EndpointsTest;
+import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
+import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
 
 public class ClaimEndpointTest extends EndpointsTest {
@@ -40,11 +44,17 @@ public class ClaimEndpointTest extends EndpointsTest {
 	private CirrasClaimService service;
 	private EndpointsRsrc topLevelEndpoints;
 
+	private String currentClaimNumber;
 	
 	@Before
 	public void prepareTests() throws CirrasClaimServiceException, Oauth2ClientException{
 		service = getService(SCOPES);
 		topLevelEndpoints = service.getTopLevelEndpoints();
+	}
+	
+	@After 
+	public void cleanUp() throws CirrasClaimServiceException, NotFoundDaoException, DaoException {
+		deleteClaimCalculation(currentClaimNumber);
 	}
 
 	
@@ -86,11 +96,17 @@ public class ClaimEndpointTest extends EndpointsTest {
 		}
 		
         String claimNumber = "37155";//????? (claims with calculations); 37155 (claim without calculation)
+        currentClaimNumber = claimNumber;
 		String policyNumber = null;//"145110-24";
 		Integer pageNumber = 0;
 		Integer pageRowCount = 100;
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
+		//Values for Claim number 37155
+		Double insuredAcres = 1835.0;
+		Integer deductibleLevel = 20;
+		Double insurableValue = 60.0;
+
 		
 		if(searchResults.getCollection().size() > 0) {
 		
@@ -100,47 +116,126 @@ public class ClaimEndpointTest extends EndpointsTest {
 	
 			Assert.assertNotNull(claimCalculationRsrc);
 			Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainUnseeded());
+			Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
 			
-			//IV: 60
-			//deductible level: 20
-			//Acres: 1835
+			ClaimCalculationGrainUnseeded grainUnseeeded = claimCalculationRsrc.getClaimCalculationGrainUnseeded();
 			
-//			claimCalculationRsrc.getClaimCalculationGrainUnseeded().setCoverageAmountAssessed(99000.5);
-//			claimCalculationRsrc.getClaimCalculationGrainUnseeded().setCoverageAssessedReason("test");
+			Assert.assertEquals(insuredAcres, grainUnseeeded.getInsuredAcres());
+			Assert.assertEquals(insurableValue, grainUnseeeded.getInsurableValue());
+			Assert.assertEquals(deductibleLevel, grainUnseeeded.getDeductibleLevel());
+			
+			Assert.assertNull(claimCalculationRsrc.getClaimCalculationGuid());
+			Assert.assertNull(grainUnseeeded.getClaimCalculationGrainUnseededGuid());
+			Assert.assertNull(grainUnseeeded.getClaimCalculationGuid());
 			
 			//Create new calculation
-//			ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
-//
-//			Assert.assertNotNull(createdCalculation);
-//			Assert.assertNotNull(createdCalculation.getClaimCalculationGrainUnseeded());
+			//User Entered
+			grainUnseeeded.setLessAdjustmentAcres(18.5);
+			grainUnseeeded.setUnseededAcres(1742.0);
+			grainUnseeeded.setLessAssessmentAcres(15.5);
 
-//			Assert.assertEquals("InsurableValueSelected", claimCalculationRsrc.getClaimCalculationGrapes().getInsurableValueSelected(), createdCalculation.getClaimCalculationGrapes().getInsurableValueSelected());
-//			Assert.assertEquals("InsurableValueHundredPercent", claimCalculationRsrc.getClaimCalculationGrapes().getInsurableValueHundredPercent(), createdCalculation.getClaimCalculationGrapes().getInsurableValueHundredPercent());
-//			Assert.assertEquals("CoverageAmount", claimCalculationRsrc.getClaimCalculationGrapes().getCoverageAmount(), createdCalculation.getClaimCalculationGrapes().getCoverageAmount());
-//			Assert.assertEquals("CoverageAmountAssessed", claimCalculationRsrc.getClaimCalculationGrapes().getCoverageAmountAssessed(), createdCalculation.getClaimCalculationGrapes().getCoverageAmountAssessed());
-//			Assert.assertEquals("CoverageAssessedReason", claimCalculationRsrc.getClaimCalculationGrapes().getCoverageAssessedReason(), createdCalculation.getClaimCalculationGrapes().getCoverageAssessedReason());
-//
-//			//update calculation
-//			createdCalculation.getClaimCalculationGrapes().setInsurableValueSelected(1.5);
-//			createdCalculation.getClaimCalculationGrapes().setInsurableValueHundredPercent(2.8230);
-//			createdCalculation.getClaimCalculationGrapes().setCoverageAmount((double)100001);
-//			createdCalculation.getClaimCalculationGrapes().setCoverageAmountAssessed(99001.5);
-//			createdCalculation.getClaimCalculationGrapes().setCoverageAssessedReason("test 2");
-//			
-//			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
-//
-//			Assert.assertEquals("InsurableValueSelected", createdCalculation.getClaimCalculationGrapes().getInsurableValueSelected(), updatedCalculation.getClaimCalculationGrapes().getInsurableValueSelected());
-//			Assert.assertEquals("InsurableValueHundredPercent", createdCalculation.getClaimCalculationGrapes().getInsurableValueHundredPercent(), updatedCalculation.getClaimCalculationGrapes().getInsurableValueHundredPercent());
-//			Assert.assertEquals("CoverageAmount", createdCalculation.getClaimCalculationGrapes().getCoverageAmount(), updatedCalculation.getClaimCalculationGrapes().getCoverageAmount());
-//			Assert.assertEquals("CoverageAmountAssessed", createdCalculation.getClaimCalculationGrapes().getCoverageAmountAssessed(), updatedCalculation.getClaimCalculationGrapes().getCoverageAmountAssessed());
-//			Assert.assertEquals("CoverageAssessedReason", createdCalculation.getClaimCalculationGrapes().getCoverageAssessedReason(), updatedCalculation.getClaimCalculationGrapes().getCoverageAssessedReason());
-//
-//			//Delete calculation
-//			service.deleteClaimCalculation(updatedCalculation);
+			//Calculated
+			Double adjustedAcres = insuredAcres -  grainUnseeeded.getLessAdjustmentAcres();
+			Double deductibleAcres = adjustedAcres * (deductibleLevel/100.0);
+			Double maxEligibleAcres = adjustedAcres - deductibleAcres;
+			Double coverageValue = maxEligibleAcres * insurableValue;
+			Double eligibleUnseededAcres = grainUnseeeded.getUnseededAcres() - grainUnseeeded.getLessAssessmentAcres() - deductibleAcres;
+
+			Double totalClaimAmount = eligibleUnseededAcres * insurableValue;
+
+			//Create new calculation
+			ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+
+			Assert.assertNotNull(createdCalculation);
+			Assert.assertNotNull(createdCalculation.getClaimCalculationGrainUnseeded());
+			
+			Assert.assertNotNull(createdCalculation);
+			Assert.assertNotNull(createdCalculation.getClaimCalculationGrainUnseeded());
+			//Assert.assertEquals("OPEN", createdCalculation.getClaimStatusCode());
+
+			Assert.assertNotNull(createdCalculation.getClaimCalculationGuid());
+			Assert.assertNotNull(createdCalculation.getClaimCalculationGrainUnseeded().getClaimCalculationGrainUnseededGuid());
+			Assert.assertNotNull(createdCalculation.getClaimCalculationGrainUnseeded().getClaimCalculationGuid());
+
+			Assert.assertEquals(insuredAcres, createdCalculation.getClaimCalculationGrainUnseeded().getInsuredAcres());
+			Assert.assertEquals(insurableValue, createdCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
+			Assert.assertEquals(deductibleLevel, createdCalculation.getClaimCalculationGrainUnseeded().getDeductibleLevel());
+
+			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), createdCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
+			Assert.assertEquals(adjustedAcres, createdCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
+			Assert.assertEquals(deductibleAcres, createdCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres());
+			Assert.assertEquals(maxEligibleAcres, createdCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres());
+			Assert.assertEquals(coverageValue, createdCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
+			Assert.assertEquals(grainUnseeeded.getUnseededAcres(), createdCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
+			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), createdCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
+			Assert.assertEquals(eligibleUnseededAcres, createdCalculation.getClaimCalculationGrainUnseeded().getEligibleUnseededAcres());
+			Assert.assertEquals(totalClaimAmount, createdCalculation.getTotalClaimAmount());
+
+			//update calculation
+			
+			grainUnseeeded = createdCalculation.getClaimCalculationGrainUnseeded();
+			
+			//User Entered
+			grainUnseeeded.setLessAdjustmentAcres(null);
+			grainUnseeeded.setUnseededAcres(1600.0);
+			grainUnseeeded.setLessAssessmentAcres(null);
+
+			//Calculated
+			adjustedAcres = insuredAcres - notNull(grainUnseeeded.getLessAdjustmentAcres(), 0.0);
+			deductibleAcres = adjustedAcres * (deductibleLevel/100.0);
+			maxEligibleAcres = adjustedAcres - deductibleAcres;
+			coverageValue = maxEligibleAcres * insurableValue;
+			eligibleUnseededAcres = notNull(grainUnseeeded.getUnseededAcres(), 0.0) - notNull(grainUnseeeded.getLessAssessmentAcres(), 0.0) - deductibleAcres;
+
+			totalClaimAmount = eligibleUnseededAcres * insurableValue;
+
+			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
+
+			Assert.assertEquals(insuredAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getInsuredAcres());
+			Assert.assertEquals(insurableValue, updatedCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
+			Assert.assertEquals(deductibleLevel, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleLevel());
+
+			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
+			Assert.assertEquals(adjustedAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
+			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres());
+			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres());
+			Assert.assertEquals(coverageValue, updatedCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
+			Assert.assertEquals(grainUnseeeded.getUnseededAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
+			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
+			Assert.assertEquals(eligibleUnseededAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getEligibleUnseededAcres());
+			Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
+
+			//Update with all user input = null => expect eligible unseeded acres and total claim amount = 0 even thought it would be < 0
+			updatedCalculation.getClaimCalculationGrainUnseeded().setUnseededAcres(null);
+			eligibleUnseededAcres = 0.0;
+			totalClaimAmount = 0.0;
+			
+			updatedCalculation = service.updateClaimCalculation(updatedCalculation, null);
+
+			Assert.assertEquals(insuredAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getInsuredAcres());
+			Assert.assertEquals(insurableValue, updatedCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
+			Assert.assertEquals(deductibleLevel, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleLevel());
+
+			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
+			Assert.assertEquals(adjustedAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
+			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres());
+			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres());
+			Assert.assertEquals(coverageValue, updatedCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
+			Assert.assertEquals(null, updatedCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
+			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
+			Assert.assertEquals(eligibleUnseededAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getEligibleUnseededAcres());
+			Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
+			
+			//Delete calculation
+			deleteClaimCalculation(claimNumber);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteGrainUnseededClaim()");
 	}	
+	
+	private Double notNull(Double value, Double defaultValue) {
+		return (value == null) ? defaultValue : value;
+	}
 	
 	@Test
 	public void testGetInsertUpdateDeleteGrapesClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
@@ -205,18 +300,20 @@ public class ClaimEndpointTest extends EndpointsTest {
 	
 	private void deleteClaimCalculation(String claimNumber) throws CirrasClaimServiceException {
 		
-		//Check if the claimNumber with calculation version already exists and delete it if it does
-		ClaimCalculationListRsrc searchResults = service.getClaimCalculations(topLevelEndpoints, claimNumber, null, null, null, null, null, null, null, null, pageNumber, pageRowCount);
-		if(searchResults.getTotalRowCount() > 0) {
-			ClaimCalculationRsrc tempRsrc = new ClaimCalculationRsrc();
-			for (int i = 0; i < searchResults.getTotalRowCount(); i++) {
-				tempRsrc = searchResults.getCollection().get(i);
-				
-				if(tempRsrc.getCalculationVersion() == 1) {
-					ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(tempRsrc, false);
-					//Delete claim
-					service.deleteClaimCalculation(calculationToDel);
-					break;
+		if(claimNumber != null) {
+			//Check if the claimNumber with calculation version already exists and delete it if it does
+			ClaimCalculationListRsrc searchResults = service.getClaimCalculations(topLevelEndpoints, claimNumber, null, null, null, null, null, null, null, null, pageNumber, pageRowCount);
+			if(searchResults.getTotalRowCount() > 0) {
+				ClaimCalculationRsrc tempRsrc = new ClaimCalculationRsrc();
+				for (int i = 0; i < searchResults.getTotalRowCount(); i++) {
+					tempRsrc = searchResults.getCollection().get(i);
+					
+					if(tempRsrc.getCalculationVersion() == 1) {
+						ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(tempRsrc, false);
+						//Delete claim
+						service.deleteClaimCalculation(calculationToDel);
+						break;
+					}
 				}
 			}
 		}
