@@ -85,7 +85,11 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
           this.viewModel.formGroup.controls.lessAssessmentAcres.setValue( this.calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres ) 
           this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
   
-          this.calculateValues()
+          if (!this.calculationDetail.claimCalculationGrainUnseeded.claimCalculationGrainUnseededGuid) {
+            // calculate values for new calculations only
+            this.calculateValues()
+          }
+          
 
           this.enableDisableFormControls();
         }
