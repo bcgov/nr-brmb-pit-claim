@@ -1097,7 +1097,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		//Coverage Value: Max Number of Eligible Acres * Insured Value per Acre
 		Double coverageValue = maxEligibleAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
-		grainUnseeded.setCoverageValue((double)Math.round(coverageValue));
+		grainUnseeded.setCoverageValue(coverageValue);
 		
 		//Eligible Unseeded Acres: Unseeded Acres - Less Assessment - Less Deductible Acres
 		//0 if negative
@@ -1106,7 +1106,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		//Plant Loss Claim: Eligible Unseeded Acres * Insured Value per Acre 
 		Double totalClaimAmount = eligibleUnseededAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
-		claimCalculation.setTotalClaimAmount((double)Math.round(totalClaimAmount));
+		claimCalculation.setTotalClaimAmount(totalClaimAmount);
 		
 	}
 	

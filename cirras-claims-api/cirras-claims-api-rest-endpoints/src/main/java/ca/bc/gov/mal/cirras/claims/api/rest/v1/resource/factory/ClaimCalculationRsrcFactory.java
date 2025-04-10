@@ -675,13 +675,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		model.setUnseededAcres(claimCalcGrainUnseeded.getUnseededAcres());
 		model.setLessAssessmentAcres(claimCalcGrainUnseeded.getLessAssessmentAcres());
 
-		// TODO MH?
 		// These are calculated in CirrasClaimServiceImpl.calculateTotalsGrainUnseeded
-		model.setAdjustedAcres(claimCalcGrainUnseeded.getAdjustedAcres());
-		model.setDeductibleAcres(claimCalcGrainUnseeded.getDeductibleAcres());
-		model.setMaxEligibleAcres(claimCalcGrainUnseeded.getMaxEligibleAcres());
-		model.setCoverageValue(claimCalcGrainUnseeded.getCoverageValue());
-		model.setEligibleUnseededAcres(claimCalcGrainUnseeded.getEligibleUnseededAcres());
+		// model.setAdjustedAcres(claimCalcGrainUnseeded.getAdjustedAcres());
+		// model.setDeductibleAcres(claimCalcGrainUnseeded.getDeductibleAcres());
+		// model.setMaxEligibleAcres(claimCalcGrainUnseeded.getMaxEligibleAcres());
+		// model.setCoverageValue(claimCalcGrainUnseeded.getCoverageValue());
+		// model.setEligibleUnseededAcres(claimCalcGrainUnseeded.getEligibleUnseededAcres());
 
 		return model;
 	}
