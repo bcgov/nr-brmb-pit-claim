@@ -69,6 +69,7 @@
     <calculation-detail-grain-unseeded
       *ngIf=" calculationDetail && 
             (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CUNS' &&
             calculationDetail.claimCalculationGrainUnseeded "
       [claimCalculationGuid]="claimCalculationGuid"
       [calculationDetail]="calculationDetail"
