@@ -20,7 +20,6 @@ export class GrainUnseededComponentModel extends BaseComponentModel {
             unseededAcres:  [{value: this.calculationDetail  && this.calculationDetail.claimCalculationGrainUnseeded ? this.calculationDetail.claimCalculationGrainUnseeded.unseededAcres : null, disabled: false }], 
             lessAssessmentAcres:  [{value: this.calculationDetail && this.calculationDetail.claimCalculationGrainUnseeded ? this.calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres : null, disabled: false }], 
             calculationComment: [{value: this.calculationDetail ? this.calculationDetail.calculationComment : null, disabled: false}, [Validators.maxLength(1000)]], 
-            totalClaimAmount:       [ '' ],
         });
     }
 
