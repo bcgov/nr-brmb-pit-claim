@@ -64,6 +64,7 @@ import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ClaimCalculationSubmitRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
+import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.CirrasDataSyncService;
 
 
@@ -534,29 +535,37 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	
 				if (!ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(result.getCalculationStatusCode())
 						&& !ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString().equals(result.getCalculationStatusCode())) {
-	
+
+					ProductRsrc policyProductRsrc = null;
 					if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+
+						try { 
+							ProductListRsrc productListRsrc = getCirrasClaimProducts(
+									policyClaimRsrc.getInsurancePolicyId().toString(), 
+									true,
+									policyClaimRsrc.getPurchaseId().toString(),
+									null);
+
+							if ( productListRsrc != null && !productListRsrc.getCollection().isEmpty() ) {
+								policyProductRsrc = productListRsrc.getCollection().get(0);
+							}
 						
-//						ProductListRsrc productListRsrc = getCirrasClaimProducts(
-//								policyClaimRsrc.getInsurancePolicyId().toString(), 
-//								true,
-//								policyClaimRsrc.getPurchaseId().toString(),
-//								null);
-//						if (productListRsrc == null) {
-//							throw new NotFoundException("no product found for " + claimNumber);
-//						}
-					}					
+						} catch ( CirrasPolicyServiceException e) {
+							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if policyProductRsrc is null.
+							logger.error("getCirrasClaimProducts: Error when getting product " + policyClaimRsrc.getPurchaseId() + " from CIRRAS for Claim Number " + policyClaimRsrc.getClaimNumber() + ": " + e);
+						}
+					}
 					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
-						refreshManualClaimData(result, policyClaimRsrc);
+						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc);
 					}
 	
 					// Sets the out of sync flags for any fields in the calculation that are out of
 					// sync with the Claim in CIRRAS.
 					// If the check cannot be performed because policyClaimRsrc is null, then they
 					// are left null to indicate that the sync status is unknown.
-					outOfSync.calculateOutOfSyncFlags(result, policyClaimRsrc);
+					outOfSync.calculateOutOfSyncFlags(result, policyClaimRsrc, policyProductRsrc);
 				} else {
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
 						// Only show an error message if the calculation status was approved or archived
@@ -649,15 +658,18 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	
 	// Updates fields in claimCalculation from insuranceClaim that are only updated
 	// when the user requests a Refresh.
-	private void refreshManualClaimData(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim)
+	private void refreshManualClaimData(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, Product product)
 			throws ServiceException {
 		logger.debug("<refreshManualClaimData");
 
 		if (claimCalculation == null || insuranceClaim == null) {
 			throw new ServiceException("Unable to refresh Claim data. Claim or Claim Calculation was not loaded.");
+		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+			throw new ServiceException("Unable to refresh Claim data. Product was not loaded.");
 		}
-
-		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim);
+		
+		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product);
 
 		// Recalculate.
 		calculateVarietyInsurableValues(claimCalculation);
