@@ -64,4 +64,24 @@
     [calculationDetail]="calculationDetail">
   </cirras-calculation-printout-strawberries-plant> 
 
+
+    <!-- GRAIN UNSEEDED -->
+    <calculation-detail-grain-unseeded
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CUNS' &&
+            calculationDetail.claimCalculationGrainUnseeded "
+      [claimCalculationGuid]="claimCalculationGuid"
+      [calculationDetail]="calculationDetail"
+  ></calculation-detail-grain-unseeded>
+
+  <!-- <cirras-calculation-printout-strawberries-plant
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid && 
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+          (calculationDetail.insuredByMeasurementType).toUpperCase() === 'ACRES'"
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout-strawberries-plant>  -->
+
+
 </base-wrapper>
