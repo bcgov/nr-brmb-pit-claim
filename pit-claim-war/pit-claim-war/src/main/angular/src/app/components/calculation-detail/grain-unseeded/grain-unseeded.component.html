@@ -67,9 +67,9 @@
             </div>
             <div class="ccc-right"> 
                {{ calculationDetail.claimCalculationGrainUnseeded.insuredAcres | number:'1.2-2' }}
-               <!-- <span #el matTooltip="Insured Acres doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainUnseeded.isOutOfSyncInsureAcres" style="margin-left: 10px;">
+               <span #el matTooltip="Insured Acres doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainUnseeded.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                 <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-              </span> -->
+              </span>
             </div>
   
             <div>
@@ -99,9 +99,9 @@
            </div>
            <div class="ccc-right"> 
              {{ calculationDetail.claimCalculationGrainUnseeded.deductibleLevel | number:'1.0-0'  }}%
-              <!-- <span #el matTooltip="Deductible doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainUnseeded.isOutOfSyncDeductibleLevel" style="margin-left: 10px;">
+              <span #el matTooltip="Deductible doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainUnseeded.isOutOfSyncDeductibleLevel" style="margin-left: 10px;">
                <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-             </span> -->
+             </span>
            </div>
            <div>
              <span class="ccc-expression">E</span> Deductible Acres
@@ -129,9 +129,9 @@
             </div>
             <div class="ccc-right">
               {{ calculationDetail.claimCalculationGrainUnseeded.insurableValue | currency  }} 
-              <!-- <span #el matTooltip="Deductible doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainUnseeded.isOutOfSyncInsurableValue" style="margin-left: 10px;">
+              <span #el matTooltip="Insured Value per Acre doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainUnseeded.isOutOfSyncInsurableValue" style="margin-left: 10px;">
                <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-              </span> -->
+              </span>
             </div> 
 
             <div>

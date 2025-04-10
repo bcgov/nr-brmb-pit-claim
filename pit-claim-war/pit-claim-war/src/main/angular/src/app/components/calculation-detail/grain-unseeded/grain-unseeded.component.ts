@@ -86,8 +86,19 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
           this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
   
           if (!this.calculationDetail.claimCalculationGrainUnseeded.claimCalculationGrainUnseededGuid) {
+
             // calculate values for new calculations only
             this.calculateValues()
+
+          } else {
+            
+            this.adjustedAcres = this.calculationDetail.claimCalculationGrainUnseeded.adjustedAcres
+            this.deductibleAcres = this.calculationDetail.claimCalculationGrainUnseeded.deductibleAcres
+            this.maxEligibleAcres = this.calculationDetail.claimCalculationGrainUnseeded.maxEligibleAcres
+            this.coverageValue = this.calculationDetail.claimCalculationGrainUnseeded.coverageValue
+            this.eligibleUnseededAcres = this.calculationDetail.claimCalculationGrainUnseeded.eligibleUnseededAcres
+            this.totalClaimAmount = this.calculationDetail.totalClaimAmount
+
           }
           
 
@@ -133,8 +144,16 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
       }
 
       // Line L = I - J - K
-      const enteredUnseededAcres = parseFloat(this.viewModel.formGroup.controls.unseededAcres.value) // line I
-      const enteredLessAssessmentAcres = parseFloat(this.viewModel.formGroup.controls.lessAssessmentAcres.value) // line J
+      let enteredUnseededAcres = 0
+      if (!isNaN(parseFloat(this.viewModel.formGroup.controls.unseededAcres.value))) {
+        enteredUnseededAcres = parseFloat(this.viewModel.formGroup.controls.unseededAcres.value) // line I
+      }
+
+      let enteredLessAssessmentAcres = 0 
+      if (!isNaN(parseFloat(this.viewModel.formGroup.controls.lessAssessmentAcres.value))) {
+        enteredLessAssessmentAcres = parseFloat(this.viewModel.formGroup.controls.lessAssessmentAcres.value) // line J
+      }
+
       if (!isNaN(this.deductibleAcres)) {
         this.eligibleUnseededAcres = Math.max( 0, enteredUnseededAcres - enteredLessAssessmentAcres - this.deductibleAcres)
       }
