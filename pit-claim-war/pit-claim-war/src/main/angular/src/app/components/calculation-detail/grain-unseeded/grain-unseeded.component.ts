@@ -6,7 +6,7 @@ import { GrainUnseededComponentModel } from './grain-unseeded.component.model';
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeNumberOnly } from 'src/app/utils';
+import { CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 
 @Component({
@@ -249,23 +249,23 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
         this.store.dispatch(syncClaimsCodeTables());
       }
     
-      // TODO
-      // onPrint() {
-      //   const originalTitle = this.titleService.getTitle()
+
+      onPrint() {
+        const originalTitle = this.titleService.getTitle()
     
-      //   const title = getPrintTitle(this.calculationDetail.commodityName, 
-      //                               this.calculationDetail.coverageName, 
-      //                               this.calculationDetail.claimNumber,
-      //                               this.calculationDetail.policyNumber,
-      //                               this.calculationDetail.growerNumber)
+        const title = getPrintTitle(this.calculationDetail.commodityName, 
+                                    this.calculationDetail.coverageName, 
+                                    this.calculationDetail.claimNumber,
+                                    this.calculationDetail.policyNumber,
+                                    this.calculationDetail.growerNumber)
     
     
-      //   this.titleService.setTitle(title);
+        this.titleService.setTitle(title);
     
-      //   window.print()
+        window.print()
     
-      //   this.titleService.setTitle(originalTitle);
-      // }
+        this.titleService.setTitle(originalTitle);
+      }
     
       onSubmit() {
           let  updatedClaim = this.getUpdatedClaim(false);
