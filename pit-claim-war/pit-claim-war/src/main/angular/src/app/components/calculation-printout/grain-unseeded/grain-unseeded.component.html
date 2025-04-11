@@ -25,7 +25,6 @@
                       <tr>
                         <td class="td-abc-label">B</td>
                         <td  style="padding-left: 20px;" colspan="2">Less Adjustment for: 
-                          <!-- <span style="float: right; padding-right: 10px; letter-spacing: 3px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAdjustmentReason }}</span> -->
                         </td>
                         <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAdjustmentAcres }}</td>
                       </tr>
@@ -75,7 +74,7 @@
                 </div>
               </div>
           
-              <!-- <div class="print-page-break-inside">
+              <div class="print-page-break-inside">
                 <div style="padding-left: 10px; font-weight: bold;">Claim Determination</div>
                 <div style="margin-left: 10px; margin-bottom: 20px; margin-right: 10px; margin-top: 3px; padding: 0px; border-radius: 0px; border: none">
                   <table>
@@ -83,35 +82,34 @@
 
                       <tr>
                         <td class="td-abc-label">I</td>
-                        <td><span style="padding-left: 10px;">Damaged Plants</span></td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.damagedUnits | number:'1.0-0' }}</td>
+                        <td><span style="padding-left: 10px;">Unseeded Acres</span></td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.unseededAcres | number:'1.2-2' }}</td>
                       </tr>
 
                       <tr>
                         <td class="td-abc-label">J</td>
                         <td>
                           <span style="padding-left: 20px;">Less Assessment for:</span>
-                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAssessmentReason }}</span>
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAssessmentUnits | number:'1.0-0' }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres | number:'1.2-2' }}</td>
                       </tr>
 
                       <tr>
                         <td class="td-abc-label">K</td>
                         <td>
-                          <span style="padding-left: 20px;">Less Deductible Plants</span>
+                          <span style="padding-left: 20px;">Less Deductible Acres</span>
                           <span style="float: right; padding-right: 10px; letter-spacing: 3px;">E</span>
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.deductibleUnits | number:'1.0-0' }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.deductibleAcres | number:'1.2-2' }}</td>
                       </tr>
 
                       <tr>
                         <td class="td-abc-label">L</td>
                         <td>
-                            <span style="padding-left: 10px;">Damaged Plants</span>
+                            <span style="padding-left: 10px;">Eligible Unseeded Acres</span>
                             <span style="float: right; padding-right: 10px; letter-spacing: 3px;">I - J - K</span>
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.totalDamagedUnits | number:'1.0-0' }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.eligibleUnseededAcres | number:'1.2-2' }}</td>
                       </tr>
 
                       <tr>
@@ -123,11 +121,10 @@
                         <td style="text-align: right; padding-right: 10px; width: 100px;">{{ makeDollarsRounded(calculationDetail.totalClaimAmount ) }}</td>
                       </tr>
 
-
                     </tbody>
                   </table>
                 </div>    
-              </div> -->
+              </div>
 
               <cirras-calculation-printout-footer 
                 [calculationDetail]="calculationDetail"
