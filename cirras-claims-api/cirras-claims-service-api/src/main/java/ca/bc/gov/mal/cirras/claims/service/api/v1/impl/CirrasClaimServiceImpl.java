@@ -943,24 +943,29 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		} else if (updateType.equals(ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString())) {
 
-			ProductRsrc productRsrc = null;
+			ProductRsrc policyProductRsrc = null;
 
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-				
-//				ProductListRsrc productListRsrc = getCirrasClaimProducts(
-//						policyClaimRsrc.getInsurancePolicyId().toString(), 
-//						true,
-//						policyClaimRsrc.getPurchaseId().toString(),
-//						null);
-//				if (productListRsrc == null) {
-//					throw new NotFoundException("no product found for " + claimNumber);
-//				}
-			}			
+					
+				ProductListRsrc productListRsrc = getCirrasClaimProducts(
+						policyClaimRsrc.getInsurancePolicyId().toString(), 
+						true,
+						policyClaimRsrc.getPurchaseId().toString(),
+						null);
+
+				if ( productListRsrc != null && !productListRsrc.getCollection().isEmpty() ) {
+					policyProductRsrc = productListRsrc.getCollection().get(0);
+				}
+			
+				if ( policyProductRsrc == null ) {
+					throw new NotFoundException("getCirrasClaimProducts: Error when getting product " + policyClaimRsrc.getPurchaseId() + " from CIRRAS for Claim Number " + policyClaimRsrc.getClaimNumber());
+				}
+			
+			}
 			
 			// Replacement is based on the current claim and policy data in CIRRAS
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, factoryContext, authentication);
-
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, policyProductRsrc, factoryContext, authentication);
 		}
 
 		// Recalculate. -> MH 2022/01/04: not necessary because calculation are done in createClaimCalculation as well
