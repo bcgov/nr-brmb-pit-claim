@@ -2,6 +2,7 @@ package ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.impl;
 
 import java.net.URI;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -11,12 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
 import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
 import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
 import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
 import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
+import ca.bc.gov.nrs.wfone.common.utils.HttpServletRequestHolder;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.SyncClaimEndpoint;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.security.Scopes;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.SyncClaimRsrc;
@@ -201,4 +204,38 @@ public class SyncClaimEndpointImpl extends BaseEndpointsImpl implements SyncClai
 		return response;
 	}
 
+	@Override
+	protected ResponseBuilder evaluatePreconditions(EntityTag eTag) {
+		logger.info("> evaluatePreconditions: Resource ETag " + eTag.getValue());
+		
+		HttpServletRequest httpServletRequest = HttpServletRequestHolder.getHttpServletRequest();
+		if ( httpServletRequest != null ) {
+		
+			String requestIfMatch = httpServletRequest.getHeader(HeaderConstants.IF_MATCH_HEADER);
+			logger.info("> evaluatePreconditions: Raw If-Match Header: " + requestIfMatch);
+	
+			if ( requestIfMatch != null && requestIfMatch.length() > 2 && requestIfMatch.startsWith("\"") && requestIfMatch.endsWith("\"") ) {
+				// EntityTag cannot correctly parse a weak etag that is also surrounded by double-quotes, so remove them.
+				String unquotedEtagValue = requestIfMatch.substring(1, requestIfMatch.length() - 1);
+				EntityTag requestETag = EntityTag.valueOf(unquotedEtagValue);
+				
+				logger.info("> evaluatePreconditions: Request ETag " + requestETag.getValue());
+				
+				if (requestETag.getValue().equals(eTag.getValue())) {
+					// If the request eTag and the resource eTag match, regardless of whether they are weak or strong, we can
+					// assume preconditions on the check are met.
+					logger.info("> evaluatePreconditions: etags matched.");
+					return null;
+				}
+			}
+
+		} else {
+			// Probably can't happen.
+			logger.warn("> evaluatePreconditions: could not retrieve httpServletRequest");
+		}
+
+		// otherwise, fall back to regular check.
+		return super.evaluatePreconditions(eTag);
+	}
+	
 }

@@ -1,13 +1,13 @@
 {
   "application": {
     "acronym": "PIT-CLAIM",
-    "version": "1.5.0-SNAPSHOT",
+    "version": "2.0.0",
     "baseUrl": "http://localhost:11200/",
     "environment": "LOCAL",
     "buildNumber": "0000"
   },
   "rest": {
-    "cirras_claims": "https://d1api.vividsolutions.com/cirras-claims-api/v1"
+    "cirras_claims": "https://cirras-claims-api-route-dev-b3e64d-dev.apps.silver.devops.gov.bc.ca/cirras-claims-api/v1"
   },
   "webade": {
     "oauth2Url": "https://d1auth.vividsolutions.com/pub/webade-oauth2/oauth/authorize",
