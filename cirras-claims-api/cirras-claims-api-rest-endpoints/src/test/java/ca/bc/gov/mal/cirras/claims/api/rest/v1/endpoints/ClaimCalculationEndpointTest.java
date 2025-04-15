@@ -52,6 +52,13 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 	// Used by out of sync and refresh tests.
 	private Integer outOfSyncClaimNumber = null;
 	private String outOfSyncClaimCalculationGuid = null;
+
+	// Used by replace tests.
+	private Integer replaceClaimNumber = null;
+	private String replaceClaimCalculationGuid1 = null;
+	private String replaceClaimCalculationGuid2 = null;
+	private String replaceClaimCalculationGuid3 = null;
+	
 	
 	private CirrasClaimService service;
 	private EndpointsRsrc topLevelEndpoints;
@@ -63,12 +70,18 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		topLevelEndpoints = service.getTopLevelEndpoints();
 		//deleteClaimCalculation();
 		deleteClaimCalculation(outOfSyncClaimNumber, outOfSyncClaimCalculationGuid);
+		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid1);
+		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid2);
+		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid3);
 	}
 	
 	@After 
 	public void cleanUp() throws CirrasClaimServiceException {
 		deleteClaimCalculation();
 		deleteClaimCalculation(outOfSyncClaimNumber, outOfSyncClaimCalculationGuid);
+		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid1);
+		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid2);
+		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid3);
 	}
 	
 	@Test
@@ -2218,6 +2231,98 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		service.deleteClaimCalculation(claimCalc);
 				
 		logger.debug(">testGrainUnseededClaimCalculationRefresh");
+	}
+
+	@Test
+	public void testGrainUnseededClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainUnseededClaimCalculationReplace");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+
+		String testClaimNumber = "37159";  // Needs to be manually set to a real, valid GRAIN UNSEEDED claim in CIRRAS db with no existing calculations.
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		replaceClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc calculationToUpdate = service.getClaim(claim);
+
+		calculationToUpdate = service.createClaimCalculation(calculationToUpdate);
+
+		replaceClaimCalculationGuid1 = calculationToUpdate.getClaimCalculationGuid();
+		
+		//Original values
+		Double originalInsuredAcres = calculationToUpdate.getClaimCalculationGrainUnseeded().getInsuredAcres();
+		Integer originalDeductibleLevel = calculationToUpdate.getClaimCalculationGrainUnseeded().getDeductibleLevel();
+		Double originalInsurableValue = calculationToUpdate.getClaimCalculationGrainUnseeded().getInsurableValue();
+		
+		//Update values for pulled in data to test if replacing NEW and COPY works correctly
+		Double updatedInsuredAcres = originalInsuredAcres - 1;
+		Integer updatedDeductibleLevel = originalDeductibleLevel + 10;
+		Double updatedInsurableValue = originalInsurableValue - 1;
+		
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate.getClaimCalculationGrainUnseeded().setInsuredAcres(updatedInsuredAcres);
+		calculationToUpdate.getClaimCalculationGrainUnseeded().setDeductibleLevel(updatedDeductibleLevel);
+		calculationToUpdate.getClaimCalculationGrainUnseeded().setInsurableValue(updatedInsurableValue);
+		
+		//Saving updated values
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		//NEW
+		//Update calculation
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		replaceClaimCalculationGuid2 = newCalculation.getClaimCalculationGuid();
+		
+		
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("New Insured Acres not consistent", originalInsuredAcres, newCalculation.getClaimCalculationGrainUnseeded().getInsuredAcres());
+		Assert.assertEquals("New Deductible Level not correct", originalDeductibleLevel, newCalculation.getClaimCalculationGrainUnseeded().getDeductibleLevel());
+		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
+		
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+		
+		//COPY
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		replaceClaimCalculationGuid3 = newCalculation.getClaimCalculationGuid();
+		
+		
+		//Check if newCalculation contains the updated values from the replaced one
+		Assert.assertEquals("Copy Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("Copy Insured Acres not consistent", updatedInsuredAcres, newCalculation.getClaimCalculationGrainUnseeded().getInsuredAcres());
+		Assert.assertEquals("Copy Deductible Level not correct", updatedDeductibleLevel, newCalculation.getClaimCalculationGrainUnseeded().getDeductibleLevel());
+		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
+		
+		//Delete - Clean up
+		service.deleteClaimCalculation(newCalculation);
+		
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate);
+
+		logger.debug(">testGrainUnseededClaimCalculationReplace");
 	}
 	
 	
