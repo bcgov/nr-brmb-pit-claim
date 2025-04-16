@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
+import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
 import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
 
@@ -20,11 +22,15 @@ public class OutOfSync {
 	private DtoUtils dtoUtils;
 	
 
-	public void calculateOutOfSyncFlags(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim) {
+	public void calculateOutOfSyncFlags(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, Product product) {
 		logger.debug("<calculateOutOfSyncFlags");
 
 		if (claimCalculation == null || insuranceClaim == null) {
-			logger.debug("<claimCalculation or insuranceClaim was null. Out of sync flags not set.");
+			logger.warn("<claimCalculation or insuranceClaim was null. Out of sync flags not set.");
+			return;
+		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+			logger.warn("<product was null. Out of sync flags not set.");
 			return;
 		}
 
@@ -50,6 +56,9 @@ public class OutOfSync {
 		// Set Plant By Acres Data flags
 		isOutOfSync = plantByAcresDataOutOfSync(claimCalculation, insuranceClaim, isOutOfSync);
 
+		// Set Grain Unseeded Data flags
+		isOutOfSync = grainUnseededDataOutOfSync(claimCalculation, product, isOutOfSync);
+		
 		claimCalculation.setIsOutOfSync(isOutOfSync);
 		
 		logger.debug(">calculateOutOfSyncFlags");
@@ -282,6 +291,41 @@ public class OutOfSync {
 		return isOutOfSync;
 	}
 
+	private boolean grainUnseededDataOutOfSync(ClaimCalculation claimCalculation, Product product, boolean isOutOfSync) {
+
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
+				&& claimCalculation.getClaimCalculationGrainUnseeded() != null ) {
+			
+			ClaimCalculationGrainUnseeded unseeded = claimCalculation.getClaimCalculationGrainUnseeded();
+			
+			if (dtoUtils.equals("InsuredAcres", product.getAcres(), unseeded.getInsuredAcres(), 4)) {
+				unseeded.setIsOutOfSyncInsuredAcres(false);
+			} else {
+				unseeded.setIsOutOfSyncInsuredAcres(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("DeductibleLevel", product.getDeductibleLevel(), unseeded.getDeductibleLevel())) {
+				unseeded.setIsOutOfSyncDeductibleLevel(false);
+			} else {
+				unseeded.setIsOutOfSyncDeductibleLevel(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("InsurableValue", product.getUnseededSelectedInsurableValue(), unseeded.getInsurableValue(), 4)) {
+				unseeded.setIsOutOfSyncInsurableValue(false);
+			} else {
+				unseeded.setIsOutOfSyncInsurableValue(true);
+				isOutOfSync = true;
+			}
+			
+		}
+
+		return isOutOfSync;
+	}
+	
+	
 	//
 	//Checks if general claim data is out of sync
 	//
