@@ -24,7 +24,7 @@
 
                       <tr>
                         <td class="td-abc-label">B</td>
-                        <td  style="padding-left: 20px;" colspan="2">Less Adjustment for: 
+                        <td  style="padding-left: 20px;" colspan="2">Less Adjustment for 
                         </td>
                         <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAdjustmentAcres }}</td>
                       </tr>
@@ -66,7 +66,7 @@
                         <td class="td-abc-label">H</td>   
                         <td colspan="2"><span style="padding-left: 10px;">Coverage Value</span>
                             <span style="float: right; padding-right: 10px; letter-spacing: 3px;">F x G</span></td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ makeDollarsRounded( calculationDetail.claimCalculationGrainUnseeded.coverageValue ) }} </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.coverageValue | number:'1.2-2'  }} </td>
                       </tr>
 
                     </tbody>
@@ -89,7 +89,7 @@
                       <tr>
                         <td class="td-abc-label">J</td>
                         <td>
-                          <span style="padding-left: 20px;">Less Assessment for:</span>
+                          <span style="padding-left: 20px;">Less Assessment</span>
                         </td>
                         <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres | number:'1.2-2' }}</td>
                       </tr>
@@ -118,7 +118,7 @@
                           <span style="padding-left: 10px;">Plant Loss Claim</span>
                           <span style="float: right; padding-right: 10px; letter-spacing: 3px;">L x G</span>
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ makeDollarsRounded(calculationDetail.totalClaimAmount ) }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.totalClaimAmount | number:'1.2-2'  }}</td>
                       </tr>
 
                     </tbody>
