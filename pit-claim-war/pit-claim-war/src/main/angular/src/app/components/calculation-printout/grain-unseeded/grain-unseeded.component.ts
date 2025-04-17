@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { roundedDollars } from 'src/app/utils';
 import {vmCalculation} from "../../../conversion/models";
 
 @Component({
@@ -10,10 +9,5 @@ import {vmCalculation} from "../../../conversion/models";
 export class CalculationPrintoutGrainUnseededComponent {
 
   @Input() calculationDetail: vmCalculation;
-
-  makeDollarsRounded( val ) {
-    return roundedDollars(val)
-  }
-
 
 }

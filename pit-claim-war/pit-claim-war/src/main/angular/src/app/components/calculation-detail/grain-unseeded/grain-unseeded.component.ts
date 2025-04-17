@@ -240,6 +240,13 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
               return false
     
           }     
+
+          if (claimForm.claimCalculationGrainUnseeded.unseededAcres > claimForm.claimCalculationGrainUnseeded.insuredAcres){
+
+            displayErrorMessage(this.snackbarService, "Unseeded acres should be no more than Total Acres Insured")
+            return false
+
+          }
           
           return true
     
