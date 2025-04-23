@@ -95,17 +95,17 @@ public class ClaimEndpointTest extends EndpointsTest {
 			return;
 		}
 		
-        String claimNumber = "37155";//????? (claims with calculations); 37155 (claim without calculation)
+        String claimNumber = "37164";//????? (claims with calculations); 37164 (claim without calculation)
         currentClaimNumber = claimNumber;
 		String policyNumber = null;//"145110-24";
 		Integer pageNumber = 0;
 		Integer pageRowCount = 100;
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
-		//Values for Claim number 37155
-		Double insuredAcres = 1835.0;
-		Integer deductibleLevel = 20;
-		Double insurableValue = 60.0;
+		//Values for Claim number 37164
+		Double insuredAcres = 987.0;
+		Integer deductibleLevel = 10;
+		Double insurableValue = 75.0;
 
 		
 		if(searchResults.getCollection().size() > 0) {
@@ -131,14 +131,14 @@ public class ClaimEndpointTest extends EndpointsTest {
 			//Create new calculation
 			//User Entered
 			grainUnseeeded.setLessAdjustmentAcres(18.5);
-			grainUnseeeded.setUnseededAcres(1742.0);
+			grainUnseeeded.setUnseededAcres(986.0);
 			grainUnseeeded.setLessAssessmentAcres(15.5);
 
 			//Calculated
 			Double adjustedAcres = insuredAcres -  grainUnseeeded.getLessAdjustmentAcres();
 			Double deductibleAcres = adjustedAcres * (deductibleLevel/100.0);
 			Double maxEligibleAcres = adjustedAcres - deductibleAcres;
-			Double coverageValue = maxEligibleAcres * insurableValue;
+			Double coverageValue = (double)Math.round(maxEligibleAcres * insurableValue);
 			Double eligibleUnseededAcres = grainUnseeeded.getUnseededAcres() - grainUnseeeded.getLessAssessmentAcres() - deductibleAcres;
 
 			Double totalClaimAmount = eligibleUnseededAcres * insurableValue;
@@ -163,8 +163,8 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), createdCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
 			Assert.assertEquals(adjustedAcres, createdCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
-			Assert.assertEquals(deductibleAcres, createdCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres());
-			Assert.assertEquals(maxEligibleAcres, createdCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres());
+			Assert.assertEquals(deductibleAcres, createdCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres(), 0.00005);
+			Assert.assertEquals(maxEligibleAcres, createdCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres(), 0.00005);
 			Assert.assertEquals(coverageValue, createdCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
 			Assert.assertEquals(grainUnseeeded.getUnseededAcres(), createdCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
 			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), createdCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
@@ -177,14 +177,14 @@ public class ClaimEndpointTest extends EndpointsTest {
 			
 			//User Entered
 			grainUnseeeded.setLessAdjustmentAcres(null);
-			grainUnseeeded.setUnseededAcres(1600.0);
+			grainUnseeeded.setUnseededAcres(787.0);
 			grainUnseeeded.setLessAssessmentAcres(null);
 
 			//Calculated
 			adjustedAcres = insuredAcres - notNull(grainUnseeeded.getLessAdjustmentAcres(), 0.0);
 			deductibleAcres = adjustedAcres * (deductibleLevel/100.0);
 			maxEligibleAcres = adjustedAcres - deductibleAcres;
-			coverageValue = maxEligibleAcres * insurableValue;
+			coverageValue = (double)Math.round(maxEligibleAcres * insurableValue);
 			eligibleUnseededAcres = notNull(grainUnseeeded.getUnseededAcres(), 0.0) - notNull(grainUnseeeded.getLessAssessmentAcres(), 0.0) - deductibleAcres;
 
 			totalClaimAmount = eligibleUnseededAcres * insurableValue;
@@ -197,8 +197,8 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
 			Assert.assertEquals(adjustedAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
-			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres());
-			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres());
+			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres(), 0.00005);
+			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres(), 0.00005);
 			Assert.assertEquals(coverageValue, updatedCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
 			Assert.assertEquals(grainUnseeeded.getUnseededAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
 			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
@@ -218,13 +218,51 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
 			Assert.assertEquals(adjustedAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
-			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres());
-			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres());
+			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres(), 0.00005);
+			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres(), 0.00005);
 			Assert.assertEquals(coverageValue, updatedCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
 			Assert.assertEquals(null, updatedCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
 			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
 			Assert.assertEquals(eligibleUnseededAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getEligibleUnseededAcres());
 			Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
+			
+			//Total Loss (rounding of coverage value)
+			//User Entered
+			grainUnseeeded = updatedCalculation.getClaimCalculationGrainUnseeded();
+
+			grainUnseeeded.setLessAdjustmentAcres(null);
+			grainUnseeeded.setUnseededAcres(insuredAcres);
+			grainUnseeeded.setLessAssessmentAcres(null);
+
+			//Calculated
+			adjustedAcres = insuredAcres - notNull(grainUnseeeded.getLessAdjustmentAcres(), 0.0);
+			deductibleAcres = adjustedAcres * (deductibleLevel/100.0);
+			maxEligibleAcres = adjustedAcres - deductibleAcres;
+			coverageValue = (double)Math.round(maxEligibleAcres * insurableValue);
+			eligibleUnseededAcres = notNull(grainUnseeeded.getUnseededAcres(), 0.0) - notNull(grainUnseeeded.getLessAssessmentAcres(), 0.0) - deductibleAcres;
+
+			totalClaimAmount = eligibleUnseededAcres * insurableValue;
+
+			updatedCalculation = service.updateClaimCalculation(updatedCalculation, null);
+			
+			//Get Total Claim Amount needs to be different from calculated Claim Amount from above.
+			//This is necessary to properly test the total loss business rules that claim amount equals rounded coverage value
+			Assert.assertNotEquals(coverageValue, totalClaimAmount);
+
+			Assert.assertEquals(insuredAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getInsuredAcres());
+			Assert.assertEquals(insurableValue, updatedCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
+			Assert.assertEquals(deductibleLevel, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleLevel());
+
+			Assert.assertEquals(grainUnseeeded.getLessAdjustmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAdjustmentAcres());
+			Assert.assertEquals(adjustedAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getAdjustedAcres());
+			Assert.assertEquals(deductibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getDeductibleAcres(), 0.00005);
+			Assert.assertEquals(maxEligibleAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getMaxEligibleAcres(), 0.00005);
+			Assert.assertEquals(coverageValue, updatedCalculation.getClaimCalculationGrainUnseeded().getCoverageValue());
+			Assert.assertEquals(grainUnseeeded.getUnseededAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getUnseededAcres());
+			Assert.assertEquals(grainUnseeeded.getLessAssessmentAcres(), updatedCalculation.getClaimCalculationGrainUnseeded().getLessAssessmentAcres());
+			Assert.assertEquals(eligibleUnseededAcres, updatedCalculation.getClaimCalculationGrainUnseeded().getEligibleUnseededAcres());
+			Assert.assertEquals(coverageValue, updatedCalculation.getTotalClaimAmount());
+			
 			
 			//Delete calculation
 			deleteClaimCalculation(claimNumber);
