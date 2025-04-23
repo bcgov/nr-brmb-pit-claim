@@ -140,7 +140,7 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
 
       // Line H = F x G 
       if (!isNaN(this.maxEligibleAcres) && !isNaN(this.calculationDetail.claimCalculationGrainUnseeded.insurableValue) ){
-        this.coverageValue = this.maxEligibleAcres * this.calculationDetail.claimCalculationGrainUnseeded.insurableValue 
+        this.coverageValue = Math.round(this.maxEligibleAcres * this.calculationDetail.claimCalculationGrainUnseeded.insurableValue )
       }
 
       // Line L = I - J - K
@@ -240,10 +240,10 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
               return false
     
           }     
+          
+          if (claimForm.claimCalculationGrainUnseeded.unseededAcres > claimForm.claimCalculationGrainUnseeded.adjustedAcres){
 
-          if (claimForm.claimCalculationGrainUnseeded.unseededAcres > claimForm.claimCalculationGrainUnseeded.insuredAcres){
-
-            displayErrorMessage(this.snackbarService, "Unseeded acres should be no more than Total Acres Insured")
+            displayErrorMessage(this.snackbarService, "Unseeded acres should be no more than Adjusted Acres")
             return false
 
           }
