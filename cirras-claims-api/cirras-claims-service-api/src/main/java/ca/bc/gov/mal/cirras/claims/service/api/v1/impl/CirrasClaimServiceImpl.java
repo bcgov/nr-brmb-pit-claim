@@ -1089,28 +1089,42 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		//Adjusted Acres: Total Acres Insured - Less Adjustment Acres
 		//0 if negative
+		//Line C
 		Double adjustedAcres = Math.max(0, (notNull(grainUnseeded.getInsuredAcres(), (double)0) - notNull(grainUnseeded.getLessAdjustmentAcres(), (double)0)));
 		grainUnseeded.setAdjustedAcres(adjustedAcres);
 		
 		//Deductible Acres: Adjusted Acres * Deductible %
+		//Line E
 		Double deductibleAcres = adjustedAcres * (notNull((double)grainUnseeded.getDeductibleLevel(), (double)0)/(double)100);
 		grainUnseeded.setDeductibleAcres(deductibleAcres);
 		
 		//Max Number of Eligible Acres: Adjusted Acres - Deductible Acres
+		//Line F
 		Double maxEligibleAcres = adjustedAcres - deductibleAcres;
 		grainUnseeded.setMaxEligibleAcres(maxEligibleAcres);
 		
 		//Coverage Value: Max Number of Eligible Acres * Insured Value per Acre
+		//Line H
 		Double coverageValue = maxEligibleAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
-		grainUnseeded.setCoverageValue(coverageValue);
+		grainUnseeded.setCoverageValue((double)Math.round(coverageValue));
+
 		
 		//Eligible Unseeded Acres: Unseeded Acres - Less Assessment - Less Deductible Acres
 		//0 if negative
+		//Line L
 		Double eligibleUnseededAcres =  Math.max(0, (notNull(grainUnseeded.getUnseededAcres(), (double)0) - notNull(grainUnseeded.getLessAssessmentAcres(), (double)0) - deductibleAcres));
 		grainUnseeded.setEligibleUnseededAcres(eligibleUnseededAcres);
 		
-		//Plant Loss Claim: Eligible Unseeded Acres * Insured Value per Acre 
-		Double totalClaimAmount = eligibleUnseededAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
+		//Plant Loss Claim: 
+		//Line M
+		// If Max Number of Eligible Acres = Eligible Unseeded Acres Then the Plant Loss Claim = Calculated Coverage Value
+		// Else Eligible Unseeded Acres * Insured Value per Acre
+		Double totalClaimAmount = (double)0;
+		if(Double.compare(eligibleUnseededAcres, maxEligibleAcres) == 0){
+			totalClaimAmount = grainUnseeded.getCoverageValue();
+		} else {
+			totalClaimAmount = eligibleUnseededAcres * notNull(grainUnseeded.getInsurableValue(), (double)0);
+		}
 		claimCalculation.setTotalClaimAmount(totalClaimAmount);
 		
 	}
