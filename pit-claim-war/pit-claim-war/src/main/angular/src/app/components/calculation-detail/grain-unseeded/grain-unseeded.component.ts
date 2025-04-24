@@ -158,9 +158,13 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
         this.eligibleUnseededAcres = Math.max( 0, enteredUnseededAcres - enteredLessAssessmentAcres - this.deductibleAcres)
       }
       
-      // Line M = L x G
-      if (!isNaN(this.eligibleUnseededAcres) && !isNaN(this.calculationDetail.claimCalculationGrainUnseeded.insurableValue)) {
-        this.totalClaimAmount = this.eligibleUnseededAcres  * this.calculationDetail.claimCalculationGrainUnseeded.insurableValue 
+      // If L = F then M = H else M = L * G
+      if (this.eligibleUnseededAcres == this.maxEligibleAcres) {
+        this.totalClaimAmount = this.coverageValue
+      } else {
+        if (!isNaN(this.eligibleUnseededAcres) && !isNaN(this.calculationDetail.claimCalculationGrainUnseeded.insurableValue)) {
+          this.totalClaimAmount = this.eligibleUnseededAcres  * this.calculationDetail.claimCalculationGrainUnseeded.insurableValue 
+        }
       }
     }
 
