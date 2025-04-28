@@ -25,6 +25,7 @@ import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrapes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationList;
@@ -35,6 +36,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainSpotLossDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainUnseededDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationVarietyDto;
@@ -89,6 +91,11 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		//Add grain unseeded
 		if(dto.getClaimCalculationGrainUnseeded() != null) {
 			resource.setClaimCalculationGrainUnseeded(createClaimCalculationGrainUnseeded(dto.getClaimCalculationGrainUnseeded()));
+		}
+
+		//Add grain unseeded
+		if(dto.getClaimCalculationGrainSpotLoss() != null) {
+			resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLoss(dto.getClaimCalculationGrainSpotLoss()));
 		}
 
 		String eTag = getEtag(resource);
@@ -153,6 +160,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 			resource.setClaimCalculationGrainUnseeded(createClaimCalculationGrainUnseededFromClaim(productRsrc));
+		}
+
+		// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
+		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+			resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLossFromClaim(productRsrc));
 		}
 
 		String eTag = getEtag(resource);
@@ -429,7 +442,21 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		return model;
 	}
+	
+	private final Integer grainSpotLossDeductible = 5;
 
+	private ClaimCalculationGrainSpotLoss createClaimCalculationGrainSpotLossFromClaim(
+			ProductRsrc productRsrc) {
+		ClaimCalculationGrainSpotLoss model = new ClaimCalculationGrainSpotLoss();
+
+		model.setInsuredAcres(productRsrc.getAcres());
+		model.setCoverageAmtPerAcre(productRsrc.getSpotLossCoverageAmountPerAcre());
+		model.setCoverageValue(productRsrc.getCoverageDollars());
+		model.setDeductible(grainSpotLossDeductible);
+
+		return model;
+	}
+	
 	@Override
 	public ClaimCalculation getCalculationFromCalculation(ClaimCalculation claimCalculation, FactoryContext context,
 			WebAdeAuthentication authentication) throws FactoryException {
@@ -1153,6 +1180,25 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		return model;
 	}
+	
+	private ClaimCalculationGrainSpotLoss createClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLossDto dto) {
+
+		ClaimCalculationGrainSpotLoss model = new ClaimCalculationGrainSpotLoss();
+		
+		model.setClaimCalculationGrainSpotLossGuid(dto.getClaimCalculationGrainSpotLossGuid());
+		model.setClaimCalculationGuid(dto.getClaimCalculationGuid());
+		model.setInsuredAcres(dto.getInsuredAcres());
+		model.setCoverageAmtPerAcre(dto.getCoverageAmtPerAcre());
+		model.setCoverageValue(dto.getCoverageValue());
+		model.setAdjustedAcres(dto.getAdjustedAcres());
+		model.setPercentYieldReduction(dto.getPercentYieldReduction());
+		model.setEligibleYieldReduction(dto.getEligibleYieldReduction());
+		model.setSpotLossReductionValue(dto.getSpotLossReductionValue());
+		model.setDeductible(dto.getDeductible());
+
+		return model;
+	}
+
 	
 	private void populateResource(ClaimCalculationRsrc resource, ClaimCalculationDto dto) {
 
