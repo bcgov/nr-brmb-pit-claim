@@ -88,6 +88,62 @@ public class ClaimEndpointTest extends EndpointsTest {
 	}
 	
 	@Test
+	public void testGetInsertUpdateDeleteGrainUnseededClaimRounding() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGetInsertUpdateDeleteGrainUnseededClaimRounding()");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		/*
+		 	AdHoc test to test this business rules:
+		 	Unseeded Loss Claim (Line M): 
+		 		if the max number of eligible acres are the same as eligible unseeded acres 
+		 		then the Unseeded Loss Claim needs to be the same as the calculated coverage
+			Same formula with line numbers: If L = F then M = H else M = L * G. 
+		*/
+		
+        String claimNumber = "37166";//Has to be a claim with a saved unseeded calculation
+		Integer pageNumber = 0;
+		Integer pageRowCount = 100;
+		
+		//Values for Claim number 37166
+		Double insuredAcres = 11964.0;
+		Integer deductibleLevel = 20;
+		Double insurableValue = 60.0;
+
+		ClaimCalculationListRsrc searchResults = service.getClaimCalculations(topLevelEndpoints, claimNumber, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+
+		
+		if(searchResults.getCollection().size() > 0) {
+			
+			ClaimCalculationRsrc claimCalcRsrc = searchResults.getCollection().get(0);
+			//Only works if there is no calculation yet
+			ClaimCalculationRsrc claimCalculationRsrc = service.getClaimCalculation(claimCalcRsrc, false);
+	
+			Assert.assertNotNull(claimCalculationRsrc);
+			Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainUnseeded());
+			
+			ClaimCalculationGrainUnseeded grainUnseeeded = claimCalculationRsrc.getClaimCalculationGrainUnseeded();
+			
+			Assert.assertEquals(insuredAcres, grainUnseeeded.getInsuredAcres());
+			Assert.assertEquals(insurableValue, grainUnseeeded.getInsurableValue());
+			Assert.assertEquals(deductibleLevel, grainUnseeeded.getDeductibleLevel());
+			
+			Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGuid());
+			Assert.assertNotNull(grainUnseeeded.getClaimCalculationGrainUnseededGuid());
+			Assert.assertNotNull(grainUnseeeded.getClaimCalculationGuid());
+			
+			
+			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(claimCalculationRsrc, null);			
+
+		}
+
+		logger.debug(">testGetInsertUpdateDeleteGrainUnseededClaimRounding()");
+	}
+	
+	@Test
 	public void testGetInsertUpdateDeleteGrainUnseededClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
 		logger.debug("<testGetInsertUpdateDeleteGrainUnseededClaim()");
 		
