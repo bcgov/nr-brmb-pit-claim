@@ -159,7 +159,7 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
       }
       
       // If L = F then M = H else M = L * G
-      if (this.eligibleUnseededAcres == this.maxEligibleAcres) {
+      if ( Math.round(this.eligibleUnseededAcres * 100 ) / 100 == Math.round(this.maxEligibleAcres * 100 ) / 100 ) {
         this.totalClaimAmount = this.coverageValue
       } else {
         if (!isNaN(this.eligibleUnseededAcres) && !isNaN(this.calculationDetail.claimCalculationGrainUnseeded.insurableValue)) {
@@ -245,7 +245,7 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
     
           }     
           
-          if (claimForm.claimCalculationGrainUnseeded.unseededAcres > claimForm.claimCalculationGrainUnseeded.adjustedAcres){
+          if (claimForm.claimCalculationGrainUnseeded.unseededAcres > this.adjustedAcres){
 
             displayErrorMessage(this.snackbarService, "Unseeded acres should be no more than Adjusted Acres")
             return false
