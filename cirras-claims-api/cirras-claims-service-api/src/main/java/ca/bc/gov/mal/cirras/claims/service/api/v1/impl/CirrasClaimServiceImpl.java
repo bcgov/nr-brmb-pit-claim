@@ -19,6 +19,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantUnits;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainSpotLossDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrapesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantAcresDao;
@@ -28,6 +29,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationUserDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainSpotLossDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainUnseededDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
@@ -91,6 +93,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	private ClaimCalculationPlantAcresDao claimCalculationPlantAcresDao;
 	private ClaimCalculationGrapesDao claimCalculationGrapesDao;
 	private ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao;
+	private ClaimCalculationGrainSpotLossDao claimCalculationGrainSpotLossDao;
 	private ClaimCalculationUserDao claimCalculationUserDao;
 	private ClaimDao claimDao;
 
@@ -154,6 +157,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 	public void setClaimCalculationGrainUnseededDao(ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao) {
 		this.claimCalculationGrainUnseededDao = claimCalculationGrainUnseededDao;
+	}
+
+	public void setClaimCalculationGrainSpotLossDao(ClaimCalculationGrainSpotLossDao claimCalculationGrainSpotLossDao) {
+		this.claimCalculationGrainSpotLossDao = claimCalculationGrainSpotLossDao;
 	}
 
 	public void setClaimCalculationPlantUnitsDao(ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao) {
@@ -254,7 +261,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			ProductRsrc productRsrc = null;
 			
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+					&& (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
+							|| policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+						)
+				) {
 				
 				ProductListRsrc productListRsrc = getCirrasClaimProducts(
 														policyClaimRsrc.getInsurancePolicyId().toString(), 
@@ -271,7 +281,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			// Convert InsuranceClaimRsrc to ClaimCalculation
 			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, context, authentication);
 
-			result.setCalculationVersion(new Integer(nextVersionNumber));
+			result.setCalculationVersion(nextVersionNumber);
 			result.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
 			result.setClaimCalculationGuid(null);
 
@@ -538,7 +548,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 					ProductRsrc policyProductRsrc = null;
 					if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+							&& (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
+								|| policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+								)
+						) {
 
 						try { 
 							ProductListRsrc productListRsrc = getCirrasClaimProducts(
@@ -627,6 +640,14 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			ClaimCalculationGrainUnseededDto grainUnseededDto = claimCalculationGrainUnseededDao.select(claimCalculationGuid);
 			dto.setClaimCalculationGrainUnseeded(grainUnseededDto);
 		}
+
+		// Get Grain Spot Loss
+		if(dto.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) 
+				&& dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+			ClaimCalculationGrainSpotLossDto grainSpotLossDto = claimCalculationGrainSpotLossDao.select(claimCalculationGuid);
+			dto.setClaimCalculationGrainSpotLoss(grainSpotLossDto);
+		}
+
 	}
 
 	// Returns a claim from cirras for a claim number

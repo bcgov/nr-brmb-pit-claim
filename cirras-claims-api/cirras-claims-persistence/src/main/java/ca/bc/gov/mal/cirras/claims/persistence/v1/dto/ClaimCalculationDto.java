@@ -84,6 +84,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	private ClaimCalculationGrapesDto claimCalculationGrapesDto;
 	private List<ClaimCalculationVarietyDto> varieties = new ArrayList<ClaimCalculationVarietyDto>();
 	private ClaimCalculationGrainUnseededDto claimCalculationGrainUnseededDto;
+	private ClaimCalculationGrainSpotLossDto claimCalculationGrainSpotLossDto;
 	
 	public ClaimCalculationDto() {
 	}
@@ -474,6 +475,14 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 
 	public void setClaimCalculationGrainUnseeded(ClaimCalculationGrainUnseededDto claimCalculationGrainUnseededDto) {
 		this.claimCalculationGrainUnseededDto = claimCalculationGrainUnseededDto;
+	}
+	
+	public ClaimCalculationGrainSpotLossDto getClaimCalculationGrainSpotLoss() {
+		return claimCalculationGrainSpotLossDto;
+	}
+
+	public void setClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLossDto claimCalculationGrainSpotLossDto) {
+		this.claimCalculationGrainSpotLossDto = claimCalculationGrainSpotLossDto;
 	}
 	
 	public String getSubmittedByUserid() {

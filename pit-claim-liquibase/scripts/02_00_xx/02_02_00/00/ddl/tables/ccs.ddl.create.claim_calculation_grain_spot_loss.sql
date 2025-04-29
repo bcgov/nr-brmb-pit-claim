@@ -4,7 +4,7 @@ CREATE TABLE CCS.CLAIM_CALCULATION_GRAIN_SPOT_LOSS(
     insured_acres                      numeric(14, 4)    NOT NULL,
     coverage_amt_per_acre              numeric(14, 4)    NOT NULL,
     coverage_value                     numeric(14, 4)    NOT NULL,
-    adjusted_ares                      numeric(14, 4),
+    adjusted_acres                     numeric(14, 4),
     percent_yield_reduction            numeric(5, 2),
     eligible_yield_reduction           numeric(14, 4),
     spot_loss_reduction_value          numeric(14, 4),
@@ -29,7 +29,7 @@ COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_SPOT_LOSS.coverage_amt_per_acre IS
 ;
 COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_SPOT_LOSS.coverage_value IS 'Coverage Value is a calculated value: insured_acres * coverage_amt_per_acre'
 ;
-COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_SPOT_LOSS.adjusted_ares IS 'Adjusted Acres is a user entered value'
+COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_SPOT_LOSS.adjusted_acres IS 'Adjusted Acres is a user entered value'
 ;
 COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_SPOT_LOSS.percent_yield_reduction IS 'Percent Yield Reduction is a user entered value'
 ;
