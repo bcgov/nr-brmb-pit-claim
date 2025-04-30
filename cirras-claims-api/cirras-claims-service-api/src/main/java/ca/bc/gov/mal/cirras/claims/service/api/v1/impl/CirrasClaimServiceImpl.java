@@ -12,6 +12,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.Claim;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimList;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationList;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantAcres;
@@ -380,6 +381,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		// Insert Grain Unseeded data
 		createGrainUnseeded(claimCalculation, userId, claimCalculationGuid);
+
+		// Insert Grain Spot Loss data
+		createGrainSpotLoss(claimCalculation, userId, claimCalculationGuid);
 	}
 
 	private void createPlantAcres(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
@@ -439,6 +443,23 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			claimCalculationGrainUnseededDao.insert(dtoGrapes, userId);
 		}
 	}
+
+	private void createGrainSpotLoss(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Spot Loss Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+				
+			ClaimCalculationGrainSpotLossDto dtoGrainSpotLoss = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainSpotLoss());
+
+			dtoGrainSpotLoss.setClaimCalculationGrainSpotLossGuid(null);
+			dtoGrainSpotLoss.setClaimCalculationGuid(claimCalculationGuid);
+			claimCalculationGrainSpotLossDao.insert(dtoGrainSpotLoss, userId);
+		}
+	}
+	
 	
 	private void createBerriesQuantity(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
 			throws DaoException {
@@ -814,6 +835,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		// Update Grain Unseeded
 		updateGrainUnseededQuantity(claimCalculation, userId);
+		
+		// Update Grain Spot Loss
+		updateGrainSpotLoss(claimCalculation, userId);
 	}
 
 	private void updatePlantAcres(ClaimCalculation claimCalculation, String userId)
@@ -871,6 +895,21 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			claimCalculationGrainUnseededDao.update(dtoGrainUnseeded, userId);
 		}
 	}
+
+	private void updateGrainSpotLoss(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Spot Loss Data
+		//
+		if (claimCalculation.getClaimCalculationGrainSpotLoss() != null) {
+			ClaimCalculationGrainSpotLossDto dtoGrainSpotLoss = claimCalculationGrainSpotLossDao.fetch(claimCalculation.getClaimCalculationGrainSpotLoss().getClaimCalculationGrainSpotLossGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainSpotLoss, claimCalculation.getClaimCalculationGrainSpotLoss());
+
+			claimCalculationGrainSpotLossDao.update(dtoGrainSpotLoss, userId);
+		}
+	}
+	
 	
 	private void updateBerriesQuantity(ClaimCalculation claimCalculation, String userId)
 			throws DaoException, NotFoundDaoException {
@@ -1102,6 +1141,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 			// Calculate totals for Grain Unseeded
 			calculateTotalsGrainUnseeded(claimCalculation);
+		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+			calculateTotalsGrainSpotLoss(claimCalculation);
 		}
 	}
 
@@ -1148,6 +1190,37 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 		claimCalculation.setTotalClaimAmount(totalClaimAmount);
 		
+	}
+
+	private void calculateTotalsGrainSpotLoss(ClaimCalculation claimCalculation) {
+		
+		ClaimCalculationGrainSpotLoss grainSpotLoss = claimCalculation.getClaimCalculationGrainSpotLoss();
+		
+		// Eligible Yield Reduction: Adjusted Acres x Percent Yield Reduction.
+		Double eligibleYieldReduction = 0.0;
+		if ( grainSpotLoss.getAdjustedAcres() != null && grainSpotLoss.getPercentYieldReduction() != null ) {
+			eligibleYieldReduction = grainSpotLoss.getAdjustedAcres() * (grainSpotLoss.getPercentYieldReduction() / 100.0);
+		}
+		
+		grainSpotLoss.setEligibleYieldReduction(eligibleYieldReduction);
+
+
+		// Spot Loss Reduction Value: Coverage Amt Per Acre x Eligible Yield Reduction.
+		Double spotLossReductionValue = 0.0;
+		if ( grainSpotLoss.getCoverageAmtPerAcre() != null && grainSpotLoss.getEligibleYieldReduction() != null ) {
+			spotLossReductionValue = grainSpotLoss.getCoverageAmtPerAcre() * grainSpotLoss.getEligibleYieldReduction();
+		}
+		
+		grainSpotLoss.setSpotLossReductionValue(spotLossReductionValue);
+
+		
+		// Spot Loss Claim Value: Adjusted Acres x (Percent Yield Reduction - Deductible) x Coverage Amount Per Acre
+		Double spotLossClaimValue = 0.0;
+		if ( grainSpotLoss.getAdjustedAcres() != null && grainSpotLoss.getPercentYieldReduction() != null && grainSpotLoss.getDeductible() != null && grainSpotLoss.getCoverageAmtPerAcre() != null ) {
+			spotLossClaimValue = grainSpotLoss.getAdjustedAcres() * ((grainSpotLoss.getPercentYieldReduction() - grainSpotLoss.getDeductible()) / 100.0) * grainSpotLoss.getCoverageAmtPerAcre();
+		}
+
+		claimCalculation.setTotalClaimAmount(spotLossClaimValue);
 	}
 	
 	private void calculateTotalsPlantUnits(ClaimCalculation claimCalculation) {
