@@ -83,4 +83,22 @@
     [calculationDetail]="calculationDetail">
   </calculation-printout-grain-unseeded> 
 
+  <!-- GRAIN SPOT LOSS -->
+  <calculation-detail-grain-spot-loss
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL' &&
+            calculationDetail.claimCalculationGrainSpotLoss "
+      [claimCalculationGuid]="claimCalculationGuid"
+      [calculationDetail]="calculationDetail"
+  ></calculation-detail-grain-spot-loss>
+
+  <!-- <calculation-printout-grain-spot-loss
+    *ngIf=" calculationDetail && 
+        (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+        (calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL' &&
+        calculationDetail.ClaimCalculationGrainSpotLoss "
+    [calculationDetail]="calculationDetail">
+  </calculation-printout-grain-spot-loss>  -->
+
 </base-wrapper>
