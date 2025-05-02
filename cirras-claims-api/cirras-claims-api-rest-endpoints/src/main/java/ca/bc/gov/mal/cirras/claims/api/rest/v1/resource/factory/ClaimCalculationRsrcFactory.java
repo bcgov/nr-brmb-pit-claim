@@ -873,6 +873,20 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		dto.setEligibleUnseededAcres(model.getEligibleUnseededAcres());
 		
 	}
+
+	@Override
+	public void updateDto(ClaimCalculationGrainSpotLossDto dto, ClaimCalculationGrainSpotLoss model) {
+		
+		dto.setAdjustedAcres(model.getAdjustedAcres());
+		dto.setCoverageAmtPerAcre(model.getCoverageAmtPerAcre());
+		dto.setCoverageValue(model.getCoverageValue());
+		dto.setDeductible(model.getDeductible());
+		dto.setEligibleYieldReduction(model.getEligibleYieldReduction());
+		dto.setInsuredAcres(model.getInsuredAcres());
+		dto.setPercentYieldReduction(model.getPercentYieldReduction());
+		dto.setSpotLossReductionValue(model.getSpotLossReductionValue());
+		
+	}
 	
 	@Override
 	public void updateDto(ClaimCalculationGrapesDto dto, ClaimCalculationGrapes model) {
@@ -1038,6 +1052,24 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		return dto;
 	}
 
+	@Override
+	public ClaimCalculationGrainSpotLossDto createDto(ClaimCalculationGrainSpotLoss model) {
+		ClaimCalculationGrainSpotLossDto dto = new ClaimCalculationGrainSpotLossDto();
+
+		dto.setClaimCalculationGuid(model.getClaimCalculationGuid());
+		dto.setAdjustedAcres(model.getAdjustedAcres());
+		dto.setCoverageAmtPerAcre(model.getCoverageAmtPerAcre());
+		dto.setCoverageValue(model.getCoverageValue());
+		dto.setDeductible(model.getDeductible());
+		dto.setEligibleYieldReduction(model.getEligibleYieldReduction());
+		dto.setInsuredAcres(model.getInsuredAcres());
+		dto.setPercentYieldReduction(model.getPercentYieldReduction());
+		dto.setSpotLossReductionValue(model.getSpotLossReductionValue());
+
+		return dto;
+	}
+	
+	
 	@Override
 	public ClaimCalculationGrapesDto createDto(ClaimCalculationGrapes model) {
 		ClaimCalculationGrapesDto dto = new ClaimCalculationGrapesDto();
