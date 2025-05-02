@@ -22,6 +22,10 @@
     display: none !important;
   }
 
+  calculation-printout-grain-spot-loss {
+    display: none !important;
+  }
+
 }
 
 
@@ -100,6 +104,15 @@
   calculation-printout-grain-unseeded  {
     display: block !important;
   }
+
+  calculation-detail-grain-spot-loss {
+    display: none !important;
+  }
+
+  calculation-printout-grain-spot-loss  {
+    display: block !important;
+  }
+
 
   #core-interface-container mat-sidenav-container mat-sidenav-content {
     top: 0px !important;

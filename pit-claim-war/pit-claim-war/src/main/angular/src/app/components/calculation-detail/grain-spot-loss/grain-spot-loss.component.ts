@@ -6,7 +6,7 @@ import { CalculationDetailGrainSpotLossComponentModel } from './grain-spot-loss.
 import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { makeNumberOnly } from 'src/app/utils';
+import { getPrintTitle, makeNumberOnly } from 'src/app/utils';
 
 @Component({
   selector: 'calculation-detail-grain-spot-loss',
@@ -165,4 +165,22 @@ export class CalculationDetailGrainSpotLossComponent extends BaseComponent imple
     setComment() {
       this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
     }
+
+    onPrint() {
+      const originalTitle = this.titleService.getTitle()
+  
+      const title = getPrintTitle(this.calculationDetail.commodityName, 
+                                  this.calculationDetail.coverageName, 
+                                  this.calculationDetail.claimNumber,
+                                  this.calculationDetail.policyNumber,
+                                  this.calculationDetail.growerNumber)
+  
+  
+      this.titleService.setTitle(title);
+  
+      window.print()
+  
+      this.titleService.setTitle(originalTitle);
+    }
+
 }
