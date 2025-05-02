@@ -75,6 +75,7 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       claimCalculationPlantAcres: calculation.claimCalculationPlantAcres,
       claimCalculationGrapes: calculation.claimCalculationGrapes,
       claimCalculationGrainUnseeded: calculation.claimCalculationGrainUnseeded,
+      claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
 
       type: "ClaimCalculationRsrc"
   };
