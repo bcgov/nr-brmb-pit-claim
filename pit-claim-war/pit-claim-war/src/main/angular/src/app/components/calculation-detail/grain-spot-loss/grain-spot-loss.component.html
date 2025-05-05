@@ -193,7 +193,7 @@
             </span>
   
             <span class="ccc-col-right">
-              <!--<button mat-raised-button color="primary"
+              <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
                 (click)="onSubmit()"
               ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
@@ -212,7 +212,6 @@
                   *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT'"
                   (click)="onSave(true)"
               ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
-  -->
               &nbsp;
               <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
