@@ -227,9 +227,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		}
 		
 		// Add a grain unseeded object if the insurance plan is grain and coverage is unseeded
-		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-			updateClaimCalculationGrainUnseededFromClaim(claimCalculation, product);
+		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())){
+			if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				updateClaimCalculationGrainUnseededFromClaim(claimCalculation, product);
+			} else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+				updateClaimCalculationGrainSpotLossFromClaim(claimCalculation, product);
+			}
 		}
 
 	}
@@ -331,6 +334,15 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		claimCalculation.getClaimCalculationGrainUnseeded().setInsuredAcres(product.getAcres());
 		claimCalculation.getClaimCalculationGrainUnseeded().setDeductibleLevel(product.getDeductibleLevel());
 		claimCalculation.getClaimCalculationGrainUnseeded().setInsurableValue(product.getUnseededSelectedInsurableValue());
+
+	}
+	
+	private void updateClaimCalculationGrainSpotLossFromClaim(ClaimCalculation claimCalculation, Product product) {
+
+		claimCalculation.getClaimCalculationGrainSpotLoss().setInsuredAcres(product.getAcres());
+		claimCalculation.getClaimCalculationGrainSpotLoss().setCoverageAmtPerAcre(product.getSpotLossCoverageAmountPerAcre());
+		claimCalculation.getClaimCalculationGrainSpotLoss().setCoverageValue(product.getCoverageDollars());
+		claimCalculation.getClaimCalculationGrainSpotLoss().setDeductible(grainSpotLossDeductible);
 
 	}
 	
