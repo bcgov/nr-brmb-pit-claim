@@ -1,7 +1,9 @@
 
 <div class="print-page-break-inside">
   <div style="text-align: center; font-weight: bold;">
-    {{ deleteDuplicateWords( calculationDetail.commodityName.toUpperCase() + ' ' + calculationDetail.coverageName.toUpperCase()) | uppercase }} LOSS CLAIM
+    {{ deleteDuplicateWords( calculationDetail.commodityName.toUpperCase() + ' ' + calculationDetail.coverageName.toUpperCase()) | uppercase }} 
+    {{ ((calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL') ? "" : "LOSS" }} 
+    CLAIM
   </div>
   <div class="ccc-row-group printout-border" style="border-top: 2px #000; border-style: solid none; padding-left: 5px; padding-right: 5px; padding-top: 0px; margin-top: 0px; margin-bottom: 0px; padding-bottom: 0px;">
     <div class="ccc-row" style="height: 10px !important;">
