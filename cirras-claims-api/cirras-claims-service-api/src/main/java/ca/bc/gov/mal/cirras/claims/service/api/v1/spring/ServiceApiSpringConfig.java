@@ -77,6 +77,8 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationPlantUnitsDao(persistenceSpringConfig.claimCalculationPlantUnitsDao());
 		result.setClaimCalculationPlantAcresDao(persistenceSpringConfig.claimCalculationPlantAcresDao());
 		result.setClaimCalculationGrapesDao(persistenceSpringConfig.claimCalculationGrapesDao());
+		result.setClaimCalculationGrainUnseededDao(persistenceSpringConfig.claimCalculationGrainUnseededDao());
+		result.setClaimCalculationGrainSpotLossDao(persistenceSpringConfig.claimCalculationGrainSpotLossDao());
 		result.setClaimCalculationUserDao(persistenceSpringConfig.claimCalculationUserDao());
 		
 		return result;
@@ -106,6 +108,8 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationPlantUnitsDao(persistenceSpringConfig.claimCalculationPlantUnitsDao());
 		result.setClaimCalculationPlantAcresDao(persistenceSpringConfig.claimCalculationPlantAcresDao());
 		result.setClaimCalculationGrapesDao(persistenceSpringConfig.claimCalculationGrapesDao());
+		result.setClaimCalculationGrainUnseededDao(persistenceSpringConfig.claimCalculationGrainUnseededDao());
+		result.setClaimCalculationGrainSpotLossDao(persistenceSpringConfig.claimCalculationGrainSpotLossDao());
 		result.setClaimCalculationUserDao(persistenceSpringConfig.claimCalculationUserDao());
 		result.setClaimDao(persistenceSpringConfig.claimDao());
 		

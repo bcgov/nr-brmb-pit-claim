@@ -54,10 +54,19 @@ public class ClaimRsrcFactory extends BaseResourceFactory implements ClaimFactor
 			ClaimRsrc resource = new ClaimRsrc();
 			
 			// Check if the claim is supported by the calculator
+			//Grape: Quantity
+			//Berries: All
+			//Grain: Unseeded
 			boolean isClaimSupported = false;
-			if (((dto.getPlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAPES.toString())
+			if ((dto.getPlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAPES.toString())
 					&& dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode()))
-					|| dto.getPlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString()))) {
+					|| dto.getPlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString())
+					|| (dto.getPlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+						&& (dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
+							|| dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+							)
+						)
+				) {
 				isClaimSupported = true;
 			}
 			

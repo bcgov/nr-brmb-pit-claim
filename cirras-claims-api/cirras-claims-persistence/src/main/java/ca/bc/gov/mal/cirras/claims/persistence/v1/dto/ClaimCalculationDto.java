@@ -83,6 +83,8 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	private ClaimCalculationPlantAcresDto claimCalculationPlantAcresDto; 
 	private ClaimCalculationGrapesDto claimCalculationGrapesDto;
 	private List<ClaimCalculationVarietyDto> varieties = new ArrayList<ClaimCalculationVarietyDto>();
+	private ClaimCalculationGrainUnseededDto claimCalculationGrainUnseededDto;
+	private ClaimCalculationGrainSpotLossDto claimCalculationGrainSpotLossDto;
 	
 	public ClaimCalculationDto() {
 	}
@@ -135,9 +137,26 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.updateClaimCalcUserName = dto.updateClaimCalcUserName;
 		this.updateUser = dto.updateUser;
 		this.updateDate = dto.updateDate;
-		this.berries = dto.berries;
-		this.claimCalculationPlantUnitsDto = dto.claimCalculationPlantUnitsDto;
-		this.claimCalculationPlantAcresDto = dto.claimCalculationPlantAcresDto;
+
+		if ( dto.berries != null) {
+			this.berries = dto.berries.copy();
+		}
+		
+		if ( dto.claimCalculationPlantUnitsDto != null) {
+			this.claimCalculationPlantUnitsDto = dto.claimCalculationPlantUnitsDto.copy();
+		}
+		
+		if ( dto.claimCalculationPlantAcresDto != null) {
+			this.claimCalculationPlantAcresDto = dto.claimCalculationPlantAcresDto.copy();
+		}
+		
+		if ( dto.claimCalculationGrainUnseededDto != null) {
+			this.claimCalculationGrainUnseededDto = dto.claimCalculationGrainUnseededDto.copy();
+		}
+		
+		if ( dto.claimCalculationGrapesDto != null) {
+			this.claimCalculationGrapesDto = dto.claimCalculationGrapesDto.copy();
+		}
 		
 		this.varieties = new ArrayList<ClaimCalculationVarietyDto>();
 		
@@ -448,6 +467,22 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 
 	public void setClaimCalculationGrapes(ClaimCalculationGrapesDto claimCalculationGrapesDto) {
 		this.claimCalculationGrapesDto = claimCalculationGrapesDto;
+	}
+	
+	public ClaimCalculationGrainUnseededDto getClaimCalculationGrainUnseeded() {
+		return claimCalculationGrainUnseededDto;
+	}
+
+	public void setClaimCalculationGrainUnseeded(ClaimCalculationGrainUnseededDto claimCalculationGrainUnseededDto) {
+		this.claimCalculationGrainUnseededDto = claimCalculationGrainUnseededDto;
+	}
+	
+	public ClaimCalculationGrainSpotLossDto getClaimCalculationGrainSpotLoss() {
+		return claimCalculationGrainSpotLossDto;
+	}
+
+	public void setClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLossDto claimCalculationGrainSpotLossDto) {
+		this.claimCalculationGrainSpotLossDto = claimCalculationGrainSpotLossDto;
 	}
 	
 	public String getSubmittedByUserid() {
