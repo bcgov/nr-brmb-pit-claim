@@ -21,6 +21,10 @@ public class ClaimCalculationGrainSpotLoss implements Serializable {
 	private Integer deductible;
 
 	// Out of sync flags
+	private Boolean isOutOfSyncInsuredAcres;
+	private Boolean isOutOfSyncCoverageAmtPerAcre;
+	private Boolean isOutOfSyncCoverageValue;
+
 	
 	public String getClaimCalculationGrainSpotLossGuid() {
 		return claimCalculationGrainSpotLossGuid;
@@ -101,4 +105,29 @@ public class ClaimCalculationGrainSpotLoss implements Serializable {
 	public void setDeductible(Integer deductible) {
 		this.deductible = deductible;
 	}
+
+	public Boolean getIsOutOfSyncInsuredAcres() {
+		return isOutOfSyncInsuredAcres;
+	}
+
+	public void setIsOutOfSyncInsuredAcres(Boolean isOutOfSyncInsuredAcres) {
+		this.isOutOfSyncInsuredAcres = isOutOfSyncInsuredAcres;
+	}
+
+	public Boolean getIsOutOfSyncCoverageAmtPerAcre() {
+		return isOutOfSyncCoverageAmtPerAcre;
+	}
+
+	public void setIsOutOfSyncCoverageAmtPerAcre(Boolean isOutOfSyncCoverageAmtPerAcre) {
+		this.isOutOfSyncCoverageAmtPerAcre = isOutOfSyncCoverageAmtPerAcre;
+	}
+
+	public Boolean getIsOutOfSyncCoverageValue() {
+		return isOutOfSyncCoverageValue;
+	}
+
+	public void setIsOutOfSyncCoverageValue(Boolean isOutOfSyncCoverageValue) {
+		this.isOutOfSyncCoverageValue = isOutOfSyncCoverageValue;
+	}
+
 }
