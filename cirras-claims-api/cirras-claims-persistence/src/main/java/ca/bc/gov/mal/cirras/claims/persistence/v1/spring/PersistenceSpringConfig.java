@@ -21,8 +21,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
-import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainSpotLossDao;
-import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantAcresDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantUnitsDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrapesDao;
@@ -39,8 +37,6 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.PerilCodeDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.CalculationStatusCodeDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationDaoImpl;
-import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainSpotLossDaoImpl;
-import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainUnseededDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationPlantAcresDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationPlantUnitsDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrapesDaoImpl;
@@ -154,17 +150,6 @@ public class PersistenceSpringConfig {
 	public ClaimCalculationGrapesDao claimCalculationGrapesDao() { 
 		return new ClaimCalculationGrapesDaoImpl(); 
 	}
-
-	@Bean
-	public ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao() { 
-		return new ClaimCalculationGrainUnseededDaoImpl(); 
-	}
-
-	@Bean
-	public ClaimCalculationGrainSpotLossDao claimCalculationGrainSpotLossDao() { 
-		return new ClaimCalculationGrainSpotLossDaoImpl(); 
-	}
-
 	@Bean
 	public ClaimCalculationUserDao claimCalculationUserDao() { 
 		return new ClaimCalculationUserDaoImpl(); 

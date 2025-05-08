@@ -221,8 +221,6 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       claimCalculationPlantUnits: calculation.claimCalculationPlantUnits,
       claimCalculationPlantAcres: calculation.claimCalculationPlantAcres,
       claimCalculationGrapes: calculation.claimCalculationGrapes,
-      claimCalculationGrainUnseeded: calculation.claimCalculationGrainUnseeded,
-      claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
       varieties: calculation.varieties,
       currentClaimStatusCode: calculation.currentClaimStatusCode
 

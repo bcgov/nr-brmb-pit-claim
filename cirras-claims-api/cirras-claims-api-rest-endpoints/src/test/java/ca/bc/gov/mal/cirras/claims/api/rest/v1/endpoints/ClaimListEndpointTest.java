@@ -118,7 +118,7 @@ public class ClaimListEndpointTest extends EndpointsTest {
 
 		Integer pageNumber = new Integer(0);
 		Integer pageRowCount = new Integer(100);
-		String claimNumber = "33690"; //27633 = not supported; 28168 = has calculations; 28213 = new
+		String claimNumber = "28213"; //27633 = not supported; 28168 = has calculations; 28213 = new
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, null, null, null, null, pageNumber, pageRowCount);
 		
 		Assert.assertNotNull(searchResults);

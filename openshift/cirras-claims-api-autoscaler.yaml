@@ -16,7 +16,13 @@ spec:
       resource:
         name: cpu
         target:
-          averageUtilization: 60
+          averageUtilization: 30
+          type: Utilization
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          averageUtilization: 150
           type: Utilization
   behaviour:
     #scale down only if consistently below value, but scale up if briefly above value
@@ -25,7 +31,7 @@ spec:
         - type: pods
           value: 1
           periodSeconds: 120
-      stabilizationWindow: 120
+      stabilizationWindow: 15
     scaleUp:
       policies:
         - type: pods

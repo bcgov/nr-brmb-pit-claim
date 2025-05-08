@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>ca.bc.gov.mal.pit.claim</groupId>
 		<artifactId>pit-claim-war-parent</artifactId>
-		<version>2.2.0-SNAPSHOT</version>
+		<version>2.0.0</version>
 	</parent>
 	<artifactId>pit-claim-ear</artifactId>
 	<packaging>ear</packaging>
