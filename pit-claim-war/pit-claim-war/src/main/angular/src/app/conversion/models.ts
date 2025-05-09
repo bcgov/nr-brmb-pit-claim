@@ -1,4 +1,4 @@
-import {ClaimCalculationGrapes, ClaimCalculationPlantAcres, ClaimCalculationPlantUnits, ClaimCalculationVariety} from "@cirras/cirras-claims-api";
+import {ClaimCalculationGrainUnseeded, ClaimCalculationGrapes, ClaimCalculationPlantAcres, ClaimCalculationPlantUnits, ClaimCalculationVariety} from "@cirras/cirras-claims-api";
 import { ClaimCalculationBerries } from '@cirras/cirras-claims-api';
 
 export interface PagedCollection {
@@ -133,6 +133,7 @@ export interface vmCalculation {
   claimCalculationPlantUnits?: ClaimCalculationPlantUnits;
   claimCalculationPlantAcres?: ClaimCalculationPlantAcres;
   claimCalculationGrapes?: ClaimCalculationGrapes;
+  claimCalculationGrainUnseeded?: ClaimCalculationGrainUnseeded;
   varieties?:Array<ClaimCalculationVariety>;
 
   currentClaimStatusCode?: string; 

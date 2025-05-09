@@ -92,6 +92,8 @@ import { CalculationsComponent } from "./components/calculations/calculations.co
 import { ClaimsContainer } from "./containers/claims/claims-container.component";
 import { ClaimsComponent } from "./components/claims/claims.component";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { CalculationDetailGrainUnseededComponent } from "./components/calculation-detail/grain-unseeded/grain-unseeded.component";
+import { CalculationPrintoutGrainUnseededComponent } from "./components/calculation-printout/grain-unseeded/grain-unseeded.component";
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.
  * Used by the Swagger CodeGen Rest API angular services.
@@ -148,6 +150,8 @@ if (!environment.production || !environment.restrict_imports) {
         CalculationPrintoutBlueberriesPlantComponent,
         CalculationDetailStrawberriesPlantComponent,
         CalculationPrintoutStrawberriesPlantComponent,
+        CalculationDetailGrainUnseededComponent,
+        CalculationPrintoutGrainUnseededComponent,
         CalculationPrintoutLogoComponent,
         CalculationPrintoutHeaderComponent,
         CalculationPrintoutFooterComponent,
