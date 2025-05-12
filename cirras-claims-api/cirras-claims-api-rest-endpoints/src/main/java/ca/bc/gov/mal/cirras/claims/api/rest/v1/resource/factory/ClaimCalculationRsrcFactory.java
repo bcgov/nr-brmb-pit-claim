@@ -156,16 +156,16 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 			}
 		}
 		
-		// Add a grain unseeded object if the insurance plan is grain and coverage is unseeded
-		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
-			resource.setClaimCalculationGrainUnseeded(createClaimCalculationGrainUnseededFromClaim(productRsrc));
-		}
-
-		// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
-		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-				&& claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
-			resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLossFromClaim(productRsrc));
+		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())) {
+			// Add a grain unseeded object if the insurance plan is grain and coverage is unseeded
+			if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				resource.setClaimCalculationGrainUnseeded(createClaimCalculationGrainUnseededFromClaim(productRsrc));
+			}
+			
+			// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
+			if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+				resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLossFromClaim(productRsrc));
+			}
 		}
 
 		String eTag = getEtag(resource);
@@ -519,6 +519,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 					createClaimCalculationGrainUnseededFromCalculation(claimCalculation.getClaimCalculationGrainUnseeded()));
 		}
 		
+		// Copy grain spot loss data
+		if (claimCalculation.getClaimCalculationGrainSpotLoss() != null) {
+			resource.setClaimCalculationGrainSpotLoss(
+					createClaimCalculationGrainSpotLossFromCalculation(claimCalculation.getClaimCalculationGrainSpotLoss()));
+		}
+		
 		String eTag = getEtag(resource);
 		resource.setETag(eTag);
 
@@ -721,6 +727,23 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		// model.setCoverageValue(claimCalcGrainUnseeded.getCoverageValue());
 		// model.setEligibleUnseededAcres(claimCalcGrainUnseeded.getEligibleUnseededAcres());
 
+		return model;
+	}
+
+	private ClaimCalculationGrainSpotLoss createClaimCalculationGrainSpotLossFromCalculation(ClaimCalculationGrainSpotLoss claimCalcGrainSpotLoss) {
+		ClaimCalculationGrainSpotLoss model = new ClaimCalculationGrainSpotLoss();
+
+		model.setClaimCalculationGrainSpotLossGuid(claimCalcGrainSpotLoss.getClaimCalculationGrainSpotLossGuid());
+		model.setClaimCalculationGuid(claimCalcGrainSpotLoss.getClaimCalculationGuid());
+		model.setInsuredAcres(claimCalcGrainSpotLoss.getInsuredAcres());
+		model.setCoverageAmtPerAcre(claimCalcGrainSpotLoss.getCoverageAmtPerAcre());
+		model.setCoverageValue(claimCalcGrainSpotLoss.getCoverageValue());
+		model.setAdjustedAcres(claimCalcGrainSpotLoss.getAdjustedAcres());
+		model.setPercentYieldReduction(claimCalcGrainSpotLoss.getPercentYieldReduction());
+		model.setEligibleYieldReduction(claimCalcGrainSpotLoss.getEligibleYieldReduction());
+		model.setSpotLossReductionValue(claimCalcGrainSpotLoss.getSpotLossReductionValue());
+		model.setDeductible(claimCalcGrainSpotLoss.getDeductible());
+		
 		return model;
 	}
 	
