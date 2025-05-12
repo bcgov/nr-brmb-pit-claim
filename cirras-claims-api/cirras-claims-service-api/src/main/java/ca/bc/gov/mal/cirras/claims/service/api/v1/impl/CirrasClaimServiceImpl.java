@@ -1006,7 +1006,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			ProductRsrc policyProductRsrc = null;
 
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-					&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+					&& (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
+							|| policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+						)
+				) {
 					
 				ProductListRsrc productListRsrc = getCirrasClaimProducts(
 						policyClaimRsrc.getInsurancePolicyId().toString(), 
