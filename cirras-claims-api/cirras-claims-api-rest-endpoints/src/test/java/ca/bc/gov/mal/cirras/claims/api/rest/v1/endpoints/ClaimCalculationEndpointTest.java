@@ -2461,6 +2461,96 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		logger.debug(">testGrainSpotLossClaimCalculationRefresh");
 	}	
 	
+
+	@Test
+	public void testGrainSpotLossClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainSpotLossClaimCalculationReplace");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		// Needs to be manually set to a real, valid GRAIN Spot Loss claim in CIRRAS db with no existing calculations.
+		String testClaimNumber = "37178"; 
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		replaceClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc calculationToUpdate = service.getClaim(claim);
+		calculationToUpdate = service.createClaimCalculation(calculationToUpdate);
+		
+		replaceClaimCalculationGuid1 = calculationToUpdate.getClaimCalculationGuid();
+		
+		//Original values
+		Double originalInsuredAcres = calculationToUpdate.getClaimCalculationGrainSpotLoss().getInsuredAcres();
+		Double originalCoverageAmtPerAcre = calculationToUpdate.getClaimCalculationGrainSpotLoss().getCoverageAmtPerAcre();
+		Double originalCoverageValue = calculationToUpdate.getClaimCalculationGrainSpotLoss().getCoverageValue();
+		
+		//Update values for pulled in data to test if replacing NEW and COPY works correctly
+		Double updatedInsuredAcres = originalInsuredAcres - 10;
+		Double updatedCoverageAmtPerAcre = originalCoverageAmtPerAcre + 10;
+		Double updatedCoverageValue = originalCoverageValue + 1000;
+		
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate.getClaimCalculationGrainSpotLoss().setInsuredAcres(updatedInsuredAcres);
+		calculationToUpdate.getClaimCalculationGrainSpotLoss().setCoverageAmtPerAcre(updatedCoverageAmtPerAcre);
+		calculationToUpdate.getClaimCalculationGrainSpotLoss().setCoverageValue(updatedCoverageValue);
+		
+		//Saving updated values
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		//NEW
+		//Update calculation
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		replaceClaimCalculationGuid2 = newCalculation.getClaimCalculationGuid();
+		
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("New Insured Acres not consistent", originalInsuredAcres, newCalculation.getClaimCalculationGrainSpotLoss().getInsuredAcres());
+		Assert.assertEquals("New Coverage Amount not correct", originalCoverageAmtPerAcre, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageAmtPerAcre());
+		Assert.assertEquals("New Coverage Value not correct", originalCoverageValue, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
+		
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+		
+		//COPY
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		replaceClaimCalculationGuid3 = newCalculation.getClaimCalculationGuid();
+		
+		
+		//Check if newCalculation contains the updated values from the replaced one
+		Assert.assertEquals("Copy Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("Copy Insured Acres not consistent", updatedInsuredAcres, newCalculation.getClaimCalculationGrainSpotLoss().getInsuredAcres());
+		Assert.assertEquals("Copy Coverage Amount not correct", updatedCoverageAmtPerAcre, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageAmtPerAcre());
+		Assert.assertEquals("Copy Coverage Value not correct", updatedCoverageValue, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
+		
+		//Delete - Clean up
+		service.deleteClaimCalculation(newCalculation);
+		
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate);
+
+		logger.debug(">testGrainSpotLossClaimCalculationReplace");
+	}
 	
 	private boolean isInteger(double number) {
 	    return number % 1 == 0;// if the modulus(remainder of the division) of the argument(number) with 1 is 0 then return true otherwise false.
