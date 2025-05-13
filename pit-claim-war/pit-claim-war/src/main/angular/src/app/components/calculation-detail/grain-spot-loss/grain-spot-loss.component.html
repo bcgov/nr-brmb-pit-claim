@@ -77,9 +77,9 @@
               </div>
               <div class="ccc-right"> 
                  {{ calculationDetail.claimCalculationGrainSpotLoss.insuredAcres | number:'1.2-2' }}
-                 <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainSpotLoss.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                 <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainSpotLoss.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                   <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                </span> -->
+                </span>
               </div>
     
               <div>
@@ -88,9 +88,9 @@
               <div class="ccc-border-right"></div>
               <div class="ccc-right"> 
                   {{ calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre | currency }}
-                  <!-- <span #el matTooltip="Coverage Dollars per Acre doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainSpotLoss.isOutOfSyncCoverageAmtPerAcre" style="margin-left: 10px;">
+                  <span #el matTooltip="Coverage Dollars per Acre doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainSpotLoss.isOutOfSyncCoverageAmtPerAcre" style="margin-left: 10px;">
                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                 </span> -->
+                 </span>
                </div>
   
              <div>
@@ -99,9 +99,9 @@
              <div class="ccc-border-right"></div>
              <div class="ccc-right"> 
                   {{ calculationDetail.claimCalculationGrainSpotLoss.coverageValue | currency }}
-                  <!-- <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainSpotLoss.isOutOfSyncCoverageValue" style="margin-left: 10px;">
+                  <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainSpotLoss.isOutOfSyncCoverageValue" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                  </span> -->
+                  </span>
              </div>
           </div>
         </div>
