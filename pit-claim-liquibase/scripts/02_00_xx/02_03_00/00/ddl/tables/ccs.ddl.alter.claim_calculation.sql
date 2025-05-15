@@ -9,3 +9,7 @@ ALTER TABLE CCS.CLAIM_CALCULATION ADD CONSTRAINT FK_CCGQ_CC
     FOREIGN KEY (claim_calc_grain_quantity_guid)
     REFERENCES CCS.CLAIM_CALCULATION_GRAIN_QUANTITY(claim_calc_grain_quantity_guid)
 ;
+
+CREATE INDEX IX_CC_GQ ON CCS.CLAIM_CALCULATION(claim_calc_grain_quantity_guid)
+ TABLESPACE pg_default
+;

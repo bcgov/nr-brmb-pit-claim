@@ -4,8 +4,9 @@ CREATE TABLE CCS.CLAIM_CALCULATION_GRAIN_QUANTITY(
     production_guarantee_amount       numeric(14, 4)    NOT NULL,
     total_yield_loss_value            numeric(14, 4)    NOT NULL,
     reseed_claim                      numeric(14, 4),
-    max_claim_payable                 numeric(14, 4),
+    max_claim_payable                 numeric(14, 4)    NOT NULL,
     advanced_claim                    numeric(14, 4),
+    quantity_loss_claim               numeric(14, 4)    NOT NULL,
     revision_count                    numeric(10, 0)    NOT NULL,
     create_user                       varchar(64)       NOT NULL,
     create_date                       timestamp(0)      NOT NULL,
@@ -29,6 +30,8 @@ COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_QUANTITY.reseed_claim IS 'Reseed C
 COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_QUANTITY.max_claim_payable IS 'Max Claim Payable is calculated as: Total Pedigreed and Non-Pedigreed Seeds Coverage Value - Reseed Claim'
 ;
 COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_QUANTITY.advanced_claim IS 'Advanced Claim is user entered'
+;
+COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_QUANTITY.quantity_loss_claim IS 'Quantity Loss Claim is calculated as: lesser of Maximum Claim Payable or Total Quantity Loss'
 ;
 COMMENT ON COLUMN CCS.CLAIM_CALCULATION_GRAIN_QUANTITY.revision_count IS 'Revision Count is the number of updates of the record'
 ;

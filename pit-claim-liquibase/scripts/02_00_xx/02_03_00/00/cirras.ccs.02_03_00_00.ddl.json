@@ -2,6 +2,7 @@
 {
     "databaseChangeLog": [
 		{ "changeSet": {"author":"mhostettler","id":"5","changes": [
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.crop_commodity_pedigree_xref.sql"}},
 			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.claim_calculation_grain_quantity.sql"}},
 			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.claim_calculation_grain_quantity_detail.sql"}},
 			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.alter.claim_calculation.sql"}},

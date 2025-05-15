@@ -1,0 +1,6 @@
+
+{
+  "databaseChangeLog": [
+{ "changeSet": {"author":"mhostettler","id":"6","changes": [
+  {"sqlFile": {"relativeToChangelogFile": "true", "path": "dml/ccs.insert.crop_commodity_pedigree_xref.sql"}}
+  ] } }]}
