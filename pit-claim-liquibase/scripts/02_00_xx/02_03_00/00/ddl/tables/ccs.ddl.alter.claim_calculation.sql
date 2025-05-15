@@ -1,6 +1,6 @@
 
 ALTER TABLE CCS.CLAIM_CALCULATION
-ADD claim_calc_grain_quantity_guid varchar(32) NOT NULL;
+ADD claim_calc_grain_quantity_guid varchar(32) NULL;
 
 COMMENT ON COLUMN CCS.CLAIM_CALCULATION.claim_calc_grain_quantity_guid IS 'Claim Calculation Grain Quantity Guid is a unique key of the record'
 ;
