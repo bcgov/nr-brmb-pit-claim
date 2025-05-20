@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDetailDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainSpotLossDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantAcresDao;
@@ -41,6 +42,7 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.CalculationStatusCodeDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainQuantityDaoImpl;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainQuantityDetailDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainSpotLossDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainUnseededDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationPlantAcresDaoImpl;
@@ -170,6 +172,11 @@ public class PersistenceSpringConfig {
 	@Bean
 	public ClaimCalculationGrainQuantityDao claimCalculationGrainQuantityDao() { 
 		return new ClaimCalculationGrainQuantityDaoImpl();
+	}
+
+	@Bean
+	public ClaimCalculationGrainQuantityDetailDao claimCalculationGrainQuantityDetailDao() { 
+		return new ClaimCalculationGrainQuantityDetailDaoImpl();
 	}
 	
 	@Bean
