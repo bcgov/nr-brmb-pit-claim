@@ -18,6 +18,10 @@
     display: none !important;
   }
 
+  calculation-printout-grain-unseeded {
+    display: none !important;
+  }
+
 }
 
 
@@ -89,6 +93,13 @@
     display: none !important;
   }
 
+  calculation-detail-grain-unseeded {
+    display: none !important;
+  }
+
+  calculation-printout-grain-unseeded  {
+    display: block !important;
+  }
 
   #core-interface-container mat-sidenav-container mat-sidenav-content {
     top: 0px !important;
