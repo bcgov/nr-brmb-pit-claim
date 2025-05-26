@@ -107,10 +107,6 @@
 		DELETE FROM claim_calculation_grain_quantity WHERE claim_calc_grain_quantity_guid = #{claimCalculationGrainQuantityGuid}
 	</delete>
 	
-	<delete id="deleteForClaim">
-		DELETE FROM claim_calculation_grain_quantity t WHERE t.claim_calc_grain_quantity_guid IN (SELECT cc.claim_calc_grain_quantity_guid FROM claim_calculation cc where cc.claim_calculation_guid = #{claimCalculationGuid})
-	</delete>
-
 	<select id="selectAll" resultMap="ClaimCalculationGrainQuantityDtoMap">
 		<include refid="selectColumns"/>
 		FROM claim_calculation_grain_quantity t

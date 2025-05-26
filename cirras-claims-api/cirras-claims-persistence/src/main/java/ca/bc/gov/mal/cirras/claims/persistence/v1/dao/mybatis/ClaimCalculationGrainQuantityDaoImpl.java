@@ -139,25 +139,7 @@ public class ClaimCalculationGrainQuantityDaoImpl extends BaseDao implements Cla
 
 		logger.debug(">delete");
 	}
-	
-	
-	@Override
-	public void deleteForClaim(String claimCalculationGuid) throws DaoException {
-		logger.debug("<deleteForClaim");
 
-		try {
-
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("claimCalculationGuid", claimCalculationGuid);
-			this.mapper.deleteForClaim(parameters);
-			
-		} catch (RuntimeException e) {
-			handleException(e);
-		}
-
-		logger.debug(">deleteForClaim");
-	}
-	
 	public List<ClaimCalculationGrainQuantityDto> selectAll() throws DaoException {
 		List<ClaimCalculationGrainQuantityDto> dtos = null;
 

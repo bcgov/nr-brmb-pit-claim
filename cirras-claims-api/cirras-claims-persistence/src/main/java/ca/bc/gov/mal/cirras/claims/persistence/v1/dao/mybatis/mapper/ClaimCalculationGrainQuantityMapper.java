@@ -15,8 +15,6 @@ public interface ClaimCalculationGrainQuantityMapper {
     
     int delete(Map<String, Object> parameters);
     
-    int deleteForClaim(Map<String, Object> parameters);
-    
     ClaimCalculationGrainQuantityDto select(Map<String, Object> parameters);
 
     List<ClaimCalculationGrainQuantityDto> selectAll();	

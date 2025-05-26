@@ -18,9 +18,7 @@ public interface ClaimCalculationGrainQuantityDao extends Serializable {
     void update(ClaimCalculationGrainQuantityDto dto, String userId) throws DaoException, NotFoundDaoException;
     
     void delete(String claimCalculationGrainQuantityGuid) throws DaoException, NotFoundDaoException;
-    
-    void deleteForClaim(String claimCalculationGuid) throws DaoException;
-    
+        
     ClaimCalculationGrainQuantityDto select(String claimCalculationGuid) throws DaoException;
 
     List<ClaimCalculationGrainQuantityDto> selectAll() throws DaoException;
