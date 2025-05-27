@@ -25,6 +25,8 @@ import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrapes;
@@ -163,9 +165,16 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 			}
 			
 			// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
-			if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
+			else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
 				resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLossFromClaim(productRsrc));
 			}
+
+			// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
+			else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				resource.setClaimCalculationGrainQuantity(createClaimCalculationGrainQuantityFromClaim(productRsrc)); // TODO: Use existing if available.
+				resource.setClaimCalculationGrainQuantityDetail(createClaimCalculationGrainQuantityDetailFromClaim(productRsrc));
+			}
+		
 		}
 
 		String eTag = getEtag(resource);
@@ -358,6 +367,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setCoverageName(claim.getCoverageName());
 		resource.setCommodityCoverageCode(claim.getCommodityCoverageCode());
 		resource.setCommodityName(claim.getCommodityName());
+		resource.setIsPedigreeInd(null); // TODO
 		resource.setCropCommodityId(claim.getCropCommodityId());
 		resource.setClaimStatusCode(claim.getClaimStatusCode());
 		resource.setClaimType(claim.getClaimType());
@@ -381,6 +391,10 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setApprovedByDate(claim.getApprovedByDate());
 		resource.setCalculateIivInd(claim.getCalculateIivInd());
 		resource.setHasChequeReqInd(claim.getHasChequeReqInd());
+		resource.setClaimCalculationGrainQuantityGuid(null); // TODO
+		resource.setLinkedProductId(null); // TODO
+		resource.setLinkedClaimNumber(null); // TODO
+		resource.setLinkedClaimCalculationGuid(null); // TODO
 
 	}
 
@@ -468,6 +482,46 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		return model;
 	}
+
+	private ClaimCalculationGrainQuantity createClaimCalculationGrainQuantityFromClaim(ProductRsrc productRsrc) {
+		ClaimCalculationGrainQuantity model = new ClaimCalculationGrainQuantity();
+
+		// TODO
+		model.setAdvancedClaim(null);
+		model.setMaxClaimPayable(null);
+		model.setProductionGuaranteeAmount(null);
+		model.setQuantityLossClaim(null);
+		model.setReseedClaim(null);
+		model.setTotalCoverageValue(null);
+		model.setTotalYieldLossValue(null);
+		
+		return model;
+	}
+
+	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetailFromClaim(ProductRsrc productRsrc) {
+		ClaimCalculationGrainQuantityDetail model = new ClaimCalculationGrainQuantityDetail();
+
+		// TODO
+		model.setAssessedYield(null);
+		model.setCalcEarlyEstYield(null);
+		model.setCoverageValue(null);
+		model.setDamagedAcres(null);
+		model.setDeductible(null);
+		model.setEarlyEstDeemedYieldValue(null);
+		model.setFiftyPercentProductionGuarantee(null);
+		model.setInspEarlyEstYield(null);
+		model.setInsurableValue(null);
+		model.setInsuredAcres(null);
+		model.setProbableYield(null);
+		model.setProductionGuaranteeWeight(null);
+		model.setSeededAcres(null);
+		model.setTotalYieldToCount(null);
+		model.setYieldValue(null);
+		model.setYieldValueWithEarlyEstDeemedYield(null);
+
+		return model;
+	}
+	
 	
 	@Override
 	public ClaimCalculation getCalculationFromCalculation(ClaimCalculation claimCalculation, FactoryContext context,
