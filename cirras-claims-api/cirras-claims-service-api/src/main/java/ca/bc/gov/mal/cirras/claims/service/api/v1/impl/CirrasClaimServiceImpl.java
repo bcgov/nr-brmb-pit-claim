@@ -72,6 +72,7 @@ import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ClaimCalculationSubmit
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
+import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingService;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.CirrasDataSyncService;
 
 
@@ -106,8 +107,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 	// services
 	private CirrasPolicyService cirrasPolicyService;
+	private CirrasUnderwritingService cirrasUnderwritingService;
 
-	// TODO: Add CirrasVerifiedYieldService
 	
 	//@Autowired
 	private CirrasDataSyncService cirrasDataSyncService;
@@ -124,7 +125,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		this.cirrasPolicyService = cirrasPolicyService;
 	}
 
-	// TODO: Add CirrasVerifiedYieldService
+	public void setCirrasUnderwritingService(CirrasUnderwritingService cirrasUnderwritingService) {
+		this.cirrasUnderwritingService = cirrasUnderwritingService;
+	}
 	
 	public void setCirrasDataSyncService(CirrasDataSyncService cirrasDataSyncService) {
 		this.cirrasDataSyncService = cirrasDataSyncService;
@@ -549,7 +552,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			// Get Subtable Records
 			getSubTableRecords(claimCalculationGuid, dto);
 
-			// TODO
 			result = claimCalculationFactory.getClaimCalculation(dto, factoryContext, authentication);
 
 			String claimNumber = result.getClaimNumber().toString();

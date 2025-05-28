@@ -38,6 +38,8 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDetailDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainSpotLossDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainUnseededDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
@@ -100,6 +102,16 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 			resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLoss(dto.getClaimCalculationGrainSpotLoss()));
 		}
 
+		//Add grain quantity
+		if(dto.getClaimCalculationGrainQuantity() != null) {
+			resource.setClaimCalculationGrainQuantity(createClaimCalculationGrainQuantity(dto.getClaimCalculationGrainQuantity()));
+		}
+
+		//Add grain quantity detail
+		if(dto.getClaimCalculationGrainQuantityDetail() != null) {
+			resource.setClaimCalculationGrainQuantityDetail(createClaimCalculationGrainQuantityDetail(dto.getClaimCalculationGrainQuantityDetail()));
+		}
+		
 		String eTag = getEtag(resource);
 		resource.setETag(eTag);
 
@@ -1320,6 +1332,45 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		return model;
 	}
 
+	private ClaimCalculationGrainQuantity createClaimCalculationGrainQuantity(ClaimCalculationGrainQuantityDto dto) {
+		ClaimCalculationGrainQuantity model = new ClaimCalculationGrainQuantity();
+
+		model.setClaimCalculationGrainQuantityGuid(dto.getClaimCalculationGrainQuantityGuid());
+		model.setAdvancedClaim(dto.getAdvancedClaim());
+		model.setMaxClaimPayable(dto.getMaxClaimPayable());
+		model.setProductionGuaranteeAmount(dto.getProductionGuaranteeAmount());
+		model.setQuantityLossClaim(dto.getQuantityLossClaim());
+		model.setReseedClaim(dto.getReseedClaim());
+		model.setTotalCoverageValue(dto.getTotalCoverageValue());
+		model.setTotalYieldLossValue(dto.getTotalYieldLossValue());
+		
+		return model;
+	}
+
+	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetail(ClaimCalculationGrainQuantityDetailDto dto) {
+		ClaimCalculationGrainQuantityDetail model = new ClaimCalculationGrainQuantityDetail();
+
+		model.setClaimCalculationGrainQuantityDetailGuid(dto.getClaimCalculationGrainQuantityDetailGuid());
+		model.setClaimCalculationGuid(dto.getClaimCalculationGuid());
+		model.setAssessedYield(dto.getAssessedYield());
+		model.setCalcEarlyEstYield(dto.getCalcEarlyEstYield());
+		model.setCoverageValue(dto.getCoverageValue());
+		model.setDamagedAcres(dto.getDamagedAcres());
+		model.setDeductible(dto.getDeductible());
+		model.setEarlyEstDeemedYieldValue(dto.getEarlyEstDeemedYieldValue());
+		model.setFiftyPercentProductionGuarantee(dto.getFiftyPercentProductionGuarantee());
+		model.setInspEarlyEstYield(dto.getInspEarlyEstYield());
+		model.setInsurableValue(dto.getInsurableValue());
+		model.setInsuredAcres(dto.getInsuredAcres());
+		model.setProbableYield(dto.getProbableYield());
+		model.setProductionGuaranteeWeight(dto.getProductionGuaranteeWeight());
+		model.setSeededAcres(dto.getSeededAcres());
+		model.setTotalYieldToCount(dto.getTotalYieldToCount());
+		model.setYieldValue(dto.getYieldValue());
+		model.setYieldValueWithEarlyEstDeemedYield(dto.getYieldValueWithEarlyEstDeemedYield());
+
+		return model;
+	}
 	
 	private void populateResource(ClaimCalculationRsrc resource, ClaimCalculationDto dto) {
 
@@ -1343,6 +1394,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setCoverageName(dto.getCoverageName());
 		resource.setCropCommodityId(dto.getCropCommodityId());
 		resource.setCommodityName(dto.getCommodityName());
+		resource.setIsPedigreeInd(dto.getIsPedigreeInd());
 		resource.setPrimaryPerilCode(dto.getPrimaryPerilCode());
 		resource.setSecondaryPerilCode(dto.getSecondaryPerilCode());
 		resource.setClaimStatusCode(dto.getClaimStatusCode());
@@ -1369,6 +1421,10 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setInsuredByMeasurementType(dto.getInsuredByMeasurementType());
 		resource.setPolicyNumber(dto.getPolicyNumber());
 		resource.setHasChequeReqInd(dto.getHasChequeReqInd());
+		resource.setClaimCalculationGrainQuantityGuid(dto.getClaimCalculationGrainQuantityGuid());
+		resource.setLinkedProductId(null); // TODO
+		resource.setLinkedClaimNumber(null); // TODO
+		resource.setLinkedClaimCalculationGuid(null); // TODO
 
 	}
 
