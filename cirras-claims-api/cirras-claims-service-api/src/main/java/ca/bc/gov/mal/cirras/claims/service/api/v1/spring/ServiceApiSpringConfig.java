@@ -45,7 +45,7 @@ public class ServiceApiSpringConfig {
 	@Autowired ResourceBundleMessageSource messageSource;
 	@Autowired Properties applicationProperties;
 	@Autowired CirrasPolicyService cirrasPolicyService;
-	/* TODO: @Autowired */ CirrasUnderwritingService cirrasUnderwritingService;
+	@Autowired CirrasUnderwritingService cirrasUnderwritingService;
 	@Autowired CirrasDataSyncFactory cirrasDataSyncFactory; 
 	
 	
@@ -116,6 +116,7 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationGrainQuantityDetailDao(persistenceSpringConfig.claimCalculationGrainQuantityDetailDao());
 		result.setClaimCalculationUserDao(persistenceSpringConfig.claimCalculationUserDao());
 		result.setClaimDao(persistenceSpringConfig.claimDao());
+		result.setCropCommodityDao(persistenceSpringConfig.cropCommodityDao());
 		
 		result.setCirrasPolicyService(cirrasPolicyService);
 		result.setCirrasUnderwritingService(cirrasUnderwritingService);
