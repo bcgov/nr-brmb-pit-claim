@@ -226,12 +226,12 @@
                               </span>     
                           
                         </div>
-                        <div class="ccc-border-right ccc-fill ccc-number">
+                        <div class="ccc-border-right ccc-fill ccc-number" style="min-width:90px; width: 100%;">
                             <mat-form-field appearance="fill">
                                 <input matInput formControlName="yieldActual" (keypress)="numberOnly($event)" maxlength="12">
                             </mat-form-field>
                         </div>
-                        <div class="ccc-border-right ccc-fill ccc-number">
+                        <div class="ccc-border-right ccc-fill ccc-number" style="min-width:90px; width: 100%;">
                             <mat-form-field appearance="fill">
                                 <input matInput formControlName="yieldAssessed" (keypress)="numberOnly($event)" maxlength="10">
                             </mat-form-field>
@@ -251,7 +251,7 @@
                           </span>                 
                         </div>                        
                         
-                        <div class="ccc-border-right ccc-fill"  *ngIf="isWineGrape()">
+                        <div class="ccc-border-right ccc-fill"  *ngIf="isWineGrape()" style="min-width:90px; width: 100%;">
                           <mat-form-field appearance="fill">
                             <input matInput formControlName="averagePriceOverride" (keypress)="numberOnly($event)" maxlength="10">
                           </mat-form-field> 
@@ -260,7 +260,7 @@
                         <div class="ccc-border-right ccc-justify-right ">
                             {{ v.value.insurableValue | number:'1.4-4' }}
                         </div>
-                        <div class="ccc-number">                            
+                        <div class="ccc-number" style="min-width:90px; width: 100%;">                            
                             <mat-form-field appearance="fill">
                               <input matInput formControlName="varietyProductionValue" readonly>
                             </mat-form-field>
