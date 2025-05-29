@@ -42,6 +42,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 import {
   displaySaveSuccessSnackbar,
+  displaySuccessSnackbar,
 } from "../../utils/user-feedback-utils";
 import {vmCalculation} from "../../conversion/models";
 import {
@@ -149,7 +150,12 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
                   "response")
                 .pipe(
                     concatMap((response: any) => {
-                      displaySaveSuccessSnackbar(this.snackbarService, displayLabel);
+                      if (updateType == CALCULATION_UPDATE_TYPE.SUBMIT) {
+                        displayLabel = " Calculation was submitted successfully "
+                      } else {
+                        displayLabel = " Calculation was saved successfully "
+                      }
+                      displaySuccessSnackbar(this.snackbarService, displayLabel);
                         return [                            
                             updateCalculationDetailMetadataSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null))
                         ]
