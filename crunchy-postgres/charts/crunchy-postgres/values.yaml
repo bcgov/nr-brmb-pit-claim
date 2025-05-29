@@ -5,6 +5,8 @@ crunchyImage: # it's not necessary to specify an image as the images specified i
 postgresVersion: 15
 #postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
 imagePullPolicy: IfNotPresent
+#Set this to true for OpenShift deployments to avoid incompatible securityContext values
+openshift: true
 
 instances:
   name: ha # high availability
@@ -55,15 +57,15 @@ pgBackRest:
       differential: 0 8 * * 1-6
       incremental: 0 0,4,12,16,20 * * *
     schedulesOffset:
-      full: 0 10 * 12 0
-      differential: 0 10 * 12 1-6
-      incremental: 0 2,6,14,18,22 * 12 *
+      full: 0 10 * * 0
+      differential: 0 10 * * 1-6
+      incremental: 0 2,6,14,18,22 * * *
     volume:
       accessModes: "ReadWriteOnce"
       storageClassName: netapp-file-backup
       storage: #{DB_BACKUP_VOLUME_SIZE}#
     configuration:
-      secretName: "dev-postgres-s3-secret"
+      secretName: "#{S3_ENVIRONMENT}#-postgres-s3-secret"
     s3:
       bucket: "pit#{S3_ENVIRONMENT}#"
       endpoint: "nrs.objectstore.gov.bc.ca"
