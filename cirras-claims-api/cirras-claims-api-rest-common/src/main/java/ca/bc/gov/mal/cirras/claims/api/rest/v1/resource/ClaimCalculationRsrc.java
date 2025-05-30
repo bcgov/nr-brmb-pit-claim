@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrapes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantAcres;
@@ -107,6 +108,7 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private ClaimCalculationPlantAcres claimCalculationPlantAcres;
 	private ClaimCalculationGrapes claimCalculationGrapes;
 	private ClaimCalculationGrainUnseeded claimCalculationGrainUnseeded;
+	private ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss;
 	
 	private List<ClaimCalculationVariety> varieties = new ArrayList<ClaimCalculationVariety>();	
 	
@@ -381,6 +383,14 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 
 	public void setClaimCalculationGrainUnseeded(ClaimCalculationGrainUnseeded claimCalculationGrainUnseeded) {
 		this.claimCalculationGrainUnseeded = claimCalculationGrainUnseeded;
+	}
+
+	public ClaimCalculationGrainSpotLoss getClaimCalculationGrainSpotLoss() {
+		return claimCalculationGrainSpotLoss;
+	}
+
+	public void setClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss) {
+		this.claimCalculationGrainSpotLoss = claimCalculationGrainSpotLoss;
 	}
 	
 	public String getSubmittedByUserid() {

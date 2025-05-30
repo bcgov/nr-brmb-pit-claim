@@ -97,7 +97,7 @@
 			#{dto.unseededAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
 			#{dto.lessAssessmentAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
 			#{dto.eligibleUnseededAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
-			#{dto.revisionCount, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			1,
 			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
 			now(),
 			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
