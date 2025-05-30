@@ -75,6 +75,9 @@ import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingService;
+import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingServiceException;
+import ca.bc.gov.mal.cirras.underwriting.api.rest.v1.resource.VerifiedYieldContractSimpleRsrc;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.CirrasDataSyncService;
 
 
@@ -286,19 +289,17 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			}
 			
 
-			// TODO: Add VerifiedYield.
 			CropCommodityDto crpDto = null;
 			ProductRsrc productRsrc = null;
-			ProductRsrc linkedProductRsrc = null;
-			ClaimDto linkedClaimDto = null;
-			ClaimCalculationDto linkedClaimCalcDto = null;
+			ProductListRsrc productListRsrc = null;
+			VerifiedYieldContractSimpleRsrc verifiedYieldRsrc = null;
 			
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())) {
 			
 				if (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
 					  || policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
 	
-					ProductListRsrc productListRsrc = getCirrasClaimProducts(
+					productListRsrc = getCirrasClaimProducts(
 															policyClaimRsrc.getInsurancePolicyId().toString(), 
 															true,
 															policyClaimRsrc.getPurchaseId().toString(),
@@ -312,13 +313,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	
 				else if (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 	
-					ProductListRsrc productListRsrc = getCirrasClaimProducts(
+					productListRsrc = getCirrasClaimProducts(
 															policyClaimRsrc.getInsurancePolicyId().toString(), 
 															true,
 															null,
 															ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode()); // TODO: Check code.
 					if (productListRsrc != null) {
-						productRsrc = getByProductId(productListRsrc, policyClaimRsrc.getPurchaseId());
+						productRsrc = getProductById(productListRsrc, policyClaimRsrc.getPurchaseId());
 					}
 					
 					if ( productRsrc == null ) { 
@@ -331,24 +332,15 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 						throw new NotFoundException("no commodity found for " + claimNumber);
 					}
 					
-					CropCommodityDto linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(policyClaimRsrc.getCropCommodityId());
-					
-					if ( linkedCrpDto != null ) {
-						linkedProductRsrc = getByCommodityAndCoverage(productListRsrc, linkedCrpDto.getCropCommodityId(), ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode());
-						
-						if ( linkedProductRsrc != null ) {
-							linkedClaimDto = claimDao.selectByProductId(linkedProductRsrc.getProductId());
-							
-							// TODO
-						}
+					verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, false, true, true, false);
+					if (verifiedYieldRsrc == null ) {
+						throw new NotFoundException("no verified yield found for " + claimNumber);
 					}
 				}
 			}
 			
 			// Convert InsuranceClaimRsrc to ClaimCalculation
-			// TODO: Add VerifiedYield
-			// TODO: Add linked product, claim, calc.
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, context, authentication);
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, productRsrc, crpDto, verifiedYieldRsrc, context, authentication);
 
 			result.setCalculationVersion(nextVersionNumber);
 			result.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
@@ -357,8 +349,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			// Calculate variety iv
 			calculateVarietyInsurableValues(result);
 
+			// Set fields from linked calculation, if any.
+			updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, true);
+
 		} catch (CirrasPolicyServiceException e) {
 			throw new ServiceException("Policy service threw an exception (CirrasPolicyServiceException)", e);
+		} catch (CirrasUnderwritingServiceException e) {
+			throw new ServiceException("Underwriting service threw an exception (CirrasUnderwritingServiceException)", e);
 		} catch (TooManyRecordsException e) {
 			throw new ServiceException("DAO threw an exception (TooManyRecordsException)", e);
 		} catch (DaoException e) {
@@ -749,6 +746,28 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 	}
 
+	private VerifiedYieldContractSimpleRsrc getUnderwritingVerifiedYield(
+			InsuranceClaimRsrc policyClaimRsrc,
+			CropCommodityDto crpDto,
+			Boolean loadVerifiedYieldContractCommodities, 
+			Boolean loadVerifiedYieldAmendments,
+			Boolean loadVerifiedYieldSummaries,
+			Boolean loadVerifiedYieldGrainBasket
+	) throws CirrasUnderwritingServiceException {
+
+		ca.bc.gov.mal.cirras.underwriting.api.rest.v1.resource.EndpointsRsrc uwTopLevelEndpoints = cirrasUnderwritingService.getTopLevelEndpoints();
+		return cirrasUnderwritingService.getVerifiedYieldContractSimple(
+				uwTopLevelEndpoints, 
+				policyClaimRsrc.getContractId().toString(), 
+				policyClaimRsrc.getCropYear().toString(), 
+				crpDto != null ? crpDto.getCropCommodityId().toString() : null,
+				crpDto != null ? crpDto.getIsPedigreeInd().toString() : null, 
+				loadVerifiedYieldContractCommodities.toString(), 
+				loadVerifiedYieldAmendments.toString(), 
+				loadVerifiedYieldSummaries.toString(), 
+				loadVerifiedYieldGrainBasket.toString());
+	}
+	
 	// Returns a claim from cirras for a claim number
 	private InsuranceClaimRsrc getCirrasClaim(String claimNumber) throws CirrasPolicyServiceException {
 		EndpointsRsrc policyTopLevelEndpoints = cirrasPolicyService.getTopLevelEndpoints();
@@ -776,7 +795,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		return productListRsrc;
 	}
 
-	private ProductRsrc getByProductId(ProductListRsrc productList, Integer productId) {
+	private ProductRsrc getProductById(ProductListRsrc productList, Integer productId) {
 		
 		ProductRsrc product = null;
 		
@@ -790,7 +809,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		return product;
 	}
 
-	private ProductRsrc getByCommodityAndCoverage(ProductListRsrc productList, Integer commodityId, String commodityCoverageCode) {
+	private ProductRsrc getProductByCommodityAndCoverage(ProductListRsrc productList, Integer commodityId, String commodityCoverageCode) {
 		
 		ProductRsrc product = null;
 		
@@ -803,7 +822,33 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		return product;
 	}
-	
+
+	private void updateFromLinkedCalculation(ClaimCalculation claimCalculation, InsuranceClaimRsrc policyClaimRsrc, ProductListRsrc productListRsrc, boolean doUpdateGrainQuantity) throws DaoException {
+
+		ProductRsrc linkedProductRsrc = null;
+		ClaimDto linkedClaimDto = null;
+		ClaimCalculationDto linkedClaimCalcDto = null;
+				
+		CropCommodityDto linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(policyClaimRsrc.getCropCommodityId());
+		
+		if ( linkedCrpDto != null ) {
+			linkedProductRsrc = getProductByCommodityAndCoverage(productListRsrc, linkedCrpDto.getCropCommodityId(), ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode());
+			
+			if ( linkedProductRsrc != null ) {
+				linkedClaimDto = claimDao.selectByProductId(linkedProductRsrc.getProductId());
+				
+				if ( linkedClaimDto != null ) { 
+					linkedClaimCalcDto = claimCalculationDao.getLatestVersionOfCalculation(linkedClaimDto.getClaimNumber()); // TODO: Should this include isPedigree?
+					
+					if ( linkedClaimCalcDto != null ) {
+						getSubTableRecords(linkedClaimCalcDto.getClaimCalculationGuid(), linkedClaimCalcDto);
+					}
+				}
+			}
+		}
+		
+		claimCalculationFactory.updateCalculationFromLinkedCalculation(claimCalculation, linkedProductRsrc, linkedClaimDto, linkedClaimCalcDto, doUpdateGrainQuantity);
+	}
 	
 	// Updates fields in claimCalculation from insuranceClaim that are only updated
 	// when the user requests a Refresh.
@@ -1135,7 +1180,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			}
 			
 			// Replacement is based on the current claim and policy data in CIRRAS
-			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, policyProductRsrc, factoryContext, authentication);
+			// TODO
+			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, policyProductRsrc, null, null, factoryContext, authentication);
 		}
 
 		// Recalculate. -> MH 2022/01/04: not necessary because calculation are done in createClaimCalculation as well

@@ -22,8 +22,11 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationVarietyDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.CropCommodityDto;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
 
 public interface ClaimCalculationFactory {
 
@@ -72,9 +75,13 @@ public interface ClaimCalculationFactory {
 	public ClaimCalculation getCalculationFromClaim(
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
 			ProductRsrc productRsrc, 
+			CropCommodityDto crpDto,
+			VerifiedYieldContractSimple verifiedYield,
 			FactoryContext context, 
 			WebAdeAuthentication authentication
 		) throws FactoryException;
+
+	public void updateCalculationFromLinkedCalculation(ClaimCalculation claimCalculation, Product linkedProduct, ClaimDto linkedClaimDto, ClaimCalculationDto linkedCalcDto, boolean doUpdateGrainQuantity);
 
 	public void updateCalculationFromClaim(ClaimCalculation claimCalculation, ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim, Product product);
 
