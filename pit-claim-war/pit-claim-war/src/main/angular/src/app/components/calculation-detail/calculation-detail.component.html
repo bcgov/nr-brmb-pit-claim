@@ -101,4 +101,22 @@
     [calculationDetail]="calculationDetail">
   </calculation-printout-grain-spot-loss> 
 
+  <!-- GRAIN QUANTITY LOSS -->
+  <calculation-detail-grain-quantity
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQG' &&
+            calculationDetail.claimCalculationGrainQuantityDetail "
+      [claimCalculationGuid]="claimCalculationGuid"
+      [calculationDetail]="calculationDetail"
+  ></calculation-detail-grain-quantity>
+
+  <!-- <calculation-printout-grain-quantity
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL' &&
+            calculationDetail.claimCalculationGrainSpotLoss "
+    [calculationDetail]="calculationDetail"> 
+  </calculation-printout-grain-quantity> -->
+
 </base-wrapper>
