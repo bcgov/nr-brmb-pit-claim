@@ -76,6 +76,7 @@ public interface ClaimCalculationFactory {
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
 			ProductRsrc productRsrc, 
 			CropCommodityDto crpDto,
+			CropCommodityDto linkedCrpDto,
 			VerifiedYieldContractSimple verifiedYield,
 			FactoryContext context, 
 			WebAdeAuthentication authentication
