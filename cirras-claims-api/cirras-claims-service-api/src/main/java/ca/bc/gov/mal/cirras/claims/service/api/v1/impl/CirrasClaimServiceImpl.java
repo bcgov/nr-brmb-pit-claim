@@ -323,20 +323,20 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					}
 					
 					if ( productRsrc == null ) { 
-						throw new NotFoundException("no product found for " + claimNumber);
+						throw new ServiceException("No product found for " + claimNumber);
 					}
 					
 					crpDto = cropCommodityDao.fetch(policyClaimRsrc.getCropCommodityId());
 					
 					if ( crpDto == null ) {
-						throw new NotFoundException("no commodity found for " + claimNumber);
+						throw new ServiceException("No commodity found for " + claimNumber);
 					}
 
 					linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(policyClaimRsrc.getCropCommodityId());
 										
 					verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, true, true, false);
 					if (verifiedYieldRsrc == null ) {
-						throw new NotFoundException("no verified yield found for " + claimNumber);
+						throw new ServiceException("No verified yield found for " + claimNumber);
 					}
 				}
 			}
@@ -652,26 +652,28 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 						}
 						
 						if ( policyProductRsrc == null ) { 
-							throw new ServiceException("no product found for " + claimNumber);
+							throw new ServiceException("No product found for " + claimNumber);
 						}
 						
 						crpDto = cropCommodityDao.fetch(policyClaimRsrc.getCropCommodityId());
 						
 						if ( crpDto == null ) {
-							throw new ServiceException("no commodity found for " + claimNumber);
+							throw new ServiceException("No commodity found for " + claimNumber);
 						}
 						
 						linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(policyClaimRsrc.getCropCommodityId());
 									
 						verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, true, true, false);
 						if (verifiedYieldRsrc == null ) {
-							throw new ServiceException("no verified yield found for " + claimNumber);
+							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
+							logger.error("No Verified Yield found for " + claimNumber);
 						}
 
 					} catch (CirrasPolicyServiceException e) {
 						throw new ServiceException("Policy service threw an exception (CirrasPolicyServiceException)", e);
 					} catch (CirrasUnderwritingServiceException e) {
-						throw new ServiceException("Underwriting service threw an exception (CirrasUnderwritingServiceException)", e);
+						// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
+						logger.error("getUnderwritingVerifiedYield: Error when getting verified yield from CUWS for Claim Number " + claimNumber + ": " + e);
 					}
 				}
 
