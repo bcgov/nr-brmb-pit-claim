@@ -88,6 +88,10 @@ mat-toolbar.mat-primary.wf1-public-application-header {
             grid-template-columns: 2fr 3fr 1fr;
         }
 
+        &.ccc-coverage-double {
+            grid-template-columns: 3fr 2fr 1fr 1fr;
+        }
+
         &.ccc-purchase {
             grid-template-columns: 2fr 1fr 3fr;
         }

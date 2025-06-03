@@ -6,6 +6,8 @@ import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
 import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
+import { setHttpHeaders } from 'src/app/utils';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'calculation-detail-grain-quantity',
@@ -23,22 +25,34 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
 
-  totalClaimAmount: number
   calculationComment: string = ""
 
+  calculationDetailNonPedigree: vmCalculation;
+  calculationDetailPedigree: vmCalculation;
+
+  // shared calculated values
   prodGuaranteeMinusAssessments: number
   earlyEstDeemedYieldValue: number
-  
-  
+  fiftyPercentProductionGuarantee: number
+  calcEarlyEstYield: number
+  yieldValueWithEarlyEstDeemedYield: number
+
+  // total calculated values
+  totalCoverageValue: number
+  productionGuaranteeAmount: number
+  totalYieldLossValue: number
+  quantityLossClaim: number
+  totalClaimAmount: number
+
   initModels() {
     this.viewModel = new CalculationDetailGrainQuantityComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
   loadPage() {
-      this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
-      this.perilCodeOptions = getCodeOptions("PERIL_CODE");
-      this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
-      this.updateView();
+    this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
+    this.perilCodeOptions = getCodeOptions("PERIL_CODE");
+    this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
+    this.updateView();
   }
 
   getViewModel(): CalculationDetailGrainQuantityComponentModel  { 
@@ -59,6 +73,16 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         this.calculationDetail = changes.calculationDetail.currentValue;
         this.calculationComment = this.calculationDetail.calculationComment
 
+        if (this.calculationDetail.isPedigreeInd) {
+          this.calculationDetailPedigree = this.calculationDetail
+        } else {
+          this.calculationDetailNonPedigree = this.calculationDetail
+        }
+        
+        if (this.calculationDetail.linkedClaimNumber) {
+          this.loadLinkedCalculation()
+        } 
+        
         setTimeout(() => {
             this.cdr.detectChanges();
         });
@@ -104,14 +128,75 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
   }
 
-
-   ngAfterViewInit() {
+  ngAfterViewInit() {
     super.ngAfterViewInit();
   }
 
-    onCancel() {
-        this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+  loadLinkedCalculation() {
+    // quick api call to load the linked calculation data
+
+    let url = this.appConfigService.getConfig().rest["cirras_claims"]
+
+    const httpOptions = setHttpHeaders(this.tokenService.getOauthToken())
+
+    if (this.calculationDetail.linkedClaimCalculationGuid) {
+
+      // load existing linked calculation
+      url = url +"/calculations/" + this.calculationDetail.linkedClaimCalculationGuid 
+      url = url + "?doRefreshManualClaimData=false"
+
+    } else {
+      if (this.calculationDetail.linkedClaimNumber) {
+
+        // load new linked calculation
+        url = url +"/claims/" + this.calculationDetail.linkedClaimNumber
+
+      } 
     }
+
+    
+    var self = this
+    return lastValueFrom(this.http.get(url,httpOptions)).then((data: vmCalculation) => {
+      debugger
+      if (data.isPedigreeInd) {
+        self.calculationDetailPedigree = data
+      } else {
+        self.calculationDetailNonPedigree = data
+      }
+
+      self.totalCoverageValue = self.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue + self.calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue
+
+      setTimeout(() => {
+            this.cdr.detectChanges();
+        });
+
+    })
+
+  }
+
+  //  validateRenameLegalLand(searchLegal) {
+
+  //   // /uwcontracts/{policyId}/validateRenameLegal
+  //   let url = this.appConfig.getConfig().rest["cirras_underwriting"]
+  //   url = url +"/uwcontracts/" + this.dataReceived.policyId + "/validateRenameLegal" 
+  //   url = url + "?policyId=" + this.dataReceived.policyId
+  //   url = url + "&annualFieldDetailId=" + this.dataReceived.annualFieldDetailId
+  //   url = url + "&newLegalLocation=" + encodeURI(searchLegal)  
+
+  //   const httpOptions = setHttpHeaders(this.tokenService.getOauthToken())
+
+  //   var self = this
+  //   return this.http.get(url,httpOptions).toPromise().then((data: RenameLegalValidationRsrc) => {
+  //     self.renameLegalLandList = data
+  //    })
+  // }
+
+
+
+
+  onCancel() {
+      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+  }
 
 
 }

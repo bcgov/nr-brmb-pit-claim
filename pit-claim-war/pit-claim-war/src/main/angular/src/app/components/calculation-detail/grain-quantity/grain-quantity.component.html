@@ -69,17 +69,30 @@
   
         <div class="ccc-row-group ccc-row-group-bordered">
             <label>Quantity Coverage</label>
-            <div class="ccc-container ccc-coverage">
+            <div class="ccc-container ccc-coverage-double">
+              <div></div>
+              <div ></div>
+              <div class="ccc-right"><span class="right-space">Non-Pedigreed</span></div>
+              <div class="ccc-right">Pedigreed</div>
+
               <div>
                 <span class="ccc-expression">A</span> Acres
               </div>
               <div class="ccc-border-right">
               </div>
-              <div class="ccc-right"> 
-                 {{ calculationDetail.claimCalculationGrainQuantityDetail.insuredAcres | number:'1.2-2' }}
-                 <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.2-2' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
+                </span>
+              </div>
+              <div class="ccc-right">                 
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.2-2' }}
+                <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                   <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                </span> -->
+                </span> -->                
               </div>
     
               <div>
@@ -87,11 +100,19 @@
               </div>
               <div class="ccc-border-right">
               </div>
-              <div class="ccc-right"> 
-                 {{ calculationDetail.claimCalculationGrainQuantityDetail.probableYield | number:'1.2-2' }}
-                 <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                </span> -->
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.probableYield : "") | number:'1.3-3' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
+                </span>
+              </div>
+              <div class="ccc-right">
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.probableYield : "") | number:'1.3-3' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
               </div>
 
               <div>
@@ -99,11 +120,19 @@
               </div>
               <div class="ccc-border-right">
               </div>
-              <div class="ccc-right"> 
-                 {{ calculationDetail.claimCalculationGrainQuantityDetail.deductible | number:'1.0-0' }}
-                 <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                </span> -->
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.deductible : "") | number:'1.0-0' }}%
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
+                </span>
+              </div>
+              <div class="ccc-right">
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.deductible : "") | number:'1.0-0' }}%
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
               </div>
 
               <div>
@@ -111,11 +140,19 @@
               </div>
               <div class="ccc-border-right">
               </div>
-              <div class="ccc-right"> 
-                 {{ calculationDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight | number:'1.2-2' }}
-                 <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                </span> -->
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.0-0' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
+                </span>
+              </div>
+              <div class="ccc-right">
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.0-0' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
               </div>
 
               <div>
@@ -123,31 +160,49 @@
               </div>
               <div class="ccc-border-right">
               </div>
-              <div class="ccc-right"> 
-                 {{ calculationDetail.claimCalculationGrainQuantityDetail.insurableValue | number:'1.2-2' }}
-                 <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                </span> -->
-              </div>
-  
-             <div>
-              <span class="ccc-expression">F</span> Coverage Value
-             </div>
-             <div class="ccc-border-right"></div>
-             <div class="ccc-right"> 
-                  {{ calculationDetail.claimCalculationGrainQuantityDetail.coverageValue | currency }}
-                  <!-- <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncCoverageValue" style="margin-left: 10px;">
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | number:'1.2-2' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span> -->
-             </div>
+                </span>
+              </div>
+              <div class="ccc-right">
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | number:'1.2-2' }}
+                  <!-- <span #el matTooltip="Insured Acres don't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span> -->
+              </div>
+  
+              <div>
+                <span class="ccc-expression">F</span> Coverage Value
+              </div>
+              <div class="ccc-border-right"></div>
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                    {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue : "" ) | currency }}
+                    <!-- <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncCoverageValue" style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span> -->
+                  </span>
+              </div>
+              <div class="ccc-right">
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue : "" ) | currency }}
+                    <!-- <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrainQuantityDetail.isOutOfSyncCoverageValue" style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span> -->
+              </div>
 
-             <!-- <div>
-              <span class="ccc-expression">G</span> Total Pedigreed and Non-Pedigreed Seeds Coverage Value
-             </div>
-             <div class="ccc-border-right"></div>
-             <div class="ccc-right"> 
-                  {{ calculationDetail.claimCalculationGrainQuantityDetail.coverageValue | currency }}
-             </div> -->
+              <div style="grid-column-start: 1; grid-column-end: 3;">
+                <span class="ccc-expression">G</span> Total Pedigreed and Non-Pedigreed Seeds Coverage Value
+              </div>
+              <div class="ccc-border-right ccc-right">
+                <span class="ccc-expression">Sum of F</span>
+              </div>
+              <div class="ccc-right">
+                {{ totalCoverageValue |  currency }} 
+              </div>
 
           </div>
         </div>
@@ -155,7 +210,7 @@
 
         <div class="ccc-row-group ccc-row-group-bordered">
           <label>Yield Loss Determination</label>
-          <div class="ccc-container ccc-coverage">
+          <div class="ccc-container ccc-coverage-double">
 
           <div>
             <span class="ccc-expression">H</span> Total Yield Harvested and Appraised (Tonnes)
@@ -163,11 +218,10 @@
           <div class="ccc-expression">           
           </div>
           <div class="ccc-fill ccc-number"> 
-            {{ calculationDetail.claimCalculationGrainQuantityDetail.totalYieldToCount | number:'1.2-2' }}
-            <!-- <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill">
               <input matInput formControlName="totalYieldToCount" (keypress)="numberOnly($event)" maxlength="14">
-            </mat-form-field>  -->
-            <!-- TODO: warning if no yield -->
+            </mat-form-field> 
+            <!-- TODO: warning if yield  out of sync -->
           </div>
   
           <div>
@@ -182,117 +236,198 @@
             <span class="ccc-expression">J</span> Production Guarantee - Assessment(s) Value 
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">D - I</span>
+            <span class="ccc-expression">( D - I ) x E</span>
           </div>  
           <div class="ccc-right">
             {{ prodGuaranteeMinusAssessments | number:'1.2-2'  }} 
           </div>
   
+          
           <div>
-            <span class="ccc-expression">K</span> Less Early Establishment Deemed Yield Value
+            <span class="ccc-expression">K</span> Total ( Production Guarantee - Assessment(s) Value )
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">Sum of J</span>
+          </div>  
+          <div class="ccc-right">
+            {{ productionGuaranteeAmount | number:'1.2-2'  }} 
+          </div>
+
+
+          <div>
+            <span class="ccc-expression">L</span> Less Early Establishment Deemed Yield Value
           </div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">B x F</span>
           </div>
-          <div class="ccc-right">
-            {{ earlyEstDeemedYieldValue | number:'1.2-2'  }} 
+          <div class="ccc-fill ccc-number">
+            <mat-form-field appearance="fill">
+              <input matInput formControlName="earlyEstDeemedYieldValue" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
           </div>
-  
+          
+          <!-- indentation -->
           <div>
-            <span class="ccc-expression">L</span> Damaged Acres
+            <span class="ccc-expression" style="margin-right: 20px;">M</span> Damaged Acres
           </div>
           <div class="ccc-border-right"></div>
-          <div class="ccc-right">
-            <!-- TODO: Form field -->
+          <div class="ccc-fill ccc-number">
+             <mat-form-field appearance="fill">
+              <input matInput formControlName="damagedAcres" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
           </div>
 
-          <!-- <div>
-            <span class="ccc-expression">I</span> Spot Loss Claim Value
+          <div>
+            <span class="ccc-expression" style="margin-right: 20px;">N</span> Acres Seeded
+          </div>
+          <div class="ccc-border-right"></div>
+          <div class="ccc-fill ccc-number">
+             <mat-form-field appearance="fill">
+              <input matInput formControlName="seededAcres" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
+          </div>
+
+          <div>
+            <span class="ccc-expression" style="margin-right: 20px;">O</span>50% of Production Guarantee
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">D x (E - H) x B</span>
+            <span class="ccc-expression">D x 50%</span>
           </div>
           <div class="ccc-right">
-            {{ totalClaimAmount | currency }} 
-            <span #el matTooltip="The Plant Loss Claim amount cannot be higher than the Coverage Value" *ngIf="isClaimTotalHigh" style="margin-left: 10px;">
-              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-            </span>
-          </div> -->
-  
-        </div>
-        </div>
-
-
-        <!-- <div class="ccc-row-group ccc-row-group-bordered">
-          <label>Claim Determination</label>
-          <div class="ccc-container ccc-coverage">
+            {{ fiftyPercentProductionGuarantee | number:'1.2-2'  }} 
+          </div>
 
           <div>
-            <span class="ccc-expression">D</span> Adjusted Acres
+            <span class="ccc-expression" style="margin-right: 20px;">P</span>Calculated Early Establishment Yield
           </div>
-          <div class="ccc-expression">           
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">O x ( M / N )</span>
           </div>
-          <div class="ccc-fill ccc-number"> 
-            <mat-form-field appearance="fill">
-              <input matInput formControlName="adjustedAcres" (keypress)="numberOnly($event)" maxlength="14">
-            </mat-form-field> 
+          <div class="ccc-right">
+            {{ calcEarlyEstYield | number:'1.2-2'  }} 
           </div>
-  
+
           <div>
-            <span class="ccc-expression">E</span> Percent Yield Reduction
+            <span class="ccc-expression" style="margin-right: 20px;">Q</span> Inspected Early Establishment Yield
           </div>
           <div class="ccc-border-right"></div>
-          <div class="ccc-fill ccc-number"> 
-            <mat-form-field appearance="fill">
-              <input matInput formControlName="percentYieldReduction" (keypress)="numberOnly($event)" maxlength="5">%
+          <div class="ccc-fill ccc-number">
+             <mat-form-field appearance="fill">
+              <input matInput formControlName="inspEarlyEstYield" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
+          </div>
+
+          <!-- end indentation -->
+
+          <div>
+            <span class="ccc-expression">R</span> Yield Value
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">H * E</span>
+          </div>
+          <div class="ccc-right">
+            {{ calculationDetail.claimCalculationGrainQuantityDetail.yieldValue |  number:'1.2-2'  }} 
+          </div>
+  
+          <div>
+            <span class="ccc-expression">S</span> Yield Value + Early Establishment Deemed Yield
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">R + L</span>
+          </div>
+          <div class="ccc-right">
+            {{ yieldValueWithEarlyEstDeemedYield |  number:'1.2-2'  }} 
+          </div>
+
+
+          <div>
+            <span class="ccc-expression">T</span> Total Pedigreed and Non-Pedigreed Seeds Yield Loss Value
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">K - Sum of S</span>
+          </div>
+          <div class="ccc-right">
+            {{ totalYieldLossValue |  number:'1.2-2'  }} 
+          </div>
+
+        </div>
+        </div>
+
+
+        <div class="ccc-row-group ccc-row-group-bordered">
+          <label>Claim Determination</label>
+          <div class="ccc-container ccc-coverage-double">
+
+          <div>
+            <span class="ccc-expression">U</span> Reseed Claim
+          </div>
+          <div class="ccc-border-right ccc-right">           
+          </div>
+          <div class="ccc-right"> 
+            {{ calculationDetail.claimCalculationGrainQuantity.reseedClaim |  number:'1.2-2'  }} 
+          </div>
+  
+          <div>
+            <span class="ccc-expression">V</span> Maximum Claim Payable
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">G - U</span>
+          </div>
+          <div class="ccc-right"> 
+            {{ calculationDetail.claimCalculationGrainQuantity.maxClaimPayable |  number:'1.2-2'  }} 
           </div> 
   
           <div>
-            <span class="ccc-expression">F</span> Eligible Yield Reduction 
+            <span class="ccc-expression">W</span> Total Quantity Loss
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">D x E</span>
+            <span class="ccc-expression">T</span>
           </div>
-  
           <div class="ccc-right">
-            {{ eligibleYieldReduction | number:'1.2-2'  }} 
+            {{ totalYieldLossValue | number:'1.2-2'  }} 
           </div>
   
           <div>
-            <span class="ccc-expression">G</span> Spot Loss Reduction Value
+            <span class="ccc-expression">X</span> Less Advanced Claim(s)
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">B x F</span>
+            <span class="ccc-expression"></span>
           </div>
-          <div class="ccc-right">
-            {{ spotLossReductionValue | number:'1.2-2'  }} 
-          </div>
-  
-          <div>
-            <span class="ccc-expression">H</span> Deductible
-          </div>
-          <div class="ccc-border-right"></div>
-          <div class="ccc-right">
-            {{ calculationDetail.claimCalculationGrainQuantityDetail.deductible | number:'1.0-0'  }}%
+          <div class="ccc-fill ccc-number">
+             <mat-form-field appearance="fill">
+              <input matInput formControlName="advancedClaim" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
           </div>
 
           <div>
-            <span class="ccc-expression">I</span> Spot Loss Claim Value
+            <span class="ccc-expression">Y</span> Quantity Loss Claim
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">D x (E - H) x B</span>
+            <span class="ccc-expression">Lesser of V or W</span>
           </div>
           <div class="ccc-right">
-            {{ totalClaimAmount | currency }} 
-            <span #el matTooltip="The Plant Loss Claim amount cannot be higher than the Coverage Value" *ngIf="isClaimTotalHigh" style="margin-left: 10px;">
-              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-            </span>
+            {{ quantityLossClaim | number:'1.0-0'  }}
+          </div>
+
+
+
+          <div>
+            <span class="ccc-expression">Z</span> Total Claim Amount
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression"></span>
+          </div>
+          <div class="ccc-fill ccc-number">
+             <mat-form-field appearance="fill">
+              <input matInput formControlName="totalClaimAmount" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
           </div>
   
         </div>
-        </div> -->
+        </div>
         
+
+
         <div class="ccc-row-group ccc-row-group-bordered">
             <label>Comments</label>
             <div class="ccc-entire">

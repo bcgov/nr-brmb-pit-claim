@@ -16,9 +16,14 @@ export class CalculationDetailGrainQuantityComponentModel extends BaseComponentM
         
         this.formGroup = this.fb.group({
             primaryPerilCode: [{value: this.calculationDetail ? this.calculationDetail.primaryPerilCode : null, disabled: false}, [Validators.required]],            
-            secondaryPerilCode: [{value: this.calculationDetail ? this.calculationDetail.secondaryPerilCode : null, disabled: false}], 
-            // adjustedAcres: [''],     
-            // percentYieldReduction: [''],
+            secondaryPerilCode: [{value: this.calculationDetail ? this.calculationDetail.secondaryPerilCode : null, disabled: false}],     
+            totalYieldToCount: [''],
+            earlyEstDeemedYieldValue: [''],
+            damagedAcres: [''],
+            seededAcres: [''],
+            inspEarlyEstYield: [''],
+            advancedClaim: [''],
+            totalClaimAmount: [''],
             calculationComment: [{value: this.calculationDetail ? this.calculationDetail.calculationComment : null, disabled: false}, [Validators.maxLength(1000)]], 
         });
     }
