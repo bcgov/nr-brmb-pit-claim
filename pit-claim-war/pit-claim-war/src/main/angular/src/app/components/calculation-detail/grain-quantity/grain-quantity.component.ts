@@ -6,7 +6,7 @@ import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
 import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { setHttpHeaders } from 'src/app/utils';
+import { makeNumberOnly, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -31,11 +31,16 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   calculationDetailPedigree: vmCalculation;
 
   // shared calculated values
-  prodGuaranteeMinusAssessments: number
-  earlyEstDeemedYieldValue: number
-  fiftyPercentProductionGuarantee: number
-  calcEarlyEstYield: number
-  yieldValueWithEarlyEstDeemedYield: number
+  prodGuaranteeMinusAssessmentsNonPedigree: number
+  prodGuaranteeMinusAssessmentsPedigree: number
+  fiftyPercentProductionGuaranteeNonPedigree: number
+  fiftyPercentProductionGuaranteePedigree: number 
+  calcEarlyEstYieldNonPedigree: number
+  calcEarlyEstYieldPedigree: number
+  yieldValueNonPedigree: number
+  yieldValuePedigree: number
+  yieldValueWithEarlyEstDeemedYieldNonPedigree: number
+  yieldValueWithEarlyEstDeemedYieldPedigree: number
 
   // total calculated values
   totalCoverageValue: number
@@ -106,9 +111,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.viewModel.formGroup.controls.primaryPerilCode.setValue( this.calculationDetail.primaryPerilCode )
       this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )  
       
-      this.viewModel.formGroup.controls.adjustedAcres.setValue( this.calculationDetail.claimCalculationGrainSpotLoss.adjustedAcres ) 
-      this.viewModel.formGroup.controls.percentYieldReduction.setValue( this.calculationDetail.claimCalculationGrainSpotLoss.percentYieldReduction ) 
-      this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
+      // this.viewModel.formGroup.controls.adjustedAcres.setValue( this.calculationDetail.claimCalculationGrainSpotLoss.adjustedAcres ) 
+      // this.viewModel.formGroup.controls.percentYieldReduction.setValue( this.calculationDetail.claimCalculationGrainSpotLoss.percentYieldReduction ) 
+      // this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
   
       // if (!this.calculationDetail.claimCalculationGrainSpotLoss.claimCalculationGrainSpotLossGuid) {
 
@@ -157,7 +162,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     
     var self = this
     return lastValueFrom(this.http.get(url,httpOptions)).then((data: vmCalculation) => {
-      debugger
       if (data.isPedigreeInd) {
         self.calculationDetailPedigree = data
       } else {
@@ -169,7 +173,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       setTimeout(() => {
             this.cdr.detectChanges();
         });
-
     })
 
   }
@@ -198,5 +201,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
   }
 
+
+  numberOnly(event): boolean {
+    return makeNumberOnly(event)
+  }
 
 }

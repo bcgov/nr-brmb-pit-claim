@@ -118,6 +118,16 @@ mat-toolbar.mat-primary.wf1-public-application-header {
             text-align: right;
         }
 
+        .ccc-number-double {
+            min-width:40px; 
+            width: 100%; 
+            //padding-left: 0.5rem;
+
+            input {
+                text-align: right;
+            }
+        }
+
         .ccc-header {
             font-weight: bold;            
         }
@@ -144,6 +154,8 @@ mat-toolbar.mat-primary.wf1-public-application-header {
         .ccc-border-bottom {
             border-bottom: 2px solid #ccc;
         }
+
+        
     }
 
     .ccc-entire {
