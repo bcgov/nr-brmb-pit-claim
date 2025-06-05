@@ -248,7 +248,7 @@
             <span class="ccc-expression">Sum of J</span>
           </div>  
           <div></div>
-          <div class="ccc-right ccc-border-right"> 
+          <div class="ccc-right "> 
             <span class="right-space">
               {{ productionGuaranteeAmount | number:'1.2-2'  }} 
             </span>
@@ -256,95 +256,102 @@
            
           <div>
             <span class="ccc-expression">L</span> Less Early Establishment Deemed Yield Value
+             <!-- <button mat-raised-button color="secondary" 
+                style="margin-left: 6px; font-size: 20px; font-weight: 200; height: 24px; "
+                (click)="toggleEarlyEstDeemedYieldValueRows()"
+              ><mat-icon>{{ !showEarlyEstDeemedYieldValueRows ? "keyboard_arrow_down" : "keyboard_arrow_up" }}</mat-icon></button> -->
+              <mat-icon style="margin-left: 6px; " (click)="toggleEarlyEstDeemedYieldValueRows()">
+                {{ !showEarlyEstDeemedYieldValueRows ? "keyboard_arrow_down" : "keyboard_arrow_up" }}
+              </mat-icon>
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">B x F</span>
+            <span class="ccc-expression">( Q or P ) x E</span>
           </div>
-          <div class="ccc-fill ccc-number-double ccc-border-right">
-            <mat-form-field appearance="fill">
-              <input matInput formControlName="earlyEstDeemedYieldValueNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
-            </mat-form-field>
+          <div class="ccc-right ccc-border-right">
+            <span class="right-space">
+              {{ earlyEstDeemedYieldValueNonPedigree | number:'1.2-2' }}
+            </span>
           </div>
-          <div class="ccc-fill ccc-number-double ccc-border-right">
-            <mat-form-field appearance="fill">
-              <input matInput formControlName="earlyEstDeemedYieldValuePedigree" (keypress)="numberOnly($event)" maxlength="14">
-            </mat-form-field>
+          <div class="ccc-right">
+            {{ earlyEstDeemedYieldValuePedigree | number:'1.2-2' }}
           </div>
-           
-          <div>
-            <span class="ccc-expression" style="margin-right: 20px;">M</span> Damaged Acres
+
+          <!--  hidden  EarlyEstDeemedYieldValue  rows  -->
+          <div *ngIf="showEarlyEstDeemedYieldValueRows">
+            <span class="ccc-expression" style="margin-right: 40px;">M</span> Damaged Acres
           </div>
-          <div class="ccc-border-right"></div>
-          <div class="ccc-fill ccc-number-double ccc-border-right">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-border-right"></div>
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-fill ccc-number-double ccc-border-right">
              <mat-form-field appearance="fill">
               <input matInput formControlName="damagedAcresNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
           </div>
-          <div class="ccc-fill ccc-number-double">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-fill ccc-number-double">
             <mat-form-field appearance="fill">
               <input matInput formControlName="damagedAcresPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
           </div>
 
-          <div>
-            <span class="ccc-expression" style="margin-right: 20px;">N</span> Acres Seeded
+          <div *ngIf="showEarlyEstDeemedYieldValueRows">
+            <span class="ccc-expression" style="margin-right: 40px;">N</span> Acres Seeded
           </div>
-          <div class="ccc-border-right"></div>
-          <div class="ccc-fill ccc-number-double ccc-border-right">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-border-right"></div>
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-fill ccc-number-double ccc-border-right">
             <mat-form-field appearance="fill">
               <input matInput formControlName="seededAcresNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
           </div>
-          <div class="ccc-fill ccc-number-double">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-fill ccc-number-double">
             <mat-form-field appearance="fill">
               <input matInput formControlName="seededAcresPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
           </div>
 
-          <div>
-            <span class="ccc-expression" style="margin-right: 20px;">O</span>50% of Production Guarantee
+          <div *ngIf="showEarlyEstDeemedYieldValueRows">
+            <span class="ccc-expression" style="margin-right: 40px;">O</span>50% of Production Guarantee
           </div>
-          <div class="ccc-border-right ccc-right">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-border-right ccc-right">
             <span class="ccc-expression">D x 50%</span>
           </div>
-          <div class="ccc-right ccc-border-right"> 
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-right ccc-border-right"> 
             <span class="right-space">
               {{ fiftyPercentProductionGuaranteeNonPedigree | number:'1.2-2'  }} 
             </span>
           </div>
-          <div class="ccc-right">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-right">
             {{ fiftyPercentProductionGuaranteePedigree | number:'1.2-2' }}
           </div>
 
-          <div>
-            <span class="ccc-expression" style="margin-right: 20px;">P</span>Calculated Early Establishment Yield
+          <div *ngIf="showEarlyEstDeemedYieldValueRows">
+            <span class="ccc-expression" style="margin-right: 40px;">P</span>Calculated Early Establishment Yield
           </div>
-          <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">O x ( M / N )</span>
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-border-right ccc-right">
+            <span class="ccc-expression">O x ( M / N)</span>
           </div>
-          <div class="ccc-right ccc-border-right"> 
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-right ccc-border-right"> 
             <span class="right-space">
               {{ calcEarlyEstYieldNonPedigree | number:'1.2-2'  }} 
             </span>
           </div>
-          <div class="ccc-right">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-right">
             {{ calcEarlyEstYieldPedigree | number:'1.2-2' }}
           </div>
 
-          <div>
-            <span class="ccc-expression" style="margin-right: 20px;">Q</span> Inspected Early Establishment Yield
+          <div *ngIf="showEarlyEstDeemedYieldValueRows">
+            <span class="ccc-expression" style="margin-right: 40px;">Q</span> Inspected Early Establishment Yield
           </div>
-          <div class="ccc-border-right"></div>
-          <div class="ccc-fill ccc-number-double ccc-border-right">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-border-right"></div>
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-fill ccc-number-double ccc-border-right">
             <mat-form-field appearance="fill">
               <input matInput formControlName="inspEarlyEstYieldNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
           </div>
-          <div class="ccc-fill ccc-number-double">
+          <div *ngIf="showEarlyEstDeemedYieldValueRows" class="ccc-fill ccc-number-double">
             <mat-form-field appearance="fill">
               <input matInput formControlName="inspEarlyEstYieldPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
-          </div>
+          </div> 
+          <!-- end hidden rows -->
 
           <div>
             <span class="ccc-expression">R</span> Yield Value
@@ -393,20 +400,24 @@
 
         <div class="ccc-row-group ccc-row-group-bordered">
           <label>Claim Determination</label>
-          <div class="ccc-container ccc-coverage">
+          <div class="ccc-container ccc-coverage-double">
 
           <div>
             <span class="ccc-expression">U</span> Reseed Claim
           </div>
+          <div></div>
           <div class="ccc-border-right ccc-right">           
           </div>
-          <div class="ccc-right"> 
-            {{ calculationDetail.claimCalculationGrainQuantity.reseedClaim |  number:'1.2-2'  }} 
+          <div class="ccc-fill ccc-number" > 
+            <mat-form-field appearance="fill">
+              <input matInput formControlName="reseedClaim" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
           </div>
   
           <div>
             <span class="ccc-expression">V</span> Maximum Claim Payable
           </div>
+          <div></div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">G - U</span>
           </div>
@@ -417,16 +428,18 @@
           <div>
             <span class="ccc-expression">W</span> Total Quantity Loss
           </div>
+          <div></div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">T</span>
           </div>
           <div class="ccc-right">
-            {{ totalYieldLossValue | number:'1.2-2'  }} 
+            {{ totalYieldLossValue | number:'1.2-2' }} 
           </div>
   
           <div>
             <span class="ccc-expression">X</span> Less Advanced Claim(s)
           </div>
+          <div></div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression"></span>
           </div>
@@ -439,6 +452,7 @@
           <div>
             <span class="ccc-expression">Y</span> Quantity Loss Claim
           </div>
+          <div></div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">Lesser of V or W</span>
           </div>
@@ -446,17 +460,22 @@
             {{ quantityLossClaim | number:'1.0-0'  }}
           </div>
 
-
-
           <div>
             <span class="ccc-expression">Z</span> Total Claim Amount
           </div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression"></span>
           </div>
+          <div class="ccc-fill ccc-number ccc-border-right">
+            <mat-form-field appearance="fill">
+              <mat-label style="font-weight: 200;">Non-Pedigree</mat-label>
+              <input matInput formControlName="totalClaimAmountNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
+            </mat-form-field>
+          </div>
           <div class="ccc-fill ccc-number">
              <mat-form-field appearance="fill">
-              <input matInput formControlName="totalClaimAmount" (keypress)="numberOnly($event)" maxlength="14">
+              <mat-label style="font-weight: 200;">Pedigree</mat-label>
+              <input matInput formControlName="totalClaimAmountPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field>
           </div>
   

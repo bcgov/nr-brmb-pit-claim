@@ -37,6 +37,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   fiftyPercentProductionGuaranteePedigree: number 
   calcEarlyEstYieldNonPedigree: number
   calcEarlyEstYieldPedigree: number
+  earlyEstDeemedYieldValueNonPedigree: number
+  earlyEstDeemedYieldValuePedigree: number
   yieldValueNonPedigree: number
   yieldValuePedigree: number
   yieldValueWithEarlyEstDeemedYieldNonPedigree: number
@@ -47,7 +49,12 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   productionGuaranteeAmount: number
   totalYieldLossValue: number
   quantityLossClaim: number
-  totalClaimAmount: number
+  totalClaimAmountNonPedigree: number
+  totalClaimAmountPedigree: number
+
+  showEarlyEstDeemedYieldValueRows = false
+  showNonPedigreeColumn = false  
+  showPedigreeColumn = false 
 
   initModels() {
     this.viewModel = new CalculationDetailGrainQuantityComponentModel(this.sanitizer, this.fb, this.calculationDetail);
@@ -80,12 +87,17 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         if (this.calculationDetail.isPedigreeInd) {
           this.calculationDetailPedigree = this.calculationDetail
+          this.showPedigreeColumn = true
         } else {
           this.calculationDetailNonPedigree = this.calculationDetail
+          this.showNonPedigreeColumn = true
         }
         
         if (this.calculationDetail.linkedClaimNumber) {
           this.loadLinkedCalculation()
+
+          this.showNonPedigreeColumn = true
+          this.showPedigreeColumn = true
         } 
         
         setTimeout(() => {
@@ -128,7 +140,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
       // }
 
-      // this.enableDisableFormControls();
+      this.enableDisableFormControls();
 
     }
   }
@@ -206,4 +218,60 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     return makeNumberOnly(event)
   }
 
+  // show / hide columns
+  showNonPdgrColumn() {
+    if (!this.calculationDetail.isPedigreeInd || this.calculationDetail.linkedClaimNumber ) {
+      return true
+    }
+  }
+
+  showPgdrColumn() {
+    if (this.calculationDetail.isPedigreeInd || this.calculationDetail.linkedClaimNumber ) {
+      return true
+    }
+  }
+
+  // enable / disable fields
+    enableDisableFormControls() {
+      if(this.calculationDetail){
+  
+        if (this.calculationDetail.linkedClaimNumber) {
+
+          if(this.calculationDetail.isPedigreeInd) {
+            // disable non pedigree fields
+            this.viewModel.formGroup.controls.totalYieldToCountNonPedigree.disable();
+            this.viewModel.formGroup.controls.damagedAcresNonPedigree.disable();
+            this.viewModel.formGroup.controls.seededAcresNonPedigree.disable();
+            this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.disable();            
+            this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.disable();
+          }
+
+          if(!this.calculationDetail.isPedigreeInd) {
+            // disable non pedigree fields
+            this.viewModel.formGroup.controls.totalYieldToCountPedigree.disable();
+            this.viewModel.formGroup.controls.damagedAcresPedigree.disable();
+            this.viewModel.formGroup.controls.seededAcresPedigree.disable();
+            this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.disable();
+            this.viewModel.formGroup.controls.totalClaimAmountPedigree.disable();
+          }
+        }
+
+        // if(this.calculationDetail.calculationStatusCode == CALCULATION_STATUS_CODE.DRAFT){
+        //   this.viewModel.formGroup.controls.primaryPerilCode.enable();
+        //   this.viewModel.formGroup.controls.secondaryPerilCode.enable();
+        //   this.viewModel.formGroup.controls.adjustedAcres.enable();
+        //   this.viewModel.formGroup.controls.percentYieldReduction.enable();
+  
+        // } else {
+        //   this.viewModel.formGroup.controls.primaryPerilCode.disable();
+        //   this.viewModel.formGroup.controls.secondaryPerilCode.disable();
+        //   this.viewModel.formGroup.controls.adjustedAcres.disable();
+        //   this.viewModel.formGroup.controls.percentYieldReduction.disable();
+        // }
+      }
+    }
+
+    toggleEarlyEstDeemedYieldValueRows(){
+      this.showEarlyEstDeemedYieldValueRows = !this.showEarlyEstDeemedYieldValueRows;
+    }
 }
