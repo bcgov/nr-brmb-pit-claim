@@ -449,7 +449,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		// Insert Grain Spot Loss data
 		createGrainSpotLoss(claimCalculation, userId, claimCalculationGuid);
-	}
+
+		// Insert Grain Quantity data
+		createGrainQuantity(claimCalculation, userId, claimCalculationGuid);
+		
+		// Insert Grain Quantity Detail data
+		createGrainQuantityDetail(claimCalculation, userId, claimCalculationGuid);
+}
 
 	private void createPlantAcres(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
 			throws DaoException {
@@ -525,6 +531,37 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 	}
 	
+	private void createGrainQuantity(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Quantity Loss Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				
+			ClaimCalculationGrainQuantityDto dtoGrainQuantity = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainQuantity());
+
+			dtoGrainQuantity.setClaimCalculationGrainQuantityGuid(null);
+			//dtoGrainQuantity.setClaimCalculationGuid(claimCalculationGuid);
+			claimCalculationGrainQuantityDao.insert(dtoGrainQuantity, userId);
+		}
+	}
+	
+	private void createGrainQuantityDetail(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Quantity Detail Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				
+			ClaimCalculationGrainQuantityDetailDto dtoGrainQuantityDetail = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainQuantityDetail());
+
+			dtoGrainQuantityDetail.setClaimCalculationGrainQuantityDetailGuid(null);
+			dtoGrainQuantityDetail.setClaimCalculationGuid(claimCalculationGuid);
+			claimCalculationGrainQuantityDetailDao.insert(dtoGrainQuantityDetail, userId);
+		}
+	}
 	
 	private void createBerriesQuantity(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
 			throws DaoException {
