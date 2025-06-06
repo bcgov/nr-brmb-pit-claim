@@ -213,9 +213,12 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
   }
 
-
   numberOnly(event): boolean {
     return makeNumberOnly(event)
+  }
+
+   setComment() {
+    this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
   }
 
   // show / hide columns
@@ -239,7 +242,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
           if(this.calculationDetail.isPedigreeInd) {
             // disable non pedigree fields
-            this.viewModel.formGroup.controls.totalYieldToCountNonPedigree.disable();
+            this.viewModel.formGroup.controls.assessedYieldNonPedigree.disable();
             this.viewModel.formGroup.controls.damagedAcresNonPedigree.disable();
             this.viewModel.formGroup.controls.seededAcresNonPedigree.disable();
             this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.disable();            
@@ -248,7 +251,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
           if(!this.calculationDetail.isPedigreeInd) {
             // disable non pedigree fields
-            this.viewModel.formGroup.controls.totalYieldToCountPedigree.disable();
+            this.viewModel.formGroup.controls.assessedYieldPedigree.disable();
             this.viewModel.formGroup.controls.damagedAcresPedigree.disable();
             this.viewModel.formGroup.controls.seededAcresPedigree.disable();
             this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.disable();
@@ -274,4 +277,23 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     toggleEarlyEstDeemedYieldValueRows(){
       this.showEarlyEstDeemedYieldValueRows = !this.showEarlyEstDeemedYieldValueRows;
     }
+
+    setStyles(){
+      // grid-template-columns: 3fr 2fr 1fr 1fr;
+      
+      let styles =  {
+
+        'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedClaimNumber? '1fr' : '')  +' 1fr' ,
+
+      }
+
+      // styles = {
+
+      //       'grid-template-columns': '1fr 1fr 1fr ' + (this.isWineGrape()? '3fr 1fr' : ' 4fr')  +' 1fr 1fr ' + (this.isWineGrape()? ' 1fr' : '') ,
+
+      // }
+
+      return styles;
+    }
+
 }

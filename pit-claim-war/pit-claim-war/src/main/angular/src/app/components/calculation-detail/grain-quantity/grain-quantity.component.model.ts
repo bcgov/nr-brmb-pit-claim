@@ -17,10 +17,8 @@ export class CalculationDetailGrainQuantityComponentModel extends BaseComponentM
         this.formGroup = this.fb.group({
             primaryPerilCode: [{value: this.calculationDetail ? this.calculationDetail.primaryPerilCode : null, disabled: false}, [Validators.required]],            
             secondaryPerilCode: [{value: this.calculationDetail ? this.calculationDetail.secondaryPerilCode : null, disabled: false}],     
-            totalYieldToCountNonPedigree: [''],
-            totalYieldToCountPedigree: [''],
-            // earlyEstDeemedYieldValueNonPedigree: [''],
-            // earlyEstDeemedYieldValuePedigree: [''],
+            assessedYieldNonPedigree: [''],
+            assessedYieldPedigree: [''],
             damagedAcresNonPedigree: [''],
             damagedAcresPedigree: [''],
             seededAcresNonPedigree: [''],

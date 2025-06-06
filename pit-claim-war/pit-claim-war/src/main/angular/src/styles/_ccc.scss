@@ -126,6 +126,11 @@ mat-toolbar.mat-primary.wf1-public-application-header {
             input {
                 text-align: right;
             }
+
+            label {
+                background-color: inherit;
+                font-size: 12px;
+            }
         }
 
         .ccc-header {
@@ -155,6 +160,9 @@ mat-toolbar.mat-primary.wf1-public-application-header {
             border-bottom: 2px solid #ccc;
         }
 
+        .ccc-border-top {
+            border-top: 2px solid #ccc;
+        }
         
     }
 
