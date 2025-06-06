@@ -132,6 +132,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	public ClaimCalculation getCalculationFromClaim(ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
 			ProductRsrc productRsrc, 
 			CropCommodityDto crpDto,
+			CropCommodityDto linkedCrpDto,
 			VerifiedYieldContractSimple verifiedYield,
 			FactoryContext context, 
 			WebAdeAuthentication authentication) throws FactoryException {
@@ -189,15 +190,15 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 				resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLossFromClaim(productRsrc));
 			}
 
-			// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
+			// Add a grain quantity object if the insurance plan is grain and coverage is grain quantity
 			else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 
 				// If there is already a calculation that is linked to this one, then this default ClaimCalculationGrainQuantity object will 
 				// be overwritten by the one from the linked calculation.
 				resource.setClaimCalculationGrainQuantity(createClaimCalculationGrainQuantityFromClaim());
 
-				resource.setClaimCalculationGrainQuantityDetail(createClaimCalculationGrainQuantityDetailFromClaim(productRsrc, crpDto, verifiedYield));
-				populateCommentForGrainQuantity(resource, verifiedYield);
+				resource.setClaimCalculationGrainQuantityDetail(createClaimCalculationGrainQuantityDetailFromClaim(productRsrc, crpDto, linkedCrpDto, verifiedYield));
+				populateCommentForGrainQuantity(resource, crpDto, linkedCrpDto, verifiedYield);
 			}
 		
 		}
@@ -451,35 +452,46 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 	}
 	
-	private void populateCommentForGrainQuantity(ClaimCalculationRsrc resource, VerifiedYieldContractSimple verifiedYield) {
+	private void populateCommentForGrainQuantity(ClaimCalculationRsrc resource, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
+
+		// CUWS stores yield data always using the non-pedigree crop id, whereas CCS stores Calculations for pedigree commodities using that crop id. So we have to account for this mis-match 
+		// here when filtering for Verified Yield.
+		Integer vysCropCommodityId = null;
+		if ( crpDto.getIsPedigreeInd() ) {
+			vysCropCommodityId = linkedCrpDto.getCropCommodityId();
+		} else {
+			vysCropCommodityId = crpDto.getCropCommodityId();
+		}
 		
 		StringBuilder commentStr = new StringBuilder();
 	
 		if ( verifiedYield.getVerifiedYieldSummaries() != null ) {
 			for ( VerifiedYieldSummary vys : verifiedYield.getVerifiedYieldSummaries() ) {
-				List<UnderwritingComment> uwComments = vys.getUwComments();
-				
-				if ( uwComments != null && !uwComments.isEmpty() ) {
-					StringBuilder vysCommentStr = new StringBuilder();
-
-					for ( UnderwritingComment uwCmt : uwComments ) {
-						// TODO: Take all comments?
-						if ( vysCommentStr.length() > 0 ) {
-							vysCommentStr.append("\n");
-						}
-						vysCommentStr.append(uwCmt.getUnderwritingComment());
-					}
+				if ( vys.getCropCommodityId().equals(vysCropCommodityId) ) {      // Extract comments for non-pedigree and pedigree.
+					List<UnderwritingComment> uwComments = vys.getUwComments();
 					
-					if ( vysCommentStr.length() > 0 ) {
-						
-						if ( commentStr.length() > 0 ) {
-							commentStr.append("\n");
+					if ( uwComments != null && !uwComments.isEmpty() ) {
+						StringBuilder vysCommentStr = new StringBuilder();
+	
+						for ( UnderwritingComment uwCmt : uwComments ) {
+							if ( vysCommentStr.length() > 0 ) {
+								vysCommentStr.append("\n\n");
+							}
+							vysCommentStr.append(uwCmt.getUnderwritingComment());
 						}
 						
-						commentStr.append("Verified Yield Summary - ")
-				          .append(vys.getCropCommodityName())
-				          .append(":\n")
-				          .append(vysCommentStr.toString());						
+						if ( vysCommentStr.length() > 0 ) {
+							
+							if ( commentStr.length() > 0 ) {
+								commentStr.append("\n\n");
+							}
+							
+							commentStr.append("Verified Yield Summary - ")
+					          .append(vys.getCropCommodityName())
+					          .append(vys.getIsPedigreeInd() ? " - Pedigreed" : "")
+					          .append(":\n")
+					          .append(vysCommentStr.toString());						
+						}
 					}
 				}
 			}
@@ -487,14 +499,15 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		if ( verifiedYield.getVerifiedYieldAmendments() != null ) {
 			for ( VerifiedYieldAmendment vya : verifiedYield.getVerifiedYieldAmendments() ) {
-				if ( vya.getRationale() != null ) {
+				if ( vya.getCropCommodityId().equals(vysCropCommodityId) && vya.getRationale() != null ) {
 
 					if ( commentStr.length() > 0 ) {
-						commentStr.append("\n");
+						commentStr.append("\n\n");
 					}
 					
 					commentStr.append("Verified Yield Amendment Rationale - ")
 			          .append(vya.getCropCommodityName())
+			          .append(vya.getIsPedigreeInd() ? " - Pedigreed" : "")
 			          .append(":\n")
 			          .append(vya.getRationale());
 				}
@@ -606,7 +619,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		return model;
 	}
 
-	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetailFromClaim(ProductRsrc productRsrc, CropCommodityDto crpDto, VerifiedYieldContractSimple verifiedYield) {
+	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetailFromClaim(ProductRsrc productRsrc, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
 
 		ClaimCalculationGrainQuantityDetail model = new ClaimCalculationGrainQuantityDetail();
 
@@ -619,10 +632,20 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		model.setProductionGuaranteeWeight(productRsrc.getProductionGuarantee());
 
 		// From CUWS
+		// CUWS stores yield data always using the non-pedigree crop id, whereas CCS stores Calculations for pedigree commodities using that crop id. So we have to account for this mis-match 
+		// here when filtering for Verified Yield.
+		Integer vysCropCommodityId = null;
+		if ( crpDto.getIsPedigreeInd() ) {
+			vysCropCommodityId = linkedCrpDto.getCropCommodityId();
+		} else {
+			vysCropCommodityId = crpDto.getCropCommodityId();
+		}
+		
+		
 		VerifiedYieldSummary vys = null;
 		if ( verifiedYield.getVerifiedYieldSummaries() != null ) {
 			for ( VerifiedYieldSummary currVys : verifiedYield.getVerifiedYieldSummaries() ) {
-				if ( currVys.getCropCommodityId().equals(crpDto.getCropCommodityId()) && currVys.getIsPedigreeInd().equals(crpDto.getIsPedigreeInd()) ) {
+				if ( currVys.getCropCommodityId().equals(vysCropCommodityId) && currVys.getIsPedigreeInd().equals(crpDto.getIsPedigreeInd()) ) {
 					vys = currVys;
 					break;
 				}
@@ -630,13 +653,13 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		}
 
 		if ( vys != null ) { 
-			model.setAssessedYield(vys.getAssessedYield());
 			model.setTotalYieldToCount(vys.getYieldToCount());
 		} else {
 			throw new FactoryException("Did not find Verified Yield Summary for " + crpDto.getCommodityName());
 		}
 
 		// User Entered
+		model.setAssessedYield(null);
 		model.setDamagedAcres(null);
 		model.setEarlyEstDeemedYieldValue(null);
 		model.setInspEarlyEstYield(null);
@@ -1577,10 +1600,11 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setPolicyNumber(dto.getPolicyNumber());
 		resource.setHasChequeReqInd(dto.getHasChequeReqInd());
 		resource.setClaimCalculationGrainQuantityGuid(dto.getClaimCalculationGrainQuantityGuid());
-		resource.setLinkedProductId(null); // TODO
-		resource.setLinkedClaimNumber(null); // TODO
-		resource.setLinkedClaimCalculationGuid(null); // TODO
 
+		// Set to null for now. Will be updated later from a linked calculation if one exists.
+		resource.setLinkedProductId(null);
+		resource.setLinkedClaimNumber(null);
+		resource.setLinkedClaimCalculationGuid(null);
 	}
 
 	static void setSelfLink(String claimCalculationGuid, ClaimCalculationRsrc resource, URI baseUri) {
