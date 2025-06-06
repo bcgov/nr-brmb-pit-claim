@@ -111,8 +111,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   ngOnInit() {
     super.ngOnInit()
 
-    // this.viewModel.formGroup.controls.adjustedAcres.valueChanges.subscribe(value => this.updateCalculated() )
-    // this.viewModel.formGroup.controls.percentYieldReduction.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.assessedYieldNonPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.assessedYieldPedigree.valueChanges.subscribe(value => this.updateCalculated() )
     
   }
 
@@ -123,22 +123,24 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.viewModel.formGroup.controls.primaryPerilCode.setValue( this.calculationDetail.primaryPerilCode )
       this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )  
       
-      // this.viewModel.formGroup.controls.adjustedAcres.setValue( this.calculationDetail.claimCalculationGrainSpotLoss.adjustedAcres ) 
-      // this.viewModel.formGroup.controls.percentYieldReduction.setValue( this.calculationDetail.claimCalculationGrainSpotLoss.percentYieldReduction ) 
-      // this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
+      this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
   
-      // if (!this.calculationDetail.claimCalculationGrainSpotLoss.claimCalculationGrainSpotLossGuid) {
+      this.setFormFields(this.calculationDetail)
 
-      //   // calculate values for new calculations only
-      //   this.calculateValues()
+      if (!this.calculationDetail.claimCalculationGrainQuantityDetail.claimCalculationGrainQuantityDetailGuid) {
 
-      // } else {
-        
-      //   this.eligibleYieldReduction = this.calculationDetail.claimCalculationGrainSpotLoss.eligibleYieldReduction
-      //   this.spotLossReductionValue = this.calculationDetail.claimCalculationGrainSpotLoss.spotLossReductionValue
-      //   this.totalClaimAmount = this.calculationDetail.totalClaimAmount
+        // calculate values for new calculations only
+        this.calculateValues()
 
-      // }
+      } else {
+        // set the total calculated values
+        this.totalCoverageValue = this.calculationDetail.claimCalculationGrainQuantity.totalCoverageValue
+        this.productionGuaranteeAmount = this.calculationDetail.claimCalculationGrainQuantity.productionGuaranteeAmount
+        this.totalYieldLossValue = this.calculationDetail.claimCalculationGrainQuantity.totalYieldLossValue
+        this.quantityLossClaim = this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim
+
+        this.setValues(this.calculationDetail)
+      }
 
       this.enableDisableFormControls();
 
@@ -180,6 +182,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         self.calculationDetailNonPedigree = data
       }
 
+      self.setFormFields(data)
+      self.setValues(data)
       self.totalCoverageValue = self.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue + self.calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue
 
       setTimeout(() => {
@@ -189,22 +193,121 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   }
 
-  //  validateRenameLegalLand(searchLegal) {
+  setFormFields (calcDetail) {
+      
+    if (calcDetail.isPedigreeInd) {
 
-  //   // /uwcontracts/{policyId}/validateRenameLegal
-  //   let url = this.appConfig.getConfig().rest["cirras_underwriting"]
-  //   url = url +"/uwcontracts/" + this.dataReceived.policyId + "/validateRenameLegal" 
-  //   url = url + "?policyId=" + this.dataReceived.policyId
-  //   url = url + "&annualFieldDetailId=" + this.dataReceived.annualFieldDetailId
-  //   url = url + "&newLegalLocation=" + encodeURI(searchLegal)  
+        this.viewModel.formGroup.controls.assessedYieldPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.assessedYield ) 
+        this.viewModel.formGroup.controls.damagedAcresPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.damagedAcres ) 
+        this.viewModel.formGroup.controls.seededAcresPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.seededAcres ) 
+        this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.inspEarlyEstYield ) 
 
-  //   const httpOptions = setHttpHeaders(this.tokenService.getOauthToken())
+      } else {
+        
+        this.viewModel.formGroup.controls.assessedYieldNonPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.assessedYield ) 
+        this.viewModel.formGroup.controls.damagedAcresNonPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.damagedAcres ) 
+        this.viewModel.formGroup.controls.seededAcresNonPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.seededAcres ) 
+        this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.setValue( calcDetail.claimCalculationGrainQuantityDetail.inspEarlyEstYield ) 
 
-  //   var self = this
-  //   return this.http.get(url,httpOptions).toPromise().then((data: RenameLegalValidationRsrc) => {
-  //     self.renameLegalLandList = data
-  //    })
-  // }
+      }
+  }
+
+  setValues(calcDetail) {
+
+    if (calcDetail.isPedigreeInd) {
+      this.prodGuaranteeMinusAssessmentsPedigree = calcDetail.claimCalculationGrainQuantityDetail.prodGuaranteeMinusAssessments
+      this.fiftyPercentProductionGuaranteePedigree = calcDetail.claimCalculationGrainQuantityDetail.fiftyPercentProductionGuarantee
+      this.calcEarlyEstYieldPedigree = calcDetail.claimCalculationGrainQuantityDetail.calcEarlyEstYield
+      this.earlyEstDeemedYieldValuePedigree = calcDetail.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue
+      this.yieldValuePedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
+      this.yieldValueWithEarlyEstDeemedYieldPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
+      this.totalClaimAmountPedigree = calcDetail.claimCalculationGrainQuantityDetail.totalClaimAmount
+    } else {
+      this.prodGuaranteeMinusAssessmentsNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.prodGuaranteeMinusAssessments
+      this.fiftyPercentProductionGuaranteeNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.fiftyPercentProductionGuarantee
+      this.calcEarlyEstYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.calcEarlyEstYield
+      this.earlyEstDeemedYieldValueNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue
+      this.yieldValueNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
+      this.yieldValueWithEarlyEstDeemedYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
+      this.totalClaimAmountNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.totalClaimAmount
+    }
+
+  }
+  
+  updatingCalculated = false
+  updateCalculated() {
+
+      if ( !this.calculationDetail ) return
+      if ( this.calculationDetail && !this.calculationDetail.claimCalculationGrainQuantityDetail) return
+      if ( this.updatingCalculated ) return
+      this.updatingCalculated = true
+
+      this.calculateValues()
+
+      this.updatingCalculated = false
+  }
+
+  calculateValues() {
+
+    let productionGuaranteeWeightNonPedigree = 
+        (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail && this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) ? 
+            this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : 0 ;
+
+    let productionGuaranteeWeightPedigree = 
+        (this.calculationDetailPedigree && this.calculationDetailPedigree.claimCalculationGrainQuantityDetail && this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) ? 
+            this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : 0 ;
+
+    // Line J: ( D - I ) x E
+
+    if ( this.viewModel.formGroup.controls.assessedYieldNonPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value ))) {
+
+      let assessedYield = parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value )
+
+      this.prodGuaranteeMinusAssessmentsNonPedigree = 
+        ( productionGuaranteeWeightNonPedigree - assessedYield) * this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insurableValue
+    }
+  
+    if ( this.viewModel.formGroup.controls.assessedYieldPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.assessedYieldPedigree.value ))) {
+
+      let assessedYield = parseFloat(this.viewModel.formGroup.controls.assessedYieldPedigree.value )
+      this.prodGuaranteeMinusAssessmentsPedigree = 
+        ( productionGuaranteeWeightPedigree - assessedYield) * this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.insurableValue
+    }
+
+    // let adjustedAcres = 0
+    // let percentYieldReduction = 0
+
+    // if (this.viewModel.formGroup.controls.adjustedAcres.value && this.viewModel.formGroup.controls.percentYieldReduction.value ) {
+      
+    //   if (!isNaN(parseFloat(this.viewModel.formGroup.controls.adjustedAcres.value)) 
+    //     && !isNaN(parseFloat(this.viewModel.formGroup.controls.percentYieldReduction.value)) ) {
+      
+    //       adjustedAcres = parseFloat(this.viewModel.formGroup.controls.adjustedAcres.value)
+    //       percentYieldReduction = parseFloat(this.viewModel.formGroup.controls.percentYieldReduction.value)
+    //     }        
+    // }
+
+    // // Line F = D * E 
+    // this.eligibleYieldReduction = adjustedAcres * percentYieldReduction / 100
+    
+
+    // // Line G = B * F
+    // this.spotLossReductionValue = 0
+    // if (!isNaN(this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre)) {
+    //   this.spotLossReductionValue = this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre * this.eligibleYieldReduction
+    // }
+    
+    // // Line I = D * ( E - H ) * B 
+    // if ( !isNaN(this.calculationDetail.claimCalculationGrainSpotLoss.deductible) && !isNaN(this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre)) {
+
+    //   this.totalClaimAmount = adjustedAcres * 
+    //                         ( percentYieldReduction - this.calculationDetail.claimCalculationGrainSpotLoss.deductible) / 100 * 
+    //                         this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre 
+
+    // }
+    
+  }
+
 
 
 
