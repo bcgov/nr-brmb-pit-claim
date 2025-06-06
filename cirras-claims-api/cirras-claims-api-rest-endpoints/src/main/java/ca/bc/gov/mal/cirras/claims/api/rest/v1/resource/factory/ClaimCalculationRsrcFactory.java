@@ -190,7 +190,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 				resource.setClaimCalculationGrainSpotLoss(createClaimCalculationGrainSpotLossFromClaim(productRsrc));
 			}
 
-			// Add a grain spot loss object if the insurance plan is grain and coverage is grain spot loss
+			// Add a grain quantity object if the insurance plan is grain and coverage is grain quantity
 			else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 
 				// If there is already a calculation that is linked to this one, then this default ClaimCalculationGrainQuantity object will 
@@ -653,13 +653,13 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		}
 
 		if ( vys != null ) { 
-			model.setAssessedYield(vys.getAssessedYield());
 			model.setTotalYieldToCount(vys.getYieldToCount());
 		} else {
 			throw new FactoryException("Did not find Verified Yield Summary for " + crpDto.getCommodityName());
 		}
 
 		// User Entered
+		model.setAssessedYield(null);
 		model.setDamagedAcres(null);
 		model.setEarlyEstDeemedYieldValue(null);
 		model.setInspEarlyEstYield(null);

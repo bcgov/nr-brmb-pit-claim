@@ -505,7 +505,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 		
 
 		// From CUWS
-		Double assessedYield = 56088.0;
 		Double yieldToCount = 24762.0;
 		String calculationComment = "Verified Yield Summary - OAT:\nTest Oat Verified Yield Summary Comment 4 5 6"
 				+ "\n\nTest Oat Verified Yield Summary Comment 1 2 3"
@@ -562,10 +561,10 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(productionGuarantee, grainQtyDetail.getProductionGuaranteeWeight());
 
 		// Values from CUWS
-		Assert.assertEquals(assessedYield, grainQtyDetail.getAssessedYield());
 		Assert.assertEquals(yieldToCount, grainQtyDetail.getTotalYieldToCount());
 		
 		// User Entered
+		Assert.assertEquals(null, grainQtyDetail.getAssessedYield());
 		Assert.assertEquals(null, grainQtyDetail.getDamagedAcres());
 		Assert.assertEquals(null, grainQtyDetail.getEarlyEstDeemedYieldValue());
 		Assert.assertEquals(null, grainQtyDetail.getInspEarlyEstYield());
@@ -596,7 +595,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 		
 
 		// From CUWS
-		assessedYield = 431235.0;
 		yieldToCount = 0.0;
 		calculationComment = "Verified Yield Summary - FIELD PEA:\nTest Field Pea Verified Yield Summary Comment 2 2 2"
 				+ "\n\nVerified Yield Summary - FIELD PEA - Pedigreed:\nTest Field Pea Pedigreed Verified Yield Summary Comment 1 1 1"
@@ -653,10 +651,10 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(productionGuarantee, grainQtyDetail.getProductionGuaranteeWeight());
 
 		// Values from CUWS
-		Assert.assertEquals(assessedYield, grainQtyDetail.getAssessedYield());
 		Assert.assertEquals(yieldToCount, grainQtyDetail.getTotalYieldToCount());
 		
 		// User Entered
+		Assert.assertEquals(null, grainQtyDetail.getAssessedYield());
 		Assert.assertEquals(null, grainQtyDetail.getDamagedAcres());
 		Assert.assertEquals(null, grainQtyDetail.getEarlyEstDeemedYieldValue());
 		Assert.assertEquals(null, grainQtyDetail.getInspEarlyEstYield());

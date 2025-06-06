@@ -352,7 +352,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			calculateVarietyInsurableValues(result);
 
 			// Set fields from linked calculation, if any.
-			updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, true);
+			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, true);
+			}
 
 		} catch (CirrasPolicyServiceException e) {
 			throw new ServiceException("Policy service threw an exception (CirrasPolicyServiceException)", e);
@@ -668,17 +671,18 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
 							logger.error("No Verified Yield found for " + claimNumber);
 						}
-
+						
 					} catch (CirrasPolicyServiceException e) {
 						throw new ServiceException("Policy service threw an exception (CirrasPolicyServiceException)", e);
 					} catch (CirrasUnderwritingServiceException e) {
 						// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
 						logger.error("getUnderwritingVerifiedYield: Error when getting verified yield from CUWS for Claim Number " + claimNumber + ": " + e);
 					}
+					
+					// Set fields from linked calculation, if any.
+					updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, false);
 				}
 
-				// Set fields from linked calculation, if any.
-				updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, false);
 				
 				if (!ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(result.getCalculationStatusCode())
 						&& !ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString().equals(result.getCalculationStatusCode())) {
