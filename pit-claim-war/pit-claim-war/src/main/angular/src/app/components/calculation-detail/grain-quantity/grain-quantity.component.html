@@ -374,18 +374,18 @@
               {{ yieldValueWithEarlyEstDeemedYieldNonPedigree | number:'1.2-2' }}
             </span>
           </div> 
-          <div *ngIf="showNonPedigreeColumn" class="ccc-right">
+          <div *ngIf="showPedigreeColumn" class="ccc-right">
             {{ yieldValueWithEarlyEstDeemedYieldPedigree | number:'1.2-2' }}
           </div>
           
-          <div *ngIf="showNonPedigreeColumn && showPedigreeColumn">
+          <div *ngIf="showNonPedigreeColumn || showPedigreeColumn">
             <span class="ccc-expression">T</span> Total Pedigreed and Non-Pedigreed Seeds Yield Loss Value
           </div>
-          <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-border-right ccc-right">
-            <span class="ccc-expression">K - Sum of S</span>
+          <div *ngIf="showNonPedigreeColumn || showPedigreeColumn" class="ccc-border-right ccc-right">
+            <span class="ccc-expression">{{calculationDetail.linkedProductId ? "K - Sum of S" : "J - S" }}</span>
           </div>
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-border-top"></div> 
-          <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-right ccc-border-top">
+          <div *ngIf="showNonPedigreeColumn || showPedigreeColumn" class="ccc-right ccc-border-top">
             {{ totalYieldLossValue | number:'1.2-2' }}
           </div>
   
@@ -412,7 +412,7 @@
             <span class="ccc-expression">V</span> Maximum Claim Payable
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">G - U</span>
+            <span class="ccc-expression">  {{ calculationDetail.linkedProductId ? "G - U" : "F - U"}} </span>
           </div>
           <div class="ccc-right"> 
             {{ maxClaimPayable |  number:'1.2-2'  }} 
@@ -444,7 +444,7 @@
             <span class="ccc-expression">Y</span> Quantity Loss Claim
           </div>
           <div class="ccc-border-right ccc-right" >
-            <span class="ccc-expression">Lesser of V or W</span>
+            <span class="ccc-expression">Lesser of (V or W) - X</span>
           </div>
           <div class="ccc-right">
             {{ quantityLossClaim | number:'1.0-0'  }}
