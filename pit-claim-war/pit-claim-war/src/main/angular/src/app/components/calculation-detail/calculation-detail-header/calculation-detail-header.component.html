@@ -165,3 +165,42 @@
     </div>
   </div>
   
+
+<!-- needs to be tested -->
+  <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
+    *ngIf="calculationDetail.linkedProductId && ( !calculationDetail.linkedClaimNumber || !calculationDetail.linkedClaimCalculationGuid)"> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'blue', 'font-size':'64px'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+        <h3 *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue;">
+          This is a linked calculation. There is a product for 
+          {{ (calculationDetail.commodityName.indexOf("Pedigreed") > -1) ? 
+            calculationDetail.commodityName.substring(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") + 1) : 
+            calculationDetail.commodityName + " Prdigreed "}} but no claim. 
+        </h3>     
+        
+        
+        <span *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue; font-size: 14px;">
+          Please create a claim in CIRRAS for the pedigree or non pedigree product
+        </span>   
+
+
+        <h3 *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue;">
+          This is a linked calculation. There is a claim for 
+          {{ (calculationDetail.commodityName.indexOf("Pedigreed") > -1) ? 
+            calculationDetail.commodityName.substring(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") + 1) : 
+            calculationDetail.commodityName + " Pedigreed "}} but no calculation. 
+        </h3>     
+                
+        <span *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue; font-size: 14px;">
+          Please create a calculation for the Pedigreed and Non-Pedigreed claims.
+        </span>  
+
+      </div>
+    </div>
+  </div>

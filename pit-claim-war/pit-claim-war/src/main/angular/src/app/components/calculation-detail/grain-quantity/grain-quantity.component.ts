@@ -8,6 +8,7 @@ import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.c
 import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
 import { makeNumberOnly, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'calculation-detail-grain-quantity',
@@ -49,6 +50,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   productionGuaranteeAmount: number
   totalYieldLossValue: number
   quantityLossClaim: number
+  maxClaimPayable: number
   totalClaimAmountNonPedigree: number
   totalClaimAmountPedigree: number
 
@@ -114,6 +116,16 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.viewModel.formGroup.controls.assessedYieldNonPedigree.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.assessedYieldPedigree.valueChanges.subscribe(value => this.updateCalculated() )
     
+    this.viewModel.formGroup.controls.damagedAcresNonPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.damagedAcresPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.seededAcresNonPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.seededAcresPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.valueChanges.subscribe(value => this.updateCalculated() )
+
+    this.viewModel.formGroup.controls.reseedClaim.valueChanges.subscribe(value => this.updateCalculated() )
+    this.viewModel.formGroup.controls.advancedClaim.valueChanges.subscribe(value => this.updateCalculated() )
+
   }
 
   ngOnChanges2(changes: SimpleChanges) {
@@ -244,71 +256,162 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
       this.calculateValues()
 
+      this.cdr.detectChanges()
+
       this.updatingCalculated = false
   }
 
   calculateValues() {
 
-    let productionGuaranteeWeightNonPedigree = 
-        (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail && this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) ? 
-            this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : 0 ;
-
-    let productionGuaranteeWeightPedigree = 
-        (this.calculationDetailPedigree && this.calculationDetailPedigree.claimCalculationGrainQuantityDetail && this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) ? 
-            this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : 0 ;
-
     // Line J: ( D - I ) x E
+    this.prodGuaranteeMinusAssessmentsNonPedigree = this.calculateProductionGuaranteeWeight(this.calculationDetailNonPedigree, <FormControl>this.viewModel.formGroup.controls.assessedYieldNonPedigree)
+    this.prodGuaranteeMinusAssessmentsPedigree = this.calculateProductionGuaranteeWeight(this.calculationDetailPedigree, <FormControl>this.viewModel.formGroup.controls.assessedYieldPedigree)
+    
+    // Line K: Sum of J
+    this.productionGuaranteeAmount = this.prodGuaranteeMinusAssessmentsNonPedigree + this.prodGuaranteeMinusAssessmentsPedigree
 
-    if ( this.viewModel.formGroup.controls.assessedYieldNonPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value ))) {
+    // Line O: D x 50%
+    this.fiftyPercentProductionGuaranteeNonPedigree = this.calculateFiftyPercentProductionGuarantee(this.calculationDetailNonPedigree)
+    this.fiftyPercentProductionGuaranteePedigree = this.calculateFiftyPercentProductionGuarantee(this.calculationDetailPedigree)
+    
+    // Line P: O x ( M / N)
+    this.calcEarlyEstYieldNonPedigree = this.calculateCalcEarlyEstYield( this.calculationDetailNonPedigree, <FormControl>this.viewModel.formGroup.controls.damagedAcresNonPedigree, <FormControl>this.viewModel.formGroup.controls.seededAcresNonPedigree)
+    this.calcEarlyEstYieldPedigree = this.calculateCalcEarlyEstYield( this.calculationDetailPedigree, <FormControl>this.viewModel.formGroup.controls.damagedAcresPedigree, <FormControl>this.viewModel.formGroup.controls.seededAcresPedigree)
 
-      let assessedYield = parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value )
+    // Line L: ( Q or P ) x E
+    this.earlyEstDeemedYieldValueNonPedigree = this.calculateEarlyEstDeemedYieldValue(this.calculationDetailNonPedigree, 
+                                                                                      <FormControl>this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree, 
+                                                                                      this.calcEarlyEstYieldNonPedigree) 
 
-      this.prodGuaranteeMinusAssessmentsNonPedigree = 
-        ( productionGuaranteeWeightNonPedigree - assessedYield) * this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insurableValue
-    }
+    this.earlyEstDeemedYieldValuePedigree = this.calculateEarlyEstDeemedYieldValue(this.calculationDetailPedigree, 
+                                                                                      <FormControl>this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree, 
+                                                                                      this.calcEarlyEstYieldPedigree) 
+    
+    // Line R: H * E
+    this.yieldValueNonPedigree = this.calculateYieldValue(this.calculationDetailNonPedigree)
+    this.yieldValuePedigree = this.calculateYieldValue(this.calculationDetailPedigree)
+
+    // Line S: R + L
+    this.yieldValueWithEarlyEstDeemedYieldNonPedigree = this.calculateYieldValueWithEarlyEstDeemedYield(this.yieldValueNonPedigree, this.earlyEstDeemedYieldValueNonPedigree)
+    this.yieldValueWithEarlyEstDeemedYieldPedigree = this.calculateYieldValueWithEarlyEstDeemedYield(this.yieldValuePedigree, this.earlyEstDeemedYieldValuePedigree)
+
+    // Line T: K - Sum of S
+    this.totalYieldLossValue = this.productionGuaranteeAmount - (this.yieldValueWithEarlyEstDeemedYieldNonPedigree + this.yieldValueWithEarlyEstDeemedYieldPedigree)
+
+    // Line V: G - U
+    this.maxClaimPayable = this.calculateMaxClaimPayable()
+
+    // Line Y: Lesser of V or W
+    this.quantityLossClaim = Math.min(this.maxClaimPayable, this.totalYieldLossValue)
+
+  }
   
-    if ( this.viewModel.formGroup.controls.assessedYieldPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.assessedYieldPedigree.value ))) {
+  calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
+    // Line J: ( D - I ) x E
+    // Production Guarantee - Assessments: Calculated as (  (Production Guarantee - Assessed Yield) * Insurable Value  ) 
+    let result = 0
 
-      let assessedYield = parseFloat(this.viewModel.formGroup.controls.assessedYieldPedigree.value )
-      this.prodGuaranteeMinusAssessmentsPedigree = 
-        ( productionGuaranteeWeightPedigree - assessedYield) * this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.insurableValue
+    let productionGuaranteeWeight = 
+      (calcDetail && calcDetail.claimCalculationGrainQuantityDetail && calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) ? 
+        calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : 0 ;
+
+    if ( ctlAssessedYield && !isNaN(parseFloat(ctlAssessedYield.value ))) {
+
+      let assessedYield = parseFloat(ctlAssessedYield.value )
+      result = ( productionGuaranteeWeight - assessedYield) * calcDetail.claimCalculationGrainQuantityDetail.insurableValue
     }
 
-    // let adjustedAcres = 0
-    // let percentYieldReduction = 0
-
-    // if (this.viewModel.formGroup.controls.adjustedAcres.value && this.viewModel.formGroup.controls.percentYieldReduction.value ) {
-      
-    //   if (!isNaN(parseFloat(this.viewModel.formGroup.controls.adjustedAcres.value)) 
-    //     && !isNaN(parseFloat(this.viewModel.formGroup.controls.percentYieldReduction.value)) ) {
-      
-    //       adjustedAcres = parseFloat(this.viewModel.formGroup.controls.adjustedAcres.value)
-    //       percentYieldReduction = parseFloat(this.viewModel.formGroup.controls.percentYieldReduction.value)
-    //     }        
-    // }
-
-    // // Line F = D * E 
-    // this.eligibleYieldReduction = adjustedAcres * percentYieldReduction / 100
-    
-
-    // // Line G = B * F
-    // this.spotLossReductionValue = 0
-    // if (!isNaN(this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre)) {
-    //   this.spotLossReductionValue = this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre * this.eligibleYieldReduction
-    // }
-    
-    // // Line I = D * ( E - H ) * B 
-    // if ( !isNaN(this.calculationDetail.claimCalculationGrainSpotLoss.deductible) && !isNaN(this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre)) {
-
-    //   this.totalClaimAmount = adjustedAcres * 
-    //                         ( percentYieldReduction - this.calculationDetail.claimCalculationGrainSpotLoss.deductible) / 100 * 
-    //                         this.calculationDetail.claimCalculationGrainSpotLoss.coverageAmtPerAcre 
-
-    // }
-    
+    return result
   }
 
+  calculateFiftyPercentProductionGuarantee(calcDetail: vmCalculation) {
+    // 50% of Production Guarantee - calculated as ( Production Guarantee x 50% )
+    let result = 0;
 
+    if (calcDetail && calcDetail.claimCalculationGrainQuantityDetail ) {
+      result = 0.5 * calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight
+    }
+     return result
+  }
+
+  calculateCalcEarlyEstYield(calcDetail: vmCalculation, ctlDamagedAcres: FormControl, ctlSeededAcres: FormControl){
+    // Calculated Early Establishment Yield - calculated as ( 50% of Production Guarantee x ( Damaged Acres / Acres Seeded) )
+
+    let result = 0
+
+    let damagedAcres = 0
+    let seededAcres = 0
+
+    if ( ctlDamagedAcres && !isNaN(parseFloat(ctlDamagedAcres.value ))) {
+      damagedAcres = parseFloat(ctlDamagedAcres.value )
+    }
+
+    if ( ctlSeededAcres && !isNaN(parseFloat(ctlSeededAcres.value ))) {
+      seededAcres = parseFloat(ctlSeededAcres.value )
+    }
+
+    if (seededAcres > 0 && calcDetail.claimCalculationGrainQuantityDetail && calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) {
+      result = 0.5 * calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight * damagedAcres / seededAcres
+    }
+
+    return result
+  }
+
+  calculateEarlyEstDeemedYieldValue(calcDetail: vmCalculation, ctlInspEarlyEstYield: FormControl, calcEarlyEstYield: number) {
+    // Less Early Establishment Deemed Yield Value → calculated as 
+    // ( Inspected Early Establishment Yield (if empty then take Calculated Early Establishment Yield) x Insurable Value per Tonne
+
+    let result = 0
+    let inspEarlyEstYield = 0
+
+    if ( ctlInspEarlyEstYield && !isNaN(parseFloat(ctlInspEarlyEstYield.value ))) {
+      inspEarlyEstYield = parseFloat(ctlInspEarlyEstYield.value )
+    }
+
+    if (calcDetail && calcDetail.claimCalculationGrainQuantityDetail) {
+      
+      if (inspEarlyEstYield > 0) {
+        result = inspEarlyEstYield * calcDetail.claimCalculationGrainQuantityDetail.insurableValue
+      } else {
+        result = calcEarlyEstYield * calcDetail.claimCalculationGrainQuantityDetail.insurableValue
+      }
+    }
+
+    return result
+
+  }
+
+  calculateYieldValue(calcDetail: vmCalculation) {
+    // Yield Value - Calculated as ( Total Yield Harvested and Appraised * Insurable Value per Tonnes )
+
+    let result = 0
+
+    if (calcDetail && calcDetail.claimCalculationGrainQuantityDetail) {
+      result = calcDetail.claimCalculationGrainQuantityDetail.totalYieldToCount * calcDetail.claimCalculationGrainQuantityDetail.insurableValue
+    }
+    
+    return result
+  }
+
+  calculateYieldValueWithEarlyEstDeemedYield(yieldValue: number, earlyEstDeemedYieldValue: number) {
+    //Calculated as ( Yield Value + Less Early Establishment Deemed Yield Value )
+    return yieldValue + earlyEstDeemedYieldValue
+  }
+
+  calculateMaxClaimPayable() {
+    // calculated as ( Total Pedigreed and Non-Pedigreed Seeds Coverage Value - Reseed Claim )
+
+    let result = 0
+    let reseedClaim = 0
+
+    if ( this.viewModel.formGroup.controls.reseedClaim && !isNaN(parseFloat(this.viewModel.formGroup.controls.reseedClaim.value ))) {
+
+      reseedClaim = parseFloat(this.viewModel.formGroup.controls.reseedClaim.value )
+      result = this.totalCoverageValue - reseedClaim
+    }
+
+    return result
+  } 
 
 
 

@@ -354,7 +354,7 @@
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">H * E</span>
           </div>
-          <div *ngIf="showNonPedigreeColumn" class="ccc-fill ccc-number ccc-border-right"> 
+          <div *ngIf="showNonPedigreeColumn" class="ccc-right ccc-border-right"> 
             <span class="right-space">
               {{ yieldValueNonPedigree | number:'1.2-2' }}
             </span>
@@ -369,7 +369,7 @@
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">R + L</span>
           </div>
-          <div *ngIf="showNonPedigreeColumn" class="ccc-fill ccc-number ccc-border-right"> 
+          <div *ngIf="showNonPedigreeColumn" class="ccc-right ccc-border-right"> 
             <span class="right-space">
               {{ yieldValueWithEarlyEstDeemedYieldNonPedigree | number:'1.2-2' }}
             </span>
@@ -415,7 +415,7 @@
             <span class="ccc-expression">G - U</span>
           </div>
           <div class="ccc-right"> 
-            {{ calculationDetail.claimCalculationGrainQuantity.maxClaimPayable |  number:'1.2-2'  }} 
+            {{ maxClaimPayable |  number:'1.2-2'  }} 
           </div> 
   
           <div>
