@@ -12,6 +12,8 @@ import ca.bc.gov.mal.cirras.claims.model.v1.Claim;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimList;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationList;
@@ -389,6 +391,14 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
+			
+			String userId = getUserId(authentication);
+			
+			//Insert or update shared grain quantity record
+			if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+					&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				createUpdateGrainQuantity(claimCalculation, userId);
+			}
 
 			ClaimCalculationDto dto = claimCalculationFactory.createDto(claimCalculation);
 
@@ -412,7 +422,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				dto.setUpdateClaimCalcUserGuid(null);
 			}
 
-			String userId = getUserId(authentication);
 			claimCalculationDao.insert(dto, userId);
 
 			String claimCalculationGuid = dto.getClaimCalculationGuid();
@@ -455,9 +464,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		// Insert Grain Spot Loss data
 		createGrainSpotLoss(claimCalculation, userId, claimCalculationGuid);
 
-		// Insert Grain Quantity data
-		createGrainQuantity(claimCalculation, userId, claimCalculationGuid);
-		
 		// Insert Grain Quantity Detail data
 		createGrainQuantityDetail(claimCalculation, userId, claimCalculationGuid);
 }
@@ -536,7 +542,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 	}
 	
-	private void createGrainQuantity(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+	private void createGrainQuantity(ClaimCalculation claimCalculation, String userId)
 			throws DaoException {
 		//
 		// Insert Grain Quantity Loss Data
@@ -547,8 +553,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			ClaimCalculationGrainQuantityDto dtoGrainQuantity = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainQuantity());
 
 			dtoGrainQuantity.setClaimCalculationGrainQuantityGuid(null);
-			//dtoGrainQuantity.setClaimCalculationGuid(claimCalculationGuid);
 			claimCalculationGrainQuantityDao.insert(dtoGrainQuantity, userId);
+			
+			claimCalculation.setClaimCalculationGrainQuantityGuid(dtoGrainQuantity.getClaimCalculationGrainQuantityGuid());
 		}
 	}
 	
@@ -1085,6 +1092,12 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		// Update Grain Spot Loss
 		updateGrainSpotLoss(claimCalculation, userId);
+		
+		//Update Grain Quantity
+		updateGrainQuantity(claimCalculation, userId);
+
+		//Update Grain Quantity Detail
+		updateGrainQuantityDetail(claimCalculation, userId);
 	}
 
 	private void updatePlantAcres(ClaimCalculation claimCalculation, String userId)
@@ -1156,7 +1169,47 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			claimCalculationGrainSpotLossDao.update(dtoGrainSpotLoss, userId);
 		}
 	}
+
+	private void createUpdateGrainQuantity(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Shared grain quantity record could already exist when creating a new calculation
+		// Insert or Update Grain Quantity Data
+		//
+		if (claimCalculation.getClaimCalculationGrainQuantity() != null) {
+			updateGrainQuantity(claimCalculation, userId);
+		} else {
+			createGrainQuantity(claimCalculation, userId);
+		}
+	}
 	
+	private void updateGrainQuantity(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Quantity Data
+		//
+		if (claimCalculation.getClaimCalculationGrainQuantity() != null) {
+			ClaimCalculationGrainQuantityDto dtoGrainQuantity = claimCalculationGrainQuantityDao.fetch(claimCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainQuantity, claimCalculation.getClaimCalculationGrainQuantity());
+
+			claimCalculationGrainQuantityDao.update(dtoGrainQuantity, userId);
+		}
+	}
+	
+	private void updateGrainQuantityDetail(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Quantity Detail Data
+		//
+		if (claimCalculation.getClaimCalculationGrainQuantityDetail() != null) {
+			ClaimCalculationGrainQuantityDetailDto dtoGrainQuantityDetail = claimCalculationGrainQuantityDetailDao.fetch(claimCalculation.getClaimCalculationGrainQuantityDetail().getClaimCalculationGrainQuantityDetailGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainQuantityDetail, claimCalculation.getClaimCalculationGrainQuantityDetail());
+
+			claimCalculationGrainQuantityDetailDao.update(dtoGrainQuantityDetail, userId);
+		}
+	}
 	
 	private void updateBerriesQuantity(ClaimCalculation claimCalculation, String userId)
 			throws DaoException, NotFoundDaoException {
@@ -1395,6 +1448,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
 			calculateTotalsGrainSpotLoss(claimCalculation);
+		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+			calculateTotalsGrainQuantity(claimCalculation);
 		}
 	}
 
@@ -1476,6 +1532,42 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 
 		claimCalculation.setTotalClaimAmount(spotLossClaimValue);
+	}
+
+	private void calculateTotalsGrainQuantity(ClaimCalculation claimCalculation) {
+		
+		//Calculate calculation specific data
+		ClaimCalculationGrainQuantityDetail grainQuantityDetail = claimCalculation.getClaimCalculationGrainQuantityDetail();
+		
+		
+		//Calculate shared data
+		ClaimCalculationGrainQuantity grainQuantity = claimCalculation.getClaimCalculationGrainQuantity();
+		
+		// Eligible Yield Reduction: Adjusted Acres x Percent Yield Reduction.
+//		Double eligibleYieldReduction = 0.0;
+//		if ( grainSpotLoss.getAdjustedAcres() != null && grainSpotLoss.getPercentYieldReduction() != null ) {
+//			eligibleYieldReduction = grainSpotLoss.getAdjustedAcres() * (grainSpotLoss.getPercentYieldReduction() / 100.0);
+//		}
+//		
+//		grainSpotLoss.setEligibleYieldReduction(eligibleYieldReduction);
+//
+//
+//		// Spot Loss Reduction Value: Coverage Amt Per Acre x Eligible Yield Reduction.
+//		Double spotLossReductionValue = 0.0;
+//		if ( grainSpotLoss.getCoverageAmtPerAcre() != null && grainSpotLoss.getEligibleYieldReduction() != null ) {
+//			spotLossReductionValue = grainSpotLoss.getCoverageAmtPerAcre() * grainSpotLoss.getEligibleYieldReduction();
+//		}
+//		
+//		grainSpotLoss.setSpotLossReductionValue(spotLossReductionValue);
+//
+//		
+//		// Spot Loss Claim Value: Adjusted Acres x (Percent Yield Reduction - Deductible) x Coverage Amount Per Acre
+//		Double spotLossClaimValue = 0.0;
+//		if ( grainSpotLoss.getAdjustedAcres() != null && grainSpotLoss.getPercentYieldReduction() != null && grainSpotLoss.getDeductible() != null && grainSpotLoss.getCoverageAmtPerAcre() != null ) {
+//			spotLossClaimValue = grainSpotLoss.getAdjustedAcres() * ((grainSpotLoss.getPercentYieldReduction() - grainSpotLoss.getDeductible()) / 100.0) * grainSpotLoss.getCoverageAmtPerAcre();
+//		}
+
+		//claimCalculation.setTotalClaimAmount(spotLossClaimValue);
 	}
 	
 	private void calculateTotalsPlantUnits(ClaimCalculation claimCalculation) {

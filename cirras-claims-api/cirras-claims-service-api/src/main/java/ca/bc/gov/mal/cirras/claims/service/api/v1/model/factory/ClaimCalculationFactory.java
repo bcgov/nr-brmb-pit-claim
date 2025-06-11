@@ -66,6 +66,8 @@ public interface ClaimCalculationFactory {
 	void updateDto(ClaimCalculationGrapesDto dto, ClaimCalculationGrapes model);
 	void updateDto(ClaimCalculationGrainUnseededDto dto, ClaimCalculationGrainUnseeded model);
 	void updateDto(ClaimCalculationGrainSpotLossDto dto, ClaimCalculationGrainSpotLoss model);
+	void updateDto(ClaimCalculationGrainQuantityDto dto, ClaimCalculationGrainQuantity model);
+	void updateDto(ClaimCalculationGrainQuantityDetailDto dto, ClaimCalculationGrainQuantityDetail model);
 	
 	ClaimCalculationDto createDto(ClaimCalculation model);
 	ClaimCalculationVarietyDto createDto(ClaimCalculationVariety model);
