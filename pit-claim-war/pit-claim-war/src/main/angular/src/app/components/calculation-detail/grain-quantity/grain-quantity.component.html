@@ -203,9 +203,11 @@
             <span class="right-space">
               {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.totalYieldToCount : "" ) | number:'1.2-2' }}
             </span>
+            <!-- TODO: warning icon -->
           </div> 
           <div *ngIf="showPedigreeColumn" class="ccc-right">
             {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.totalYieldToCount : "" ) | number:'1.2-2' }}
+            <!-- TODO: warning icon -->
           </div>
 
           <div>
@@ -216,13 +218,11 @@
             <mat-form-field appearance="fill">
               <input matInput formControlName="assessedYieldNonPedigree" (keypress)="numberOnly($event)" maxlength="14"> 
             </mat-form-field> 
-            <!-- TODO: warning if yield  out of sync -->
           </div>
           <div *ngIf="showPedigreeColumn" class="ccc-fill ccc-number-double ccc-border-right">
             <mat-form-field appearance="fill">
               <input matInput formControlName="assessedYieldPedigree" (keypress)="numberOnly($event)" maxlength="14">
             </mat-form-field> 
-            <!-- TODO: warning if yield  out of sync -->
           </div>        
 
           <div>
@@ -378,14 +378,14 @@
             {{ yieldValueWithEarlyEstDeemedYieldPedigree | number:'1.2-2' }}
           </div>
           
-          <div *ngIf="showNonPedigreeColumn || showPedigreeColumn">
+          <div>
             <span class="ccc-expression">T</span> Total Pedigreed and Non-Pedigreed Seeds Yield Loss Value
           </div>
-          <div *ngIf="showNonPedigreeColumn || showPedigreeColumn" class="ccc-border-right ccc-right">
+          <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">{{calculationDetail.linkedProductId ? "K - Sum of S" : "J - S" }}</span>
           </div>
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-border-top"></div> 
-          <div *ngIf="showNonPedigreeColumn || showPedigreeColumn" class="ccc-right ccc-border-top">
+          <div class="ccc-right ccc-border-top">
             {{ totalYieldLossValue | number:'1.2-2' }}
           </div>
   

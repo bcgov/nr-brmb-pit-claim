@@ -64,7 +64,7 @@
       <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
         <!-- Product but no claim messages -->
         <h3 *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue;">
-          This must be a linked calculation. However, no claim exists for the
+          There are two quantity products for this commodity on this policy. However, no claim exists for the
             {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
             calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName}}  
             {{ calculationDetail.isPedigreeInd ? "Non-Pedigreed" : "Pedigreed"}} commodity. 
@@ -80,7 +80,7 @@
 
         <!-- Claim but no calculation messages -->
         <h3 *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue;">
-          This must be a linked calculation. However, no calculation exists for the
+          There are two quantity products for this commodity on this policy. However, no calculation exists for the
             {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
             calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName}}  
             {{ calculationDetail.isPedigreeInd ? "Non-Pedigreed" : "Pedigreed"}} claim. 

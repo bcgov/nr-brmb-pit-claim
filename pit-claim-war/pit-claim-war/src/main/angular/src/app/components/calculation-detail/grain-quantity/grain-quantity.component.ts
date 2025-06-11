@@ -87,11 +87,13 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           this.showNonPedigreeColumn = true
         }
         
-        if (this.calculationDetail.linkedClaimNumber) {
-          this.loadLinkedCalculation()
-
+        if (this.calculationDetail.linkedProductId) {
           this.showNonPedigreeColumn = true
           this.showPedigreeColumn = true
+        }
+
+        if (this.calculationDetail.linkedClaimNumber) {
+          this.loadLinkedCalculation()
         } 
         
         setTimeout(() => {
@@ -245,19 +247,12 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   }
   
-  updatingCalculated = false
   updateCalculated() {
 
       if ( !this.calculationDetail ) return
       if ( this.calculationDetail && !this.calculationDetail.claimCalculationGrainQuantityDetail) return
-      if ( this.updatingCalculated ) return
-      this.updatingCalculated = true
 
       this.calculateValues()
-
-      this.cdr.detectChanges()
-
-      this.updatingCalculated = false
   }
 
   calculateValues() {
@@ -421,11 +416,10 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     let advancedClaim = 0
 
     if ( this.viewModel.formGroup.controls.advancedClaim && !isNaN(parseFloat(this.viewModel.formGroup.controls.advancedClaim.value ))) {
-
       advancedClaim = parseFloat(this.viewModel.formGroup.controls.advancedClaim.value )
-      result = Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim
     }
 
+    result = Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim
     return result
   } 
 
@@ -441,24 +435,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
   }
 
-  // show / hide columns
-  showNonPdgrColumn() {
-    if (!this.calculationDetail.isPedigreeInd || this.calculationDetail.linkedClaimNumber ) {
-      return true
-    }
-  }
-
-  showPgdrColumn() {
-    if (this.calculationDetail.isPedigreeInd || this.calculationDetail.linkedClaimNumber ) {
-      return true
-    }
-  }
-
   // enable / disable fields
     enableDisableFormControls() {
       if(this.calculationDetail){
   
-        if (this.calculationDetail.linkedClaimNumber) {
+        if (this.calculationDetail.linkedProductId) {
 
           if(this.calculationDetail.isPedigreeInd) {
             // disable non pedigree fields
@@ -502,7 +483,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     setStyles(){
       
       let styles =  {
-        'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedClaimNumber? '1fr' : '')  +' 1fr' ,
+        'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedProductId? '1fr' : '')  +' 1fr' ,
       }
 
       return styles;
