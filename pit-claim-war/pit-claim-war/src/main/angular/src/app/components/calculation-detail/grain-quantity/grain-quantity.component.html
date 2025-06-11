@@ -255,9 +255,11 @@
            
           <div>
             <span class="ccc-expression">L</span> Less Early Establishment Deemed Yield Value
-              <mat-icon style="margin-left: 6px; " (click)="toggleEarlyEstDeemedYieldValueRows()">
-                {{ !showEarlyEstDeemedYieldValueRows ? "keyboard_arrow_down" : "keyboard_arrow_up" }}
-              </mat-icon>
+              <span  style="border-style: solid; border-color: #454545; border-radius: 2px; border-width: 1px; margin-left: 4px;">
+                <mat-icon style="padding-top:3px;" (click)="toggleEarlyEstDeemedYieldValueRows()">
+                  {{ !showEarlyEstDeemedYieldValueRows ? "keyboard_arrow_down" : "keyboard_arrow_up" }}
+                </mat-icon>
+              </span>
           </div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression">( Q or P ) x E</span>
