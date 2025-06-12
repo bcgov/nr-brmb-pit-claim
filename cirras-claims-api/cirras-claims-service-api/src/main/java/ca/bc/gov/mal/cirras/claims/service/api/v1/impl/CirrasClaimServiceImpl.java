@@ -1534,40 +1534,100 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		claimCalculation.setTotalClaimAmount(spotLossClaimValue);
 	}
 
-	private void calculateTotalsGrainQuantity(ClaimCalculation claimCalculation) {
+	private void calculateTotalsGrainQuantity(ClaimCalculation claimCalculation) throws DaoException {
 		
-		//Calculate calculation specific data
+		ClaimCalculationGrainQuantityDetailDto linkedGrainQtyDetailDto = null;
+		
+		//Load linked calculation if necessary
+		if(claimCalculation.getClaimCalculationGrainQuantityGuid() != null) {
+			linkedGrainQtyDetailDto = claimCalculationGrainQuantityDetailDao.select(claimCalculation.getClaimCalculationGuid());
+		}
+		
+		//Calculation specific data
 		ClaimCalculationGrainQuantityDetail grainQuantityDetail = claimCalculation.getClaimCalculationGrainQuantityDetail();
-		
-		
-		//Calculate shared data
+		//Shared data
 		ClaimCalculationGrainQuantity grainQuantity = claimCalculation.getClaimCalculationGrainQuantity();
 		
-		// Eligible Yield Reduction: Adjusted Acres x Percent Yield Reduction.
-//		Double eligibleYieldReduction = 0.0;
-//		if ( grainSpotLoss.getAdjustedAcres() != null && grainSpotLoss.getPercentYieldReduction() != null ) {
-//			eligibleYieldReduction = grainSpotLoss.getAdjustedAcres() * (grainSpotLoss.getPercentYieldReduction() / 100.0);
-//		}
-//		
-//		grainSpotLoss.setEligibleYieldReduction(eligibleYieldReduction);
-//
-//
-//		// Spot Loss Reduction Value: Coverage Amt Per Acre x Eligible Yield Reduction.
-//		Double spotLossReductionValue = 0.0;
-//		if ( grainSpotLoss.getCoverageAmtPerAcre() != null && grainSpotLoss.getEligibleYieldReduction() != null ) {
-//			spotLossReductionValue = grainSpotLoss.getCoverageAmtPerAcre() * grainSpotLoss.getEligibleYieldReduction();
-//		}
-//		
-//		grainSpotLoss.setSpotLossReductionValue(spotLossReductionValue);
-//
-//		
-//		// Spot Loss Claim Value: Adjusted Acres x (Percent Yield Reduction - Deductible) x Coverage Amount Per Acre
-//		Double spotLossClaimValue = 0.0;
-//		if ( grainSpotLoss.getAdjustedAcres() != null && grainSpotLoss.getPercentYieldReduction() != null && grainSpotLoss.getDeductible() != null && grainSpotLoss.getCoverageAmtPerAcre() != null ) {
-//			spotLossClaimValue = grainSpotLoss.getAdjustedAcres() * ((grainSpotLoss.getPercentYieldReduction() - grainSpotLoss.getDeductible()) / 100.0) * grainSpotLoss.getCoverageAmtPerAcre();
-//		}
+		//G - Total Pedigreed and Non-Pedigreed Seeds Coverage Value
+		//Sum of pedigreed and non pedigreed coverage value
+		//G = sum of F
+		Double linkedCoverageValue = linkedGrainQtyDetailDto != null ? linkedGrainQtyDetailDto.getCoverageValue() : 0.0;
+		Double totalCoverageValue = grainQuantityDetail.getCoverageValue() + linkedCoverageValue;
+		grainQuantity.setTotalCoverageValue(totalCoverageValue);
 
-		//claimCalculation.setTotalClaimAmount(spotLossClaimValue);
+		
+		//K - Production Guarantee - Assessment(s) Value
+		//Sum ((Production Guarantee (Tonnes) - Assessed Yield (Tonnes)) * Insurable Value (Tonnes))
+		//K = Sum of pedigreed and non pedigreed of ( D - I ) x E
+		Double linkedProductionGuaranteeAmount = 0.0;
+		if( linkedGrainQtyDetailDto != null ) {
+			linkedProductionGuaranteeAmount = calculateProductionGuarantee(
+												linkedGrainQtyDetailDto.getProductionGuaranteeWeight(),
+												linkedGrainQtyDetailDto.getAssessedYield(),
+												linkedGrainQtyDetailDto.getInsurableValue());
+		}
+		Double productionGuaranteeAmount = calculateProductionGuarantee(
+				grainQuantityDetail.getProductionGuaranteeWeight(),
+				grainQuantityDetail.getAssessedYield(),
+				grainQuantityDetail.getInsurableValue())
+				+ linkedProductionGuaranteeAmount;
+		grainQuantity.setProductionGuaranteeAmount(productionGuaranteeAmount);
+		
+		//O - 50% of Production Guarantee  (has to be calculated before L and P!!!)
+		//Production Guarantee Weight * 50%
+		Double fiftyPercentProductionGuarantee = grainQuantityDetail.getProductionGuaranteeWeight() * 0.5;
+		grainQuantityDetail.setFiftyPercentProductionGuarantee(fiftyPercentProductionGuarantee);
+		
+		//P - Calculated Early Establishment Yield (has to be calculated before L!!!)
+		//50% Production Guarantee (O) * (Damaged Acres (M) / Acres Seeded (N))
+		Double calcEarlyEstYield = 0.0;
+		if(grainQuantityDetail.getSeededAcres() != null && grainQuantityDetail.getSeededAcres() > 0) {
+			calcEarlyEstYield = fiftyPercentProductionGuarantee * (notNull(grainQuantityDetail.getDamagedAcres(), 0.0) / grainQuantityDetail.getSeededAcres());
+		}
+		grainQuantityDetail.setCalcEarlyEstYield(calcEarlyEstYield);
+		
+		//L - Less Early Establishment Deemed Yield Value
+		// (Inspected Early Establishment Yield (Q) but if empty Calculated Early Establishment Yield (P)) x Insurable Value (Tonnes) (E).  
+		//( Q or P ) x E
+		Double earlyEstablishment = grainQuantityDetail.getInspEarlyEstYield() == null ? calcEarlyEstYield : grainQuantityDetail.getInspEarlyEstYield();
+		Double earlyEstDeemedYieldValue = earlyEstablishment * grainQuantityDetail.getInsurableValue();
+		grainQuantityDetail.setEarlyEstDeemedYieldValue(earlyEstDeemedYieldValue);
+		
+		//R - Yield Value
+		//Total Yield Harvested and Appraised (H) * Insurable Value per Tonnes (E)
+		// H * E
+		Double yieldValue = notNull(grainQuantityDetail.getTotalYieldToCount(), 0.0) * grainQuantityDetail.getInsurableValue();
+		grainQuantityDetail.setYieldValue(yieldValue);
+		
+		//S - Yield Value + Early Establishment Deemed Yields 
+		//(R + L)
+		Double yieldValueWithEarlyEstDeemedYield = notNull(yieldValue, 0.0) + notNull(earlyEstDeemedYieldValue, 0.0);
+		grainQuantityDetail.setYieldValueWithEarlyEstDeemedYield(yieldValueWithEarlyEstDeemedYield);
+		
+		//T - Total Pedigreed and Non-Pedigreed Seeds Yield Loss Value 
+		// Production Guarantee - Assessment(s) Value (K) - SUM(Yield Value + Early Establishment Deemed Yield (S))
+		//(K - SUM of S)
+		Double linkedYieldValueWithEarlyEstDeemedYield = linkedGrainQtyDetailDto != null ? linkedGrainQtyDetailDto.getYieldValueWithEarlyEstDeemedYield() : 0.0;
+		Double totalYieldLossValue = Math.max(0, productionGuaranteeAmount - notNull(yieldValueWithEarlyEstDeemedYield, 0.0) - linkedYieldValueWithEarlyEstDeemedYield);
+		grainQuantity.setTotalYieldLossValue(totalYieldLossValue);
+		
+		// V - Maximum Claim Payable
+		// Total Pedigreed and Non-Pedigreed Seeds Coverage Value (G) - Reseed Claim (U)
+		// (G - U)
+		Double maxClaimPayable = Math.max(0, notNull(totalCoverageValue, 0.0) - notNull(grainQuantity.getReseedClaim(), 0.0));
+		grainQuantity.setMaxClaimPayable(maxClaimPayable);
+		
+		// Y - Quantity Loss Claim
+		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
+		Double totalClaimAmount = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
+		claimCalculation.setTotalClaimAmount(totalClaimAmount);
+
+	}
+	
+	private Double calculateProductionGuarantee(Double productionGuaranteeWeight, Double assessedYield, Double insurableValue) {
+		//( D - I ) x E
+		Double calcProdGuaranteeWeight = notNull(productionGuaranteeWeight, 0.0) - notNull(assessedYield, 0.0);
+		return Math.max(0, calcProdGuaranteeWeight) * notNull(insurableValue, 0.0);
 	}
 	
 	private void calculateTotalsPlantUnits(ClaimCalculation claimCalculation) {
