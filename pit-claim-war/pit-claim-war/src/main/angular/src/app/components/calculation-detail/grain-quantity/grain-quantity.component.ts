@@ -93,7 +93,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           this.showPedigreeColumn = true
         }
 
-        if (this.calculationDetail.linkedClaimNumber) {
+        if (this.calculationDetail.linkedClaimCalculationGuid) {
           this.loadLinkedCalculation()
         } 
         
@@ -161,26 +161,15 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   loadLinkedCalculation() {
     // quick api call to load the linked calculation data
+    // we are loading the linked calculation only if it was already saved
 
     let url = this.appConfigService.getConfig().rest["cirras_claims"]
 
     const httpOptions = setHttpHeaders(this.tokenService.getOauthToken())
 
-    if (this.calculationDetail.linkedClaimCalculationGuid) {
-
-      // load existing linked calculation
-      url = url +"/calculations/" + this.calculationDetail.linkedClaimCalculationGuid 
-      url = url + "?doRefreshManualClaimData=false"
-
-    } else {
-      if (this.calculationDetail.linkedClaimNumber) {
-
-        // load new linked calculation
-        url = url +"/claims/" + this.calculationDetail.linkedClaimNumber
-
-      } 
-    }
-
+    // load existing linked calculation
+    url = url +"/calculations/" + this.calculationDetail.linkedClaimCalculationGuid 
+    url = url + "?doRefreshManualClaimData=false"
     
     var self = this
     return lastValueFrom(this.http.get(url,httpOptions)).then((data: vmCalculation) => {
