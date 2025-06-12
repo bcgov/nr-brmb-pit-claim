@@ -31,6 +31,7 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       coverageName: calculation.coverageName ? calculation.coverageName : null,
       cropCommodityId: calculation.cropCommodityId ? calculation.cropCommodityId : null,
       commodityName: calculation.commodityName ? calculation.commodityName : null,
+      isPedigreeInd: calculation.isPedigreeInd ? calculation.isPedigreeInd : null,
       primaryPerilCode: calculation.primaryPerilCode ? calculation.primaryPerilCode : null,
       secondaryPerilCode: calculation.secondaryPerilCode ? calculation.secondaryPerilCode : null,
       claimStatusCode: calculation.claimStatusCode ? calculation.claimStatusCode : null,
@@ -67,6 +68,11 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       
       insuredByMeasurementType: calculation.insuredByMeasurementType ? calculation.insuredByMeasurementType : null,
 
+      // linked product / claim / calculation
+      linkedProductId: calculation.linkedProductId,
+      linkedClaimNumber: calculation.linkedClaimNumber,
+      linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+
       currentClaimStatusCode: calculation.currentClaimStatusCode? calculation.currentClaimStatusCode : null,
       varieties: calculation.varieties ? calculation.varieties.map(item => convertToCalculationVarietiesRsrc(item)) : [],
 
@@ -76,6 +82,8 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       claimCalculationGrapes: calculation.claimCalculationGrapes,
       claimCalculationGrainUnseeded: calculation.claimCalculationGrainUnseeded,
       claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
+      claimCalculationGrainQuantity: calculation.claimCalculationGrainQuantity,
+      claimCalculationGrainQuantityDetail: calculation.claimCalculationGrainQuantityDetail,        
 
       type: "ClaimCalculationRsrc"
   };
