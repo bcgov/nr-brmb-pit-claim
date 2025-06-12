@@ -123,7 +123,7 @@ public class ClaimCalculationEndpointImpl extends BaseEndpointsImpl implements C
 
 	
 	@Override
-	public Response deleteClaimCalculation(String claimCalculationGuid) {
+	public Response deleteClaimCalculation(String claimCalculationGuid, String doDeleteLinkedCalculations) {
 		logger.debug("<deleteClaimCalculation");
 
 		Response response = null;
@@ -152,6 +152,7 @@ public class ClaimCalculationEndpointImpl extends BaseEndpointsImpl implements C
 
 				cirrasClaimService.deleteClaimCalculation(
 						claimCalculationGuid, 
+						toBoolean(doDeleteLinkedCalculations),
 						optimisticLock, 
 						getWebAdeAuthentication());
 

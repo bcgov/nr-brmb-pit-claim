@@ -27,9 +27,9 @@ public class ClaimCalculationGrainQuantityDaoTest {
 	private PersistenceSpringConfig persistenceSpringConfig;
 	
 	private String userId = "JUNIT_TEST";
-	private String claimCalculationGuid;
 	private String claimCalculationGrainQuantityGuid;
-	private Integer claimNumber = 99778865;
+	private Integer claimNumber1 = 99778865;
+	private Integer claimNumber2 = 99778866;
 	
 	@Before
 	public void prepareTests() throws NotFoundDaoException, DaoException{
@@ -42,6 +42,19 @@ public class ClaimCalculationGrainQuantityDaoTest {
 	}
 	
 	private void delete() throws DaoException {
+		deleteCalculation(claimNumber1);
+		deleteCalculation(claimNumber2);
+		
+		if ( claimCalculationGrainQuantityGuid != null ) {
+			ClaimCalculationGrainQuantityDao dao = persistenceSpringConfig.claimCalculationGrainQuantityDao();
+			ClaimCalculationGrainQuantityDto dto = dao.fetch(claimCalculationGrainQuantityGuid);
+			if(dto != null) {
+				dao.delete(claimCalculationGrainQuantityGuid);
+			}
+		}
+	}
+	
+	private void deleteCalculation(Integer claimNumber) throws DaoException {
 
 		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
 		List<ClaimCalculationDto> ccDtos = dao.getCalculationsByClaimNumber(claimNumber, null);
@@ -54,10 +67,6 @@ public class ClaimCalculationGrainQuantityDaoTest {
 				//delete claim calculation first
 				dao.delete(dto.getClaimCalculationGuid());
 				
-				if ( dto.getClaimCalculationGrainQuantityGuid() != null ) {
-					//delete claim calculation grain quantity
-					daoGrain.delete(dto.getClaimCalculationGrainQuantityGuid());
-				}
 			}
 		}
 	}
@@ -84,7 +93,7 @@ public class ClaimCalculationGrainQuantityDaoTest {
 		claimCalculationGrainQuantityGuid = newDto.getClaimCalculationGrainQuantityGuid();
 
 		//Add claim calculation
-		createClaimCalculation();
+		String claimCalculationGuid1 = createClaimCalculation(claimNumber1);
 		
 		//FETCH
 		ClaimCalculationGrainQuantityDto fetchedDto = dao.fetch(newDto.getClaimCalculationGrainQuantityGuid());
@@ -108,19 +117,26 @@ public class ClaimCalculationGrainQuantityDaoTest {
 		assertGrainQuantity(fetchedDto, updatedDto, false);
 		
 		//SELECT
-		ClaimCalculationGrainQuantityDto dto = dao.select(claimCalculationGuid);
+		ClaimCalculationGrainQuantityDto dto = dao.select(claimCalculationGuid1);
 		Assert.assertNotNull(dto);
 		assertGrainQuantity(dto, updatedDto, false);
 		
 		//SELECT ALL
 		List<ClaimCalculationGrainQuantityDto> dtos = dao.selectAll();
 		Assert.assertNotNull(dtos);
-		Assert.assertEquals(1, dtos.size());
-		assertGrainQuantity(dtos.get(0), updatedDto, false);
+		
+		//Generate second claim with shared data
+		String claimCalculationGuid2 = createClaimCalculation(claimNumber2);
+		
+		//Get all calculations that are associated with the grain quantity record
+		ClaimCalculationDao ccDao = persistenceSpringConfig.claimCalculationDao();
+		List<ClaimCalculationDto> calculationsDto = ccDao.getCalculationsByGrainQuantityGuid(claimCalculationGrainQuantityGuid);
+		Assert.assertNotNull(calculationsDto);
+		Assert.assertEquals(2, calculationsDto.size());
 
 		// Delete claim calc
-		ClaimCalculationDao ccDao = persistenceSpringConfig.claimCalculationDao();
-		ccDao.delete(claimCalculationGuid);
+		ccDao.delete(claimCalculationGuid1);
+		ccDao.delete(claimCalculationGuid2);
 		
 		//DELETE
 		dao.delete(updatedDto.getClaimCalculationGrainQuantityGuid());
@@ -149,7 +165,7 @@ public class ClaimCalculationGrainQuantityDaoTest {
 		Assert.assertEquals("TotalYieldLossValue", expectedDto.getTotalYieldLossValue(), actualDto.getTotalYieldLossValue());
 	}
 	
-	private void createClaimCalculation() throws Exception {
+	private String createClaimCalculation(Integer claimNumber) throws Exception {
 		ClaimCalculationDto newDto = new ClaimCalculationDto();
 
 		Date transactionDate = new Date();
@@ -195,7 +211,7 @@ public class ClaimCalculationGrainQuantityDaoTest {
 		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
 		
 		//set claim Calculation GUID
-		claimCalculationGuid = newDto.getClaimCalculationGuid();
+		return newDto.getClaimCalculationGuid();
 	}	
 
 }

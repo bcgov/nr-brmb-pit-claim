@@ -348,4 +348,10 @@
 		ORDER BY T.CALCULATION_VERSION DESC
 	</select>
 
+	<select id="getCalculationsByGrainQuantityGuid" resultMap="ClaimCalculationDtoMap">  
+		SELECT T.CLAIM_CALCULATION_GUID
+		FROM CLAIM_CALCULATION T
+		WHERE T.CLAIM_CALC_GRAIN_QUANTITY_GUID = #{claimCalculationGrainQuantityGuid}
+	</select>
+
 </mapper>

@@ -955,7 +955,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	// Updates fields in claimCalculation from insuranceClaim that are only updated
 	// when the user requests a Refresh.
 	private void refreshManualClaimData(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, Product product)
-			throws ServiceException {
+			throws ServiceException, DaoException {
 		logger.debug("<refreshManualClaimData");
 
 		if (claimCalculation == null || insuranceClaim == null) {
@@ -1176,7 +1176,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		// Shared grain quantity record could already exist when creating a new calculation
 		// Insert or Update Grain Quantity Data
 		//
-		if (claimCalculation.getClaimCalculationGrainQuantity() != null) {
+		if (claimCalculation.getClaimCalculationGrainQuantity() != null 
+				&& claimCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid() != null) {
 			updateGrainQuantity(claimCalculation, userId);
 		} else {
 			createGrainQuantity(claimCalculation, userId);
@@ -1387,12 +1388,15 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	}
 
 	@Override
-	public void deleteClaimCalculation(String claimCalculationGuid, String optimisticLock,
+	public void deleteClaimCalculation(
+			String claimCalculationGuid, 
+			Boolean doDeleteLinkedCalculations,
+			String optimisticLock,
 			WebAdeAuthentication authentication)
 			throws ServiceException, NotFoundException, ForbiddenException, ConflictException {
 		logger.debug("<deleteClaimCalculation");
 		
-		cirrasServiceHelper.deleteClaimCalculation(claimCalculationGuid);
+		cirrasServiceHelper.deleteClaimCalculation(claimCalculationGuid, doDeleteLinkedCalculations);
 
 		logger.debug(">deleteClaimCalculation");
 	}
@@ -1425,7 +1429,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		return results;
 	}
 
-	private void calculateTotals(ClaimCalculation claimCalculation) {
+	private void calculateTotals(ClaimCalculation claimCalculation) throws DaoException {
 		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAPES.toString())) {
 			// Calculate totals for Grapes
 			calculateTotalsGrapes(claimCalculation);

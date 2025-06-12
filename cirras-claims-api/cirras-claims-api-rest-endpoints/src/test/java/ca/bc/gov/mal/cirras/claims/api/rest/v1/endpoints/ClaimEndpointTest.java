@@ -57,7 +57,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 	
 	@After 
 	public void cleanUp() throws CirrasClaimServiceException, NotFoundDaoException, DaoException {
-		deleteClaimCalculation(currentClaimNumber);
+		deleteClaimCalculation(currentClaimNumber, true);
 	}
 
 	
@@ -324,7 +324,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			
 			
 			//Delete calculation
-			deleteClaimCalculation(claimNumber);
+			deleteClaimCalculation(claimNumber, false);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteGrainUnseededClaim()");
@@ -469,7 +469,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
 		
 		//Delete calculation
-		deleteClaimCalculation(claimNumber);
+		deleteClaimCalculation(claimNumber, false);
 
 		logger.debug(">testGetInsertUpdateDeleteGrainSpotLossClaim()");
 	}
@@ -575,97 +575,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(null, grainQtyDetail.getFiftyPercentProductionGuarantee());
 		Assert.assertEquals(null, grainQtyDetail.getYieldValue());
 		Assert.assertEquals(null, grainQtyDetail.getYieldValueWithEarlyEstDeemedYield());
-		
-		// TEST 2: Quantity Claim with linked product
-        claimNumber = "37195";       // Set to Open Grain Quantity Claim without a calculation.
-        currentClaimNumber = claimNumber;
-		searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
-		
-		//Values for Claim number 37195
-		// From CIRRAS
-		cropCommodityId = 22;
-		commodityName = "FIELD PEA - PEDIGREED";
-		isPedigreeInd = true;
-		coverageDollars = 48513.0;
-		deductibleLevel = 30;
-		selectedInsurableValue = 246.8571;
-		acres = 250.0;
-		probableYield = 1.1230;
-		productionGuarantee = 197.000;
-		
-
-		// From CUWS
-		yieldToCount = 0.0;
-		calculationComment = "Verified Yield Summary - FIELD PEA:\nTest Field Pea Verified Yield Summary Comment 2 2 2"
-				+ "\n\nVerified Yield Summary - FIELD PEA - Pedigreed:\nTest Field Pea Pedigreed Verified Yield Summary Comment 1 1 1"
-				+ "\n\nVerified Yield Amendment Rationale - FIELD PEA:\nTest Field Pea Appraisal Rationale A A A"
-				+ "\n\nVerified Yield Amendment Rationale - FIELD PEA - Pedigreed:\nTest Field Pea Pedigreed Rationale B B B";
-
-		// Linked Product/Claim
-		linkedClaimNumber = 37196;
-		linkedProductId = 1251643;
-		
-		Assert.assertEquals(1, searchResults.getCollection().size());
-		
-		claimRsrc = searchResults.getCollection().get(0);
-		//Only works if there is no calculation yet
-		claimCalculationRsrc = service.getClaim(claimRsrc);
-
-		Assert.assertNotNull(claimCalculationRsrc);
-		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainQuantity());
-		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainQuantityDetail());
-		Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
-		Assert.assertEquals(calculationComment, claimCalculationRsrc.getCalculationComment());
-		Assert.assertEquals(null, claimCalculationRsrc.getClaimCalculationGrainQuantityGuid());
-		Assert.assertEquals(cropCommodityId, claimCalculationRsrc.getCropCommodityId());
-		Assert.assertEquals(commodityName, claimCalculationRsrc.getCommodityName());
-		Assert.assertEquals(isPedigreeInd, claimCalculationRsrc.getIsPedigreeInd());
-		Assert.assertEquals(null, claimCalculationRsrc.getLinkedClaimCalculationGuid());
-		Assert.assertEquals(linkedClaimNumber, claimCalculationRsrc.getLinkedClaimNumber());
-		Assert.assertEquals(linkedProductId, claimCalculationRsrc.getLinkedProductId());
-		
-		grainQty = claimCalculationRsrc.getClaimCalculationGrainQuantity();
-		grainQtyDetail = claimCalculationRsrc.getClaimCalculationGrainQuantityDetail();
-
-		// Grain Quantity
-		Assert.assertEquals(null, grainQty.getAdvancedClaim());
-		Assert.assertEquals(null, grainQty.getClaimCalculationGrainQuantityGuid());
-		Assert.assertEquals(null, grainQty.getMaxClaimPayable());
-		Assert.assertEquals(null, grainQty.getProductionGuaranteeAmount());
-		Assert.assertEquals(null, grainQty.getQuantityLossClaim());
-		Assert.assertEquals(null, grainQty.getReseedClaim());
-		Assert.assertEquals(null, grainQty.getTotalCoverageValue());
-		Assert.assertEquals(null, grainQty.getTotalYieldLossValue());
-
-		// Grain Quantity Detail
-		// GUIDs
-		Assert.assertEquals(null, grainQtyDetail.getClaimCalculationGrainQuantityDetailGuid());
-		Assert.assertEquals(null, grainQtyDetail.getClaimCalculationGuid());
-				
-		// Values From CIRRAS
-		Assert.assertEquals(coverageDollars, grainQtyDetail.getCoverageValue());
-		Assert.assertEquals(deductibleLevel, grainQtyDetail.getDeductible());
-		Assert.assertEquals(selectedInsurableValue, grainQtyDetail.getInsurableValue());
-		Assert.assertEquals(acres, grainQtyDetail.getInsuredAcres());
-		Assert.assertEquals(probableYield, grainQtyDetail.getProbableYield());
-		Assert.assertEquals(productionGuarantee, grainQtyDetail.getProductionGuaranteeWeight());
-
-		// Values from CUWS
-		Assert.assertEquals(yieldToCount, grainQtyDetail.getTotalYieldToCount());
-		
-		// User Entered
-		Assert.assertEquals(null, grainQtyDetail.getAssessedYield());
-		Assert.assertEquals(null, grainQtyDetail.getDamagedAcres());
-		Assert.assertEquals(null, grainQtyDetail.getEarlyEstDeemedYieldValue());
-		Assert.assertEquals(null, grainQtyDetail.getInspEarlyEstYield());
-		Assert.assertEquals(null, grainQtyDetail.getSeededAcres());
-		
-		// Calculated
-		Assert.assertEquals(null, grainQtyDetail.getCalcEarlyEstYield());
-		Assert.assertEquals(null, grainQtyDetail.getFiftyPercentProductionGuarantee());
-		Assert.assertEquals(null, grainQtyDetail.getYieldValue());
-		Assert.assertEquals(null, grainQtyDetail.getYieldValueWithEarlyEstDeemedYield());
-
 
 		//Create new calculation
 		//User Entered
@@ -763,6 +672,217 @@ public class ClaimEndpointTest extends EndpointsTest {
 		logger.debug(">testGetInsertUpdateDeleteGrainQuantityClaim()");
 	}
 	
+	@Test
+	public void testGetInsertUpdateDeleteGrainQuantityClaim2Calculations() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGetInsertUpdateDeleteGrainQuantityClaim2Calculations()");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+
+		
+		// TEST 2: Quantity Claim with linked product
+        String claimNumber = "37195";       // Set to Open Grain Quantity Claim without a calculation.
+        currentClaimNumber = claimNumber;
+		String policyNumber = null;
+        ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
+		
+		//Values for Claim number 37195
+		// From CIRRAS
+		Integer cropCommodityId = 22;
+		String commodityName = "FIELD PEA - PEDIGREED";
+		Boolean isPedigreeInd = true;
+		Double coverageDollars = 48513.0;
+		Integer deductibleLevel = 30;
+		Double selectedInsurableValue = 246.8571;
+		Double acres = 250.0;
+		Double probableYield = 1.1230;
+		Double productionGuarantee = 197.000;
+		
+
+		// From CUWS
+		Double yieldToCount = 120.0;
+//		String calculationComment = "Verified Yield Summary - FIELD PEA:\nTest Field Pea Verified Yield Summary Comment 2 2 2"
+//				+ "\n\nVerified Yield Summary - FIELD PEA - Pedigreed:\nTest Field Pea Pedigreed Verified Yield Summary Comment 1 1 1"
+//				+ "\n\nVerified Yield Amendment Rationale - FIELD PEA:\nTest Field Pea Appraisal Rationale A A A"
+//				+ "\n\nVerified Yield Amendment Rationale - FIELD PEA - Pedigreed:\nTest Field Pea Pedigreed Rationale B B B";
+
+		// Linked Product/Claim
+		Integer linkedClaimNumber = 37196;
+		Integer linkedProductId = 1251643;
+		
+		Assert.assertEquals(1, searchResults.getCollection().size());
+		
+		ClaimRsrc claimRsrc = searchResults.getCollection().get(0);
+		//Only works if there is no calculation yet
+		ClaimCalculationRsrc claimCalculationRsrc = service.getClaim(claimRsrc);
+
+		Assert.assertNotNull(claimCalculationRsrc);
+		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainQuantity());
+		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainQuantityDetail());
+		Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
+		Assert.assertNotNull(claimCalculationRsrc.getCalculationComment());
+		Assert.assertEquals(null, claimCalculationRsrc.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals(cropCommodityId, claimCalculationRsrc.getCropCommodityId());
+		Assert.assertEquals(commodityName, claimCalculationRsrc.getCommodityName());
+		Assert.assertEquals(isPedigreeInd, claimCalculationRsrc.getIsPedigreeInd());
+		Assert.assertEquals(null, claimCalculationRsrc.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(linkedClaimNumber, claimCalculationRsrc.getLinkedClaimNumber());
+		Assert.assertEquals(linkedProductId, claimCalculationRsrc.getLinkedProductId());
+		
+		ClaimCalculationGrainQuantity grainQty = claimCalculationRsrc.getClaimCalculationGrainQuantity();
+		ClaimCalculationGrainQuantityDetail grainQtyDetail = claimCalculationRsrc.getClaimCalculationGrainQuantityDetail();
+
+		// Grain Quantity
+		Assert.assertEquals(null, grainQty.getAdvancedClaim());
+		Assert.assertEquals(null, grainQty.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals(null, grainQty.getMaxClaimPayable());
+		Assert.assertEquals(null, grainQty.getProductionGuaranteeAmount());
+		Assert.assertEquals(null, grainQty.getQuantityLossClaim());
+		Assert.assertEquals(null, grainQty.getReseedClaim());
+		Assert.assertEquals(null, grainQty.getTotalCoverageValue());
+		Assert.assertEquals(null, grainQty.getTotalYieldLossValue());
+
+		// Grain Quantity Detail
+		// GUIDs
+		Assert.assertEquals(null, grainQtyDetail.getClaimCalculationGrainQuantityDetailGuid());
+		Assert.assertEquals(null, grainQtyDetail.getClaimCalculationGuid());
+				
+		// Values From CIRRAS
+		Assert.assertEquals(coverageDollars, grainQtyDetail.getCoverageValue());
+		Assert.assertEquals(deductibleLevel, grainQtyDetail.getDeductible());
+		Assert.assertEquals(selectedInsurableValue, grainQtyDetail.getInsurableValue());
+		Assert.assertEquals(acres, grainQtyDetail.getInsuredAcres());
+		Assert.assertEquals(probableYield, grainQtyDetail.getProbableYield());
+		Assert.assertEquals(productionGuarantee, grainQtyDetail.getProductionGuaranteeWeight());
+
+		// Values from CUWS
+		Assert.assertEquals(yieldToCount, grainQtyDetail.getTotalYieldToCount());
+		
+		// User Entered
+		Assert.assertEquals(null, grainQtyDetail.getAssessedYield());
+		Assert.assertEquals(null, grainQtyDetail.getDamagedAcres());
+		Assert.assertEquals(null, grainQtyDetail.getEarlyEstDeemedYieldValue());
+		Assert.assertEquals(null, grainQtyDetail.getInspEarlyEstYield());
+		Assert.assertEquals(null, grainQtyDetail.getSeededAcres());
+		
+		// Calculated
+		Assert.assertEquals(null, grainQtyDetail.getCalcEarlyEstYield());
+		Assert.assertEquals(null, grainQtyDetail.getFiftyPercentProductionGuarantee());
+		Assert.assertEquals(null, grainQtyDetail.getYieldValue());
+		Assert.assertEquals(null, grainQtyDetail.getYieldValueWithEarlyEstDeemedYield());
+
+
+		Double assessedYield = 5.0;
+		Double damagedAcres = 50.0;
+		Double seededAcres = 100.0;
+		Double inspEarlyEstYield = 45.0;
+		Double reseedClaim = 1000.0;
+		Double advancedClaim = 250.0;
+		Double quantityLossClaim = 6000.0;
+		//Create new calculation
+		//User Entered
+		grainQtyDetail.setAssessedYield(assessedYield);
+		grainQtyDetail.setDamagedAcres(damagedAcres);
+		grainQtyDetail.setSeededAcres(seededAcres);
+		grainQtyDetail.setInspEarlyEstYield(inspEarlyEstYield);
+		grainQty.setReseedClaim(reseedClaim);
+		grainQty.setAdvancedClaim(advancedClaim);
+		grainQty.setQuantityLossClaim(quantityLossClaim);
+
+		//Calculated
+//		Double eligibleYieldReduction = 1.3025; // Adjusted Acres x Percent Yield Reduction.
+//		Double spotLossReductionValue = 390.7382; // Coverage Amt Per Acre x Eligible Yield Reduction.
+//		Double totalClaimAmount = 205.55; // Adjusted Acres x (Percent Yield Reduction - Deductible) x Coverage Amount Per Acre
+//		
+		
+		//Create new calculation
+		ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+
+		Assert.assertNotNull(createdCalculation);
+//		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainSpotLoss());
+//
+//		Assert.assertNotNull(createdCalculation.getClaimCalculationGuid());
+//		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainSpotLoss().getClaimCalculationGrainSpotLossGuid());
+//		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainSpotLoss().getClaimCalculationGuid());
+//
+//		
+//		Assert.assertEquals(grainSpotLoss.getInsuredAcres(), createdCalculation.getClaimCalculationGrainSpotLoss().getInsuredAcres());
+//		Assert.assertEquals(grainSpotLoss.getCoverageAmtPerAcre(), createdCalculation.getClaimCalculationGrainSpotLoss().getCoverageAmtPerAcre());
+//		Assert.assertEquals(grainSpotLoss.getCoverageValue(), createdCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
+//		Assert.assertEquals(grainSpotLoss.getDeductible(), createdCalculation.getClaimCalculationGrainSpotLoss().getDeductible());
+//		
+//		Assert.assertEquals(grainSpotLoss.getAdjustedAcres(), createdCalculation.getClaimCalculationGrainSpotLoss().getAdjustedAcres());
+//		Assert.assertEquals(grainSpotLoss.getPercentYieldReduction(), createdCalculation.getClaimCalculationGrainSpotLoss().getPercentYieldReduction());
+//		Assert.assertEquals(eligibleYieldReduction, createdCalculation.getClaimCalculationGrainSpotLoss().getEligibleYieldReduction());
+//		Assert.assertEquals(spotLossReductionValue, createdCalculation.getClaimCalculationGrainSpotLoss().getSpotLossReductionValue());
+//		
+//		Assert.assertEquals(totalClaimAmount, createdCalculation.getTotalClaimAmount());
+//		
+//
+//		//update calculation
+//		grainSpotLoss = createdCalculation.getClaimCalculationGrainSpotLoss();
+//
+//		//User Entered
+//		grainSpotLoss.setAdjustedAcres(98.7654);
+//		grainSpotLoss.setPercentYieldReduction(6.78);
+//
+//		//Calculated
+//		eligibleYieldReduction = 6.6963; // Adjusted Acres x Percent Yield Reduction.
+//		spotLossReductionValue = 2008.8882; // Coverage Amt Per Acre x Eligible Yield Reduction.
+//		totalClaimAmount = 527.41; // Adjusted Acres x (Percent Yield Reduction - Deductible) x Coverage Amount Per Acre
+//		
+//
+//		ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
+//
+//		Assert.assertEquals(grainSpotLoss.getInsuredAcres(), updatedCalculation.getClaimCalculationGrainSpotLoss().getInsuredAcres());
+//		Assert.assertEquals(grainSpotLoss.getCoverageAmtPerAcre(), updatedCalculation.getClaimCalculationGrainSpotLoss().getCoverageAmtPerAcre());
+//		Assert.assertEquals(grainSpotLoss.getCoverageValue(), updatedCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
+//		Assert.assertEquals(grainSpotLoss.getDeductible(), updatedCalculation.getClaimCalculationGrainSpotLoss().getDeductible());
+//		
+//		Assert.assertEquals(grainSpotLoss.getAdjustedAcres(), updatedCalculation.getClaimCalculationGrainSpotLoss().getAdjustedAcres());
+//		Assert.assertEquals(grainSpotLoss.getPercentYieldReduction(), updatedCalculation.getClaimCalculationGrainSpotLoss().getPercentYieldReduction());
+//		Assert.assertEquals(eligibleYieldReduction, updatedCalculation.getClaimCalculationGrainSpotLoss().getEligibleYieldReduction());
+//		Assert.assertEquals(spotLossReductionValue, updatedCalculation.getClaimCalculationGrainSpotLoss().getSpotLossReductionValue());
+//		
+//		Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
+//			
+//
+//		//Update with all user input = null => expect calculated values to be 0.
+//		grainSpotLoss = updatedCalculation.getClaimCalculationGrainSpotLoss();
+//
+//		//User Entered
+//		grainSpotLoss.setAdjustedAcres(null);
+//		grainSpotLoss.setPercentYieldReduction(null);
+//
+//		//Calculated
+//		eligibleYieldReduction = 0.0; // Adjusted Acres x Percent Yield Reduction.
+//		spotLossReductionValue = 0.0; // Coverage Amt Per Acre x Eligible Yield Reduction.
+//		totalClaimAmount = 0.0; // Adjusted Acres x (Percent Yield Reduction - Deductible) x Coverage Amount Per Acre
+//
+//		updatedCalculation = service.updateClaimCalculation(updatedCalculation, null);
+//
+//		Assert.assertEquals(grainSpotLoss.getInsuredAcres(), updatedCalculation.getClaimCalculationGrainSpotLoss().getInsuredAcres());
+//		Assert.assertEquals(grainSpotLoss.getCoverageAmtPerAcre(), updatedCalculation.getClaimCalculationGrainSpotLoss().getCoverageAmtPerAcre());
+//		Assert.assertEquals(grainSpotLoss.getCoverageValue(), updatedCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
+//		Assert.assertEquals(grainSpotLoss.getDeductible(), updatedCalculation.getClaimCalculationGrainSpotLoss().getDeductible());
+//		
+//		Assert.assertEquals(grainSpotLoss.getAdjustedAcres(), updatedCalculation.getClaimCalculationGrainSpotLoss().getAdjustedAcres());
+//		Assert.assertEquals(grainSpotLoss.getPercentYieldReduction(), updatedCalculation.getClaimCalculationGrainSpotLoss().getPercentYieldReduction());
+//		Assert.assertEquals(eligibleYieldReduction, updatedCalculation.getClaimCalculationGrainSpotLoss().getEligibleYieldReduction());
+//		Assert.assertEquals(spotLossReductionValue, updatedCalculation.getClaimCalculationGrainSpotLoss().getSpotLossReductionValue());
+//		
+//		Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
+//		
+		//Delete 1 calculation
+		deleteClaimCalculation(claimNumber, false);
+		
+		//TODO: Check if the shared quantity data is still there 
+
+		logger.debug(">testGetInsertUpdateDeleteGrainQuantityClaim2Calculations()");
+	}
+	
 	private Double notNull(Double value, Double defaultValue) {
 		return (value == null) ? defaultValue : value;
 	}
@@ -822,13 +942,13 @@ public class ClaimEndpointTest extends EndpointsTest {
 			Assert.assertEquals("CoverageAssessedReason", createdCalculation.getClaimCalculationGrapes().getCoverageAssessedReason(), updatedCalculation.getClaimCalculationGrapes().getCoverageAssessedReason());
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation);
+			service.deleteClaimCalculation(updatedCalculation, false);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteGrapesClaim()");
 	}
 	
-	private void deleteClaimCalculation(String claimNumber) throws CirrasClaimServiceException {
+	private void deleteClaimCalculation(String claimNumber, Boolean doDeleteLinkedCalculations) throws CirrasClaimServiceException {
 		
 		if(claimNumber != null) {
 			//Check if the claimNumber with calculation version already exists and delete it if it does
@@ -841,7 +961,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 					if(tempRsrc.getCalculationVersion() == 1) {
 						ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(tempRsrc, false);
 						//Delete claim
-						service.deleteClaimCalculation(calculationToDel);
+						service.deleteClaimCalculation(calculationToDel, doDeleteLinkedCalculations);
 						break;
 					}
 				}
@@ -864,7 +984,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer pageRowCount = new Integer(100);
 
 		//delete calculation if it exists
-		deleteClaimCalculation(claimNumber.toString());
+		deleteClaimCalculation(claimNumber.toString(), false);
 		
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
@@ -940,7 +1060,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			Assert.assertEquals("YieldAssessment", createdCalculation.getClaimCalculationBerries().getYieldAssessment(), updatedCalculation.getClaimCalculationBerries().getYieldAssessment());
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation);
+			service.deleteClaimCalculation(updatedCalculation, false);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteBerriesClaim");
@@ -961,7 +1081,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer pageRowCount = new Integer(100);
 
 		//delete calculation if it exists
-		deleteClaimCalculation(claimNumber.toString());
+		deleteClaimCalculation(claimNumber.toString(), false);
 		
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
@@ -1005,7 +1125,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation);
+			service.deleteClaimCalculation(updatedCalculation, false);
 		}
 
 		logger.debug(">testGetInsertUpdateDeletePlantUnitsClaim");
@@ -1026,7 +1146,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer pageRowCount = new Integer(100);
 
 		//delete calculation if it exists
-		deleteClaimCalculation(claimNumber.toString());
+		deleteClaimCalculation(claimNumber.toString(), false);
 		
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
@@ -1069,7 +1189,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation);
+			service.deleteClaimCalculation(updatedCalculation, false);
 		}
 
 		logger.debug(">testGetInsertUpdateDeletePlantAcresClaim");

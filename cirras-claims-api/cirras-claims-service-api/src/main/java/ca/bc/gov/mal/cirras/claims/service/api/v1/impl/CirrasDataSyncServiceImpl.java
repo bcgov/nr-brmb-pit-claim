@@ -556,7 +556,7 @@ public class CirrasDataSyncServiceImpl implements CirrasDataSyncService {
 					null);
 			for (ClaimCalculationDto claimCalcDto : dtos) {
 				// delete one by one to make sure the sub table records are deleted as well
-				cirrasServiceHelper.deleteClaimCalculation(claimCalcDto.getClaimCalculationGuid());
+				cirrasServiceHelper.deleteClaimCalculation(claimCalcDto.getClaimCalculationGuid(), false);
 			}
 
 			// Delete claim record
