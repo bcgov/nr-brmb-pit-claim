@@ -171,6 +171,7 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       coverageName: calculation.coverageName,
       cropCommodityId: calculation.cropCommodityId,
       commodityName: calculation.commodityName,
+      isPedigreeInd: calculation.isPedigreeInd,
       primaryPerilCode: calculation.primaryPerilCode,
       secondaryPerilCode: calculation.secondaryPerilCode,
       claimStatusCode: calculation.claimStatusCode,
@@ -207,6 +208,11 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
  
       insuredByMeasurementType: calculation.insuredByMeasurementType ? calculation.insuredByMeasurementType : null,
 
+      // linked product / claim / calculation
+      linkedProductId: calculation.linkedProductId,
+      linkedClaimNumber: calculation.linkedClaimNumber,
+      linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+
       isOutOfSync: calculation.isOutOfSync,
       isOutOfSyncGrowerNumber: calculation.isOutOfSyncGrowerNumber,
       isOutOfSyncGrowerName: calculation.isOutOfSyncGrowerName,
@@ -223,6 +229,8 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       claimCalculationGrapes: calculation.claimCalculationGrapes,
       claimCalculationGrainUnseeded: calculation.claimCalculationGrainUnseeded,
       claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
+      claimCalculationGrainQuantity: calculation.claimCalculationGrainQuantity,
+      claimCalculationGrainQuantityDetail: calculation.claimCalculationGrainQuantityDetail,
       varieties: calculation.varieties,
       currentClaimStatusCode: calculation.currentClaimStatusCode
 
