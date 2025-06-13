@@ -1543,8 +1543,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		ClaimCalculationGrainQuantityDetailDto linkedGrainQtyDetailDto = null;
 		
 		//Load linked calculation if necessary
-		if(claimCalculation.getClaimCalculationGrainQuantityGuid() != null) {
-			linkedGrainQtyDetailDto = claimCalculationGrainQuantityDetailDao.select(claimCalculation.getClaimCalculationGuid());
+		if(claimCalculation.getLinkedClaimCalculationGuid() != null) {
+			linkedGrainQtyDetailDto = claimCalculationGrainQuantityDetailDao.select(claimCalculation.getLinkedClaimCalculationGuid());
 		}
 		
 		//Calculation specific data
