@@ -10,6 +10,7 @@ import { CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, ma
 import { lastValueFrom } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
+import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 
 @Component({
   selector: 'calculation-detail-grain-quantity',
@@ -22,6 +23,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   displayLabel = "Calculation Detail";
 
   @Input() calculationDetail: vmCalculation;
+  @Input() isUnsaved: boolean;
   
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -243,6 +245,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       if ( this.calculationDetail && !this.calculationDetail.claimCalculationGrainQuantityDetail) return
 
       this.calculateValues()
+
+      this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
   }
 
   calculateValues() {
@@ -415,6 +419,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   onCancel() {
     this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), "false"));
+    this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
   }
 
   numberOnly(event): boolean {
@@ -485,6 +490,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
           this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
           this.doSyncClaimsCodeTables();
+
+          this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
       }
   }
 
@@ -524,6 +531,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : null
       }
 
+      updatedCalculation.claimCalculationGrainQuantityDetail.assessedYield = assessedYield
+      updatedCalculation.claimCalculationGrainQuantityDetail.damagedAcres = damagedAcres
+      updatedCalculation.claimCalculationGrainQuantityDetail.seededAcres = seededAcres
+      updatedCalculation.claimCalculationGrainQuantityDetail.inspEarlyEstYield = inspEarlyEstYield
+
       updatedCalculation.claimCalculationGrainQuantity.reseedClaim = this.viewModel.formGroup.controls.reseedClaim.value ? parseFloat(this.viewModel.formGroup.controls.reseedClaim.value) : null
       updatedCalculation.claimCalculationGrainQuantity.advancedClaim = this.viewModel.formGroup.controls.advancedClaim.value ? parseFloat(this.viewModel.formGroup.controls.advancedClaim.value) : null
 
@@ -541,6 +553,29 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         return false
 
     }     
+
+    // Submit is only possible if: the payed out amount of the claim doesn’t exceed the coverage value on line F
+    let totalClaimAmountNonPedigree = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
+    let totalClaimAmountPedigree = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
+    
+    if (totalClaimAmountNonPedigree > this.calculationDetailNonPedigree.claimCalculationGrainQuantity.totalCoverageValue) {
+      displayErrorMessage(this.snackbarService, "The Non-Pedigree Total Claim Amount should not exceed the Non-Pedigree Coverage Value.")
+      return false
+    }
+
+    if (totalClaimAmountPedigree > this.calculationDetailPedigree.claimCalculationGrainQuantity.totalCoverageValue) {
+      displayErrorMessage(this.snackbarService, "The Pedigree Total Claim Amount should not exceed the Pedigree Coverage Value.")
+      return false
+    }
+
+    // If there is a second calculation, the sum of both payed out amounts have to be equal to Quantity Loss Claim on line Y.
+    if (this.calculationDetail.linkedClaimCalculationGuid && this.isLinkedCalculationSubmitted() ) {
+      
+      if (  Math.round( (totalClaimAmountNonPedigree + totalClaimAmountNonPedigree) * 100) / 100 !== Math.round(this.quantityLossClaim  * 100 ) / 100 ) {
+        displayErrorMessage(this.snackbarService, "The sum of Pedigree and Non-Pedigree Total Claim Amount should not exceed the Quantity Loss Claim.")
+        return false
+      }
+    }
     
     return true
   }
@@ -559,7 +594,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       // if linked, the linked calculation should be saved first before we allow submit
       return false
     }
-    // TODO: other restrictions
 
     if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
         (
@@ -568,7 +602,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
         )
     ) {
-
           return true
 
     } else {
@@ -576,7 +609,31 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       return false
     }
 
-    
+  }
+
+  isLinkedCalculationSubmitted() {
+
+    if (this.calculationDetail.linkedClaimCalculationGuid) {
+      // find which one is the linked calculation - the pedigree or non-pedigree
+
+      if (this.calculationDetailNonPedigree && 
+        this.calculationDetailNonPedigree.claimCalculationGuid == this.calculationDetail.linkedClaimCalculationGuid &&
+        this.calculationDetailNonPedigree.calculationStatusCode == CALCULATION_STATUS_CODE.SUBMITTED) {
+
+          return true
+
+      }
+
+      if (this.calculationDetailPedigree && 
+        this.calculationDetailPedigree.claimCalculationGuid == this.calculationDetail.linkedClaimCalculationGuid &&
+        this.calculationDetailPedigree.calculationStatusCode == CALCULATION_STATUS_CODE.SUBMITTED) {
+
+          return true
+
+      }
+    }
+
+    return false // default
   }
 
   onSubmit() {
