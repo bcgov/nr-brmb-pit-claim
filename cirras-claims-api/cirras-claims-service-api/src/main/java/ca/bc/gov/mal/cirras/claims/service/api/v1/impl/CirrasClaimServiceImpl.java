@@ -1623,8 +1623,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		// Y - Quantity Loss Claim
 		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
-		Double totalClaimAmount = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
-		claimCalculation.setTotalClaimAmount(totalClaimAmount);
+		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
+		grainQuantity.setQuantityLossClaim(quantityLossClaim);
 
 	}
 	

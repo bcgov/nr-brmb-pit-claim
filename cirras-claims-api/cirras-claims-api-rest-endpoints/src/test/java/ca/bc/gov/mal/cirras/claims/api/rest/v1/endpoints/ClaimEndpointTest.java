@@ -13,6 +13,7 @@ import ca.bc.gov.mal.cirras.claims.api.rest.client.v1.ValidationException;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.security.Scopes;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
+import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
@@ -49,6 +50,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 	private EndpointsRsrc topLevelEndpoints;
 
 	private String currentClaimNumber;
+	private String secondClaimNumber;
 	
 	@Before
 	public void prepareTests() throws CirrasClaimServiceException, Oauth2ClientException{
@@ -682,8 +684,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			return;
 		}
 
-		
-		// TEST 2: Quantity Claim with linked product
+		// Quantity Claim with linked product
         String claimNumber = "37195";       // Set to Open Grain Quantity Claim without a calculation.
         currentClaimNumber = claimNumber;
 		String policyNumber = null;
@@ -700,7 +701,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Double acres = 250.0;
 		Double probableYield = 1.1230;
 		Double productionGuarantee = 197.000;
-		
 
 		// From CUWS
 		Double yieldToCount = 120.0;
@@ -779,12 +779,12 @@ public class ClaimEndpointTest extends EndpointsTest {
 		grainQtyDetail.setInspEarlyEstYield(45.0);
 		grainQty.setReseedClaim(1000.0);
 		grainQty.setAdvancedClaim(250.0);
-		grainQty.setQuantityLossClaim(6000.0);
+		claimCalculationRsrc.setTotalClaimAmount(3000.0);
 		
 		ClaimCalculationGrainQuantity expectedGrainQuantity = new ClaimCalculationGrainQuantity();
 		ClaimCalculationGrainQuantityDetail expectedGrainQuantityDetail = new ClaimCalculationGrainQuantityDetail();
 		
-		Double expectedTotalClaimAmount = createExpectedGrainQuantityCalculation(claimCalculationRsrc, expectedGrainQuantity, expectedGrainQuantityDetail);
+		createExpectedGrainQuantityCalculation(claimCalculationRsrc, expectedGrainQuantity, expectedGrainQuantityDetail);
 		
 		//Create new calculation
 		ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
@@ -797,7 +797,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid());
 		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainQuantityDetail().getClaimCalculationGrainQuantityDetailGuid());
 
-		Assert.assertEquals(expectedTotalClaimAmount, createdCalculation.getTotalClaimAmount(), 0.00005);
+		Assert.assertEquals(claimCalculationRsrc.getTotalClaimAmount(), createdCalculation.getTotalClaimAmount(), 0.00005);
 		
 		assertGrainQuantity(expectedGrainQuantity, createdCalculation.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, createdCalculation.getClaimCalculationGrainQuantityDetail());
@@ -815,12 +815,12 @@ public class ClaimEndpointTest extends EndpointsTest {
 		grainQtyDetail.setInspEarlyEstYield(30.0);
 		grainQty.setReseedClaim(755.0);
 		grainQty.setAdvancedClaim(200.0);
-		grainQty.setQuantityLossClaim(4000.0);
+		createdCalculation.setTotalClaimAmount(4000.0);
 
 		expectedGrainQuantity = new ClaimCalculationGrainQuantity();
 		expectedGrainQuantityDetail = new ClaimCalculationGrainQuantityDetail();
 		
-		expectedTotalClaimAmount = createExpectedGrainQuantityCalculation(createdCalculation, expectedGrainQuantity, expectedGrainQuantityDetail);
+		createExpectedGrainQuantityCalculation(createdCalculation, expectedGrainQuantity, expectedGrainQuantityDetail);
 
 		ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
 
@@ -832,7 +832,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid());
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantityDetail().getClaimCalculationGrainQuantityDetailGuid());
 
-		Assert.assertEquals(expectedTotalClaimAmount, updatedCalculation.getTotalClaimAmount(), 0.00005);
+		Assert.assertEquals(createdCalculation.getTotalClaimAmount(), updatedCalculation.getTotalClaimAmount(), 0.00005);
 		
 		assertGrainQuantity(expectedGrainQuantity, updatedCalculation.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, updatedCalculation.getClaimCalculationGrainQuantityDetail());
@@ -848,29 +848,83 @@ public class ClaimEndpointTest extends EndpointsTest {
 		grainQtyDetail.setInspEarlyEstYield(null);
 		grainQty.setReseedClaim(null);
 		grainQty.setAdvancedClaim(null);
-		grainQty.setQuantityLossClaim(3000.0);
+		updatedCalculation.setTotalClaimAmount(4000.0);
 
 		expectedGrainQuantity = new ClaimCalculationGrainQuantity();
 		expectedGrainQuantityDetail = new ClaimCalculationGrainQuantityDetail();
 		
-		expectedTotalClaimAmount = createExpectedGrainQuantityCalculation(updatedCalculation, expectedGrainQuantity, expectedGrainQuantityDetail);
+		createExpectedGrainQuantityCalculation(updatedCalculation, expectedGrainQuantity, expectedGrainQuantityDetail);
 
 		updatedCalculation = service.updateClaimCalculation(updatedCalculation, null);
 
 		Assert.assertNotNull(updatedCalculation);
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantity());
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantityDetail());
-
-		Assert.assertEquals(expectedTotalClaimAmount, updatedCalculation.getTotalClaimAmount(), 0.00005);
 		
 		assertGrainQuantity(expectedGrainQuantity, updatedCalculation.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, updatedCalculation.getClaimCalculationGrainQuantityDetail());
 		
+		//Test submit with total claim amount is different from Quantity Loss Claim
+		//It has to be smaller
+		//updatedCalculation = service.updateClaimCalculation(updatedCalculation, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
+
+		
+		
+		
 		//Add second calculation
+		// Quantity Claim linked to 37195
+        claimNumber = "37196";       // Set to Open Grain Quantity Claim without a calculation.
+        secondClaimNumber = claimNumber;
+		policyNumber = null;
+        searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
+		
+		//Values for Claim number 37195
+		// From CIRRAS
+		cropCommodityId = 21;
+		commodityName = "FIELD PEA";
+		isPedigreeInd = false;
+		coverageDollars = 35868.0;
+		deductibleLevel = 20;
+		selectedInsurableValue = 180.0;
+		acres = 237.0;
+		probableYield = 1.051;
+		productionGuarantee = 199.000;
+
+		// From CUWS
+		yieldToCount = 180.0;
+		
+		Assert.assertEquals(1, searchResults.getCollection().size());
+		
+		ClaimRsrc claimRsrc2 = searchResults.getCollection().get(0);
+		//Only works if there is no calculation yet
+		ClaimCalculationRsrc claimCalculationRsrc2 = service.getClaim(claimRsrc2);
+
+		Assert.assertNotNull(claimCalculationRsrc2);
+		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantity());
+//		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantityGuid());
+		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail());
+		Assert.assertEquals("OPEN", claimCalculationRsrc2.getClaimStatusCode());
+		Assert.assertNotNull(claimCalculationRsrc2.getCalculationComment());
+		Assert.assertEquals(cropCommodityId, claimCalculationRsrc2.getCropCommodityId());
+		Assert.assertEquals(commodityName, claimCalculationRsrc2.getCommodityName());
+		Assert.assertEquals(isPedigreeInd, claimCalculationRsrc2.getIsPedigreeInd());
+//		Assert.assertEquals(updatedCalculation.getLinkedClaimCalculationGuid(), claimCalculationRsrc2.getLinkedClaimCalculationGuid());
+//		Assert.assertEquals(updatedCalculation.getClaimNumber(), claimCalculationRsrc2.getLinkedClaimNumber());
+		
+		ClaimCalculationGrainQuantity grainQty2 = claimCalculationRsrc2.getClaimCalculationGrainQuantity();
+		ClaimCalculationGrainQuantityDetail grainQtyDetail2 = claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail();
+
+		//TODO: assert???
+		
+		//TODO: Need to update to include both claims
+//		createExpectedGrainQuantityCalculation(claimCalculationRsrc2, expectedGrainQuantity, expectedGrainQuantityDetail);
+		
+		//Create new calculation
+		ClaimCalculationRsrc createdCalculation2 = service.createClaimCalculation(claimCalculationRsrc);
 
 		
 		//Delete 1 calculation
-		deleteClaimCalculation(claimNumber, false);
+//		deleteClaimCalculation(claimNumber, false);
 		
 		//TODO: Check if the shared quantity data is still there 
 
@@ -942,8 +996,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		}
 	}
 
-	//Returns total claim amount
-	private Double createExpectedGrainQuantityCalculation(ClaimCalculationRsrc claimCalculationRsrc,
+	private void createExpectedGrainQuantityCalculation(ClaimCalculationRsrc claimCalculationRsrc,
 			ClaimCalculationGrainQuantity expGrainQuantity,
 			ClaimCalculationGrainQuantityDetail expGrainQuantityDetail) {
 		
@@ -978,7 +1031,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Double maxClaimPayable = Math.max(0, notNull(totalCoverageValue, 0.0) - notNull(grainQty.getReseedClaim(), 0.0));
 		
 		//Y - Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
-		Double totalClaimAmount = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQty.getAdvancedClaim(), 0.0));
+		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQty.getAdvancedClaim(), 0.0));
 		
 		expGrainQuantity.setClaimCalculationGrainQuantityGuid(grainQty.getClaimCalculationGrainQuantityGuid());
 		expGrainQuantity.setTotalCoverageValue(totalCoverageValue); //Calculated
@@ -987,7 +1040,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		expGrainQuantity.setReseedClaim(grainQty.getReseedClaim());
 		expGrainQuantity.setMaxClaimPayable(maxClaimPayable); //Calculated
 		expGrainQuantity.setAdvancedClaim(grainQty.getAdvancedClaim());
-		expGrainQuantity.setQuantityLossClaim(grainQty.getQuantityLossClaim());
+		expGrainQuantity.setQuantityLossClaim(quantityLossClaim); //Calculated
 
 		expGrainQuantityDetail.setClaimCalculationGrainQuantityDetailGuid(grainQtyDetail.getClaimCalculationGrainQuantityDetailGuid());
 		expGrainQuantityDetail.setClaimCalculationGuid(grainQtyDetail.getClaimCalculationGuid());
@@ -1008,8 +1061,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 		expGrainQuantityDetail.setYieldValue(yieldValue); //Calculated
 		expGrainQuantityDetail.setYieldValueWithEarlyEstDeemedYield(yieldValueWithEarlyEstDeemedYield); //Calculated
 		
-		return (double) Math.round(totalClaimAmount * 100d) / 100d; //Round to two decimals
-
 	}
 	
 	private Double calculateProductionGuarantee(Double productionGuaranteeWeight, Double assessedYield, Double insurableValue) {
