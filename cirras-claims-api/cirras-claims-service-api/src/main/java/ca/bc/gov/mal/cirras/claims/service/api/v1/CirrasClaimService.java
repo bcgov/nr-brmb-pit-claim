@@ -55,7 +55,6 @@ public interface CirrasClaimService {
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	void deleteClaimCalculation(
 		String claimCalculationGuid, 
-		Boolean doDeleteLinkedCalculations,
 		String optimisticLock, 
 		WebAdeAuthentication authentication
 	)

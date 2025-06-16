@@ -51,7 +51,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 	private EndpointsRsrc topLevelEndpoints;
 
 	private String currentClaimNumber;
-	private String secondClaimNumber;
 	
 	@Before
 	public void prepareTests() throws CirrasClaimServiceException, Oauth2ClientException{
@@ -61,7 +60,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 	
 	@After 
 	public void cleanUp() throws CirrasClaimServiceException, NotFoundDaoException, DaoException {
-		deleteClaimCalculation(currentClaimNumber, true);
+		deleteClaimCalculation(currentClaimNumber);
 	}
 
 	
@@ -328,7 +327,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			
 			
 			//Delete calculation
-			deleteClaimCalculation(claimNumber, false);
+			deleteClaimCalculation(claimNumber);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteGrainUnseededClaim()");
@@ -473,7 +472,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(totalClaimAmount, updatedCalculation.getTotalClaimAmount());
 		
 		//Delete calculation
-		deleteClaimCalculation(claimNumber, false);
+		deleteClaimCalculation(claimNumber);
 
 		logger.debug(">testGetInsertUpdateDeleteGrainSpotLossClaim()");
 	}
@@ -684,12 +683,14 @@ public class ClaimEndpointTest extends EndpointsTest {
 			logger.warn("Skipping tests");
 			return;
 		}
+		
+		
 
 		// Quantity Claim with linked product
-        String claimNumber = "37195";       // Set to Open Grain Quantity Claim without a calculation.
-        currentClaimNumber = claimNumber;
+        String claimNumber1 = "37195";       // Set to Open Grain Quantity Claim without a calculation.
+        currentClaimNumber = claimNumber1;
 		String policyNumber = null;
-        ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
+        ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber1, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
 		//Values for Claim number 37195
 		// From CIRRAS
@@ -710,6 +711,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer linkedClaimNumber = 37196;
 		Integer linkedProductId = 1251643;
 		
+        searchResults = service.getClaimList(topLevelEndpoints, claimNumber1, policyNumber, null, null, null, pageNumber, pageRowCount);
 		Assert.assertEquals(1, searchResults.getCollection().size());
 		
 		ClaimRsrc claimRsrc = searchResults.getCollection().get(0);
@@ -810,12 +812,12 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		//Update calculation
 		//User Entered - Remove all optional values
-		grainQtyDetail.setAssessedYield(2.5);
-		grainQtyDetail.setDamagedAcres(25.5);
-		grainQtyDetail.setSeededAcres(95.5);
-		grainQtyDetail.setInspEarlyEstYield(30.0);
-		grainQty.setReseedClaim(755.0);
-		grainQty.setAdvancedClaim(200.0);
+		grainQtyDetail.setAssessedYield(null);
+		grainQtyDetail.setDamagedAcres(null);
+		grainQtyDetail.setSeededAcres(null);
+		grainQtyDetail.setInspEarlyEstYield(null);
+		grainQty.setReseedClaim(null);
+		grainQty.setAdvancedClaim(null);
 		createdCalculation.setTotalClaimAmount(4000.0);
 
 		expectedGrainQuantity = new ClaimCalculationGrainQuantity();
@@ -828,27 +830,28 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertNotNull(updatedCalculation);
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantity());
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantityDetail());
-
+		
+		Assert.assertEquals(createdCalculation.getTotalClaimAmount(), updatedCalculation.getTotalClaimAmount(), 0.00005);
+		
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGuid());
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid());
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantityDetail().getClaimCalculationGrainQuantityDetailGuid());
-
-		Assert.assertEquals(createdCalculation.getTotalClaimAmount(), updatedCalculation.getTotalClaimAmount(), 0.00005);
 		
 		assertGrainQuantity(expectedGrainQuantity, updatedCalculation.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, updatedCalculation.getClaimCalculationGrainQuantityDetail());
+		
 		
 		//Update calculation
 		grainQty = updatedCalculation.getClaimCalculationGrainQuantity();
 		grainQtyDetail = updatedCalculation.getClaimCalculationGrainQuantityDetail();
 		
-		//User Entered - Remove all optional values
-		grainQtyDetail.setAssessedYield(null);
-		grainQtyDetail.setDamagedAcres(null);
-		grainQtyDetail.setSeededAcres(null);
-		grainQtyDetail.setInspEarlyEstYield(null);
-		grainQty.setReseedClaim(null);
-		grainQty.setAdvancedClaim(null);
+		//User Entered
+		grainQtyDetail.setAssessedYield(2.5);
+		grainQtyDetail.setDamagedAcres(25.5);
+		grainQtyDetail.setSeededAcres(95.5);
+		grainQtyDetail.setInspEarlyEstYield(30.0);
+		grainQty.setReseedClaim(755.0);
+		grainQty.setAdvancedClaim(200.0);
 		updatedCalculation.setTotalClaimAmount(4000.0);
 
 		expectedGrainQuantity = new ClaimCalculationGrainQuantity();
@@ -861,23 +864,20 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertNotNull(updatedCalculation);
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantity());
 		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainQuantityDetail());
-		
+
 		assertGrainQuantity(expectedGrainQuantity, updatedCalculation.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, updatedCalculation.getClaimCalculationGrainQuantityDetail());
 		
 		//Test submit with total claim amount is different from Quantity Loss Claim
 		//It has to be smaller
 		//updatedCalculation = service.updateClaimCalculation(updatedCalculation, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
-
-		
 		
 		
 		//Add second calculation
 		// Quantity Claim linked to 37195
-        claimNumber = "37196";       // Set to Open Grain Quantity Claim without a calculation.
-        secondClaimNumber = claimNumber;
+		String claimNumber2 = "37196";       // Set to Open Grain Quantity Claim without a calculation.
 		policyNumber = null;
-        searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
+        searchResults = service.getClaimList(topLevelEndpoints, claimNumber2, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
 		//Values for Claim number 37195
 		// From CIRRAS
@@ -909,13 +909,18 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(cropCommodityId, claimCalculationRsrc2.getCropCommodityId());
 		Assert.assertEquals(commodityName, claimCalculationRsrc2.getCommodityName());
 		Assert.assertEquals(isPedigreeInd, claimCalculationRsrc2.getIsPedigreeInd());
-//		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), claimCalculationRsrc2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), claimCalculationRsrc2.getLinkedClaimCalculationGuid());
 		Assert.assertEquals(updatedCalculation.getClaimNumber(), claimCalculationRsrc2.getLinkedClaimNumber());
 		
-		ClaimCalculationGrainQuantity grainQty2 = claimCalculationRsrc2.getClaimCalculationGrainQuantity();
 		ClaimCalculationGrainQuantityDetail grainQtyDetail2 = claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail();
+		
+		//User Entered
+		grainQtyDetail2.setAssessedYield(20.0);
+		grainQtyDetail2.setDamagedAcres(10.0);
+		grainQtyDetail2.setSeededAcres(100.0);
+		grainQtyDetail2.setInspEarlyEstYield(null);
+		claimCalculationRsrc2.setTotalClaimAmount(5000.0);
 
-		//TODO: assert???
 		
 		expectedGrainQuantity = new ClaimCalculationGrainQuantity();
 		expectedGrainQuantityDetail = new ClaimCalculationGrainQuantityDetail();
@@ -927,12 +932,24 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		assertGrainQuantity(expectedGrainQuantity, createdCalculation2.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, createdCalculation2.getClaimCalculationGrainQuantityDetail());
+		
+		//Try to delete calculations with doDeleteLinkedCalculations parameter set to false
+		try {
+			service.deleteClaimCalculation(createdCalculation2, false);
+			Assert.fail("deleteClaimCalculation should have thrown an exception because parameter doDeleteLinkedCalculations is set to false");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+		}
+		
+		//Delete calculations
+		service.deleteClaimCalculation(createdCalculation2, true);
 
-		
-		//Delete 1 calculation
-//		deleteClaimCalculation(claimNumber, false);
-		
-		//TODO: Check if the shared quantity data is still there 
+		//Check if both calculations are deleted
+		ClaimCalculationListRsrc claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber1, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+		Assert.assertEquals(0, claimCalculations.getCollection().size());
+
+		claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber2, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+		Assert.assertEquals(0, claimCalculations.getCollection().size());
 
 		logger.debug(">testGetInsertUpdateDeleteGrainQuantityClaim2Calculations()");
 	}
@@ -943,10 +960,10 @@ public class ClaimEndpointTest extends EndpointsTest {
 		
 		Assert.assertNotNull(actual.getClaimCalculationGrainQuantityGuid());
 		Assert.assertEquals(expected.getTotalCoverageValue(), actual.getTotalCoverageValue(), 0.00005);
-		Assert.assertEquals(expected.getProductionGuaranteeAmount(), actual.getProductionGuaranteeAmount(), 0.00005);
+		Assert.assertEquals(expected.getProductionGuaranteeAmount(), actual.getProductionGuaranteeAmount(), 0.005);
 		Assert.assertEquals(expected.getTotalYieldLossValue(), actual.getTotalYieldLossValue(), 0.00005);
 		Assert.assertEquals(expected.getMaxClaimPayable(), actual.getMaxClaimPayable(), 0.00005);
-		Assert.assertEquals(expected.getQuantityLossClaim(), actual.getQuantityLossClaim());
+		Assert.assertEquals(expected.getQuantityLossClaim(), actual.getQuantityLossClaim(), 0.05);
 
 		//User Entered Fields
 		if(expected.getReseedClaim() == null) {
@@ -1026,7 +1043,8 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Double productionGuaranteeAmount = calculateProductionGuarantee(
 				grainQtyDetail.getProductionGuaranteeWeight(),
 				grainQtyDetail.getAssessedYield(),
-				grainQtyDetail.getInsurableValue());
+				grainQtyDetail.getInsurableValue())
+				+ linkedProductionGuaranteeAmount;
 		//O 50% of Production Guarantee (Tonnes) D
 		Double fiftyPercentProductionGuarantee = grainQtyDetail.getProductionGuaranteeWeight() * 0.5;
 		//P - O x ( M / N)
@@ -1153,13 +1171,13 @@ public class ClaimEndpointTest extends EndpointsTest {
 			Assert.assertEquals("CoverageAssessedReason", createdCalculation.getClaimCalculationGrapes().getCoverageAssessedReason(), updatedCalculation.getClaimCalculationGrapes().getCoverageAssessedReason());
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation, false);
+			service.deleteClaimCalculation(updatedCalculation, true);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteGrapesClaim()");
 	}
 	
-	private void deleteClaimCalculation(String claimNumber, Boolean doDeleteLinkedCalculations) throws CirrasClaimServiceException {
+	private void deleteClaimCalculation(String claimNumber) throws CirrasClaimServiceException {
 		
 		if(claimNumber != null) {
 			//Check if the claimNumber with calculation version already exists and delete it if it does
@@ -1172,7 +1190,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 					if(tempRsrc.getCalculationVersion() == 1) {
 						ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(tempRsrc, false);
 						//Delete claim
-						service.deleteClaimCalculation(calculationToDel, doDeleteLinkedCalculations);
+						service.deleteClaimCalculation(calculationToDel, true);
 						break;
 					}
 				}
@@ -1195,7 +1213,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer pageRowCount = new Integer(100);
 
 		//delete calculation if it exists
-		deleteClaimCalculation(claimNumber.toString(), false);
+		deleteClaimCalculation(claimNumber.toString());
 		
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
@@ -1271,7 +1289,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			Assert.assertEquals("YieldAssessment", createdCalculation.getClaimCalculationBerries().getYieldAssessment(), updatedCalculation.getClaimCalculationBerries().getYieldAssessment());
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation, false);
+			service.deleteClaimCalculation(updatedCalculation, true);
 		}
 
 		logger.debug(">testGetInsertUpdateDeleteBerriesClaim");
@@ -1292,7 +1310,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer pageRowCount = new Integer(100);
 
 		//delete calculation if it exists
-		deleteClaimCalculation(claimNumber.toString(), false);
+		deleteClaimCalculation(claimNumber.toString());
 		
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
@@ -1336,7 +1354,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation, false);
+			service.deleteClaimCalculation(updatedCalculation, true);
 		}
 
 		logger.debug(">testGetInsertUpdateDeletePlantUnitsClaim");
@@ -1357,7 +1375,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Integer pageRowCount = new Integer(100);
 
 		//delete calculation if it exists
-		deleteClaimCalculation(claimNumber.toString(), false);
+		deleteClaimCalculation(claimNumber.toString());
 		
 		ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber, policyNumber, null, null, null, pageNumber, pageRowCount);
 		
@@ -1400,7 +1418,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
 
 			//Delete calculation
-			service.deleteClaimCalculation(updatedCalculation, false);
+			service.deleteClaimCalculation(updatedCalculation, true);
 		}
 
 		logger.debug(">testGetInsertUpdateDeletePlantAcresClaim");

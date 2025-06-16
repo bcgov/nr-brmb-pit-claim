@@ -52,6 +52,7 @@ import ca.bc.gov.mal.cirras.claims.service.api.v1.model.factory.ClaimFactory;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.CirrasServiceHelper;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.OutOfSync;
+import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums.CalculationStatusCodes;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.validation.ModelValidator;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyServiceException;
@@ -1022,8 +1023,25 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				result = replaceClaimCalculation(claimCalculation, updateType, factoryContext, authentication);
 			} else {
 				if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
-					//If calculation is submitted the claim in CIRRAS needs to get updated.
-					submitCalculation(claimCalculation, userId);
+					Boolean submitCalculation = true;
+					//For Grain Quanity Claims the submitted amount can't exceed the calculated value
+					//If there is a linked calculation that is already submitted we need to check if the sum of both doesn't
+					//exceed the calculated value
+					if(claimCalculation.getLinkedClaimCalculationGuid() != null) {
+						ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
+						if(dtoLinkedCalculation != null && dtoLinkedCalculation.getCalculationStatus().equals(CalculationStatusCodes.SUBMITTED.toString())) {
+							Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
+							if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
+								submitCalculation = false;
+								//TODO return a message to user
+							}
+						}
+					}
+					
+					if(submitCalculation) {
+						//If calculation is submitted the claim in CIRRAS needs to get updated.
+						submitCalculation(claimCalculation, userId);
+					}
 				}
 				result = getClaimCalculation(claimCalculationGuid, false, factoryContext, authentication);
 			}
@@ -1389,14 +1407,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 	@Override
 	public void deleteClaimCalculation(
-			String claimCalculationGuid, 
-			Boolean doDeleteLinkedCalculations,
+			String claimCalculationGuid,
 			String optimisticLock,
 			WebAdeAuthentication authentication)
 			throws ServiceException, NotFoundException, ForbiddenException, ConflictException {
 		logger.debug("<deleteClaimCalculation");
 		
-		cirrasServiceHelper.deleteClaimCalculation(claimCalculationGuid, doDeleteLinkedCalculations);
+		cirrasServiceHelper.deleteClaimCalculation(claimCalculationGuid);
 
 		logger.debug(">deleteClaimCalculation");
 	}

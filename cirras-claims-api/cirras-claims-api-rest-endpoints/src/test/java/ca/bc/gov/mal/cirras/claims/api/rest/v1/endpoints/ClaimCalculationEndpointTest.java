@@ -437,7 +437,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 				if(tempRsrc.getCalculationVersion() == 1) {
 					ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(tempRsrc, false);
 					//Delete claim
-					service.deleteClaimCalculation(calculationToDel, false);
+					service.deleteClaimCalculation(calculationToDel, true);
 					break;
 				}
 			}
@@ -453,7 +453,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 					
 					if ( searchResults.getCollection().get(i).getClaimCalculationGuid().equals(claimCalculationGuid) ) {
 						ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(searchResults.getCollection().get(i), false);
-						service.deleteClaimCalculation(calculationToDel, false);
+						service.deleteClaimCalculation(calculationToDel, true);
 					}
 				}
 			}
@@ -534,7 +534,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		ClaimCalculationListRsrc searchResults = service.getClaimCalculations(topLevelEndpoints, "28082", null, null, null, null, null, null, null, null, pageNumber, pageRowCount);
 		ClaimCalculationRsrc claimCalc = searchResults.getCollection().get(0);
 		claimCalc = service.getClaimCalculation(claimCalc, false);
-		service.deleteClaimCalculation(claimCalc, false);		
+		service.deleteClaimCalculation(claimCalc, true);		
 	}
 	
 	@Test
@@ -693,7 +693,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testClaimCalculationOutOfSyncFlags");
 	}
@@ -766,7 +766,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrapesClaimCalculationOutOfSyncFlags");
 	}
@@ -858,7 +858,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testBerriesClaimCalculationOutOfSyncFlags");
 	}
@@ -931,7 +931,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Coverage Amount not correct", originalMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -955,10 +955,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testBerriesClaimCalculationReplace");
 	}	
@@ -1027,7 +1027,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantUnitsClaimCalculationOutOfSyncFlags");
 	}
@@ -1087,7 +1087,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantUnitsClaimCalculationRefresh");
 	}
@@ -1144,7 +1144,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationPlantUnits().getInsurableValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -1163,10 +1163,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationPlantUnits().getInsurableValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testPlantUnitsClaimCalculationReplace");
 	}	
@@ -1278,7 +1278,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantAcresClaimCalculationOutOfSyncFlags");
 	}	
@@ -1338,7 +1338,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantAcresClaimCalculationRefresh");
 	}
@@ -1395,7 +1395,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationPlantAcres().getInsurableValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -1414,10 +1414,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationPlantAcres().getInsurableValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testPlantAcresClaimCalculationReplace");
 	}	
@@ -1541,7 +1541,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		}
 		
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGetClaimCalculationRefresh");
 	}
@@ -1599,7 +1599,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);		
 		
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrapesClaimCalculationRefresh");
 	}
@@ -1682,7 +1682,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		checkVarieties(cropVarietyId, averagePrice, null, averagePriceFinal, newCalculation, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -1703,10 +1703,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		checkVarieties(cropVarietyId, averagePriceNew, averagePriceOverride, null, newCalculation, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
 
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testGrapesClaimCalculationReplace");
 	}
@@ -1991,7 +1991,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);		
 		
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testBerriesClaimCalculationRefresh");
 	}
@@ -2166,7 +2166,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrainUnseededClaimCalculationOutOfSyncFlags");
 	}
@@ -2229,7 +2229,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 				
 		logger.debug(">testGrainUnseededClaimCalculationRefresh");
 	}
@@ -2295,7 +2295,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -2317,11 +2317,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testGrainUnseededClaimCalculationReplace");
 	}
@@ -2392,7 +2392,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrainSpotLossClaimCalculationOutOfSyncFlags");
 	}
@@ -2456,7 +2456,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc, false);
+		service.deleteClaimCalculation(claimCalc, true);
 				
 		logger.debug(">testGrainSpotLossClaimCalculationRefresh");
 	}	
@@ -2521,7 +2521,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Coverage Value not correct", originalCoverageValue, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -2543,11 +2543,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Coverage Value not correct", updatedCoverageValue, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation, false);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testGrainSpotLossClaimCalculationReplace");
 	}

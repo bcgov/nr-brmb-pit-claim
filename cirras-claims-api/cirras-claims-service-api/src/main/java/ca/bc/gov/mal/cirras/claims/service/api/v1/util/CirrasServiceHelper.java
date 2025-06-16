@@ -166,7 +166,7 @@ public class CirrasServiceHelper {
 		return dto;
 	}
 	
-	public void deleteClaimCalculation(String claimCalculationGuid, Boolean doDeleteLinkedCalculations)
+	public void deleteClaimCalculation(String claimCalculationGuid)
 			throws ServiceException, NotFoundException, ForbiddenException, ConflictException {
 		logger.debug("<deleteClaimCalculation");
 
@@ -180,7 +180,7 @@ public class CirrasServiceHelper {
 			//Get shared grain quantity record before the claim calculation is deleted
 			ClaimCalculationGrainQuantityDto grainQtyDto = claimCalculationGrainQuantityDao.select(claimCalculationGuid);
 			
-			// Delete subtables
+			// Delete sub tables
 			claimCalculationVarietyDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationGrapesDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationBerriesDao.deleteForClaim(claimCalculationGuid);
@@ -192,22 +192,17 @@ public class CirrasServiceHelper {
 			claimCalculationDao.delete(claimCalculationGuid);
 			
 			//Grain Quantity sub table might be used by another calculation
-			//It's only deleted if there is no other calculation associated with it
-			// or if doDeleteLinkedCalculations is true
+			//The linked calculation needs to be deleted first.
 			if(grainQtyDto != null) {
 				//Check for other calculations associated with it
 				List<ClaimCalculationDto> calculationsDto = claimCalculationDao.getCalculationsByGrainQuantityGuid(grainQtyDto.getClaimCalculationGrainQuantityGuid());
 				if(calculationsDto != null && calculationsDto.size() > 0) {
-					//Only delete associated calculation and grain quantity record if the flag is true  
-					if(doDeleteLinkedCalculations) {
-						for (ClaimCalculationDto claimCalculationDto : calculationsDto) {
-							claimCalculationDao.delete(claimCalculationDto.getClaimCalculationGuid());
-						}
-						claimCalculationGrainQuantityDao.delete(grainQtyDto.getClaimCalculationGrainQuantityGuid());
-					} 
-				} else {
-					claimCalculationGrainQuantityDao.delete(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+					for (ClaimCalculationDto claimCalculationDto : calculationsDto) {
+						claimCalculationGrainQuantityDetailDao.deleteForClaim(claimCalculationDto.getClaimCalculationGuid());
+						claimCalculationDao.delete(claimCalculationDto.getClaimCalculationGuid());
+					}
 				}
+				claimCalculationGrainQuantityDao.delete(grainQtyDto.getClaimCalculationGrainQuantityGuid());
 			}
 
 		} catch (IntegrityConstraintViolatedDaoException e) {
