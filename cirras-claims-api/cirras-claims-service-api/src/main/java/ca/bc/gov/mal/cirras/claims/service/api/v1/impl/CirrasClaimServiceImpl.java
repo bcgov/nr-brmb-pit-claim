@@ -994,6 +994,18 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
+			
+			//If a Grain Quantity calculation is submitted and there is a already submitted linked calculation
+			//the sum of both submitted amounts on line Z has to be equal to the calculated value on line Y
+			if(claimCalculation.getLinkedClaimCalculationGuid() != null && updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
+				if(dtoLinkedCalculation != null && dtoLinkedCalculation.getCalculationStatus().equals(CalculationStatusCodes.SUBMITTED.toString())) {
+					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
+					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
+						throw new ServiceException("The calculation can't be submitted because the sum on line Z has to be equal to line Y.");
+					}
+				}
+			}
 
 			ClaimCalculationDto dto = claimCalculationDao.fetch(claimCalculationGuid);
 
@@ -1023,25 +1035,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				result = replaceClaimCalculation(claimCalculation, updateType, factoryContext, authentication);
 			} else {
 				if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
-					Boolean submitCalculation = true;
-					//For Grain Quanity Claims the submitted amount can't exceed the calculated value
-					//If there is a linked calculation that is already submitted we need to check if the sum of both doesn't
-					//exceed the calculated value
-					if(claimCalculation.getLinkedClaimCalculationGuid() != null) {
-						ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
-						if(dtoLinkedCalculation != null && dtoLinkedCalculation.getCalculationStatus().equals(CalculationStatusCodes.SUBMITTED.toString())) {
-							Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
-							if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
-								submitCalculation = false;
-								//TODO return a message to user
-							}
-						}
-					}
-					
-					if(submitCalculation) {
-						//If calculation is submitted the claim in CIRRAS needs to get updated.
-						submitCalculation(claimCalculation, userId);
-					}
+					//If calculation is submitted the claim in CIRRAS needs to get updated.
+					submitCalculation(claimCalculation, userId);
 				}
 				result = getClaimCalculation(claimCalculationGuid, false, factoryContext, authentication);
 			}
