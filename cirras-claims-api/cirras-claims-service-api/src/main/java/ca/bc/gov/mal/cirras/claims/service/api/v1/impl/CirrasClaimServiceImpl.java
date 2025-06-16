@@ -1588,6 +1588,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		if(grainQuantityDetail.getSeededAcres() != null && grainQuantityDetail.getSeededAcres() > 0) {
 			calcEarlyEstYield = fiftyPercentProductionGuarantee * (notNull(grainQuantityDetail.getDamagedAcres(), 0.0) / grainQuantityDetail.getSeededAcres());
 		}
+		if(calcEarlyEstYield > 0) {
+			calcEarlyEstYield = (double) Math.round(calcEarlyEstYield * 1000d) / 1000d;
+		}
 		grainQuantityDetail.setCalcEarlyEstYield(calcEarlyEstYield);
 		
 		//L - Less Early Establishment Deemed Yield Value
@@ -1624,6 +1627,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		// Y - Quantity Loss Claim
 		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
 		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
+		if(quantityLossClaim > 0) {
+			//Round to two decimals
+			quantityLossClaim = (double) Math.round(quantityLossClaim * 100d) / 100d;
+		}
 		grainQuantity.setQuantityLossClaim(quantityLossClaim);
 
 	}

@@ -343,7 +343,9 @@
 
 	<select id="getCalculationsForDataSync" resultMap="ClaimCalculationDtoMap">
 		<include refid="selectColumns"/>
+			, IP.INSURANCE_PLAN_NAME
 		FROM CLAIM_CALCULATION T
+		JOIN INSURANCE_PLAN IP ON IP.INSURANCE_PLAN_ID = T.INSURANCE_PLAN_ID
 		WHERE T.CLAIM_NUMBER = #{claimNumber}
 		ORDER BY T.CALCULATION_VERSION DESC
 	</select>
