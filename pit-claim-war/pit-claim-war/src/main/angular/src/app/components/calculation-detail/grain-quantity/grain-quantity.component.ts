@@ -151,7 +151,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         this.setValues(this.calculationDetail)
       }
-
       this.enableDisableFormControls();
 
     }
@@ -212,7 +211,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue( calcDetail.totalClaimAmount ) 
       }
-
       this.viewModel.formGroup.controls.reseedClaim.setValue( calcDetail.claimCalculationGrainQuantity.reseedClaim ) 
       this.viewModel.formGroup.controls.advancedClaim.setValue( calcDetail.claimCalculationGrainQuantity.advancedClaim ) 
 
@@ -291,6 +289,15 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
     // Line Y: Lesser of ( V or W ) - X
     this.quantityLossClaim = this.calculateQuantityLossClaim() 
+
+    // Poluate Line X if new calculation
+    if ( !this.calculationDetail.claimCalculationGuid ) {
+      if (this.calculationDetail.isPedigreeInd) {      
+        this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue(this.quantityLossClaim)
+      } else {
+        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(this.quantityLossClaim)
+      }
+    }
 
   }
   
@@ -436,7 +443,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
       if (this.calculationDetail.linkedProductId) {
 
-        if(this.calculationDetail.isPedigreeInd) {
+        if(this.calculationDetail.isPedigreeInd == true || this.calculationDetail.calculationStatusCode !== CALCULATION_STATUS_CODE.DRAFT) {
           // disable non pedigree fields
           this.viewModel.formGroup.controls.assessedYieldNonPedigree.disable();
           this.viewModel.formGroup.controls.damagedAcresNonPedigree.disable();
@@ -445,7 +452,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.disable();
         }
 
-        if(!this.calculationDetail.isPedigreeInd) {
+        if(this.calculationDetail.isPedigreeInd == false || this.calculationDetail.calculationStatusCode !== CALCULATION_STATUS_CODE.DRAFT) {
           // disable pedigree fields
           this.viewModel.formGroup.controls.assessedYieldPedigree.disable();
           this.viewModel.formGroup.controls.damagedAcresPedigree.disable();
@@ -454,20 +461,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           this.viewModel.formGroup.controls.totalClaimAmountPedigree.disable();
         }
       }
-
-      // this will be useful once we start dealing with replace / reopen calculation
-      // if(this.calculationDetail.calculationStatusCode == CALCULATION_STATUS_CODE.DRAFT){
-      //   this.viewModel.formGroup.controls.primaryPerilCode.enable();
-      //   this.viewModel.formGroup.controls.secondaryPerilCode.enable();
-      //   this.viewModel.formGroup.controls.adjustedAcres.enable();
-      //   this.viewModel.formGroup.controls.percentYieldReduction.enable();
-
-      // } else {
-      //   this.viewModel.formGroup.controls.primaryPerilCode.disable();
-      //   this.viewModel.formGroup.controls.secondaryPerilCode.disable();
-      //   this.viewModel.formGroup.controls.adjustedAcres.disable();
-      //   this.viewModel.formGroup.controls.percentYieldReduction.disable();
-      // }
     }
   }
 
@@ -491,7 +484,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
           this.doSyncClaimsCodeTables();
 
-          this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+          this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
       }
   }
 
@@ -508,6 +501,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       updatedCalculation.primaryPerilCode = this.viewModel.formGroup.controls.primaryPerilCode.value
       updatedCalculation.secondaryPerilCode = this.viewModel.formGroup.controls.secondaryPerilCode.value
 
+      // claimCalculationGrainQuantityGuid
+      updatedCalculation.claimCalculationGrainQuantityGuid = updatedCalculation.claimCalculationGrainQuantity.claimCalculationGrainQuantityGuid
+
       let assessedYield = 0
       let damagedAcres = 0
       let seededAcres = 0
@@ -520,7 +516,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         seededAcres = this.viewModel.formGroup.controls.seededAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresPedigree.value) : null
         inspEarlyEstYield = this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.value ? parseFloat(this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.value) : null
       
-        updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : null
+        updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
       } else {
       
         assessedYield = this.viewModel.formGroup.controls.assessedYieldNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value) : null
@@ -528,7 +524,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         seededAcres = this.viewModel.formGroup.controls.seededAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresNonPedigree.value) : null
         inspEarlyEstYield = this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.value) : null
       
-        updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : null
+        updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
       }
 
       updatedCalculation.claimCalculationGrainQuantityDetail.assessedYield = assessedYield
@@ -558,12 +554,12 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     let totalClaimAmountNonPedigree = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
     let totalClaimAmountPedigree = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
     
-    if (totalClaimAmountNonPedigree > this.calculationDetailNonPedigree.claimCalculationGrainQuantity.totalCoverageValue) {
+    if (this.calculationDetailNonPedigree && totalClaimAmountNonPedigree > this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue) {
       displayErrorMessage(this.snackbarService, "The Non-Pedigree Total Claim Amount should not exceed the Non-Pedigree Coverage Value.")
       return false
     }
 
-    if (totalClaimAmountPedigree > this.calculationDetailPedigree.claimCalculationGrainQuantity.totalCoverageValue) {
+    if (this.calculationDetailPedigree && totalClaimAmountPedigree > this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue) {
       displayErrorMessage(this.snackbarService, "The Pedigree Total Claim Amount should not exceed the Pedigree Coverage Value.")
       return false
     }
@@ -571,7 +567,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     // If there is a second calculation, the sum of both payed out amounts have to be equal to Quantity Loss Claim on line Y.
     if (this.calculationDetail.linkedClaimCalculationGuid && this.isLinkedCalculationSubmitted() ) {
       
-      if (  Math.round( (totalClaimAmountNonPedigree + totalClaimAmountNonPedigree) * 100) / 100 !== Math.round(this.quantityLossClaim  * 100 ) / 100 ) {
+      if (  Math.round( (totalClaimAmountNonPedigree + totalClaimAmountPedigree) * 100) / 100 !== Math.round(this.quantityLossClaim  * 100 ) / 100 ) {
         displayErrorMessage(this.snackbarService, "The sum of Pedigree and Non-Pedigree Total Claim Amount should not exceed the Quantity Loss Claim.")
         return false
       }
@@ -647,5 +643,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
   }
          
+
+  setUnsavedMessage(){
+    this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+  }
 
 }

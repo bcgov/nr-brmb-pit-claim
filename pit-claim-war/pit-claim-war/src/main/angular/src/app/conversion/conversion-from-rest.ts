@@ -150,7 +150,8 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       etag: etag,
 
       claimCalculationGuid: calculation.claimCalculationGuid,
-
+      claimCalculationGrainQuantityGuid: calculation.claimCalculationGrainQuantityGuid,
+      
       // calculation
       calculationVersion: calculation.calculationVersion,
       calculationVersionDisplay: calculation.calculationVersion ? 'V' + calculation.calculationVersion : null,

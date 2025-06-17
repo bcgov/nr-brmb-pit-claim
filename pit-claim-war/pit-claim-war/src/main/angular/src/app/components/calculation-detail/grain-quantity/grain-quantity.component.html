@@ -30,7 +30,7 @@
             <span class="ccc-col-right">
               Primary Peril:
               <mat-form-field appearance="fill">
-                <mat-select formControlName="primaryPerilCode" required >
+                <mat-select formControlName="primaryPerilCode" required (selectionChange)="setUnsavedMessage()">
                   <mat-option>(None)</mat-option>
                   <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
                 </mat-select>
@@ -50,7 +50,7 @@
             <span class="ccc-col-right">
                 Secondary Peril:
                 <mat-form-field appearance="fill">
-                  <mat-select formControlName="secondaryPerilCode" >
+                  <mat-select formControlName="secondaryPerilCode" (selectionChange)="setUnsavedMessage()">
                       <mat-option>(None)</mat-option>
                       <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
                       >{{ option.description }}</mat-option>

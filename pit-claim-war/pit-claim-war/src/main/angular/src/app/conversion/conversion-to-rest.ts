@@ -12,10 +12,11 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       etag: calculation.etag,
 
       claimCalculationGuid: calculation.claimCalculationGuid ? calculation.claimCalculationGuid : null,
-
+      claimCalculationGrainQuantityGuid: calculation.claimCalculationGrainQuantityGuid,
+      
       // calculation
       calculationVersion: calculation.calculationVersion ? calculation.calculationVersion : null,
-      totalClaimAmount: calculation.totalClaimAmount ? calculation.totalClaimAmount : null,
+      totalClaimAmount: calculation.totalClaimAmount ? calculation.totalClaimAmount : 0,
       calculationStatusCode: calculation.calculationStatusCode ? calculation.calculationStatusCode : null,
       calculationComment: calculation.calculationComment ? calculation.calculationComment : null,
       revisionCount: calculation.revisionCount ? calculation.revisionCount : null,
