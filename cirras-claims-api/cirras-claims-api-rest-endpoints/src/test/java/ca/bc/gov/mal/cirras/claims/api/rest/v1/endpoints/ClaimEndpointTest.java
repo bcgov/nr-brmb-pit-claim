@@ -683,8 +683,6 @@ public class ClaimEndpointTest extends EndpointsTest {
 			logger.warn("Skipping tests");
 			return;
 		}
-		
-		
 
 		// Quantity Claim with linked product
         String claimNumber1 = "37195";       // Set to Open Grain Quantity Claim without a calculation.
@@ -868,10 +866,16 @@ public class ClaimEndpointTest extends EndpointsTest {
 		assertGrainQuantity(expectedGrainQuantity, updatedCalculation.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, updatedCalculation.getClaimCalculationGrainQuantityDetail());
 		
-		//Test submit with total claim amount is different from Quantity Loss Claim
-		//It has to be smaller
-		//updatedCalculation = service.updateClaimCalculation(updatedCalculation, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
-		
+		//Test to submit: Only possible if there are two calculations
+		//Expect error
+		try {
+			updatedCalculation = service.updateClaimCalculation(updatedCalculation, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
+			Assert.fail("updateClaimCalculation should have thrown an exception because the calculation can't be submitted because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be submitted because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists."));
+		}
 		
 		//Add second calculation
 		// Quantity Claim linked to 37195
@@ -932,6 +936,32 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		assertGrainQuantity(expectedGrainQuantity, createdCalculation2.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, createdCalculation2.getClaimCalculationGrainQuantityDetail());
+		
+
+		//Try to save calculation if the claim amount is greater the coverage amount
+		//Expect error
+		//ClaimCalculationRsrc updatedCalculation2 = new ClaimCalculationRsrc();
+		createdCalculation2.setTotalClaimAmount(createdCalculation2.getClaimCalculationGrainQuantityDetail().getCoverageValue() + 1.0);
+		try {
+			service.updateClaimCalculation(createdCalculation2, null);
+			Assert.fail("updateClaimCalculation should have thrown an exception because Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be saved because the Total Claim Amount is bigger than the Coverage Value."));
+		}
+		
+		//Try to submit calculation if the claim amount sum of both calculations is greater than the calculated quantity loss
+		//Expect error
+		createdCalculation2.setTotalClaimAmount(5000.0);
+		try {
+			service.updateClaimCalculation(createdCalculation2, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
+			Assert.fail("updateClaimCalculation should have thrown an exception because Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim."));
+		}
 		
 		//Try to delete calculations with doDeleteLinkedCalculations parameter set to false
 		try {

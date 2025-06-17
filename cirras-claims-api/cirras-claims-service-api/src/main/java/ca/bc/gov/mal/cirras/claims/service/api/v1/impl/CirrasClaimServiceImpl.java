@@ -995,17 +995,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
 			
-			//If a Grain Quantity calculation is submitted and there is a already submitted linked calculation
-			//the sum of both submitted amounts on line Z has to be equal to the calculated value on line Y
-			if(claimCalculation.getLinkedClaimCalculationGuid() != null && updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
-				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
-				if(dtoLinkedCalculation != null && dtoLinkedCalculation.getCalculationStatus().equals(CalculationStatusCodes.SUBMITTED.toString())) {
-					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
-					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
-						throw new ServiceException("The calculation can't be submitted because the sum on line Z has to be equal to line Y.");
-					}
-				}
-			}
+			checkForLinkedCalculations(updateType, claimCalculation);
 
 			ClaimCalculationDto dto = claimCalculationDao.fetch(claimCalculationGuid);
 
@@ -1050,6 +1040,54 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		logger.debug(">updateClaimCalculation");
 		return result;
+	}
+
+	private void checkForLinkedCalculations(String updateType, ClaimCalculation claimCalculation) throws DaoException {
+		
+		//If there is a linked product or linked calculation additional business rules apply when updating and submitting a calculation:
+		//1. Updating is always possible if it's version 1
+		//2. Updating version 2 and up is only possible if there is a linked calculation with the same version number.
+		//   This is to make sure both calculations are being replaced.
+		//3. Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim
+		//4. On Submit: If there is a linked product but no linked calculation, submit is not possible
+		//5. On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
+		//   has to be equal to the calculated value on line Y
+		
+		//TODO, might have to change this: It might be possible that claimCalculation.getLinkedClaimCalculationGuid() is not null
+		// but the linked calculation has a different version number
+		if(claimCalculation.getLinkedProductId() != null && claimCalculation.getLinkedClaimCalculationGuid() == null) {
+			//There is a linked product but no linked calculation
+			//Update only possible if the calculations are in version 1
+			if(claimCalculation.getCalculationVersion() > 1) {
+				throw new ServiceException("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+			}
+			
+			//On Submit: If there is a linked product but no linked calculation, submit is not possible
+			if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+				throw new ServiceException("The calculation can't be submitted because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+			}
+
+		}
+		
+		//if(claimCalculation.getLinkedClaimCalculationGuid() != null && updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+		if(claimCalculation.getLinkedClaimCalculationGuid() != null) {
+			//Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim
+			if(notNull(claimCalculation.getTotalClaimAmount(), 0.0) > notNull(claimCalculation.getClaimCalculationGrainQuantityDetail().getCoverageValue(), 0.0)) {
+				throw new ServiceException("The calculation can't be saved because the Total Claim Amount is bigger than the Coverage Value.");
+			}
+
+			if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+				//On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
+				//has to be equal to the calculated value on line Y
+				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
+				if(dtoLinkedCalculation != null) {
+					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
+					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
+						throw new ServiceException("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim.");
+					}
+				}
+			}
+		}
 	}
 
 	private void submitCalculation(ClaimCalculation claimCalculation, String userId) throws CirrasPolicyServiceException, ValidationFailureException {

@@ -229,9 +229,18 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		}
 		
 		if ( linkedCalcDto != null ) {
-			claimCalculation.setLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
+			
+			if(claimCalculation.getCalculationVersion() == linkedCalcDto.getCalculationVersion()) {
+				claimCalculation.setLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
+			} else {
+				claimCalculation.setLinkedClaimCalculationGuid(null); //Not setting the linked claim calculation guid if the version is different
+			}
+			claimCalculation.setLatestLinkedCalculationVersion(linkedCalcDto.getCalculationVersion());
+			claimCalculation.setLatestLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
 			
 			if ( doUpdateGrainQuantity && linkedCalcDto.getClaimCalculationGrainQuantityGuid() != null ) {
+				
+				
 				claimCalculation.setClaimCalculationGrainQuantityGuid(linkedCalcDto.getClaimCalculationGrainQuantityGuid());
 				
 				if ( linkedCalcDto.getClaimCalculationGrainQuantity() != null ) {
@@ -449,7 +458,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setLinkedProductId(null);
 		resource.setLinkedClaimNumber(null);
 		resource.setLinkedClaimCalculationGuid(null);
-
+		resource.setLatestLinkedClaimCalculationGuid(null);
+		resource.setLatestLinkedCalculationVersion(null);
 	}
 	
 	private void populateCommentForGrainQuantity(ClaimCalculationRsrc resource, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
@@ -1641,6 +1651,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setLinkedProductId(null);
 		resource.setLinkedClaimNumber(null);
 		resource.setLinkedClaimCalculationGuid(null);
+		resource.setLatestLinkedClaimCalculationGuid(null);
+		resource.setLatestLinkedCalculationVersion(null);
 	}
 
 	static void setSelfLink(String claimCalculationGuid, ClaimCalculationRsrc resource, URI baseUri) {
