@@ -383,3 +383,21 @@ export function setHttpHeaders(authToken) {
     };
 
 }
+
+export function roundUpDecimals(number, precision) {
+  if (!number || isNaN(parseFloat(number))) {
+    return ""
+  }
+
+  if ( isNaN(parseFloat(precision)) || parseFloat(precision) % 1 !== 0 || precision < 0 ) {
+    return number
+  }
+
+  if (parseFloat(number) % 1 == 0 ) {
+    // return integer if it's an integer, no zeros after the decimal point
+    return parseInt(number)
+  }
+
+  return parseFloat(number).toFixed(precision)
+  
+}

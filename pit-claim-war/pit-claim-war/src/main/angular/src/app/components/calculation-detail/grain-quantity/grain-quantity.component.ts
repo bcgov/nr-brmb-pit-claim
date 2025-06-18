@@ -6,7 +6,7 @@ import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
 import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { makeNumberOnly, setHttpHeaders } from 'src/app/utils';
+import { makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
@@ -236,6 +236,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   }
   
+  roundUpToPrecision(ctrl, precision){
+    let value = this.viewModel.formGroup.controls[ctrl].value
+    this.viewModel.formGroup.controls[ctrl].setValue(roundUpDecimals(value, precision))
+  }
+
   updateCalculated() {
 
       if ( !this.calculationDetail ) return
@@ -280,6 +285,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
     // Line T: K - Sum of S  
     this.totalYieldLossValue = this.productionGuaranteeAmount - (this.yieldValueWithEarlyEstDeemedYieldNonPedigree + this.yieldValueWithEarlyEstDeemedYieldPedigree)
+    // T should have a Min value of 0
+    this.totalYieldLossValue = Math.max(0, this.totalYieldLossValue)
 
     // Line V: G - U
     this.maxClaimPayable = this.calculateMaxClaimPayable()
@@ -307,7 +314,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = ( productionGuaranteeWeight - assessedYield) * calcDetail.claimCalculationGrainQuantityDetail.insurableValue
     }
     
-    return result
+    return Math.max(0, result)
   }
 
   calculateFiftyPercentProductionGuarantee(calcDetail: vmCalculation) {
@@ -394,7 +401,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       reseedClaim = parseFloat(this.viewModel.formGroup.controls.reseedClaim.value )
     }
 
-    result = this.totalCoverageValue - reseedClaim
+    result = Math.max(0, this.totalCoverageValue - reseedClaim)
     return result
   } 
 
@@ -408,7 +415,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       advancedClaim = parseFloat(this.viewModel.formGroup.controls.advancedClaim.value )
     }
 
-    result = Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim
+    result = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim ) )
     return result
   } 
 
