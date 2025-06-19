@@ -30,7 +30,7 @@
             <span class="ccc-col-right">
               Primary Peril:
               <mat-form-field appearance="fill">
-                <mat-select formControlName="primaryPerilCode" required (selectionChange)="setUnsavedMessage()">
+                <mat-select formControlName="primaryPerilCode" required (selectionChange)="isMyFormDirty()">
                   <mat-option>(None)</mat-option>
                   <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
                 </mat-select>
@@ -50,7 +50,7 @@
             <span class="ccc-col-right">
                 Secondary Peril:
                 <mat-form-field appearance="fill">
-                  <mat-select formControlName="secondaryPerilCode" (selectionChange)="setUnsavedMessage()">
+                  <mat-select formControlName="secondaryPerilCode" (selectionChange)="isMyFormDirty()">
                       <mat-option>(None)</mat-option>
                       <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
                       >{{ option.description }}</mat-option>
@@ -218,7 +218,7 @@
             <mat-form-field appearance="fill">
               <input matInput formControlName="assessedYieldNonPedigree" 
                 (keypress)="numberOnly($event)"
-                (blur)="roundUpToPrecision('assessedYieldNonPedigree',3)" 
+                (blur)="roundUpToPrecision('assessedYieldNonPedigree',3);isMyFormDirty();" 
                 maxlength="14"> 
             </mat-form-field> 
           </div>
@@ -226,7 +226,7 @@
             <mat-form-field appearance="fill">
               <input matInput formControlName="assessedYieldPedigree" maxlength="14"
                 (keypress)="numberOnly($event)" 
-                (blur)="roundUpToPrecision('assessedYieldPedigree',3)">
+                (blur)="roundUpToPrecision('assessedYieldPedigree',3); isMyFormDirty();">
             </mat-form-field> 
           </div>        
 
@@ -288,7 +288,7 @@
               <input matInput 
                 formControlName="damagedAcresNonPedigree" 
                 (keypress)="numberOnly($event)" 
-                (blur)="roundUpToPrecision('damagedAcresNonPedigree',1)"
+                (blur)="roundUpToPrecision('damagedAcresNonPedigree',1);isMyFormDirty();"
                 maxlength="14">
             </mat-form-field>
           </div>
@@ -297,7 +297,7 @@
               <input matInput 
               formControlName="damagedAcresPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('damagedAcresPedigree',1)"
+              (blur)="roundUpToPrecision('damagedAcresPedigree',1);isMyFormDirty();"
               maxlength="14">
             </mat-form-field>
           </div>
@@ -311,7 +311,7 @@
               <input matInput 
               formControlName="seededAcresNonPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('seededAcresNonPedigree',1)"
+              (blur)="roundUpToPrecision('seededAcresNonPedigree',1);isMyFormDirty();"
               maxlength="14">	
             </mat-form-field>
           </div>
@@ -319,7 +319,7 @@
             <mat-form-field appearance="fill">
               <input matInput 
               formControlName="seededAcresPedigree" 
-              (blur)="roundUpToPrecision('seededAcresPedigree',1)"
+              (blur)="roundUpToPrecision('seededAcresPedigree',1);isMyFormDirty();"
               (keypress)="numberOnly($event)" 
               maxlength="14">
             </mat-form-field>
@@ -364,7 +364,7 @@
               <input matInput maxlength="14"
               formControlName="inspEarlyEstYieldNonPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('inspEarlyEstYieldNonPedigree', 3)">
+              (blur)="roundUpToPrecision('inspEarlyEstYieldNonPedigree', 3);isMyFormDirty();">
             </mat-form-field>
           </div>
           <div *ngIf="showEarlyEstDeemedYieldValueRows && showPedigreeColumn" class="ccc-fill ccc-number-double">
@@ -372,7 +372,7 @@
               <input matInput maxlength="14"
               formControlName="inspEarlyEstYieldPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('inspEarlyEstYieldPedigree', 3)">
+              (blur)="roundUpToPrecision('inspEarlyEstYieldPedigree', 3);isMyFormDirty();">
             </mat-form-field>
           </div> 
           <!-- end hidden rows -->
@@ -436,7 +436,7 @@
               <input matInput maxlength="14"
               formControlName="reseedClaim" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('reseedClaim', 2)">
+              (blur)="roundUpToPrecision('reseedClaim', 2); isMyFormDirty();">
             </mat-form-field>
           </div>
   
@@ -471,7 +471,7 @@
               <input matInput maxlength="14"
               formControlName="advancedClaim" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('advancedClaim', 2)">
+              (blur)="roundUpToPrecision('advancedClaim', 2); isMyFormDirty();">
             </mat-form-field>
           </div>
 
@@ -491,13 +491,13 @@
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-fill ccc-right ccc-number-double ccc-border-right">
             <mat-form-field appearance="fill" style="max-width: 150px;">
               <mat-label style="font-weight: 200;">Non-Pedigree</mat-label>
-              <input matInput formControlName="totalClaimAmountNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="totalClaimAmountNonPedigree" (keypress)="numberOnly($event)" maxlength="14" (blur)="isMyFormDirty();">
             </mat-form-field>
           </div>
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-fill ccc-number-double">
              <mat-form-field appearance="fill">
               <mat-label id="totAmountPdgree" style="font-weight: 200;">Pedigree</mat-label>
-              <input matInput formControlName="totalClaimAmountPedigree" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="totalClaimAmountPedigree" (keypress)="numberOnly($event)" maxlength="14" (blur)="isMyFormDirty();">
             </mat-form-field>
           </div>
   
@@ -508,7 +508,9 @@
             <label>Comments</label>
             <div class="ccc-entire">
                 <mat-form-field appearance="fill">
-                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()">{{ calculationDetail.calculationComment }} </textarea>
+                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()" (blur)="isMyFormDirty();">
+                      {{ calculationDetail.calculationComment }} 
+                    </textarea>
                 </mat-form-field>
             </div>
         </div>
@@ -522,6 +524,12 @@
             </span>
   
             <span class="ccc-col-right">
+              <span *ngIf="isUnsaved" style="color:orange;">
+                <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
+                Unsaved Changes
+              </span>
+              &nbsp;
+
               <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
                 (click)="onSubmit()"
