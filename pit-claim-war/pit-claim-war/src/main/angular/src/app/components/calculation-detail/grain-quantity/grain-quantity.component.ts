@@ -283,6 +283,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
     // Line T: K - Sum of S  
     this.totalYieldLossValue = this.productionGuaranteeAmount - (this.yieldValueWithEarlyEstDeemedYieldNonPedigree + this.yieldValueWithEarlyEstDeemedYieldPedigree)
+    // T should have a Min value of 0
+    this.totalYieldLossValue = Math.max(0, this.totalYieldLossValue)
 
     // Line V: G - U
     this.maxClaimPayable = this.calculateMaxClaimPayable()
@@ -319,7 +321,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = ( productionGuaranteeWeight - assessedYield) * calcDetail.claimCalculationGrainQuantityDetail.insurableValue
     }
     
-    return result
+    return Math.max(0, result)
   }
 
   calculateFiftyPercentProductionGuarantee(calcDetail: vmCalculation) {
@@ -406,7 +408,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       reseedClaim = parseFloat(this.viewModel.formGroup.controls.reseedClaim.value )
     }
 
-    result = this.totalCoverageValue - reseedClaim
+    result = Math.max(0, this.totalCoverageValue - reseedClaim)
     return result
   } 
 
@@ -420,7 +422,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       advancedClaim = parseFloat(this.viewModel.formGroup.controls.advancedClaim.value )
     }
 
-    result = Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim
+    result = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim ) )
     return result
   } 
 
