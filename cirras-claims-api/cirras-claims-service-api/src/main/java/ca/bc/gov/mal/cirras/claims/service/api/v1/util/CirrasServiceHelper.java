@@ -2,12 +2,17 @@ package ca.bc.gov.mal.cirras.claims.service.api.v1.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDetailDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainSpotLossDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrapesDao;
@@ -16,6 +21,8 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantUnits
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationUserDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationVarietyDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDetailDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationUserDto;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.IntegrityConstraintViolatedDaoException;
@@ -40,6 +47,8 @@ public class CirrasServiceHelper {
 	private ClaimCalculationGrapesDao claimCalculationGrapesDao;
 	private ClaimCalculationGrainUnseededDao claimCalculationGrainUnseededDao;
 	private ClaimCalculationGrainSpotLossDao claimCalculationGrainSpotLossDao;
+	private ClaimCalculationGrainQuantityDao claimCalculationGrainQuantityDao;
+	private ClaimCalculationGrainQuantityDetailDao claimCalculationGrainQuantityDetailDao;
 	private ClaimCalculationUserDao claimCalculationUserDao;
 
 	public void setClaimCalculationDao(ClaimCalculationDao claimCalculationDao) {
@@ -64,6 +73,14 @@ public class CirrasServiceHelper {
 
 	public void setClaimCalculationGrainSpotLossDao(ClaimCalculationGrainSpotLossDao claimCalculationGrainSpotLossDao) {
 		this.claimCalculationGrainSpotLossDao = claimCalculationGrainSpotLossDao;
+	}
+
+	public void setClaimCalculationGrainQuantityDao(ClaimCalculationGrainQuantityDao claimCalculationGrainQuantityDao) {
+		this.claimCalculationGrainQuantityDao = claimCalculationGrainQuantityDao;
+	}
+
+	public void setClaimCalculationGrainQuantityDetailDao(ClaimCalculationGrainQuantityDetailDao claimCalculationGrainQuantityDetailDao) {
+		this.claimCalculationGrainQuantityDetailDao = claimCalculationGrainQuantityDetailDao;
 	}
 	
 	public void setClaimCalculationPlantUnitsDao(ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao) {
@@ -160,7 +177,10 @@ public class CirrasServiceHelper {
 				throw new NotFoundException("Did not find the Group: " + claimCalculationGuid);
 			}
 
-			// Delete subtables
+			//Get shared grain quantity record before the claim calculation is deleted
+			ClaimCalculationGrainQuantityDto grainQtyDto = claimCalculationGrainQuantityDao.select(claimCalculationGuid);
+			
+			// Delete sub tables
 			claimCalculationVarietyDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationGrapesDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationBerriesDao.deleteForClaim(claimCalculationGuid);
@@ -168,7 +188,22 @@ public class CirrasServiceHelper {
 			claimCalculationPlantAcresDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationGrainUnseededDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationGrainSpotLossDao.deleteForClaim(claimCalculationGuid);
+			claimCalculationGrainQuantityDetailDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationDao.delete(claimCalculationGuid);
+			
+			//Grain Quantity sub table might be used by another calculation
+			//The linked calculation needs to be deleted first.
+			if(grainQtyDto != null) {
+				//Check for other calculations associated with it
+				List<ClaimCalculationDto> calculationsDto = claimCalculationDao.getCalculationsByGrainQuantityGuid(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+				if(calculationsDto != null && calculationsDto.size() > 0) {
+					for (ClaimCalculationDto claimCalculationDto : calculationsDto) {
+						claimCalculationGrainQuantityDetailDao.deleteForClaim(claimCalculationDto.getClaimCalculationGuid());
+						claimCalculationDao.delete(claimCalculationDto.getClaimCalculationGuid());
+					}
+				}
+				claimCalculationGrainQuantityDao.delete(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+			}
 
 		} catch (IntegrityConstraintViolatedDaoException e) {
 			throw new ConflictException(e.getMessage());

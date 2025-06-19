@@ -229,9 +229,18 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		}
 		
 		if ( linkedCalcDto != null ) {
-			claimCalculation.setLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
+			
+			if(claimCalculation.getCalculationVersion() == linkedCalcDto.getCalculationVersion()) {
+				claimCalculation.setLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
+			} else {
+				claimCalculation.setLinkedClaimCalculationGuid(null); //Not setting the linked claim calculation guid if the version is different
+			}
+			claimCalculation.setLatestLinkedCalculationVersion(linkedCalcDto.getCalculationVersion());
+			claimCalculation.setLatestLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
 			
 			if ( doUpdateGrainQuantity && linkedCalcDto.getClaimCalculationGrainQuantityGuid() != null ) {
+				
+				
 				claimCalculation.setClaimCalculationGrainQuantityGuid(linkedCalcDto.getClaimCalculationGrainQuantityGuid());
 				
 				if ( linkedCalcDto.getClaimCalculationGrainQuantity() != null ) {
@@ -449,7 +458,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setLinkedProductId(null);
 		resource.setLinkedClaimNumber(null);
 		resource.setLinkedClaimCalculationGuid(null);
-
+		resource.setLatestLinkedClaimCalculationGuid(null);
+		resource.setLatestLinkedCalculationVersion(null);
 	}
 	
 	private void populateCommentForGrainQuantity(ClaimCalculationRsrc resource, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
@@ -1128,6 +1138,41 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		dto.setSpotLossReductionValue(model.getSpotLossReductionValue());
 		
 	}
+
+	@Override
+	public void updateDto(ClaimCalculationGrainQuantityDto dto, ClaimCalculationGrainQuantity model) {
+		
+		dto.setTotalCoverageValue(model.getTotalCoverageValue());
+		dto.setProductionGuaranteeAmount(model.getProductionGuaranteeAmount());
+		dto.setTotalYieldLossValue(model.getTotalYieldLossValue());
+		dto.setReseedClaim(model.getReseedClaim());
+		dto.setMaxClaimPayable(model.getMaxClaimPayable());
+		dto.setAdvancedClaim(model.getAdvancedClaim());
+		dto.setQuantityLossClaim(model.getQuantityLossClaim());
+		
+	}
+
+	@Override
+	public void updateDto(ClaimCalculationGrainQuantityDetailDto dto, ClaimCalculationGrainQuantityDetail model) {
+		
+		dto.setInsuredAcres(model.getInsuredAcres());
+		dto.setProbableYield(model.getProbableYield());
+		dto.setDeductible(model.getDeductible());
+		dto.setProductionGuaranteeWeight(model.getProductionGuaranteeWeight());
+		dto.setInsurableValue(model.getInsurableValue());
+		dto.setCoverageValue(model.getCoverageValue());
+		dto.setTotalYieldToCount(model.getTotalYieldToCount());
+		dto.setAssessedYield(model.getAssessedYield());
+		dto.setEarlyEstDeemedYieldValue(model.getEarlyEstDeemedYieldValue());
+		dto.setDamagedAcres(model.getDamagedAcres());
+		dto.setSeededAcres(model.getSeededAcres());
+		dto.setFiftyPercentProductionGuarantee(model.getFiftyPercentProductionGuarantee());
+		dto.setCalcEarlyEstYield(model.getCalcEarlyEstYield());
+		dto.setInspEarlyEstYield(model.getInspEarlyEstYield());
+		dto.setYieldValue(model.getYieldValue());
+		dto.setYieldValueWithEarlyEstDeemedYield(model.getYieldValueWithEarlyEstDeemedYield());
+		
+	}
 	
 	@Override
 	public void updateDto(ClaimCalculationGrapesDto dto, ClaimCalculationGrapes model) {
@@ -1180,6 +1225,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		dto.setApprovedByDate(resource.getApprovedByDate());
 		dto.setCalculateIivInd(resource.getCalculateIivInd());
 		dto.setHasChequeReqInd(resource.getHasChequeReqInd());
+		dto.setClaimCalculationGrainQuantityGuid(resource.getClaimCalculationGrainQuantityGuid());
 		return dto;
 	}
 
@@ -1309,7 +1355,45 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		return dto;
 	}
-	
+
+	@Override
+	public ClaimCalculationGrainQuantityDto createDto(ClaimCalculationGrainQuantity model) {
+		ClaimCalculationGrainQuantityDto dto = new ClaimCalculationGrainQuantityDto();
+
+		dto.setTotalCoverageValue(model.getTotalCoverageValue());
+		dto.setProductionGuaranteeAmount(model.getProductionGuaranteeAmount());
+		dto.setTotalYieldLossValue(model.getTotalYieldLossValue());
+		dto.setReseedClaim(model.getReseedClaim());
+		dto.setMaxClaimPayable(model.getMaxClaimPayable());
+		dto.setAdvancedClaim(model.getAdvancedClaim());
+		dto.setQuantityLossClaim(model.getQuantityLossClaim());
+
+		return dto;
+	}	
+
+	@Override
+	public ClaimCalculationGrainQuantityDetailDto createDto(ClaimCalculationGrainQuantityDetail model) {
+		ClaimCalculationGrainQuantityDetailDto dto = new ClaimCalculationGrainQuantityDetailDto();
+
+		dto.setInsuredAcres(model.getInsuredAcres());
+		dto.setProbableYield(model.getProbableYield());
+		dto.setDeductible(model.getDeductible());
+		dto.setProductionGuaranteeWeight(model.getProductionGuaranteeWeight());
+		dto.setInsurableValue(model.getInsurableValue());
+		dto.setCoverageValue(model.getCoverageValue());
+		dto.setTotalYieldToCount(model.getTotalYieldToCount());
+		dto.setAssessedYield(model.getAssessedYield());
+		dto.setEarlyEstDeemedYieldValue(model.getEarlyEstDeemedYieldValue());
+		dto.setDamagedAcres(model.getDamagedAcres());
+		dto.setSeededAcres(model.getSeededAcres());
+		dto.setFiftyPercentProductionGuarantee(model.getFiftyPercentProductionGuarantee());
+		dto.setCalcEarlyEstYield(model.getCalcEarlyEstYield());
+		dto.setInspEarlyEstYield(model.getInspEarlyEstYield());
+		dto.setYieldValue(model.getYieldValue());
+		dto.setYieldValueWithEarlyEstDeemedYield(model.getYieldValueWithEarlyEstDeemedYield());
+
+		return dto;
+	}	
 	
 	@Override
 	public ClaimCalculationGrapesDto createDto(ClaimCalculationGrapes model) {
@@ -1567,6 +1651,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		resource.setLinkedProductId(null);
 		resource.setLinkedClaimNumber(null);
 		resource.setLinkedClaimCalculationGuid(null);
+		resource.setLatestLinkedClaimCalculationGuid(null);
+		resource.setLatestLinkedCalculationVersion(null);
 	}
 
 	static void setSelfLink(String claimCalculationGuid, ClaimCalculationRsrc resource, URI baseUri) {

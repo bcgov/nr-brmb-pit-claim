@@ -168,6 +168,12 @@ public interface ClaimCalculation extends Serializable {
 	public String getLinkedClaimCalculationGuid();
 	public void setLinkedClaimCalculationGuid(String linkedClaimCalculationGuid);
 	
+	public String getLatestLinkedClaimCalculationGuid();
+	public void setLatestLinkedClaimCalculationGuid(String linkedLatestClaimCalculationGuid);
+	
+	public Integer getLatestLinkedCalculationVersion();
+	public void setLatestLinkedCalculationVersion(Integer latestLinkedCalculationVersion);
+
 	public Boolean getIsOutOfSync();	
 	public void setIsOutOfSync(Boolean isOutOfSync);
 

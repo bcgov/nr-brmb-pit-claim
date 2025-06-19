@@ -12,6 +12,8 @@ import ca.bc.gov.mal.cirras.claims.model.v1.Claim;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimList;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationList;
@@ -50,6 +52,7 @@ import ca.bc.gov.mal.cirras.claims.service.api.v1.model.factory.ClaimFactory;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.CirrasServiceHelper;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.OutOfSync;
+import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums.CalculationStatusCodes;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.validation.ModelValidator;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyServiceException;
@@ -389,6 +392,14 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
+			
+			String userId = getUserId(authentication);
+			
+			//Insert or update shared grain quantity record
+			if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+					&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				createUpdateGrainQuantity(claimCalculation, userId);
+			}
 
 			ClaimCalculationDto dto = claimCalculationFactory.createDto(claimCalculation);
 
@@ -412,7 +423,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				dto.setUpdateClaimCalcUserGuid(null);
 			}
 
-			String userId = getUserId(authentication);
 			claimCalculationDao.insert(dto, userId);
 
 			String claimCalculationGuid = dto.getClaimCalculationGuid();
@@ -454,7 +464,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		// Insert Grain Spot Loss data
 		createGrainSpotLoss(claimCalculation, userId, claimCalculationGuid);
-	}
+
+		// Insert Grain Quantity Detail data
+		createGrainQuantityDetail(claimCalculation, userId, claimCalculationGuid);
+}
 
 	private void createPlantAcres(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
 			throws DaoException {
@@ -530,6 +543,38 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 	}
 	
+	private void createGrainQuantity(ClaimCalculation claimCalculation, String userId)
+			throws DaoException {
+		//
+		// Insert Grain Quantity Loss Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				
+			ClaimCalculationGrainQuantityDto dtoGrainQuantity = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainQuantity());
+
+			dtoGrainQuantity.setClaimCalculationGrainQuantityGuid(null);
+			claimCalculationGrainQuantityDao.insert(dtoGrainQuantity, userId);
+			
+			claimCalculation.setClaimCalculationGrainQuantityGuid(dtoGrainQuantity.getClaimCalculationGrainQuantityGuid());
+		}
+	}
+	
+	private void createGrainQuantityDetail(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Quantity Detail Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				
+			ClaimCalculationGrainQuantityDetailDto dtoGrainQuantityDetail = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainQuantityDetail());
+
+			dtoGrainQuantityDetail.setClaimCalculationGrainQuantityDetailGuid(null);
+			dtoGrainQuantityDetail.setClaimCalculationGuid(claimCalculationGuid);
+			claimCalculationGrainQuantityDetailDao.insert(dtoGrainQuantityDetail, userId);
+		}
+	}
 	
 	private void createBerriesQuantity(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
 			throws DaoException {
@@ -911,7 +956,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	// Updates fields in claimCalculation from insuranceClaim that are only updated
 	// when the user requests a Refresh.
 	private void refreshManualClaimData(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, Product product)
-			throws ServiceException {
+			throws ServiceException, DaoException {
 		logger.debug("<refreshManualClaimData");
 
 		if (claimCalculation == null || insuranceClaim == null) {
@@ -949,6 +994,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
+			
+			checkForLinkedCalculations(updateType, claimCalculation);
 
 			ClaimCalculationDto dto = claimCalculationDao.fetch(claimCalculationGuid);
 
@@ -993,6 +1040,54 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		logger.debug(">updateClaimCalculation");
 		return result;
+	}
+
+	private void checkForLinkedCalculations(String updateType, ClaimCalculation claimCalculation) throws DaoException {
+		
+		//If there is a linked product or linked calculation additional business rules apply when updating and submitting a calculation:
+		//1. Updating is always possible if it's version 1
+		//2. Updating version 2 and up is only possible if there is a linked calculation with the same version number.
+		//   This is to make sure both calculations are being replaced.
+		//3. Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim
+		//4. On Submit: If there is a linked product but no linked calculation, submit is not possible
+		//5. On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
+		//   has to be equal to the calculated value on line Y
+		
+		//TODO, might have to change this: It might be possible that claimCalculation.getLinkedClaimCalculationGuid() is not null
+		// but the linked calculation has a different version number
+		if(claimCalculation.getLinkedProductId() != null && claimCalculation.getLinkedClaimCalculationGuid() == null) {
+			//There is a linked product but no linked calculation
+			//Update only possible if the calculations are in version 1
+			if(claimCalculation.getCalculationVersion() > 1) {
+				throw new ServiceException("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+			}
+			
+			//On Submit: If there is a linked product but no linked calculation, submit is not possible
+			if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+				throw new ServiceException("The calculation can't be submitted because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+			}
+
+		}
+		
+		//if(claimCalculation.getLinkedClaimCalculationGuid() != null && updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+		if(claimCalculation.getLinkedClaimCalculationGuid() != null) {
+			//Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim
+			if(notNull(claimCalculation.getTotalClaimAmount(), 0.0) > notNull(claimCalculation.getClaimCalculationGrainQuantityDetail().getCoverageValue(), 0.0)) {
+				throw new ServiceException("The calculation can't be saved because the Total Claim Amount is bigger than the Coverage Value.");
+			}
+
+			if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
+				//On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
+				//has to be equal to the calculated value on line Y
+				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
+				if(dtoLinkedCalculation != null) {
+					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
+					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
+						throw new ServiceException("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim.");
+					}
+				}
+			}
+		}
 	}
 
 	private void submitCalculation(ClaimCalculation claimCalculation, String userId) throws CirrasPolicyServiceException, ValidationFailureException {
@@ -1048,6 +1143,12 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		// Update Grain Spot Loss
 		updateGrainSpotLoss(claimCalculation, userId);
+		
+		//Update Grain Quantity
+		updateGrainQuantity(claimCalculation, userId);
+
+		//Update Grain Quantity Detail
+		updateGrainQuantityDetail(claimCalculation, userId);
 	}
 
 	private void updatePlantAcres(ClaimCalculation claimCalculation, String userId)
@@ -1119,7 +1220,48 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			claimCalculationGrainSpotLossDao.update(dtoGrainSpotLoss, userId);
 		}
 	}
+
+	private void createUpdateGrainQuantity(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Shared grain quantity record could already exist when creating a new calculation
+		// Insert or Update Grain Quantity Data
+		//
+		if (claimCalculation.getClaimCalculationGrainQuantity() != null 
+				&& claimCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid() != null) {
+			updateGrainQuantity(claimCalculation, userId);
+		} else {
+			createGrainQuantity(claimCalculation, userId);
+		}
+	}
 	
+	private void updateGrainQuantity(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Quantity Data
+		//
+		if (claimCalculation.getClaimCalculationGrainQuantity() != null) {
+			ClaimCalculationGrainQuantityDto dtoGrainQuantity = claimCalculationGrainQuantityDao.fetch(claimCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainQuantity, claimCalculation.getClaimCalculationGrainQuantity());
+
+			claimCalculationGrainQuantityDao.update(dtoGrainQuantity, userId);
+		}
+	}
+	
+	private void updateGrainQuantityDetail(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Quantity Detail Data
+		//
+		if (claimCalculation.getClaimCalculationGrainQuantityDetail() != null) {
+			ClaimCalculationGrainQuantityDetailDto dtoGrainQuantityDetail = claimCalculationGrainQuantityDetailDao.fetch(claimCalculation.getClaimCalculationGrainQuantityDetail().getClaimCalculationGrainQuantityDetailGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainQuantityDetail, claimCalculation.getClaimCalculationGrainQuantityDetail());
+
+			claimCalculationGrainQuantityDetailDao.update(dtoGrainQuantityDetail, userId);
+		}
+	}
 	
 	private void updateBerriesQuantity(ClaimCalculation claimCalculation, String userId)
 			throws DaoException, NotFoundDaoException {
@@ -1297,7 +1439,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	}
 
 	@Override
-	public void deleteClaimCalculation(String claimCalculationGuid, String optimisticLock,
+	public void deleteClaimCalculation(
+			String claimCalculationGuid,
+			String optimisticLock,
 			WebAdeAuthentication authentication)
 			throws ServiceException, NotFoundException, ForbiddenException, ConflictException {
 		logger.debug("<deleteClaimCalculation");
@@ -1335,7 +1479,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		return results;
 	}
 
-	private void calculateTotals(ClaimCalculation claimCalculation) {
+	private void calculateTotals(ClaimCalculation claimCalculation) throws DaoException {
 		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAPES.toString())) {
 			// Calculate totals for Grapes
 			calculateTotalsGrapes(claimCalculation);
@@ -1358,6 +1502,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
 			calculateTotalsGrainSpotLoss(claimCalculation);
+		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+			calculateTotalsGrainQuantity(claimCalculation);
 		}
 	}
 
@@ -1439,6 +1586,109 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 
 		claimCalculation.setTotalClaimAmount(spotLossClaimValue);
+	}
+
+	private void calculateTotalsGrainQuantity(ClaimCalculation claimCalculation) throws DaoException {
+		
+		ClaimCalculationGrainQuantityDetailDto linkedGrainQtyDetailDto = null;
+		
+		//Load linked calculation if necessary
+		if(claimCalculation.getLinkedClaimCalculationGuid() != null) {
+			linkedGrainQtyDetailDto = claimCalculationGrainQuantityDetailDao.select(claimCalculation.getLinkedClaimCalculationGuid());
+		}
+		
+		//Calculation specific data
+		ClaimCalculationGrainQuantityDetail grainQuantityDetail = claimCalculation.getClaimCalculationGrainQuantityDetail();
+		//Shared data
+		ClaimCalculationGrainQuantity grainQuantity = claimCalculation.getClaimCalculationGrainQuantity();
+		
+		//G - Total Pedigreed and Non-Pedigreed Seeds Coverage Value
+		//Sum of pedigreed and non pedigreed coverage value
+		//G = sum of F
+		Double linkedCoverageValue = linkedGrainQtyDetailDto != null ? linkedGrainQtyDetailDto.getCoverageValue() : 0.0;
+		Double totalCoverageValue = grainQuantityDetail.getCoverageValue() + linkedCoverageValue;
+		grainQuantity.setTotalCoverageValue(totalCoverageValue);
+
+		
+		//K - Production Guarantee - Assessment(s) Value
+		//Sum ((Production Guarantee (Tonnes) - Assessed Yield (Tonnes)) * Insurable Value (Tonnes))
+		//K = Sum of pedigreed and non pedigreed of ( D - I ) x E
+		Double linkedProductionGuaranteeAmount = 0.0;
+		if( linkedGrainQtyDetailDto != null ) {
+			linkedProductionGuaranteeAmount = calculateProductionGuarantee(
+												linkedGrainQtyDetailDto.getProductionGuaranteeWeight(),
+												linkedGrainQtyDetailDto.getAssessedYield(),
+												linkedGrainQtyDetailDto.getInsurableValue());
+		}
+		Double productionGuaranteeAmount = calculateProductionGuarantee(
+				grainQuantityDetail.getProductionGuaranteeWeight(),
+				grainQuantityDetail.getAssessedYield(),
+				grainQuantityDetail.getInsurableValue())
+				+ linkedProductionGuaranteeAmount;
+		grainQuantity.setProductionGuaranteeAmount(productionGuaranteeAmount);
+		
+		//O - 50% of Production Guarantee  (has to be calculated before L and P!!!)
+		//Production Guarantee Weight * 50%
+		Double fiftyPercentProductionGuarantee = grainQuantityDetail.getProductionGuaranteeWeight() * 0.5;
+		grainQuantityDetail.setFiftyPercentProductionGuarantee(fiftyPercentProductionGuarantee);
+		
+		//P - Calculated Early Establishment Yield (has to be calculated before L!!!)
+		//50% Production Guarantee (O) * (Damaged Acres (M) / Acres Seeded (N))
+		Double calcEarlyEstYield = 0.0;
+		if(grainQuantityDetail.getSeededAcres() != null && grainQuantityDetail.getSeededAcres() > 0) {
+			calcEarlyEstYield = fiftyPercentProductionGuarantee * (notNull(grainQuantityDetail.getDamagedAcres(), 0.0) / grainQuantityDetail.getSeededAcres());
+		}
+		if(calcEarlyEstYield > 0) {
+			calcEarlyEstYield = (double) Math.round(calcEarlyEstYield * 1000d) / 1000d;
+		}
+		grainQuantityDetail.setCalcEarlyEstYield(calcEarlyEstYield);
+		
+		//L - Less Early Establishment Deemed Yield Value
+		// (Inspected Early Establishment Yield (Q) but if empty Calculated Early Establishment Yield (P)) x Insurable Value (Tonnes) (E).  
+		//( Q or P ) x E
+		Double earlyEstablishment = grainQuantityDetail.getInspEarlyEstYield() == null ? calcEarlyEstYield : grainQuantityDetail.getInspEarlyEstYield();
+		Double earlyEstDeemedYieldValue = earlyEstablishment * grainQuantityDetail.getInsurableValue();
+		grainQuantityDetail.setEarlyEstDeemedYieldValue(earlyEstDeemedYieldValue);
+		
+		//R - Yield Value
+		//Total Yield Harvested and Appraised (H) * Insurable Value per Tonnes (E)
+		// H * E
+		Double yieldValue = notNull(grainQuantityDetail.getTotalYieldToCount(), 0.0) * grainQuantityDetail.getInsurableValue();
+		grainQuantityDetail.setYieldValue(yieldValue);
+		
+		//S - Yield Value + Early Establishment Deemed Yields 
+		//(R + L)
+		Double yieldValueWithEarlyEstDeemedYield = notNull(yieldValue, 0.0) + notNull(earlyEstDeemedYieldValue, 0.0);
+		grainQuantityDetail.setYieldValueWithEarlyEstDeemedYield(yieldValueWithEarlyEstDeemedYield);
+		
+		//T - Total Pedigreed and Non-Pedigreed Seeds Yield Loss Value 
+		// Production Guarantee - Assessment(s) Value (K) - SUM(Yield Value + Early Establishment Deemed Yield (S))
+		//(K - SUM of S)
+		Double linkedYieldValueWithEarlyEstDeemedYield = linkedGrainQtyDetailDto != null ? linkedGrainQtyDetailDto.getYieldValueWithEarlyEstDeemedYield() : 0.0;
+		Double totalYieldLossValue = Math.max(0, productionGuaranteeAmount - notNull(yieldValueWithEarlyEstDeemedYield, 0.0) - linkedYieldValueWithEarlyEstDeemedYield);
+		grainQuantity.setTotalYieldLossValue(totalYieldLossValue);
+		
+		// V - Maximum Claim Payable
+		// Total Pedigreed and Non-Pedigreed Seeds Coverage Value (G) - Reseed Claim (U)
+		// (G - U)
+		Double maxClaimPayable = Math.max(0, notNull(totalCoverageValue, 0.0) - notNull(grainQuantity.getReseedClaim(), 0.0));
+		grainQuantity.setMaxClaimPayable(maxClaimPayable);
+		
+		// Y - Quantity Loss Claim
+		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
+		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
+		if(quantityLossClaim > 0) {
+			//Round to two decimals
+			quantityLossClaim = (double) Math.round(quantityLossClaim * 100d) / 100d;
+		}
+		grainQuantity.setQuantityLossClaim(quantityLossClaim);
+
+	}
+	
+	private Double calculateProductionGuarantee(Double productionGuaranteeWeight, Double assessedYield, Double insurableValue) {
+		//( D - I ) x E
+		Double calcProdGuaranteeWeight = notNull(productionGuaranteeWeight, 0.0) - notNull(assessedYield, 0.0);
+		return Math.max(0, calcProdGuaranteeWeight) * notNull(insurableValue, 0.0);
 	}
 	
 	private void calculateTotalsPlantUnits(ClaimCalculation claimCalculation) {

@@ -98,6 +98,8 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private Integer linkedProductId;
 	private Integer linkedClaimNumber;
 	private String linkedClaimCalculationGuid;
+	private String linkedLatestClaimCalculationGuid;
+	private Integer latestLinkedCalculationVersion;
 	
 	
 	// Out of sync flags
@@ -628,6 +630,22 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 
 	public void setLinkedClaimCalculationGuid(String linkedClaimCalculationGuid) {
 		this.linkedClaimCalculationGuid = linkedClaimCalculationGuid;
+	}
+
+	public String getLatestLinkedClaimCalculationGuid() {
+		return linkedLatestClaimCalculationGuid;
+	}
+
+	public void setLatestLinkedClaimCalculationGuid(String linkedLatestClaimCalculationGuid) {
+		this.linkedLatestClaimCalculationGuid = linkedLatestClaimCalculationGuid;
+	}
+
+	public Integer getLatestLinkedCalculationVersion() {
+		return latestLinkedCalculationVersion;
+	}
+
+	public void setLatestLinkedCalculationVersion(Integer latestLinkedCalculationVersion) {
+		this.latestLinkedCalculationVersion = latestLinkedCalculationVersion;
 	}
 	
 	public Boolean getIsOutOfSync() {
