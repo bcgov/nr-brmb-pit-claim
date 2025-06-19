@@ -1,5 +1,7 @@
 import {ClaimCalculationGrainSpotLoss, ClaimCalculationGrainUnseeded, ClaimCalculationGrapes, ClaimCalculationPlantAcres, ClaimCalculationPlantUnits, ClaimCalculationVariety} from "@cirras/cirras-claims-api";
 import { ClaimCalculationBerries } from '@cirras/cirras-claims-api';
+import { ClaimCalculationGrainQuantity } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantity";
+import { ClaimCalculationGrainQuantityDetail } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantityDetail";
 
 export interface PagedCollection {
     pageNumber?: number;
@@ -82,6 +84,7 @@ export interface vmCalculation {
   coverageName: string;
   cropCommodityId: number;
   commodityName: string;
+  isPedigreeInd?: boolean;
   primaryPerilCode: string;
   secondaryPerilCode: string;
   claimStatusCode: string;
@@ -118,6 +121,11 @@ export interface vmCalculation {
 
   insuredByMeasurementType?: string;
 
+  // linked product / claim / calculation
+  linkedProductId?: number;
+  linkedClaimNumber?: number;
+  linkedClaimCalculationGuid?: string;
+
   // out of sync flags
   isOutOfSync?: boolean;
   isOutOfSyncGrowerNumber?: boolean;
@@ -135,8 +143,9 @@ export interface vmCalculation {
   claimCalculationGrapes?: ClaimCalculationGrapes;
   claimCalculationGrainUnseeded?: ClaimCalculationGrainUnseeded;
   claimCalculationGrainSpotLoss?: ClaimCalculationGrainSpotLoss;
+  claimCalculationGrainQuantity?: ClaimCalculationGrainQuantity;
+  claimCalculationGrainQuantityDetail?: ClaimCalculationGrainQuantityDetail;
   varieties?:Array<ClaimCalculationVariety>;
 
   currentClaimStatusCode?: string; 
-
 }

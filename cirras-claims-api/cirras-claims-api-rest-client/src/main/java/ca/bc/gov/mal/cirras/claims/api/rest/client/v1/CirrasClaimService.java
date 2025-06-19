@@ -71,7 +71,7 @@ public interface CirrasClaimService {
 		ClaimCalculationRsrc createClaimCalculation(ClaimCalculationRsrc resource) throws CirrasClaimServiceException, ValidationException;
 		ClaimCalculationRsrc getClaimCalculation(ClaimCalculationRsrc resource, Boolean doRefreshManualClaimData) throws CirrasClaimServiceException;
 		ClaimCalculationRsrc updateClaimCalculation(ClaimCalculationRsrc resource, String updateType) throws CirrasClaimServiceException, ValidationException;
-		void deleteClaimCalculation(ClaimCalculationRsrc resource) throws CirrasClaimServiceException;
+		void deleteClaimCalculation(ClaimCalculationRsrc resource, Boolean doDeleteLinkedCalculations) throws CirrasClaimServiceException;
 		
 		//////////////////////////////////////////////////////
 		//DATA SYNC METHODS

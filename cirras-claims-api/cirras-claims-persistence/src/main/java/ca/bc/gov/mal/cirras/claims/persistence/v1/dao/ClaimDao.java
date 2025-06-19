@@ -17,7 +17,9 @@ public interface ClaimDao extends Serializable {
 	ClaimDto fetch(Integer colId) throws DaoException;
 	
 	ClaimDto selectByClaimNumber(Integer claimNumber) throws DaoException;
-        
+
+	ClaimDto selectByProductId(Integer ippId) throws DaoException;
+	
     void insert(ClaimDto dto, String userId) throws DaoException;
     
     void update(ClaimDto dto, String userId) throws DaoException, NotFoundDaoException;

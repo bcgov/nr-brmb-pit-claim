@@ -38,8 +38,61 @@
         {{ calculationDetail.growerCity }}, {{ calculationDetail.growerProvince }}, {{ calculationDetail.growerPostalCode }}
       </div>
       <div></div>                
-      <div class="ccc-right">
-        Claim: {{ calculationDetail.claimNumber }}
+      <div class="ccc-right" style="display: grid;">
+        <div class="ccc-right">
+          Claim: {{ calculationDetail.claimNumber }} 
+        </div>
+        <div *ngIf="calculationDetail.linkedClaimNumber" class="ccc-right">
+          Linked Claim: &nbsp;
+          <a (click)="goToLinkedCalulation()" style="cursor: pointer;">
+            {{ calculationDetail.linkedClaimNumber }}
+          </a> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
+    *ngIf="calculationDetail.linkedProductId && ( !calculationDetail.linkedClaimNumber || !calculationDetail.linkedClaimCalculationGuid)"> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'blue'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+        <!-- Product but no claim messages -->
+        <h3 *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue;">
+          There are two quantity products for this commodity on this policy. However, no claim exists for the
+            {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName}}  
+            {{ calculationDetail.isPedigreeInd ? "Non-Pedigreed" : "Pedigreed"}} commodity. 
+        </h3>     
+        
+        <span *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue; font-size: 14px;">
+          Please create a claim in CIRRAS for the 
+          {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            ( calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) + " Non-Pedigreed") : 
+            (calculationDetail.commodityName + " Pedigreed") }}
+            commodity.
+        </span>   
+
+        <!-- Claim but no calculation messages -->
+        <h3 *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue;">
+          There are two quantity products for this commodity on this policy. However, no calculation exists for the
+            {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName}}  
+            {{ calculationDetail.isPedigreeInd ? "Non-Pedigreed" : "Pedigreed"}} claim. 
+        </h3>     
+                
+        <span *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue; font-size: 14px;">
+          Please create a calculation for each of the  
+          {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName }}
+            Pedigreed and Non-Pedigreed claims, using the Linked Claim link.
+        </span>  
+
       </div>
     </div>
   </div>

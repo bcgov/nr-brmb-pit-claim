@@ -6,6 +6,8 @@ import {SortDirection} from "@wf1/wfcc-core-lib";
 import moment, { Moment } from "moment";
 import {Validators} from "@angular/forms";
 import {Router} from "@angular/router";
+import { UUID } from 'angular2-uuid';
+import { HttpHeaders } from '@angular/common/http';
 
 export const CODE_TABLE_CACHE = {};
 
@@ -21,6 +23,8 @@ export const CONSTANTS = {
     DATE_TIME_MASK: [ /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/, ' ', /\d/, /\d/, ':', /\d/, /\d/  ],
     EMAIL_PATTERN: "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$"
 };
+
+export const REST_VERSION = 1;
 
 export enum ResourcesRoutes {
     LANDING = "",
@@ -362,3 +366,38 @@ export function getPrintTitle (commodityName, coverageName, claimNumber, policyN
     return title
 }
 
+
+export function setHttpHeaders(authToken) {
+
+    let requestId = `cirras-claims${UUID.UUID().toUpperCase()}`.replace(/-/g, "");
+
+    return {
+      headers: new HttpHeaders({
+        'Accept': 'application/json',
+        'RequestId': requestId,
+        'Rest-Version': REST_VERSION.toString(),
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Authorization': `Bearer ${authToken}`,
+      })
+    };
+
+}
+
+export function roundUpDecimals(number, precision) {
+  if (!number || isNaN(parseFloat(number))) {
+    return ""
+  }
+
+  if ( isNaN(parseFloat(precision)) || parseFloat(precision) % 1 !== 0 || precision < 0 ) {
+    return number
+  }
+
+  if (parseFloat(number) % 1 == 0 ) {
+    // return integer if it's an integer, no zeros after the decimal point
+    return parseInt(number)
+  }
+
+  return parseFloat(number).toFixed(precision)
+  
+}

@@ -94,6 +94,12 @@
 		FROM CLAIM T
 		WHERE T.CLAIM_NUMBER = #{claimNumber}
 	</select>
+
+	<select id="selectByProductId" resultMap="ClaimDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM T
+		WHERE T.IPP_ID = #{ippId}
+	</select>
 	
 	<insert id="insert">
 

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.mapper.ClaimCalculationGrainQuantityDetailMapper">
+
+	<resultMap id="ClaimCalculationGrainQuantityDetailDtoMap" type="ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDetailDto">
+
+		<id property="claimCalculationGrainQuantityDetailGuid" column="claim_calc_grain_quantity_detail_guid" javaType="java.lang.String" jdbcType="VARCHAR" />
+
+		<result property="claimCalculationGuid" column="claim_calculation_guid" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="insuredAcres" column="insured_acres" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="probableYield" column="probable_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="deductible" column="deductible" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="productionGuaranteeWeight" column="production_guarantee_weight" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="insurableValue" column="insurable_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="coverageValue" column="coverage_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="totalYieldToCount" column="total_yield_to_count" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="assessedYield" column="assessed_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="earlyEstDeemedYieldValue" column="early_est_deemed_yield_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="damagedAcres" column="damaged_acres" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="seededAcres" column="seeded_acres" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="fiftyPercentProductionGuarantee" column="fifty_percent_production_guarantee" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="calcEarlyEstYield" column="calc_early_est_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="inspEarlyEstYield" column="insp_early_est_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="yieldValue" column="yield_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="yieldValueWithEarlyEstDeemedYield" column="yield_value_with_early_est_deemed_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
+
+		<result property="revisionCount" column="revision_count" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="createUser" column="create_user" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="update_user" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="update_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT	t.claim_calc_grain_quantity_detail_guid,
+				t.claim_calculation_guid,
+				t.insured_acres,
+				t.probable_yield,
+				t.deductible,
+				t.production_guarantee_weight,
+				t.insurable_value,
+				t.coverage_value,
+				t.total_yield_to_count,
+				t.assessed_yield,
+				t.early_est_deemed_yield_value,
+				t.damaged_acres,
+				t.seeded_acres,
+				t.fifty_percent_production_guarantee,
+				t.calc_early_est_yield,
+				t.insp_early_est_yield,
+				t.yield_value,
+				t.yield_value_with_early_est_deemed_yield,
+				t.revision_count,
+				t.create_user,
+				t.create_date,
+				t.update_user,
+				t.update_date
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimCalculationGrainQuantityDetailDtoMap">
+		<include refid="selectColumns"/>
+		FROM claim_calculation_grain_quantity_detail t
+		WHERE t.claim_calc_grain_quantity_detail_guid = #{claimCalculationGrainQuantityDetailGuid}
+	</select>
+	
+	<select id="select" resultMap="ClaimCalculationGrainQuantityDetailDtoMap">  
+		<include refid="selectColumns"/>
+		FROM claim_calculation_grain_quantity_detail t
+		WHERE t.claim_calculation_guid = #{claimCalculationGuid}
+	</select> 
+	
+	<insert id="insert">
+		<selectKey keyProperty="claimCalculationGrainQuantityDetailGuid" resultType="java.lang.String" order="BEFORE"> 
+			select replace(cast(gen_random_uuid() as text), '-', '')
+		</selectKey>
+
+		INSERT INTO claim_calculation_grain_quantity_detail (
+			claim_calc_grain_quantity_detail_guid,
+			claim_calculation_guid,
+			insured_acres,
+			probable_yield,
+			deductible,
+			production_guarantee_weight,
+			insurable_value,
+			coverage_value,
+			total_yield_to_count,
+			assessed_yield,
+			early_est_deemed_yield_value,
+			damaged_acres,
+			seeded_acres,
+			fifty_percent_production_guarantee,
+			calc_early_est_yield,
+			insp_early_est_yield,
+			yield_value,
+			yield_value_with_early_est_deemed_yield,
+			revision_count,
+			create_user,
+			create_date,
+			update_user,
+			update_date
+		) VALUES (
+		   	#{claimCalculationGrainQuantityDetailGuid},
+			#{dto.claimCalculationGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.insuredAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.probableYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.deductible, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.productionGuaranteeWeight, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.coverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.totalYieldToCount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.assessedYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.earlyEstDeemedYieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.damagedAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.seededAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.fiftyPercentProductionGuarantee, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.calcEarlyEstYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.inspEarlyEstYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.yieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.yieldValueWithEarlyEstDeemedYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			1,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			now(),
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			now()
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE claim_calculation_grain_quantity_detail
+		SET 
+			insured_acres = #{dto.insuredAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			probable_yield = #{dto.probableYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			deductible = #{dto.deductible, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			production_guarantee_weight = #{dto.productionGuaranteeWeight, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			insurable_value = #{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			coverage_value = #{dto.coverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			total_yield_to_count = #{dto.totalYieldToCount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			assessed_yield = #{dto.assessedYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			early_est_deemed_yield_value = #{dto.earlyEstDeemedYieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			damaged_acres = #{dto.damagedAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			seeded_acres = #{dto.seededAcres, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			fifty_percent_production_guarantee = #{dto.fiftyPercentProductionGuarantee, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			calc_early_est_yield = #{dto.calcEarlyEstYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			insp_early_est_yield = #{dto.inspEarlyEstYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			yield_value = #{dto.yieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			yield_value_with_early_est_deemed_yield = #{dto.yieldValueWithEarlyEstDeemedYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			revision_count = revision_count + 1,
+			update_user = #{userId, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			update_date = now()
+		 WHERE claim_calc_grain_quantity_detail_guid = #{claimCalculationGrainQuantityDetailGuid}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM claim_calculation_grain_quantity_detail WHERE claim_calc_grain_quantity_detail_guid = #{claimCalculationGrainQuantityDetailGuid}
+	</delete>
+	
+	<delete id="deleteForClaim">
+		DELETE FROM claim_calculation_grain_quantity_detail WHERE claim_calculation_guid = #{claimCalculationGuid}
+	</delete>
+
+	<select id="selectAll" resultMap="ClaimCalculationGrainQuantityDetailDtoMap">
+		<include refid="selectColumns"/>
+		FROM claim_calculation_grain_quantity_detail t
+	</select>	
+	
+</mapper>

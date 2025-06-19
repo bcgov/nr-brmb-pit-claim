@@ -3,7 +3,9 @@ package ca.bc.gov.mal.cirras.claims.persistence.v1.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.spring.PersistenceSpringConfig;
+import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
+import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
 import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
 
 
@@ -24,6 +29,39 @@ public class ClaimCalculationDaoTest {
 	@Autowired 
 	private PersistenceSpringConfig persistenceSpringConfig;
 
+	private Integer quantityClaimNumber = 99778865;
+	
+	@Before
+	public void prepareTests() throws NotFoundDaoException, DaoException{
+		delete();
+	}
+
+	@After 
+	public void cleanUp() throws NotFoundDaoException, DaoException{
+		delete();
+	}
+	
+	private void delete() throws DaoException {
+
+		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
+		List<ClaimCalculationDto> ccDtos = dao.getCalculationsByClaimNumber(quantityClaimNumber, null);
+
+		if(ccDtos != null && ccDtos.size() > 0) {
+
+			ClaimCalculationGrainQuantityDao daoGrain = persistenceSpringConfig.claimCalculationGrainQuantityDao();
+			
+			for (ClaimCalculationDto dto : ccDtos) {
+				//delete claim calculation first
+				dao.delete(dto.getClaimCalculationGuid());
+				
+				if ( dto.getClaimCalculationGrainQuantityGuid() != null ) {
+					//delete claim calculation grain quantity
+					daoGrain.delete(dto.getClaimCalculationGrainQuantityGuid());
+				}
+			}
+		}
+	}
+	
 	@Test
 	public void testGetLatestVersionOfCalculation() throws Exception {
 		
@@ -75,6 +113,8 @@ public class ClaimCalculationDaoTest {
 		newDto.setApprovedByDate(transactionDate);
 		newDto.setCalculateIivInd("Y");
 		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(null);
+		newDto.setIsPedigreeInd(false);
 		
 		String userId = "JUNIT_TEST";
 
@@ -115,6 +155,8 @@ public class ClaimCalculationDaoTest {
 		Assert.assertEquals("ApprovedByUserid", newDto.getApprovedByUserid(), fetchedDto.getApprovedByUserid());
 		Assert.assertEquals("ApprovedByName", newDto.getApprovedByName(), fetchedDto.getApprovedByName());
 		Assert.assertEquals("HasChequeReqInd", newDto.getHasChequeReqInd(), fetchedDto.getHasChequeReqInd());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", newDto.getClaimCalculationGrainQuantityGuid(), fetchedDto.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals("IsPedigreeInd", newDto.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
 
 		//UPDATE
 		transactionDate = new Date();
@@ -141,6 +183,7 @@ public class ClaimCalculationDaoTest {
 		fetchedDto.setApprovedByName("user 3 2");
 		fetchedDto.setApprovedByDate(transactionDate);
 		fetchedDto.setHasChequeReqInd(false);
+
 		
 		dao.update(fetchedDto.getClaimCalculationGuid(), fetchedDto, userId);
 		
@@ -166,6 +209,8 @@ public class ClaimCalculationDaoTest {
 		Assert.assertEquals("ApprovedByUserid", fetchedDto.getApprovedByUserid(), updatedDto.getApprovedByUserid());
 		Assert.assertEquals("ApprovedByName", fetchedDto.getApprovedByName(), updatedDto.getApprovedByName());
 		Assert.assertEquals("HasChequeReqInd", fetchedDto.getHasChequeReqInd(), updatedDto.getHasChequeReqInd());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", fetchedDto.getClaimCalculationGrainQuantityGuid(), updatedDto.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals("IsPedigreeInd", fetchedDto.getIsPedigreeInd(), updatedDto.getIsPedigreeInd());
 
 		//DELETE
 		dao.delete(updatedDto.getClaimCalculationGuid());
@@ -270,6 +315,339 @@ public class ClaimCalculationDaoTest {
 		Assert.assertNotNull(dtos);
 
 	}
+
+	
+	@Test 
+	public void testClaimCalculationWithGrainQuantity() throws Exception {
+
+		String userId = "JUNIT_TEST";
+		
+		ClaimCalculationGrainQuantityDto grainQtyDto = new ClaimCalculationGrainQuantityDto();
+
+		grainQtyDto.setAdvancedClaim(12.34);
+		grainQtyDto.setMaxClaimPayable(56.78);
+		grainQtyDto.setProductionGuaranteeAmount(11.22);
+		grainQtyDto.setQuantityLossClaim(33.44);
+		grainQtyDto.setReseedClaim(55.66);
+		grainQtyDto.setTotalCoverageValue(77.88);
+		grainQtyDto.setTotalYieldLossValue(99.88);
+		
+		ClaimCalculationGrainQuantityDao grainQtyDao = persistenceSpringConfig.claimCalculationGrainQuantityDao();
+
+		//INSERT Grain Quantity
+		grainQtyDao.insert(grainQtyDto, userId);
+		Assert.assertNotNull(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+		
+		ClaimCalculationDto newDto = new ClaimCalculationDto();
+
+		Date transactionDate = new Date();
+		newDto.setPrimaryPerilCode("DROUGHT");
+		newDto.setSecondaryPerilCode("FIRE");
+		newDto.setClaimStatusCode("OPEN");
+		newDto.setCommodityCoverageCode("CQNT");
+		newDto.setCalculationStatusCode("DRAFT");
+		newDto.setInsurancePlanId(1);
+		newDto.setCropCommodityId(1);
+		newDto.setCropYear(2020);
+		newDto.setInsuredByMeasurementType("ACRES");
+		newDto.setPolicyNumber("100100-20");
+		newDto.setContractId(1000);
+		newDto.setClaimNumber(quantityClaimNumber);
+		newDto.setCalculationVersion(1);
+		newDto.setGrowerNumber(11111);
+		newDto.setGrowerName("Name 1");
+		newDto.setGrowerAddressLine1("Line 1");
+		newDto.setGrowerAddressLine2("Line 2");
+		newDto.setGrowerPostalCode("V1V1V1");
+		newDto.setGrowerCity("Victoria");
+		newDto.setGrowerProvince("BC");
+		newDto.setTotalClaimAmount(15000.0);
+		newDto.setCalculationComment("Test Comment");
+		newDto.setSubmittedByUserid("user1");
+		newDto.setSubmittedByName("user 1");
+		newDto.setSubmittedByDate(transactionDate);
+		newDto.setRecommendedByUserid("user2");
+		newDto.setRecommendedByName("user 2");
+		newDto.setRecommendedByDate(transactionDate);
+		newDto.setApprovedByUserid("user3");
+		newDto.setApprovedByName("user 3");
+		newDto.setApprovedByDate(transactionDate);
+		newDto.setCalculateIivInd("Y");
+		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+		newDto.setIsPedigreeInd(false);
+
+		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
+		//INSERT
+		dao.insert(newDto, userId);
+		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
+		
+		//FETCH
+		ClaimCalculationDto fetchedDto = dao.fetch(newDto.getClaimCalculationGuid());
+		
+		Assert.assertEquals("PrimaryPerilCode", newDto.getPrimaryPerilCode(), fetchedDto.getPrimaryPerilCode());
+		Assert.assertEquals("SecondaryPerilCode", newDto.getSecondaryPerilCode(), fetchedDto.getSecondaryPerilCode());
+		Assert.assertEquals("ClaimStatusCode", newDto.getClaimStatusCode(), fetchedDto.getClaimStatusCode());
+		Assert.assertEquals("CommodityCoverageCode", newDto.getCommodityCoverageCode(), fetchedDto.getCommodityCoverageCode());
+		Assert.assertEquals("CalculationStatusCode", newDto.getCalculationStatusCode(), fetchedDto.getCalculationStatusCode());
+		Assert.assertEquals("InsurancePlanId", newDto.getInsurancePlanId(), fetchedDto.getInsurancePlanId());
+		Assert.assertEquals("CropCommodityId", newDto.getCropCommodityId(), fetchedDto.getCropCommodityId());
+		Assert.assertEquals("CropYear", newDto.getCropYear(), fetchedDto.getCropYear());
+		Assert.assertEquals("InsuredByMeasType", newDto.getInsuredByMeasurementType(), fetchedDto.getInsuredByMeasurementType());
+		Assert.assertEquals("PolicyNumber", newDto.getPolicyNumber(), fetchedDto.getPolicyNumber());
+		Assert.assertEquals("ContractId", newDto.getContractId(), fetchedDto.getContractId());
+		Assert.assertEquals("ClaimNumber", newDto.getClaimNumber(), fetchedDto.getClaimNumber());
+		Assert.assertEquals("CalculationVersion", newDto.getCalculationVersion(), fetchedDto.getCalculationVersion());
+		Assert.assertEquals("GrowerNumber", newDto.getGrowerNumber(), fetchedDto.getGrowerNumber());
+		Assert.assertEquals("GrowerName", newDto.getGrowerName(), fetchedDto.getGrowerName());
+		Assert.assertEquals("GrowerAddressLine1", newDto.getGrowerAddressLine1(), fetchedDto.getGrowerAddressLine1());
+		Assert.assertEquals("GrowerAddressLine2", newDto.getGrowerAddressLine2(), fetchedDto.getGrowerAddressLine2());
+		Assert.assertEquals("GrowerPostalCode", newDto.getGrowerPostalCode(), fetchedDto.getGrowerPostalCode());
+		Assert.assertEquals("GrowerCity", newDto.getGrowerCity(), fetchedDto.getGrowerCity());
+		Assert.assertEquals("GrowerProvince", newDto.getGrowerProvince(), fetchedDto.getGrowerProvince());
+		Assert.assertEquals("TotalClaimAmount", newDto.getTotalClaimAmount(), fetchedDto.getTotalClaimAmount());
+		Assert.assertEquals("CalculationComment", newDto.getCalculationComment(), fetchedDto.getCalculationComment());
+		Assert.assertEquals("SubmittedByUserid", newDto.getSubmittedByUserid(), fetchedDto.getSubmittedByUserid());
+		Assert.assertEquals("SubmittedByName", newDto.getSubmittedByName(), fetchedDto.getSubmittedByName());
+		Assert.assertEquals("RecommendedByUserid", newDto.getRecommendedByUserid(), fetchedDto.getRecommendedByUserid());
+		Assert.assertEquals("RecommendedByName", newDto.getRecommendedByName(), fetchedDto.getRecommendedByName());
+		Assert.assertEquals("ApprovedByUserid", newDto.getApprovedByUserid(), fetchedDto.getApprovedByUserid());
+		Assert.assertEquals("ApprovedByName", newDto.getApprovedByName(), fetchedDto.getApprovedByName());
+		Assert.assertEquals("HasChequeReqInd", newDto.getHasChequeReqInd(), fetchedDto.getHasChequeReqInd());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", newDto.getClaimCalculationGrainQuantityGuid(), fetchedDto.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals("IsPedigreeInd", newDto.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
+
+		//UPDATE
+		transactionDate = new Date();
+		fetchedDto.setPrimaryPerilCode("FLOOD");
+		fetchedDto.setSecondaryPerilCode("WIND");
+		fetchedDto.setClaimStatusCode("IN PROGRESS");
+		fetchedDto.setCalculationStatusCode("SUBMITTED");
+		fetchedDto.setGrowerNumber(22222);
+		fetchedDto.setGrowerName("Name 2");
+		fetchedDto.setGrowerAddressLine1("Line 1 2");
+		fetchedDto.setGrowerAddressLine2("Line 2 2");
+		fetchedDto.setGrowerPostalCode("V2V2V2");
+		fetchedDto.setGrowerCity("Vancouver");
+		fetchedDto.setGrowerProvince("AB");
+		fetchedDto.setTotalClaimAmount(15001.0);
+		fetchedDto.setCalculationComment("Test Comment 2");
+		fetchedDto.setSubmittedByUserid("user1 2");
+		fetchedDto.setSubmittedByName("user 1 2");
+		fetchedDto.setSubmittedByDate(transactionDate);
+		fetchedDto.setRecommendedByUserid("user2 2");
+		fetchedDto.setRecommendedByName("user 2 2");
+		fetchedDto.setRecommendedByDate(transactionDate);
+		fetchedDto.setApprovedByUserid("user3 2");
+		fetchedDto.setApprovedByName("user 3 2");
+		fetchedDto.setApprovedByDate(transactionDate);
+		fetchedDto.setHasChequeReqInd(false);
+		fetchedDto.setClaimCalculationGrainQuantityGuid(null);
+		
+		dao.update(fetchedDto.getClaimCalculationGuid(), fetchedDto, userId);
+		
+		//FETCH
+		ClaimCalculationDto updatedDto = dao.fetch(fetchedDto.getClaimCalculationGuid());
+
+		Assert.assertEquals("PrimaryPerilCode", fetchedDto.getPrimaryPerilCode(), updatedDto.getPrimaryPerilCode());
+		Assert.assertEquals("SecondaryPerilCode", fetchedDto.getSecondaryPerilCode(), updatedDto.getSecondaryPerilCode());
+		Assert.assertEquals("ClaimStatusCode", fetchedDto.getClaimStatusCode(), updatedDto.getClaimStatusCode());
+		Assert.assertEquals("GrowerNumber", fetchedDto.getGrowerNumber(), updatedDto.getGrowerNumber());
+		Assert.assertEquals("GrowerName", fetchedDto.getGrowerName(), updatedDto.getGrowerName());
+		Assert.assertEquals("GrowerAddressLine1", fetchedDto.getGrowerAddressLine1(), updatedDto.getGrowerAddressLine1());
+		Assert.assertEquals("GrowerAddressLine2", fetchedDto.getGrowerAddressLine2(), updatedDto.getGrowerAddressLine2());
+		Assert.assertEquals("GrowerPostalCode", fetchedDto.getGrowerPostalCode(), updatedDto.getGrowerPostalCode());
+		Assert.assertEquals("GrowerCity", fetchedDto.getGrowerCity(), updatedDto.getGrowerCity());
+		Assert.assertEquals("GrowerProvince", fetchedDto.getGrowerProvince(), updatedDto.getGrowerProvince());
+		Assert.assertEquals("TotalClaimAmount", fetchedDto.getTotalClaimAmount(), updatedDto.getTotalClaimAmount());
+		Assert.assertEquals("CalculationComment", fetchedDto.getCalculationComment(), updatedDto.getCalculationComment());
+		Assert.assertEquals("SubmittedByUserid", fetchedDto.getSubmittedByUserid(), updatedDto.getSubmittedByUserid());
+		Assert.assertEquals("SubmittedByName", fetchedDto.getSubmittedByName(), updatedDto.getSubmittedByName());
+		Assert.assertEquals("RecommendedByUserid", fetchedDto.getRecommendedByUserid(), updatedDto.getRecommendedByUserid());
+		Assert.assertEquals("RecommendedByName", fetchedDto.getRecommendedByName(), updatedDto.getRecommendedByName());
+		Assert.assertEquals("ApprovedByUserid", fetchedDto.getApprovedByUserid(), updatedDto.getApprovedByUserid());
+		Assert.assertEquals("ApprovedByName", fetchedDto.getApprovedByName(), updatedDto.getApprovedByName());
+		Assert.assertEquals("HasChequeReqInd", fetchedDto.getHasChequeReqInd(), updatedDto.getHasChequeReqInd());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", null, updatedDto.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals("IsPedigreeInd", fetchedDto.getIsPedigreeInd(), updatedDto.getIsPedigreeInd());
+
+		updatedDto.setClaimCalculationGrainQuantityGuid(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+		
+		dao.update(updatedDto.getClaimCalculationGuid(), updatedDto, userId);
+		
+		//FETCH
+		updatedDto = dao.fetch(updatedDto.getClaimCalculationGuid());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", grainQtyDto.getClaimCalculationGrainQuantityGuid(), updatedDto.getClaimCalculationGrainQuantityGuid());
+		
+		//DELETE
+		dao.delete(updatedDto.getClaimCalculationGuid());
+		grainQtyDao.delete(grainQtyDto.getClaimCalculationGrainQuantityGuid());
+	}
+
+	@Test 
+	public void testClaimCalculationWithPedigree() throws Exception {
+
+		String userId = "JUNIT_TEST";
+				
+		ClaimCalculationDto newDto = new ClaimCalculationDto();
+
+		Date transactionDate = new Date();
+		newDto.setPrimaryPerilCode("DROUGHT");
+		newDto.setSecondaryPerilCode("FIRE");
+		newDto.setClaimStatusCode("OPEN");
+		newDto.setCommodityCoverageCode("CQNT");
+		newDto.setCalculationStatusCode("DRAFT");
+		newDto.setInsurancePlanId(1);
+		newDto.setCropCommodityId(1);   // Fresh Grapes
+		newDto.setCropYear(2020);
+		newDto.setInsuredByMeasurementType("ACRES");
+		newDto.setPolicyNumber("100100-20");
+		newDto.setContractId(1000);
+		newDto.setClaimNumber(quantityClaimNumber);
+		newDto.setCalculationVersion(1);
+		newDto.setGrowerNumber(11111);
+		newDto.setGrowerName("Name 1");
+		newDto.setGrowerAddressLine1("Line 1");
+		newDto.setGrowerAddressLine2("Line 2");
+		newDto.setGrowerPostalCode("V1V1V1");
+		newDto.setGrowerCity("Victoria");
+		newDto.setGrowerProvince("BC");
+		newDto.setTotalClaimAmount(15000.0);
+		newDto.setCalculationComment("Test Comment");
+		newDto.setSubmittedByUserid("user1");
+		newDto.setSubmittedByName("user 1");
+		newDto.setSubmittedByDate(transactionDate);
+		newDto.setRecommendedByUserid("user2");
+		newDto.setRecommendedByName("user 2");
+		newDto.setRecommendedByDate(transactionDate);
+		newDto.setApprovedByUserid("user3");
+		newDto.setApprovedByName("user 3");
+		newDto.setApprovedByDate(transactionDate);
+		newDto.setCalculateIivInd("Y");
+		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(null);
+		newDto.setIsPedigreeInd(false);
+
+		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
+		//INSERT
+		dao.insert(newDto, userId);
+		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
+		
+		//FETCH
+		ClaimCalculationDto fetchedDto = dao.fetch(newDto.getClaimCalculationGuid());
+		
+		Assert.assertEquals("InsurancePlanId", newDto.getInsurancePlanId(), fetchedDto.getInsurancePlanId());
+		Assert.assertEquals("CropCommodityId", newDto.getCropCommodityId(), fetchedDto.getCropCommodityId());
+		Assert.assertEquals("IsPedigreeInd", newDto.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
+
+		//DELETE (because crop commodity id cannot be updated)
+		dao.delete(newDto.getClaimCalculationGuid());
+
+		newDto = new ClaimCalculationDto();
+		
+		newDto.setPrimaryPerilCode("DROUGHT");
+		newDto.setSecondaryPerilCode("FIRE");
+		newDto.setClaimStatusCode("OPEN");
+		newDto.setCommodityCoverageCode("CQNT");
+		newDto.setCalculationStatusCode("DRAFT");
+		newDto.setInsurancePlanId(4);
+		newDto.setCropCommodityId(17);   // Barley - Pedigreed
+		newDto.setCropYear(2020);
+		newDto.setInsuredByMeasurementType("ACRES");
+		newDto.setPolicyNumber("100100-20");
+		newDto.setContractId(1000);
+		newDto.setClaimNumber(quantityClaimNumber);
+		newDto.setCalculationVersion(1);
+		newDto.setGrowerNumber(11111);
+		newDto.setGrowerName("Name 1");
+		newDto.setGrowerAddressLine1("Line 1");
+		newDto.setGrowerAddressLine2("Line 2");
+		newDto.setGrowerPostalCode("V1V1V1");
+		newDto.setGrowerCity("Victoria");
+		newDto.setGrowerProvince("BC");
+		newDto.setTotalClaimAmount(15000.0);
+		newDto.setCalculationComment("Test Comment");
+		newDto.setSubmittedByUserid("user1");
+		newDto.setSubmittedByName("user 1");
+		newDto.setSubmittedByDate(transactionDate);
+		newDto.setRecommendedByUserid("user2");
+		newDto.setRecommendedByName("user 2");
+		newDto.setRecommendedByDate(transactionDate);
+		newDto.setApprovedByUserid("user3");
+		newDto.setApprovedByName("user 3");
+		newDto.setApprovedByDate(transactionDate);
+		newDto.setCalculateIivInd("Y");
+		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(null);
+		newDto.setIsPedigreeInd(true);
+
+		//INSERT
+		dao.insert(newDto, userId);
+		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
+		
+		//FETCH
+		fetchedDto = dao.fetch(newDto.getClaimCalculationGuid());
+		
+		Assert.assertEquals("InsurancePlanId", newDto.getInsurancePlanId(), fetchedDto.getInsurancePlanId());
+		Assert.assertEquals("CropCommodityId", newDto.getCropCommodityId(), fetchedDto.getCropCommodityId());
+		Assert.assertEquals("IsPedigreeInd", newDto.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
+
+		//DELETE (because crop commodity id cannot be updated)
+		dao.delete(newDto.getClaimCalculationGuid());
+
+		newDto = new ClaimCalculationDto();
+		
+		newDto.setPrimaryPerilCode("DROUGHT");
+		newDto.setSecondaryPerilCode("FIRE");
+		newDto.setClaimStatusCode("OPEN");
+		newDto.setCommodityCoverageCode("CQNT");
+		newDto.setCalculationStatusCode("DRAFT");
+		newDto.setInsurancePlanId(4);
+		newDto.setCropCommodityId(16);   // Barley (not Pedigreed)
+		newDto.setCropYear(2020);
+		newDto.setInsuredByMeasurementType("ACRES");
+		newDto.setPolicyNumber("100100-20");
+		newDto.setContractId(1000);
+		newDto.setClaimNumber(quantityClaimNumber);
+		newDto.setCalculationVersion(1);
+		newDto.setGrowerNumber(11111);
+		newDto.setGrowerName("Name 1");
+		newDto.setGrowerAddressLine1("Line 1");
+		newDto.setGrowerAddressLine2("Line 2");
+		newDto.setGrowerPostalCode("V1V1V1");
+		newDto.setGrowerCity("Victoria");
+		newDto.setGrowerProvince("BC");
+		newDto.setTotalClaimAmount(15000.0);
+		newDto.setCalculationComment("Test Comment");
+		newDto.setSubmittedByUserid("user1");
+		newDto.setSubmittedByName("user 1");
+		newDto.setSubmittedByDate(transactionDate);
+		newDto.setRecommendedByUserid("user2");
+		newDto.setRecommendedByName("user 2");
+		newDto.setRecommendedByDate(transactionDate);
+		newDto.setApprovedByUserid("user3");
+		newDto.setApprovedByName("user 3");
+		newDto.setApprovedByDate(transactionDate);
+		newDto.setCalculateIivInd("Y");
+		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(null);
+		newDto.setIsPedigreeInd(false);
+
+		//INSERT
+		dao.insert(newDto, userId);
+		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
+		
+		//FETCH
+		fetchedDto = dao.fetch(newDto.getClaimCalculationGuid());
+		
+		Assert.assertEquals("InsurancePlanId", newDto.getInsurancePlanId(), fetchedDto.getInsurancePlanId());
+		Assert.assertEquals("CropCommodityId", newDto.getCropCommodityId(), fetchedDto.getCropCommodityId());
+		Assert.assertEquals("IsPedigreeInd", newDto.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
+
+		//DELETE (because crop commodity id cannot be updated)
+		dao.delete(newDto.getClaimCalculationGuid());		
+	}
+	
 	
 	private ClaimCalculationDto getDto() throws Exception {
 		String claimCalculationGuid = "D2CF0984F30C0CC4E053E60A0A0A8DBD";
