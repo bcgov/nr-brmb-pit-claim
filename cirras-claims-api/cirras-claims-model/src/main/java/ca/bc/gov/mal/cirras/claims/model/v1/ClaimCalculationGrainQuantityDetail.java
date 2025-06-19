@@ -29,7 +29,13 @@ public class ClaimCalculationGrainQuantityDetail implements Serializable {
 	
 
 	// Out of sync flags
-	// TODO
+	private Boolean isOutOfSyncInsuredAcres;
+	private Boolean isOutOfSyncProbableYield;
+	private Boolean isOutOfSyncDeductible;
+	private Boolean isOutOfSyncProductionGuaranteeWeight;
+	private Boolean isOutOfSyncInsurableValue;
+	private Boolean isOutOfSyncCoverageValue;
+	private Boolean isOutOfSyncTotalYieldToCount;
 
 	public String getClaimCalculationGrainQuantityDetailGuid() {
 		return claimCalculationGrainQuantityDetailGuid;
@@ -156,4 +162,61 @@ public class ClaimCalculationGrainQuantityDetail implements Serializable {
 	public void setYieldValueWithEarlyEstDeemedYield(Double yieldValueWithEarlyEstDeemedYield) {
 		this.yieldValueWithEarlyEstDeemedYield = yieldValueWithEarlyEstDeemedYield;
 	}
+
+	public Boolean getIsOutOfSyncInsuredAcres() {
+		return isOutOfSyncInsuredAcres;
+	}
+
+	public void setIsOutOfSyncInsuredAcres(Boolean isOutOfSyncInsuredAcres) {
+		this.isOutOfSyncInsuredAcres = isOutOfSyncInsuredAcres;
+	}
+
+	public Boolean getIsOutOfSyncProbableYield() {
+		return isOutOfSyncProbableYield;
+	}
+
+	public void setIsOutOfSyncProbableYield(Boolean isOutOfSyncProbableYield) {
+		this.isOutOfSyncProbableYield = isOutOfSyncProbableYield;
+	}
+
+	public Boolean getIsOutOfSyncDeductible() {
+		return isOutOfSyncDeductible;
+	}
+
+	public void setIsOutOfSyncDeductible(Boolean isOutOfSyncDeductible) {
+		this.isOutOfSyncDeductible = isOutOfSyncDeductible;
+	}
+
+	public Boolean getIsOutOfSyncProductionGuaranteeWeight() {
+		return isOutOfSyncProductionGuaranteeWeight;
+	}
+
+	public void setIsOutOfSyncProductionGuaranteeWeight(Boolean isOutOfSyncProductionGuaranteeWeight) {
+		this.isOutOfSyncProductionGuaranteeWeight = isOutOfSyncProductionGuaranteeWeight;
+	}
+
+	public Boolean getIsOutOfSyncInsurableValue() {
+		return isOutOfSyncInsurableValue;
+	}
+
+	public void setIsOutOfSyncInsurableValue(Boolean isOutOfSyncInsurableValue) {
+		this.isOutOfSyncInsurableValue = isOutOfSyncInsurableValue;
+	}
+
+	public Boolean getIsOutOfSyncCoverageValue() {
+		return isOutOfSyncCoverageValue;
+	}
+
+	public void setIsOutOfSyncCoverageValue(Boolean isOutOfSyncCoverageValue) {
+		this.isOutOfSyncCoverageValue = isOutOfSyncCoverageValue;
+	}
+
+	public Boolean getIsOutOfSyncTotalYieldToCount() {
+		return isOutOfSyncTotalYieldToCount;
+	}
+
+	public void setIsOutOfSyncTotalYieldToCount(Boolean isOutOfSyncTotalYieldToCount) {
+		this.isOutOfSyncTotalYieldToCount = isOutOfSyncTotalYieldToCount;
+	}
+
 }
