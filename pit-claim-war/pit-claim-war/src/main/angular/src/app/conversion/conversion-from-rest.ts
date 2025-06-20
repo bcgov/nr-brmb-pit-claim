@@ -213,6 +213,8 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       linkedProductId: calculation.linkedProductId,
       linkedClaimNumber: calculation.linkedClaimNumber,
       linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+      latestLinkedCalculationVersion: calculation.latestLinkedCalculationVersion,
+      latestLinkedClaimCalculationGuid: calculation.latestLinkedClaimCalculationGuid,
 
       isOutOfSync: calculation.isOutOfSync,
       isOutOfSyncGrowerNumber: calculation.isOutOfSyncGrowerNumber,

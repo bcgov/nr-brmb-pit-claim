@@ -4,6 +4,8 @@ import {BaseComponent} from "../../common/base/base.component";
 import { makeTitleCase, removeDuplicateWords, ResourcesRoutes } from "../../../utils"
 import { loadCalculationDetail } from "../../../store/calculation-detail/calculation-detail.actions";
 import { ReplaceOptionsDialogComponent } from "src/app/components/dialogs/replace-options-dialog/replace-options-dialog.component";
+import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
+import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 
 @Component({
   selector: 'cirras-calculation-detail-header',
@@ -13,11 +15,9 @@ import { ReplaceOptionsDialogComponent } from "src/app/components/dialogs/replac
 export class CalculationDetailHeaderComponent extends BaseComponent implements OnChanges, AfterViewInit {
 
   displayLabel = "Calculation Detail";
-  @Input() claimCalculationGuid?: string;
-  @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
-
   @Input() calculationComment?:string;
+  @Input() linkedCalculationDetail? : vmCalculation;
 
   title: string;
   
@@ -28,16 +28,9 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
   ngOnChanges(changes: SimpleChanges): void {
 
     super.ngOnChanges(changes);
-    if (changes.claimCalculationGuid) {
-        this.claimCalculationGuid = changes.claimCalculationGuid.currentValue;
-    }
 
     if (changes.calculationComment) {
       this.calculationComment = changes.calculationComment.currentValue;
-    }
-
-    if (changes.claimNumber) {
-      this.claimNumber = changes.claimNumber.currentValue;
     }
 
     if (changes.calculationDetail) {
@@ -48,6 +41,14 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
         });
     }
 
+    if (changes.linkedCalculationDetail) {
+        this.linkedCalculationDetail = changes.linkedCalculationDetail.currentValue;
+
+        setTimeout(() => {
+            this.cdr.detectChanges();
+        });
+
+    }
   }
 
   titleCase(str) {
@@ -55,7 +56,8 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
   }
 
   onRefresh() {
-    this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "true"));
+    // refresh the calculation
+    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, "", "true"));
   }
 
   onReplace() {        
@@ -85,7 +87,16 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
           this.calculationDetail.linkedClaimNumber.toString()
         ]);
     }
-
   }
 
+  isRefreshAllowedForLinkedCalculations() {
+
+    if (this.linkedCalculationDetail && 
+      this.linkedCalculationDetail.calculationStatusCode !== 'DRAFT' ) {
+
+      return false
+    }
+
+    return true
+  }
 }
