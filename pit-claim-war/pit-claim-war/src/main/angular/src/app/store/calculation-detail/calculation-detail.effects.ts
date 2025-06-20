@@ -151,7 +151,10 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
                 .pipe(
                     concatMap((response: any) => {
                       if (updateType == CALCULATION_UPDATE_TYPE.SUBMIT) {
-                        displayLabel = " Calculation was submitted successfully "
+                        displayLabel = " Calculation was submitted successfully."
+                        if (payload.linkedClaimCalculationGuid) {
+                          displayLabel  = displayLabel  + " Please ensure that you also submit the linked calculation, if you haven't done so."
+                        }
                       } else {
                         displayLabel = " Calculation was saved successfully "
                       }

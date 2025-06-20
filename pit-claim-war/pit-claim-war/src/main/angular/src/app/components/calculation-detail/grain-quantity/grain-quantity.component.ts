@@ -5,10 +5,12 @@ import { CodeData, Option } from 'src/app/store/application/application.state';
 import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
-import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
+import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { FormControl, UntypedFormGroup } from '@angular/forms';
+import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
+import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 
 @Component({
   selector: 'calculation-detail-grain-quantity',
@@ -21,6 +23,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   displayLabel = "Calculation Detail";
 
   @Input() calculationDetail: vmCalculation;
+  @Input() isUnsaved: boolean;
   
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -148,7 +151,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         this.setValues(this.calculationDetail)
       }
-
       this.enableDisableFormControls();
 
     }
@@ -209,7 +211,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue( calcDetail.totalClaimAmount ) 
       }
-
       this.viewModel.formGroup.controls.reseedClaim.setValue( calcDetail.claimCalculationGrainQuantity.reseedClaim ) 
       this.viewModel.formGroup.controls.advancedClaim.setValue( calcDetail.claimCalculationGrainQuantity.advancedClaim ) 
 
@@ -235,12 +236,12 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
 
   }
-  
+
   roundUpToPrecision(ctrl, precision){
     let value = this.viewModel.formGroup.controls[ctrl].value
     this.viewModel.formGroup.controls[ctrl].setValue(roundUpDecimals(value, precision))
   }
-
+  
   updateCalculated() {
 
       if ( !this.calculationDetail ) return
@@ -294,6 +295,14 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     // Line Y: Lesser of ( V or W ) - X
     this.quantityLossClaim = this.calculateQuantityLossClaim() 
 
+    // Populate Line X 
+    if (!this.calculationDetail.claimCalculationGuid) {
+      if (this.calculationDetail.isPedigreeInd) {      
+        this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue(this.quantityLossClaim)
+      } else {
+        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(this.quantityLossClaim)
+      }
+    }
   }
   
   calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
@@ -421,68 +430,331 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   onCancel() {
     this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), "false"));
+    this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
   }
 
   numberOnly(event): boolean {
     return makeNumberOnly(event)
   }
 
-   setComment() {
+  setComment() {
     this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
   }
 
   // enable / disable fields
-    enableDisableFormControls() {
-      if(this.calculationDetail){
-  
-        if (this.calculationDetail.linkedProductId) {
+  enableDisableFormControls() {
+    if(this.calculationDetail){
 
-          if(this.calculationDetail.isPedigreeInd) {
-            // disable non pedigree fields
-            this.viewModel.formGroup.controls.assessedYieldNonPedigree.disable();
-            this.viewModel.formGroup.controls.damagedAcresNonPedigree.disable();
-            this.viewModel.formGroup.controls.seededAcresNonPedigree.disable();
-            this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.disable();            
-            this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.disable();
-          }
+      this.enableAllFields()
 
-          if(!this.calculationDetail.isPedigreeInd) {
-            // disable pedigree fields
-            this.viewModel.formGroup.controls.assessedYieldPedigree.disable();
-            this.viewModel.formGroup.controls.damagedAcresPedigree.disable();
-            this.viewModel.formGroup.controls.seededAcresPedigree.disable();
-            this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.disable();
-            this.viewModel.formGroup.controls.totalClaimAmountPedigree.disable();
-          }
-        }
-
-        // this will be useful once we start dealing with replace / reopen calculation
-        // if(this.calculationDetail.calculationStatusCode == CALCULATION_STATUS_CODE.DRAFT){
-        //   this.viewModel.formGroup.controls.primaryPerilCode.enable();
-        //   this.viewModel.formGroup.controls.secondaryPerilCode.enable();
-        //   this.viewModel.formGroup.controls.adjustedAcres.enable();
-        //   this.viewModel.formGroup.controls.percentYieldReduction.enable();
-  
-        // } else {
-        //   this.viewModel.formGroup.controls.primaryPerilCode.disable();
-        //   this.viewModel.formGroup.controls.secondaryPerilCode.disable();
-        //   this.viewModel.formGroup.controls.adjustedAcres.disable();
-        //   this.viewModel.formGroup.controls.percentYieldReduction.disable();
-        // }
+      if (this.calculationDetail.calculationStatusCode !== CALCULATION_STATUS_CODE.DRAFT) {
+        this.viewModel.formGroup.controls.primaryPerilCode.disable();
+        this.viewModel.formGroup.controls.secondaryPerilCode.disable();
+        this.viewModel.formGroup.controls.reseedClaim.disable();
+        this.viewModel.formGroup.controls.advancedClaim.disable();
       }
+
+      if(this.calculationDetail.isPedigreeInd == true || this.calculationDetail.calculationStatusCode !== CALCULATION_STATUS_CODE.DRAFT) {
+        // disable non pedigree fields
+        this.viewModel.formGroup.controls.assessedYieldNonPedigree.disable();
+        this.viewModel.formGroup.controls.damagedAcresNonPedigree.disable();
+        this.viewModel.formGroup.controls.seededAcresNonPedigree.disable();
+        this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.disable();            
+        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.disable();
+      }
+
+      if(this.calculationDetail.isPedigreeInd == false || this.calculationDetail.calculationStatusCode !== CALCULATION_STATUS_CODE.DRAFT) {
+        // disable pedigree fields
+        this.viewModel.formGroup.controls.assessedYieldPedigree.disable();
+        this.viewModel.formGroup.controls.damagedAcresPedigree.disable();
+        this.viewModel.formGroup.controls.seededAcresPedigree.disable();
+        this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.disable();
+        this.viewModel.formGroup.controls.totalClaimAmountPedigree.disable();
+      }
+
+    }
+  }
+
+  enableAllFields(){
+    this.viewModel.formGroup.controls.primaryPerilCode.enable();
+    this.viewModel.formGroup.controls.secondaryPerilCode.enable();
+    this.viewModel.formGroup.controls.assessedYieldNonPedigree.enable();
+    this.viewModel.formGroup.controls.assessedYieldPedigree.enable();
+    this.viewModel.formGroup.controls.damagedAcresNonPedigree.enable();
+    this.viewModel.formGroup.controls.damagedAcresPedigree.enable();
+    this.viewModel.formGroup.controls.seededAcresNonPedigree.enable();
+    this.viewModel.formGroup.controls.seededAcresPedigree.enable();
+    this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.enable();    
+    this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.enable();
+    this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.enable();
+    this.viewModel.formGroup.controls.totalClaimAmountPedigree.enable();
+    this.viewModel.formGroup.controls.reseedClaim.enable();
+    this.viewModel.formGroup.controls.advancedClaim.enable();
+  }
+
+  toggleEarlyEstDeemedYieldValueRows(){
+    this.showEarlyEstDeemedYieldValueRows = !this.showEarlyEstDeemedYieldValueRows;
+  }
+
+  setStyles(){
+    
+    let styles =  {
+      'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedProductId? '1fr' : '')  +' 1fr' ,
     }
 
-    toggleEarlyEstDeemedYieldValueRows(){
-      this.showEarlyEstDeemedYieldValueRows = !this.showEarlyEstDeemedYieldValueRows;
-    }
+    return styles;
+  }
 
-    setStyles(){
+  onSave(saveCommentsOnly:boolean) {
+      const  updatedClaim = this.getUpdatedClaim(saveCommentsOnly);
+      if (this.isFormValid(updatedClaim) )  {
+
+          this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+          this.doSyncClaimsCodeTables();
+
+          this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
+      }
+  }
+
+  getUpdatedClaim(saveCommentsOnly:boolean) {
+    // making a deep copy here
+    let updatedCalculation :vmCalculation = JSON.parse(JSON.stringify(this.calculationDetail));
+
+    if (saveCommentsOnly) {
+
+        updatedCalculation.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+
+    } else {
+      // user fields
+      updatedCalculation.primaryPerilCode = this.viewModel.formGroup.controls.primaryPerilCode.value
+      updatedCalculation.secondaryPerilCode = this.viewModel.formGroup.controls.secondaryPerilCode.value
+
+      // claimCalculationGrainQuantityGuid
+      updatedCalculation.claimCalculationGrainQuantityGuid = updatedCalculation.claimCalculationGrainQuantity.claimCalculationGrainQuantityGuid
+
+      let assessedYield = 0
+      let damagedAcres = 0
+      let seededAcres = 0
+      let inspEarlyEstYield = 0
+
+      if (updatedCalculation.isPedigreeInd) {
+
+        assessedYield = this.viewModel.formGroup.controls.assessedYieldPedigree.value ? parseFloat(this.viewModel.formGroup.controls.assessedYieldPedigree.value) : null
+        damagedAcres = this.viewModel.formGroup.controls.damagedAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.damagedAcresPedigree.value) : null
+        seededAcres = this.viewModel.formGroup.controls.seededAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresPedigree.value) : null
+        inspEarlyEstYield = this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.value ? parseFloat(this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.value) : null
       
-      let styles =  {
-        'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedProductId? '1fr' : '')  +' 1fr' ,
+        if (updatedCalculation.linkedProductId) {
+          // take the user entered value
+          updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
+        } else {
+          // take the calculated value
+          updatedCalculation.totalClaimAmount = this.quantityLossClaim
+        }
+        
+      } else {
+      
+        assessedYield = this.viewModel.formGroup.controls.assessedYieldNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value) : null
+        damagedAcres = this.viewModel.formGroup.controls.damagedAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.damagedAcresNonPedigree.value) : null
+        seededAcres = this.viewModel.formGroup.controls.seededAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresNonPedigree.value) : null
+        inspEarlyEstYield = this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.value) : null
+      
+        if (updatedCalculation.linkedProductId) {
+          // take the user entered value
+          updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
+        } else {
+          // take the calculated value
+          updatedCalculation.totalClaimAmount = this.quantityLossClaim
+        }
+        
       }
 
-      return styles;
+      updatedCalculation.claimCalculationGrainQuantityDetail.assessedYield = assessedYield
+      updatedCalculation.claimCalculationGrainQuantityDetail.damagedAcres = damagedAcres
+      updatedCalculation.claimCalculationGrainQuantityDetail.seededAcres = seededAcres
+      updatedCalculation.claimCalculationGrainQuantityDetail.inspEarlyEstYield = inspEarlyEstYield
+
+      updatedCalculation.claimCalculationGrainQuantity.reseedClaim = this.viewModel.formGroup.controls.reseedClaim.value ? parseFloat(this.viewModel.formGroup.controls.reseedClaim.value) : null
+      updatedCalculation.claimCalculationGrainQuantity.advancedClaim = this.viewModel.formGroup.controls.advancedClaim.value ? parseFloat(this.viewModel.formGroup.controls.advancedClaim.value) : null
+
+      updatedCalculation.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
     }
+
+    return updatedCalculation
+  }
+       
+  isFormValid (claimForm: vmCalculation) { 
+
+    if (!claimForm.primaryPerilCode )  {
+
+        displayErrorMessage(this.snackbarService, "Please choose a primary peril")
+        return false
+
+    }  
+
+    // M <= N
+    let damagedAcresNonPedigree = this.viewModel.formGroup.controls.damagedAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.damagedAcresNonPedigree.value) : 0
+    let seededAcresNonPedigree = this.viewModel.formGroup.controls.seededAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresNonPedigree.value) : 0
+    if (damagedAcresNonPedigree > seededAcresNonPedigree) {
+      displayErrorMessage(this.snackbarService, "The Non-Pedigree Damaged Acres should not exceed the Non-Pedigree Seeded Acres.")
+      return false
+    }
+
+    let damagedAcresPedigree = this.viewModel.formGroup.controls.damagedAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.damagedAcresPedigree.value) : 0
+    let seededAcresPedigree = this.viewModel.formGroup.controls.seededAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresPedigree.value) : 0
+    if (damagedAcresPedigree > seededAcresPedigree) {
+      displayErrorMessage(this.snackbarService, "The Pedigree Damaged Acres should not exceed the Pedigree Seeded Acres.")
+      return false
+    }
+
+    // Submit is only possible if: the payed out amount of the claim doesn’t exceed the coverage value on line F
+    let totalClaimAmountNonPedigree = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
+    let totalClaimAmountPedigree = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
+    
+    if (this.calculationDetailNonPedigree && totalClaimAmountNonPedigree > this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue) {
+      displayErrorMessage(this.snackbarService, "The Non-Pedigree Total Claim Amount should not exceed the Non-Pedigree Coverage Value.")
+      return false
+    }
+
+    if (this.calculationDetailPedigree && totalClaimAmountPedigree > this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue) {
+      displayErrorMessage(this.snackbarService, "The Pedigree Total Claim Amount should not exceed the Pedigree Coverage Value.")
+      return false
+    }
+
+    // If there is a second calculation, the sum of both payed out amounts have to be equal to Quantity Loss Claim on line Y.
+    if (this.calculationDetail.linkedClaimCalculationGuid && this.isLinkedCalculationSubmitted() ) {
+      
+      if (  (Math.round( (totalClaimAmountNonPedigree + totalClaimAmountPedigree) * 100) / 100) !== (Math.round(this.quantityLossClaim  * 100 ) / 100) ) {
+        displayErrorMessage(this.snackbarService, "The sum of Pedigree and Non-Pedigree Total Claim Amount should not exceed the Quantity Loss Claim.")
+        return false
+      }
+    }
+    
+    return true
+  }
+
+  doSyncClaimsCodeTables(){
+    this.store.dispatch(syncClaimsCodeTables());
+  }
+
+  showSubmitButton() {
+
+    if (this.calculationDetail.isOutOfSync == null) {
+        return false
+    }
+
+    if (this.calculationDetail.linkedProductId && !this.calculationDetail.linkedClaimCalculationGuid) {
+      // if linked, the linked calculation should be saved first before we allow submit
+      return false
+    }
+
+    if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
+        (
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
+          || 
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
+        )
+    ) {
+          return true
+
+    } else {
+
+      return false
+    }
+
+  }
+
+  isLinkedCalculationSubmitted() {
+
+    if (this.calculationDetail.linkedClaimCalculationGuid) {
+      // find which one is the linked calculation - the pedigree or non-pedigree
+
+      if (this.calculationDetailNonPedigree && 
+        this.calculationDetailNonPedigree.claimCalculationGuid == this.calculationDetail.linkedClaimCalculationGuid &&
+        this.calculationDetailNonPedigree.calculationStatusCode == CALCULATION_STATUS_CODE.SUBMITTED) {
+
+          return true
+
+      }
+
+      if (this.calculationDetailPedigree && 
+        this.calculationDetailPedigree.claimCalculationGuid == this.calculationDetail.linkedClaimCalculationGuid &&
+        this.calculationDetailPedigree.calculationStatusCode == CALCULATION_STATUS_CODE.SUBMITTED) {
+
+          return true
+
+      }
+    }
+
+    return false // default
+  }
+
+  onSubmit() {
+    let  updatedClaim = this.getUpdatedClaim(false);
+
+    if (this.isFormValid(updatedClaim) )  {
+
+        updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.SUBMITTED;
+        this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, CALCULATION_UPDATE_TYPE.SUBMIT))
+
+    }
+  }
+         
+
+  isMyFormDirty(){
+    const hasChanged = this.isMyFormReallyDirty()
+
+    if (hasChanged) {
+      this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+    }
+  }
+
+  isMyFormReallyDirty(): boolean {
+
+    if (!this.calculationDetail) return false
+
+    const frmMain = this.viewModel.formGroup as UntypedFormGroup
+
+    if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+         areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+         areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+        
+        return true
+    }
+
+    if (this.calculationDetail.claimCalculationGrainQuantity && 
+        ( areNotEqual (this.calculationDetail.claimCalculationGrainQuantity.reseedClaim, frmMain.controls.reseedClaim.value) ||
+          areNotEqual (this.calculationDetail.claimCalculationGrainQuantity.advancedClaim, frmMain.controls.advancedClaim.value) )
+      ) {
+
+      return true
+    }
+
+    // non-pedigree fields
+    if ( this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail) {
+      if (areNotEqual (this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.assessedYield, frmMain.controls.assessedYieldNonPedigree.value) ||
+          areNotEqual (this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.damagedAcres, frmMain.controls.damagedAcresNonPedigree.value) ||
+          areNotEqual (this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.seededAcres, frmMain.controls.seededAcresNonPedigree.value) ||
+          areNotEqual (this.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.inspEarlyEstYield, frmMain.controls.inspEarlyEstYieldNonPedigree.value) ||
+          areNotEqual (this.calculationDetailNonPedigree.totalClaimAmount, frmMain.controls.totalClaimAmountNonPedigree.value)
+    ) {
+        return true
+      }
+    }
+
+    // pedigree fields
+    if ( this.calculationDetailPedigree && this.calculationDetailPedigree.claimCalculationGrainQuantityDetail) {
+      if (areNotEqual (this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.assessedYield, frmMain.controls.assessedYieldPedigree.value) ||
+          areNotEqual (this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.damagedAcres, frmMain.controls.damagedAcresPedigree.value) ||
+          areNotEqual (this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.seededAcres, frmMain.controls.seededAcresPedigree.value) ||
+          areNotEqual (this.calculationDetailPedigree.claimCalculationGrainQuantityDetail.inspEarlyEstYield, frmMain.controls.inspEarlyEstYieldPedigree.value) ||
+          areNotEqual (this.calculationDetailPedigree.totalClaimAmount, frmMain.controls.totalClaimAmountPedigree.value)
+    ) {
+        return true
+      }
+    }
+
+    return false
+  }
 
 }
