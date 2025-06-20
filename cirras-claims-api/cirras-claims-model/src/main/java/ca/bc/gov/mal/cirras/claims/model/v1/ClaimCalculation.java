@@ -197,4 +197,7 @@ public interface ClaimCalculation extends Serializable {
 
 	public ClaimCalculationGrainUnseeded getClaimCalculationGrainUnseeded();
 	public void setClaimCalculationGrainUnseeded(ClaimCalculationGrainUnseeded claimCalculationGrainUnseeded);
+
+	public ClaimCalculationGrainSpotLoss getClaimCalculationGrainSpotLoss();
+	public void setClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss);
 }
