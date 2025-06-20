@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
@@ -58,6 +59,9 @@ public class OutOfSync {
 
 		// Set Grain Unseeded Data flags
 		isOutOfSync = grainUnseededDataOutOfSync(claimCalculation, product, isOutOfSync);
+		
+		// Set Grain Spot Loss Data flags
+		isOutOfSync = grainSpotLossDataOutOfSync(claimCalculation, product, isOutOfSync);
 		
 		claimCalculation.setIsOutOfSync(isOutOfSync);
 		
@@ -325,6 +329,39 @@ public class OutOfSync {
 		return isOutOfSync;
 	}
 	
+	private boolean grainSpotLossDataOutOfSync(ClaimCalculation claimCalculation, Product product, boolean isOutOfSync) {
+
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+				&& claimCalculation.getClaimCalculationGrainSpotLoss() != null ) {
+			
+			ClaimCalculationGrainSpotLoss spotLoss = claimCalculation.getClaimCalculationGrainSpotLoss();
+			
+			if (dtoUtils.equals("InsuredAcres", product.getAcres(), spotLoss.getInsuredAcres(), 4)) {
+				spotLoss.setIsOutOfSyncInsuredAcres(false);
+			} else {
+				spotLoss.setIsOutOfSyncInsuredAcres(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("CoverageAmtPerAcre", product.getSpotLossCoverageAmountPerAcre(), spotLoss.getCoverageAmtPerAcre(), 4)) {
+				spotLoss.setIsOutOfSyncCoverageAmtPerAcre(false);
+			} else {
+				spotLoss.setIsOutOfSyncCoverageAmtPerAcre(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("CoverageValue", product.getCoverageDollars(), spotLoss.getCoverageValue(), 4)) {
+				spotLoss.setIsOutOfSyncCoverageValue(false);
+			} else {
+				spotLoss.setIsOutOfSyncCoverageValue(true);
+				isOutOfSync = true;
+			}
+			
+		}
+
+		return isOutOfSync;
+	}
 	
 	//
 	//Checks if general claim data is out of sync

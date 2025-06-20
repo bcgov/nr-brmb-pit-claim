@@ -1,6 +1,8 @@
 
   <div class="cirras-claims-header-bar flex-y-fixed">
-     <h1>{{ titleCase(calculationDetail.commodityName + ' ' + calculationDetail.coverageName) }} Loss</h1> 
+     <h1>{{ titleCase(calculationDetail.commodityName + ' ' + calculationDetail.coverageName) }} 
+      {{ ((calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL') ? "" : "Loss" }}
+      </h1> 
   </div>
 
   <div class="ccc-row-group">
