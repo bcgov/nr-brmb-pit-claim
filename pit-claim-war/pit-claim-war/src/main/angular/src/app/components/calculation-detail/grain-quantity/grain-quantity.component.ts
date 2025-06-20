@@ -237,7 +237,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   }
 
-    roundUpToPrecision(ctrl, precision){
+  roundUpToPrecision(ctrl, precision){
     let value = this.viewModel.formGroup.controls[ctrl].value
     this.viewModel.formGroup.controls[ctrl].setValue(roundUpDecimals(value, precision))
   }
@@ -295,15 +295,14 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     // Line Y: Lesser of ( V or W ) - X
     this.quantityLossClaim = this.calculateQuantityLossClaim() 
 
-    // Poluate Line X if new calculation
-    if ( !this.calculationDetail.claimCalculationGuid ) {
+    // Populate Line X 
+    if (!this.calculationDetail.claimCalculationGuid) {
       if (this.calculationDetail.isPedigreeInd) {      
         this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue(this.quantityLossClaim)
       } else {
         this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(this.quantityLossClaim)
       }
     }
-
   }
   
   calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
@@ -449,6 +448,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.enableAllFields()
 
       if (this.calculationDetail.calculationStatusCode !== CALCULATION_STATUS_CODE.DRAFT) {
+        this.viewModel.formGroup.controls.primaryPerilCode.disable();
+        this.viewModel.formGroup.controls.secondaryPerilCode.disable();
         this.viewModel.formGroup.controls.reseedClaim.disable();
         this.viewModel.formGroup.controls.advancedClaim.disable();
       }
@@ -475,6 +476,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
   enableAllFields(){
+    this.viewModel.formGroup.controls.primaryPerilCode.enable();
+    this.viewModel.formGroup.controls.secondaryPerilCode.enable();
     this.viewModel.formGroup.controls.assessedYieldNonPedigree.enable();
     this.viewModel.formGroup.controls.assessedYieldPedigree.enable();
     this.viewModel.formGroup.controls.damagedAcresNonPedigree.enable();
@@ -541,7 +544,14 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         seededAcres = this.viewModel.formGroup.controls.seededAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresPedigree.value) : null
         inspEarlyEstYield = this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.value ? parseFloat(this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.value) : null
       
-        updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
+        if (updatedCalculation.linkedProductId) {
+          // take the user entered value
+          updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
+        } else {
+          // take the calculated value
+          updatedCalculation.totalClaimAmount = this.quantityLossClaim
+        }
+        
       } else {
       
         assessedYield = this.viewModel.formGroup.controls.assessedYieldNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.assessedYieldNonPedigree.value) : null
@@ -549,7 +559,14 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         seededAcres = this.viewModel.formGroup.controls.seededAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresNonPedigree.value) : null
         inspEarlyEstYield = this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.value) : null
       
-        updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
+        if (updatedCalculation.linkedProductId) {
+          // take the user entered value
+          updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
+        } else {
+          // take the calculated value
+          updatedCalculation.totalClaimAmount = this.quantityLossClaim
+        }
+        
       }
 
       updatedCalculation.claimCalculationGrainQuantityDetail.assessedYield = assessedYield
@@ -573,7 +590,22 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         displayErrorMessage(this.snackbarService, "Please choose a primary peril")
         return false
 
-    }     
+    }  
+
+    // M <= N
+    let damagedAcresNonPedigree = this.viewModel.formGroup.controls.damagedAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.damagedAcresNonPedigree.value) : 0
+    let seededAcresNonPedigree = this.viewModel.formGroup.controls.seededAcresNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresNonPedigree.value) : 0
+    if (damagedAcresNonPedigree > seededAcresNonPedigree) {
+      displayErrorMessage(this.snackbarService, "The Non-Pedigree Damaged Acres should not exceed the Non-Pedigree Seeded Acres.")
+      return false
+    }
+
+    let damagedAcresPedigree = this.viewModel.formGroup.controls.damagedAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.damagedAcresPedigree.value) : 0
+    let seededAcresPedigree = this.viewModel.formGroup.controls.seededAcresPedigree.value ? parseFloat(this.viewModel.formGroup.controls.seededAcresPedigree.value) : 0
+    if (damagedAcresPedigree > seededAcresPedigree) {
+      displayErrorMessage(this.snackbarService, "The Pedigree Damaged Acres should not exceed the Pedigree Seeded Acres.")
+      return false
+    }
 
     // Submit is only possible if: the payed out amount of the claim doesn’t exceed the coverage value on line F
     let totalClaimAmountNonPedigree = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
@@ -592,7 +624,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     // If there is a second calculation, the sum of both payed out amounts have to be equal to Quantity Loss Claim on line Y.
     if (this.calculationDetail.linkedClaimCalculationGuid && this.isLinkedCalculationSubmitted() ) {
       
-      if (  Math.round( (totalClaimAmountNonPedigree + totalClaimAmountPedigree) * 100) / 100 !== Math.round(this.quantityLossClaim  * 100 ) / 100 ) {
+      if (  (Math.round( (totalClaimAmountNonPedigree + totalClaimAmountPedigree) * 100) / 100) !== (Math.round(this.quantityLossClaim  * 100 ) / 100) ) {
         displayErrorMessage(this.snackbarService, "The sum of Pedigree and Non-Pedigree Total Claim Amount should not exceed the Quantity Loss Claim.")
         return false
       }
