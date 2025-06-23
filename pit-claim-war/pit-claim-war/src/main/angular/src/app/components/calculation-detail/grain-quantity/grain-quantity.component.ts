@@ -6,7 +6,7 @@ import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
 import { FormControl, UntypedFormGroup } from '@angular/forms';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
@@ -758,6 +758,24 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
 
     return false
+  }
+
+
+  onPrint() {
+    const originalTitle = this.titleService.getTitle()
+
+    const title = getPrintTitle(this.calculationDetail.commodityName, 
+                                this.calculationDetail.coverageName, 
+                                this.calculationDetail.claimNumber,
+                                this.calculationDetail.policyNumber,
+                                this.calculationDetail.growerNumber)
+
+
+    this.titleService.setTitle(title);
+
+    window.print()
+
+    this.titleService.setTitle(originalTitle);
   }
 
 }

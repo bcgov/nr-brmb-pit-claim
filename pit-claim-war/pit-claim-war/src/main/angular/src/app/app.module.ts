@@ -98,6 +98,7 @@ import { CalculationDetailGrainSpotLossComponent } from "./components/calculatio
 import { CalculationPrintoutGrainSpotLossComponent } from "./components/calculation-printout/grain-spot-loss/grain-spot-loss.component";
 import { CalculationDetailGrainQuantityComponent } from "./components/calculation-detail/grain-quantity/grain-quantity.component";
 import { UnsavedDialogComponent } from "./components/dialogs/unsaved-dialog/unsaved-dialog.component";
+import { CalculationPrintoutGrainQuantityComponent } from "./components/calculation-printout/grain-quantity/grain-quantity.component";
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.
  * Used by the Swagger CodeGen Rest API angular services.
@@ -162,6 +163,7 @@ if (!environment.production || !environment.restrict_imports) {
         CalculationDetailGrainSpotLossComponent,
         CalculationPrintoutGrainSpotLossComponent,
         CalculationDetailGrainQuantityComponent,
+        CalculationPrintoutGrainQuantityComponent,
         UnsavedDialogComponent
     ],
     bootstrap: [AppComponent], imports: [CirrasClaimsAPIServiceModule,
