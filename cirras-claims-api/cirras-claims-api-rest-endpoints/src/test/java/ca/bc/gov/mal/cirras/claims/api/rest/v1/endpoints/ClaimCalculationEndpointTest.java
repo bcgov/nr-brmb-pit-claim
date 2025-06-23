@@ -2633,21 +2633,38 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailTotalYieldToCount");
 		claimCalc.getClaimCalculationGrainQuantityDetail().setTotalYieldToCount(oldTotalYieldToCount);
-
+		
+		/*Precondition error
+		  	If the subsequent statement is commented out the error happens on delete
+		  	otherwise it happens when updating ARCHIVED
+		  	
+		  	If the subsequent statement is commented out AND one of the APPROVED or ARCHIVED is commented out
+		  	the script finishes without errors
+		  	
+		  	If I comment out both APPROVED AND ARCHIVED and run the Coverage Value and Total Yield To Count again
+		  	no errors
+		  	
+		  	For testing I executed this query 3 times in a row and the precondition failed on the third one without
+		  	ever executing the updateClaimCalculation with Approved or Archived.
+		  	
+		  	claimCalc = service.updateClaimCalculation(claimCalc, null);				
+			assertOutOfSyncFlagsFalse(claimCalc);
+			
+			This seems to be a unit test issue and couldn't be reproduced in the app itself so far.
+		  	
+		*/
 		claimCalc = service.updateClaimCalculation(claimCalc, null);				
 		assertOutOfSyncFlagsFalse(claimCalc);
-
+		
 		//3. Out of sync flags not set for certain statuses.
-//Precondition error. Something is going wrong, the subsequent call is getting a precondition error
-//		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
-//		claimCalc = service.updateClaimCalculation(claimCalc, null);
-//		assertOutOfSyncFlagsNull(claimCalc);
+		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsNull(claimCalc);
 
-		//TODO: Throws a precondition error
-//		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
-//		claimCalc = service.updateClaimCalculation(claimCalc, null);
-//		assertOutOfSyncFlagsNull(claimCalc);		
-				
+		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsNull(claimCalc);		
+
 		//4. Delete the Claim Calculation.
 		service.deleteClaimCalculation(claimCalc, true);
 		

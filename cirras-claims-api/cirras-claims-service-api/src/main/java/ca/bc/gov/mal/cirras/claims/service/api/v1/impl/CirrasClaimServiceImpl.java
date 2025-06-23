@@ -687,7 +687,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				VerifiedYieldContractSimpleRsrc verifiedYieldRsrc = null;
 
 				if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-						&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+						&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) 
+				{
 
 					try { 
 						productListRsrc = getCirrasClaimProducts(
