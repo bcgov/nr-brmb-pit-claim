@@ -73,6 +73,8 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       linkedProductId: calculation.linkedProductId,
       linkedClaimNumber: calculation.linkedClaimNumber,
       linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+      latestLinkedCalculationVersion: calculation.latestLinkedCalculationVersion,
+      latestLinkedClaimCalculationGuid: calculation.latestLinkedClaimCalculationGuid,
 
       currentClaimStatusCode: calculation.currentClaimStatusCode? calculation.currentClaimStatusCode : null,
       varieties: calculation.varieties ? calculation.varieties.map(item => convertToCalculationVarietiesRsrc(item)) : [],

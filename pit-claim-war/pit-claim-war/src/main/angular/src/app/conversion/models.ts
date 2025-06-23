@@ -126,6 +126,8 @@ export interface vmCalculation {
   linkedProductId?: number;
   linkedClaimNumber?: number;
   linkedClaimCalculationGuid?: string;
+  latestLinkedCalculationVersion?: number;
+  latestLinkedClaimCalculationGuid?: string;
 
   // out of sync flags
   isOutOfSync?: boolean;

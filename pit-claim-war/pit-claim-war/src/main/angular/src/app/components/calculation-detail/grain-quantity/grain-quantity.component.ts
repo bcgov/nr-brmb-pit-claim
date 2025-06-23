@@ -32,6 +32,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   calculationDetailNonPedigree: vmCalculation;
   calculationDetailPedigree: vmCalculation;
+  linkedCalculationDetail: vmCalculation
 
   // shared calculated values
   prodGuaranteeMinusAssessmentsNonPedigree: number
@@ -183,6 +184,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       self.setFormFields(data)
       self.setValues(data)
       self.totalCoverageValue = self.calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue + self.calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue
+
+      self.linkedCalculationDetail = data
 
       setTimeout(() => {
             this.cdr.detectChanges();

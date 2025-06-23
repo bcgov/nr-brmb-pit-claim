@@ -114,11 +114,11 @@
         <br /><br/>
       </span>
       <span class="ccc-col-right3">    
-          <button mat-raised-button color="primary"
 
+          <button mat-raised-button color="primary"
           *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.REFRESH_DATA) && 
                 (calculationDetail.calculationStatusCode === 'DRAFT' ) && 
-                calculationDetail.isOutOfSync ; else emptySpaces"
+                calculationDetail.isOutOfSync && isRefreshAllowedForLinkedCalculations() ; else emptySpaces"
               (click)="onRefresh()"
           ><mat-icon style="padding-right: 4px;">refresh</mat-icon>Refresh</button>
       
@@ -126,6 +126,8 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
             &nbsp;&nbsp;&nbsp;  
           </ng-template>
+
+
       </span>
     </div>              
     <div class="ccc-row">
@@ -210,3 +212,24 @@
     </div>
   </div>
   
+<!-- refresh not possible because the linked calculation is not editable -->
+   <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: red;" 
+    *ngIf="calculationDetail && calculationDetail.calculationStatusCode === 'DRAFT' && calculationDetail.isOutOfSync &&
+          linkedCalculationDetail && linkedCalculationDetail.calculationStatusCode !== 'DRAFT' "> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'red', 'font-size':'x-large'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+        <h3 style="color: red;">
+          Refreshing this calculation is not possible becase the linked calculation is not editable.
+        </h3>      
+        <span style="color: red; font-size: 14px;">
+          Roll back the linked claim # {{ linkedCalculationDetail.claimNumber }} in CIRRAS to resolve this issue.
+        </span>   
+      </div>
+    </div>
+  </div>
