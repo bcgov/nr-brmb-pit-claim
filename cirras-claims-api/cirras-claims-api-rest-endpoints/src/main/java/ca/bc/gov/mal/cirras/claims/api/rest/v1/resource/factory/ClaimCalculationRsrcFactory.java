@@ -763,6 +763,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 					createClaimCalculationGrainSpotLossFromCalculation(claimCalculation.getClaimCalculationGrainSpotLoss()));
 		}
 		
+		// Copy grain quantity detail data
+		if (claimCalculation.getClaimCalculationGrainQuantityDetail() != null) {
+			resource.setClaimCalculationGrainQuantityDetail(
+					createClaimCalculationGrainQuantityDetailFromCalculation(claimCalculation.getClaimCalculationGrainQuantityDetail()));
+		}
+		
 		String eTag = getEtag(resource);
 		resource.setETag(eTag);
 
@@ -981,6 +987,31 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		model.setEligibleYieldReduction(claimCalcGrainSpotLoss.getEligibleYieldReduction());
 		model.setSpotLossReductionValue(claimCalcGrainSpotLoss.getSpotLossReductionValue());
 		model.setDeductible(claimCalcGrainSpotLoss.getDeductible());
+		
+		return model;
+	}
+	
+	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetailFromCalculation(ClaimCalculationGrainQuantityDetail claimCalcGrainQuantityDetail) {
+		ClaimCalculationGrainQuantityDetail model = new ClaimCalculationGrainQuantityDetail();
+
+		model.setClaimCalculationGrainQuantityDetailGuid(claimCalcGrainQuantityDetail.getClaimCalculationGrainQuantityDetailGuid());
+		model.setClaimCalculationGuid(claimCalcGrainQuantityDetail.getClaimCalculationGuid());
+		model.setAssessedYield(claimCalcGrainQuantityDetail.getAssessedYield());
+		model.setCalcEarlyEstYield(claimCalcGrainQuantityDetail.getCalcEarlyEstYield());
+		model.setCoverageValue(claimCalcGrainQuantityDetail.getCoverageValue());
+		model.setDamagedAcres(claimCalcGrainQuantityDetail.getDamagedAcres());
+		model.setDeductible(claimCalcGrainQuantityDetail.getDeductible());
+		model.setEarlyEstDeemedYieldValue(claimCalcGrainQuantityDetail.getEarlyEstDeemedYieldValue());
+		model.setFiftyPercentProductionGuarantee(claimCalcGrainQuantityDetail.getFiftyPercentProductionGuarantee());
+		model.setInspEarlyEstYield(claimCalcGrainQuantityDetail.getInspEarlyEstYield());
+		model.setInsurableValue(claimCalcGrainQuantityDetail.getInsurableValue());
+		model.setInsuredAcres(claimCalcGrainQuantityDetail.getInsuredAcres());
+		model.setProbableYield(claimCalcGrainQuantityDetail.getProbableYield());
+		model.setProductionGuaranteeWeight(claimCalcGrainQuantityDetail.getProductionGuaranteeWeight());
+		model.setSeededAcres(claimCalcGrainQuantityDetail.getSeededAcres());
+		model.setTotalYieldToCount(claimCalcGrainQuantityDetail.getTotalYieldToCount());
+		model.setYieldValue(claimCalcGrainQuantityDetail.getYieldValue());
+		model.setYieldValueWithEarlyEstDeemedYield(claimCalcGrainQuantityDetail.getYieldValueWithEarlyEstDeemedYield());
 		
 		return model;
 	}

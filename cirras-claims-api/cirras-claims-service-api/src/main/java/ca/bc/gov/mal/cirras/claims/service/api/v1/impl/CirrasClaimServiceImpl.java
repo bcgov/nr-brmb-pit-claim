@@ -1373,9 +1373,30 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 
 		if (updateType.equals(ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString())) {
+
+			//TODO: Check if there is already a shared quantity calculation
+			//Check getClaim, code might already exist.
+			
+			//Maybe use linked calculation guid to get shared data?
+			
+			
+			// Set fields from linked calculation, if any.
+//			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+//					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+//				updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, true);
+//			}			
+			
+			
+//This is done in createCalculation and don't need to be done here
+			//Insert or update shared grain quantity record
+//			if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+//					&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+//				createUpdateGrainQuantity(claimCalculation, userId);
+//			}
+
+			
 			// Replacement is based on the archived calculation
-			result = claimCalculationFactory.getCalculationFromCalculation(claimCalculation, factoryContext,
-					authentication);
+			result = claimCalculationFactory.getCalculationFromCalculation(claimCalculation, factoryContext, authentication);
 
 			// Need to set current claim data: status, type, monitored, recommended and
 			// approved
@@ -1399,6 +1420,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 					&& (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
 							|| policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+							|| policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())
 						)
 				) {
 					
@@ -1419,13 +1441,21 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			}
 			
 			// Replacement is based on the current claim and policy data in CIRRAS
-			// TODO
 			result = claimCalculationFactory.getCalculationFromClaim(policyClaimRsrc, policyProductRsrc, null, null, null, factoryContext, authentication);
 		}
 
 		// Recalculate. -> MH 2022/01/04: not necessary because calculation are done in createClaimCalculation as well
 		//calculateVarietyInsurableValues(result);
 		//calculateTotals(result);
+		
+		// Set fields from linked calculation, if any and load shared grain quantity record  
+		if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+				policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+			
+//			linkedProductRsrc = getProductByCommodityAndCoverage(productListRsrc, linkedCrpDto.getCropCommodityId(), ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode());
+			
+			updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, true);
+		}
 
 		// Save
 		result = createClaimCalculation(result, factoryContext, authentication);
