@@ -9,5 +9,7 @@ import { BaseComponent } from '../../common/base/base.component';
 })
 export class CalculationPrintoutGrainQuantityComponent{
   @Input() calculationDetail: vmCalculation;
+  @Input() calculationDetailNonPedigree: vmCalculation;
+  @Input() calculationDetailPedigree: vmCalculation;
 
 }

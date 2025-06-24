@@ -111,13 +111,6 @@
       [isUnsaved]="isUnsaved"
   ></calculation-detail-grain-quantity>
 
-  <!-- GRAIN QUANTITY Printout-->
-  <calculation-printout-grain-quantity
-      *ngIf=" calculationDetail && 
-            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
-            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQG' &&
-            calculationDetail.claimCalculationGrainQuantityDetail "
-    [calculationDetail]="calculationDetail"> 
-  </calculation-printout-grain-quantity>
+  <!-- GRAIN QUANTITY Printout is in the upper component -->
 
 </base-wrapper>

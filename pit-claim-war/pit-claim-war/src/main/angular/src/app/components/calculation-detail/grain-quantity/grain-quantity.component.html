@@ -1,4 +1,4 @@
-<div class="cirras-claims-base-container page-width-container desktop">
+<div id="grain-quantity" class="cirras-claims-base-container page-width-container desktop">
     <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
   
   
@@ -591,3 +591,14 @@
     </div>
   </div>
   
+<!-- Quantity printout -->
+    <calculation-printout-grain-quantity
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQG' &&
+            calculationDetail.claimCalculationGrainQuantityDetail "
+    [calculationDetail]="calculationDetail"
+    [calculationDetailNonPedigree]="calculationDetailNonPedigree"
+    [calculationDetailPedigree]="calculationDetailPedigree"
+    > 
+  </calculation-printout-grain-quantity>
