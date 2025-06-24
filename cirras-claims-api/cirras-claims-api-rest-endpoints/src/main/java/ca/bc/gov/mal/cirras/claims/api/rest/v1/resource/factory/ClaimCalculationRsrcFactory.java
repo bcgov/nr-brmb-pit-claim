@@ -254,7 +254,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	@Override
 	public void updateCalculationFromClaim(ClaimCalculation claimCalculation,
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
-			Product product
+			Product product,
+			VerifiedYieldSummary verifiedSummary
 	) {
 
 		// Update ClaimCalculation fields
@@ -301,6 +302,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 				updateClaimCalculationGrainUnseededFromClaim(claimCalculation, product);
 			} else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())) {
 				updateClaimCalculationGrainSpotLossFromClaim(claimCalculation, product);
+			} else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+				updateClaimCalculationGrainQuantityFromClaim(claimCalculation, product, verifiedSummary);
 			}
 		}
 
@@ -412,6 +415,25 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		claimCalculation.getClaimCalculationGrainSpotLoss().setCoverageAmtPerAcre(product.getSpotLossCoverageAmountPerAcre());
 		claimCalculation.getClaimCalculationGrainSpotLoss().setCoverageValue(product.getCoverageDollars());
 		claimCalculation.getClaimCalculationGrainSpotLoss().setDeductible(grainSpotLossDeductible);
+
+	}
+	
+	private void updateClaimCalculationGrainQuantityFromClaim(ClaimCalculation claimCalculation, Product product, VerifiedYieldSummary vys) {
+
+		//From CIRRAS
+		claimCalculation.getClaimCalculationGrainQuantityDetail().setCoverageValue(product.getCoverageDollars());
+		claimCalculation.getClaimCalculationGrainQuantityDetail().setDeductible(product.getDeductibleLevel());
+		claimCalculation.getClaimCalculationGrainQuantityDetail().setInsurableValue(product.getSelectedInsurableValue());
+		claimCalculation.getClaimCalculationGrainQuantityDetail().setInsuredAcres(product.getAcres());
+		claimCalculation.getClaimCalculationGrainQuantityDetail().setProbableYield(product.getProbableYield());
+		claimCalculation.getClaimCalculationGrainQuantityDetail().setProductionGuaranteeWeight(product.getProductionGuarantee());
+		
+		// From CUWS
+		if ( vys != null ) { 
+			claimCalculation.getClaimCalculationGrainQuantityDetail().setTotalYieldToCount(vys.getYieldToCount());
+		} else {
+			throw new FactoryException("Did not find Verified Yield Summary for " + claimCalculation.getCommodityName());
+		}
 
 	}
 	

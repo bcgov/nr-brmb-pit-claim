@@ -81,6 +81,7 @@ import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingSe
 import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingServiceException;
 import ca.bc.gov.mal.cirras.underwriting.api.rest.v1.resource.VerifiedYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.CirrasDataSyncService;
 
 
@@ -686,7 +687,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				VerifiedYieldContractSimpleRsrc verifiedYieldRsrc = null;
 
 				if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-						&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+						&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) 
+				{
 
 					try { 
 						productListRsrc = getCirrasClaimProducts(
@@ -755,15 +757,17 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 						}
 					}
 					
+					VerifiedYieldSummary verifiedSummary = getVerifiedYieldSummary(verifiedYieldRsrc, crpDto, linkedCrpDto);
+					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
-						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc);
+						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc, verifiedSummary);
 					}
 	
 					// Sets the out of sync flags for any fields in the calculation that are out of
 					// sync with the Claim in CIRRAS.
 					// If the check cannot be performed because policyClaimRsrc is null, then they
 					// are left null to indicate that the sync status is unknown.
-					outOfSync.calculateOutOfSyncFlags(result, policyClaimRsrc, policyProductRsrc);
+					outOfSync.calculateOutOfSyncFlags(result, policyClaimRsrc, policyProductRsrc, verifiedSummary);
 				} else {
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
 						// Only show an error message if the calculation status was approved or archived
@@ -787,6 +791,37 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		logger.debug(">getClaimCalculation");
 		return result;
+	}
+	
+	private VerifiedYieldSummary getVerifiedYieldSummary(
+			VerifiedYieldContractSimple verifiedYield, 
+			CropCommodityDto crpDto,
+			CropCommodityDto linkedCrpDto) {
+		// From CUWS
+		// CUWS stores yield data always using the non-pedigree crop id, whereas CCS stores Calculations for pedigree commodities using that crop id. So we have to account for this mis-match 
+		// here when filtering for Verified Yield.
+		VerifiedYieldSummary vys = null;
+		
+		if(verifiedYield != null && crpDto != null) {
+			if ( verifiedYield.getVerifiedYieldSummaries() != null ) {
+	
+				Integer vysCropCommodityId = null;
+				if ( crpDto.getIsPedigreeInd() ) {
+					vysCropCommodityId = linkedCrpDto.getCropCommodityId();
+				} else {
+					vysCropCommodityId = crpDto.getCropCommodityId();
+				}
+			
+				for ( VerifiedYieldSummary currVys : verifiedYield.getVerifiedYieldSummaries() ) {
+					if ( currVys.getCropCommodityId().equals(vysCropCommodityId) && currVys.getIsPedigreeInd().equals(crpDto.getIsPedigreeInd()) ) {
+						vys = currVys;
+						break;
+					}
+				}
+			}
+		}
+		
+		return vys;
 	}
 
 	private void getSubTableRecords(String claimCalculationGuid, ClaimCalculationDto dto) throws DaoException {
@@ -955,7 +990,11 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	
 	// Updates fields in claimCalculation from insuranceClaim that are only updated
 	// when the user requests a Refresh.
-	private void refreshManualClaimData(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, Product product)
+	private void refreshManualClaimData(
+			ClaimCalculation claimCalculation, 
+			InsuranceClaim insuranceClaim, 
+			Product product,
+			VerifiedYieldSummary verifiedSummary)
 			throws ServiceException, DaoException {
 		logger.debug("<refreshManualClaimData");
 
@@ -966,7 +1005,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			throw new ServiceException("Unable to refresh Claim data. Product was not loaded.");
 		}
 		
-		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product);
+		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product, verifiedSummary);
 
 		// Recalculate.
 		calculateVarietyInsurableValues(claimCalculation);
