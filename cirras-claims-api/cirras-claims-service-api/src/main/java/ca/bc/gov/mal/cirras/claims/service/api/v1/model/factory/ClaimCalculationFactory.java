@@ -105,5 +105,6 @@ public interface ClaimCalculationFactory {
 			WebAdeAuthentication authentication
 		) throws FactoryException;
 
+	ClaimCalculationGrainQuantity createClaimCalculationGrainQuantity(ClaimCalculationGrainQuantityDto dto);
 
 }

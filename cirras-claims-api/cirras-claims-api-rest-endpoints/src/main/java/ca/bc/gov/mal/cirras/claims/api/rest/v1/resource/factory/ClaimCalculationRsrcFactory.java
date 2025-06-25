@@ -1609,7 +1609,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		return model;
 	}
 
-	private ClaimCalculationGrainQuantity createClaimCalculationGrainQuantity(ClaimCalculationGrainQuantityDto dto) {
+	@Override
+	public ClaimCalculationGrainQuantity createClaimCalculationGrainQuantity(ClaimCalculationGrainQuantityDto dto) {
 		ClaimCalculationGrainQuantity model = new ClaimCalculationGrainQuantity();
 
 		model.setClaimCalculationGrainQuantityGuid(dto.getClaimCalculationGrainQuantityGuid());
