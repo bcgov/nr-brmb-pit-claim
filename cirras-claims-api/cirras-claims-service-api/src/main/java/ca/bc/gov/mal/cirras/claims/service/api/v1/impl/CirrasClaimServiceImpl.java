@@ -1419,23 +1419,24 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					throw new NotFoundException("getCirrasClaimProducts: Error when getting product " + policyClaimRsrc.getPurchaseId() + " from CIRRAS for Claim Number " + policyClaimRsrc.getClaimNumber());
 				}
 				
-				crpDto = cropCommodityDao.fetch(policyClaimRsrc.getCropCommodityId());
-				
-				if ( crpDto == null ) {
-					throw new ServiceException("No commodity found for " + claimCalculation.getClaimNumber().toString());
-				}
-
-				linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(policyClaimRsrc.getCropCommodityId());
-									
-				try {
-					verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, true, true, false);
-					if (verifiedYieldRsrc == null ) {
-						throw new ServiceException("No verified yield found for " + claimCalculation.getClaimNumber().toString());
+				if(policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+					crpDto = cropCommodityDao.fetch(policyClaimRsrc.getCropCommodityId());
+					
+					if ( crpDto == null ) {
+						throw new ServiceException("No commodity found for " + claimCalculation.getClaimNumber().toString());
 					}
-				} catch (CirrasUnderwritingServiceException e) {
-					throw new ServiceException("Underwriting service threw an exception (CirrasUnderwritingServiceException)", e);
+
+					linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(policyClaimRsrc.getCropCommodityId());
+										
+					try {
+						verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, true, true, false);
+						if (verifiedYieldRsrc == null ) {
+							throw new ServiceException("No verified yield found for " + claimCalculation.getClaimNumber().toString());
+						}
+					} catch (CirrasUnderwritingServiceException e) {
+						throw new ServiceException("Underwriting service threw an exception (CirrasUnderwritingServiceException)", e);
+					}
 				}
-			
 			}
 			
 			// Replacement is based on the current claim and policy data in CIRRAS

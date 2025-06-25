@@ -997,12 +997,9 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		model.setClaimCalculationGrainQuantityDetailGuid(claimCalcGrainQuantityDetail.getClaimCalculationGrainQuantityDetailGuid());
 		model.setClaimCalculationGuid(claimCalcGrainQuantityDetail.getClaimCalculationGuid());
 		model.setAssessedYield(claimCalcGrainQuantityDetail.getAssessedYield());
-		model.setCalcEarlyEstYield(claimCalcGrainQuantityDetail.getCalcEarlyEstYield());
 		model.setCoverageValue(claimCalcGrainQuantityDetail.getCoverageValue());
 		model.setDamagedAcres(claimCalcGrainQuantityDetail.getDamagedAcres());
 		model.setDeductible(claimCalcGrainQuantityDetail.getDeductible());
-		model.setEarlyEstDeemedYieldValue(claimCalcGrainQuantityDetail.getEarlyEstDeemedYieldValue());
-		model.setFiftyPercentProductionGuarantee(claimCalcGrainQuantityDetail.getFiftyPercentProductionGuarantee());
 		model.setInspEarlyEstYield(claimCalcGrainQuantityDetail.getInspEarlyEstYield());
 		model.setInsurableValue(claimCalcGrainQuantityDetail.getInsurableValue());
 		model.setInsuredAcres(claimCalcGrainQuantityDetail.getInsuredAcres());
@@ -1010,9 +1007,14 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		model.setProductionGuaranteeWeight(claimCalcGrainQuantityDetail.getProductionGuaranteeWeight());
 		model.setSeededAcres(claimCalcGrainQuantityDetail.getSeededAcres());
 		model.setTotalYieldToCount(claimCalcGrainQuantityDetail.getTotalYieldToCount());
-		model.setYieldValue(claimCalcGrainQuantityDetail.getYieldValue());
-		model.setYieldValueWithEarlyEstDeemedYield(claimCalcGrainQuantityDetail.getYieldValueWithEarlyEstDeemedYield());
-		
+
+		// These are calculated in CirrasClaimServiceImpl.calculateTotalsGrainQuantity
+		//model.setFiftyPercentProductionGuarantee(claimCalcGrainQuantityDetail.getFiftyPercentProductionGuarantee());
+		//model.setCalcEarlyEstYield(claimCalcGrainQuantityDetail.getCalcEarlyEstYield());
+		//model.setEarlyEstDeemedYieldValue(claimCalcGrainQuantityDetail.getEarlyEstDeemedYieldValue());
+		//model.setYieldValue(claimCalcGrainQuantityDetail.getYieldValue());
+		//model.setYieldValueWithEarlyEstDeemedYield(claimCalcGrainQuantityDetail.getYieldValueWithEarlyEstDeemedYield());
+
 		return model;
 	}
 	
