@@ -29,6 +29,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.api.rest.test.EndpointsTest;
+import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
 
 public class ClaimCalculationEndpointTest extends EndpointsTest {
@@ -2746,6 +2747,182 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		service.deleteClaimCalculation(claimCalc, true);
 				
 		logger.debug(">testGrainQuantityClaimCalculationRefresh");
+	}
+	
+
+	@Test
+	public void testGrainQuantityClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainQuantityClaimCalculationReplace");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		// Needs to be manually set to a real, valid GRAIN Quantity claim in CIRRAS db with no existing calculations.
+		ClaimCalculationRsrc calculationToUpdate = createClaimCalculation("37195");
+		
+		//Original values
+		ClaimCalculationGrainQuantityDetail qtyDetail = calculationToUpdate.getClaimCalculationGrainQuantityDetail();
+
+		Double originalInsuredAcres = qtyDetail.getInsuredAcres();
+		Double originalProbableYield = qtyDetail.getProbableYield();
+		Integer originalDeductible = qtyDetail.getDeductible();
+		Double originalProductionGuaranteeWeight = qtyDetail.getProductionGuaranteeWeight();
+		Double originalInsurableValue = qtyDetail.getInsurableValue();
+		Double originalCoverageValue = qtyDetail.getCoverageValue();
+		Double originalTotalYieldToCount = qtyDetail.getTotalYieldToCount();
+
+		//Update values for pulled in data to test if replacing NEW and COPY works correctly
+		Double updatedInsuredAcres = originalInsuredAcres - 5;
+		Double updatedProbableYield = originalProbableYield + 0.1;
+		Integer updatedDeductible = originalDeductible + 10;
+		Double updatedProductionGuaranteeWeight = originalProductionGuaranteeWeight + 10;
+		Double updatedInsurableValue = originalInsurableValue + 5;
+		Double updatedCoverageValue = originalCoverageValue - 5;
+		Double updatedTotalYieldToCount = originalTotalYieldToCount + 5;
+		
+		Double reseedClaim = 100.0;
+		Double advancedClaim = 50.0;
+		
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setInsuredAcres(updatedInsuredAcres);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setProbableYield(updatedProbableYield);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setDeductible(updatedDeductible);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setProductionGuaranteeWeight(updatedProductionGuaranteeWeight);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setInsurableValue(updatedInsurableValue);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setCoverageValue(updatedCoverageValue);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setTotalYieldToCount(updatedTotalYieldToCount);
+		calculationToUpdate.getClaimCalculationGrainQuantity().setReseedClaim(reseedClaim);
+		calculationToUpdate.getClaimCalculationGrainQuantity().setAdvancedClaim(advancedClaim);
+		
+		//Saving updated values
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		//NEW
+		//Update calculation
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		replaceClaimCalculationGuid2 = newCalculation.getClaimCalculationGuid();
+		
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals(originalInsuredAcres, newCalculation.getClaimCalculationGrainQuantityDetail().getInsuredAcres());
+		Assert.assertEquals(originalProbableYield, newCalculation.getClaimCalculationGrainQuantityDetail().getProbableYield());
+		Assert.assertEquals(originalDeductible, newCalculation.getClaimCalculationGrainQuantityDetail().getDeductible());
+		Assert.assertEquals(originalProductionGuaranteeWeight, newCalculation.getClaimCalculationGrainQuantityDetail().getProductionGuaranteeWeight());
+		Assert.assertEquals(originalInsurableValue, newCalculation.getClaimCalculationGrainQuantityDetail().getInsurableValue());
+		Assert.assertEquals(originalCoverageValue, newCalculation.getClaimCalculationGrainQuantityDetail().getCoverageValue());
+		Assert.assertEquals(originalTotalYieldToCount, newCalculation.getClaimCalculationGrainQuantityDetail().getTotalYieldToCount());
+		Assert.assertNull(newCalculation.getClaimCalculationGrainQuantity().getReseedClaim());
+		Assert.assertNull(newCalculation.getClaimCalculationGrainQuantity().getAdvancedClaim());
+		
+		//Try to update, expect error because second calculation is missing
+		try {
+			//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+			newCalculation = service.getClaimCalculation(newCalculation, false);
+			newCalculation = service.updateClaimCalculation(newCalculation, null);
+			Assert.fail("updateClaimCalculation should have thrown an exception because the calculation can't be saved because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists."));
+		}
+		
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation, true);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+		
+		//COPY
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		replaceClaimCalculationGuid3 = newCalculation.getClaimCalculationGuid();
+		
+		//Check if newCalculation contains the updated values from the replaced one
+		Assert.assertEquals("Copy Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals(updatedInsuredAcres, newCalculation.getClaimCalculationGrainQuantityDetail().getInsuredAcres());
+		Assert.assertEquals(updatedProbableYield, newCalculation.getClaimCalculationGrainQuantityDetail().getProbableYield());
+		Assert.assertEquals(updatedDeductible, newCalculation.getClaimCalculationGrainQuantityDetail().getDeductible());
+		Assert.assertEquals(updatedProductionGuaranteeWeight, newCalculation.getClaimCalculationGrainQuantityDetail().getProductionGuaranteeWeight());
+		Assert.assertEquals(updatedInsurableValue, newCalculation.getClaimCalculationGrainQuantityDetail().getInsurableValue());
+		Assert.assertEquals(updatedCoverageValue, newCalculation.getClaimCalculationGrainQuantityDetail().getCoverageValue());
+		Assert.assertEquals(updatedTotalYieldToCount, newCalculation.getClaimCalculationGrainQuantityDetail().getTotalYieldToCount());
+		Assert.assertEquals(reseedClaim, newCalculation.getClaimCalculationGrainQuantity().getReseedClaim());
+		Assert.assertEquals(advancedClaim, newCalculation.getClaimCalculationGrainQuantity().getAdvancedClaim());
+		
+		//Add second calculation *********************************************************************************************
+		// Needs to be manually set to a real, valid GRAIN Quantity claim in CIRRAS db with no existing calculations.
+		ClaimCalculationRsrc calculation2 = createClaimCalculation("37196");
+
+		//Try to update first calculation, expect error because second calculation is in wrong version
+		try {
+			//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+			newCalculation = service.getClaimCalculation(newCalculation, false);
+			newCalculation = service.updateClaimCalculation(newCalculation, null);
+			Assert.fail("updateClaimCalculation should have thrown an exception because the calculation can't be saved because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists."));
+		}
+		
+		//Archive second calculation
+		calculation2 = service.getClaimCalculation(calculation2, false);
+		calculation2.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculation2 = service.updateClaimCalculation(calculation2, null);
+		
+		calculation2 = service.getClaimCalculation(calculation2, false);
+		calculation2.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation2 = service.updateClaimCalculation(calculation2, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		//Check shared data
+		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantityGuid(), newCalculation2.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantity().getReseedClaim(), newCalculation2.getClaimCalculationGrainQuantity().getReseedClaim());
+		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantity().getAdvancedClaim(), newCalculation2.getClaimCalculationGrainQuantity().getAdvancedClaim());
+
+		//Update comment of one of the calculations - no errors expected because now there are two calculations 
+		newCalculation2 = service.getClaimCalculation(newCalculation2, false);
+		newCalculation2.setCalculationComment("test");
+		newCalculation2 = service.updateClaimCalculation(newCalculation2, null);
+		
+		Assert.assertEquals("test", newCalculation2.getCalculationComment());
+		
+		//Delete - Clean up
+		newCalculation2 = service.getClaimCalculation(newCalculation2, false);
+		service.deleteClaimCalculation(newCalculation2, true);
+		
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
+
+		logger.debug(">testGrainQuantityClaimCalculationReplace");
+	}
+
+	private ClaimCalculationRsrc createClaimCalculation(String claimNumber) throws CirrasClaimServiceException, ValidationException {
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", claimNumber.equals("TODO"));
+
+		replaceClaimNumber = Integer.valueOf(claimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, claimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc calculationToUpdate = service.getClaim(claim);
+		calculationToUpdate = service.createClaimCalculation(calculationToUpdate);
+		
+		replaceClaimCalculationGuid1 = calculationToUpdate.getClaimCalculationGuid();
+		return calculationToUpdate;
 	}	
 	
 	private boolean isInteger(double number) {
