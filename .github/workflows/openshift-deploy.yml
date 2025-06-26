@@ -137,6 +137,7 @@ jobs:
           MAX_UI_COUNT: ${{ vars.MAX_UI_COUNT }}
           BASE_URL: https://pit-claim-ui-route-${{ inputs.ENVIRONMENT_NAME }}-${{inputs.NAMESPACE}}.apps.silver.devops.gov.bc.ca/pub/pit-claim/
           CIRRAS_CLAIMS_REST_URI: https://cirras-claims-api-route-${{ inputs.ENVIRONMENT_NAME }}-${{inputs.NAMESPACE}}.apps.silver.devops.gov.bc.ca/cirras-claims-api/v1
+          PIT_UNDERWRITING_UI_URL: {{ vars.PIT_UNDERWRITING_UI_URL }}
 
           ACTIVE_PORT: ${{ vars.TOMCAT_PORT }}
           LOCAL_CHECKTOKEN_ENDPOINT: ${{ vars.LOCAL_CHECKTOKEN_ENDPOINT }}

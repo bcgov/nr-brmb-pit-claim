@@ -193,6 +193,17 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     })
 
   }
+  
+  goToVerifiedYield(){
+
+ 		let verifiedYieldUrl = this.appConfigService.getConfig().rest["pit_underwriting_ui"]
+
+    if (verifiedYieldUrl.length > 0) {
+      verifiedYieldUrl = verifiedYieldUrl + "/landingpage/" + this.calculationDetail.policyNumber + "/verified_yield"
+      window.open(verifiedYieldUrl, "_blank", "noopener,noreferrer");
+    }
+    
+  }
 
   setFormFields (calcDetail) {
       

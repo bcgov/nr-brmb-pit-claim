@@ -69,6 +69,11 @@ spec:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
                   key: CIRRAS_CLAIMS_REST_URI
+            - name: PIT_UNDERWRITING_UI_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pit-claim-ui-config-#{ENV}#
+                  key: PIT_UNDERWRITING_UI_URL
             - name: WEBADE_OAUTH2_AUTHORIZE_URL
               valueFrom:
                 configMapKeyRef:

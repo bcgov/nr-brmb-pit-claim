@@ -220,7 +220,11 @@
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn"class="ccc-right">Pedigreed</div>
 
           <div>
-            <span class="ccc-expression">H</span> Total Yield Harvested and Appraised (Tonnes)
+            <span class="ccc-expression">H</span> 
+              <a (click)="goToVerifiedYield()" style="cursor: pointer;" matTooltip="Open Verified Yield in a new tab.">
+                Total Yield Harvested and Appraised (Tonnes)
+                <mat-icon style="vertical-align: middle;">info</mat-icon>
+              </a>
           </div>
           <div class="ccc-expression ccc-border-right">           
           </div>
