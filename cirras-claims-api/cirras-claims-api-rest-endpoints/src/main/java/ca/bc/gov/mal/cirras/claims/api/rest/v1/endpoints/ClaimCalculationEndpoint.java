@@ -98,5 +98,7 @@ public interface ClaimCalculationEndpoint extends BaseEndpoints {
 		@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = MessageListRsrc.class))) })
 	@DELETE
 	public Response deleteClaimCalculation(
-		@Parameter(description = "The GUID of the claim calculation resource.") @PathParam("claimCalculationGuid") String claimCalculationGuid);
+		@Parameter(description = "The GUID of the claim calculation resource.") @PathParam("claimCalculationGuid") String claimCalculationGuid,
+		@Parameter(description = "Indicates if linked calculation are deleted as well") @QueryParam("doDeleteLinkedCalculations") String doDeleteLinkedCalculations
+	);
 }

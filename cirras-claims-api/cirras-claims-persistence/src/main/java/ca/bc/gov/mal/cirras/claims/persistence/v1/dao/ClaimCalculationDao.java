@@ -55,4 +55,8 @@ public interface ClaimCalculationDao extends Serializable {
    
    ClaimCalculationDto getLatestVersionOfCalculation(Integer claimNumber) throws DaoException;
    
+   List<ClaimCalculationDto> getCalculationsByGrainQuantityGuid(
+		String claimCalculationGrainQuantityGuid
+   ) throws DaoException;
+   
 }
