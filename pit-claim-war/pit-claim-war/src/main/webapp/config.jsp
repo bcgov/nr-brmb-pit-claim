@@ -34,7 +34,7 @@
     }
 
     json = json.append("\"rest\":{");
-    json = json.append("\"cirras_claims\":\"").append(pitClaimRestUri).append("\"");
+    json = json.append("\"cirras_claims\":\"").append(pitClaimRestUri).append("\"").append(",");
     json = json.append("\"pit_underwriting_ui\":\"").append(pitUnderwritingUiUrl).append("\"");
     json = json.append("},");
 
