@@ -520,8 +520,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
   showSaveButton() {
-    if (this.calculationDetail && this.calculationDetail.linkedClaimNumber &&
-       this.calculationDetail.calculationVersion !== this.calculationDetail.latestLinkedCalculationVersion) {
+    // forbid save if the versions of the linked calculations don't match
+    if (this.calculationDetail && this.calculationDetail.linkedProductId &&
+        this.calculationDetail.latestLinkedClaimCalculationGuid && !this.calculationDetail.linkedClaimCalculationGuid) {
 
         return false
       }

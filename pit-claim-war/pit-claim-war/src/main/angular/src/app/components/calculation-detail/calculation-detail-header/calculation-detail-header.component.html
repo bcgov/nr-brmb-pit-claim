@@ -98,11 +98,10 @@
     </div>
   </div>
 
-  <!-- linked calculations version mismatch -->
+  <!-- linked calculations version mismatch  -->
   <div 
     class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
-    *ngIf="calculationDetail.linkedProductId &&
-        calculationDetail.calculationVersion !== calculationDetail.latestLinkedCalculationVersion "> 
+    *ngIf="calculationDetail.linkedProductId && calculationDetail.latestLinkedClaimCalculationGuid && !calculationDetail.linkedClaimCalculationGuid"> 
     <div class="ccc-container ccc-warning">
       <div>
         <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
