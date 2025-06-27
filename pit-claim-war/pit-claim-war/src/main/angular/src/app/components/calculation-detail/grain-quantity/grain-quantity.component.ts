@@ -6,7 +6,7 @@ import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
 import { FormControl, UntypedFormGroup } from '@angular/forms';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
@@ -82,6 +82,13 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     if (changes.calculationDetail) {
         this.calculationDetail = changes.calculationDetail.currentValue;
         this.calculationComment = this.calculationDetail.calculationComment
+
+        // reset values 
+        this.calculationDetailNonPedigree = null
+        this.calculationDetailPedigree = null
+        this.linkedCalculationDetail = null
+        this.showNonPedigreeColumn = false  
+        this.showPedigreeColumn = false
 
         if (this.calculationDetail.isPedigreeInd) {
           this.calculationDetailPedigree = this.calculationDetail
@@ -500,7 +507,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
   setStyles(){
-    
     let styles =  {
       'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedProductId? '1fr' : '')  +' 1fr' ,
     }
@@ -758,6 +764,46 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
 
     return false
+  }
+
+
+  // If there are two products, the button is only enabled/visible if there is a second calculation 
+  // and the sum of the paid out amount of both calculations equals Quantity Loss Claim.
+  showPrintButton() {
+    if (this.calculationDetail.linkedProductId) {
+      
+      if (this.calculationDetail.linkedClaimCalculationGuid && this.calculationDetailNonPedigree && this.calculationDetailPedigree && 
+        (Math.round( (this.calculationDetailNonPedigree.totalClaimAmount + this.calculationDetailPedigree.totalClaimAmount) * 100) / 100) == (Math.round(this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim  * 100 ) / 100) 
+      ) {
+
+        return true
+
+      } else {
+
+        return false
+
+      }
+
+    } else {
+      return true
+    }
+  }
+
+  onPrint() {
+    const originalTitle = this.titleService.getTitle()
+
+    const title = getPrintTitle(this.calculationDetail.commodityName, 
+                                this.calculationDetail.coverageName, 
+                                this.calculationDetail.claimNumber,
+                                this.calculationDetail.policyNumber,
+                                this.calculationDetail.growerNumber)
+
+
+    this.titleService.setTitle(title);
+
+    window.print()
+
+    this.titleService.setTitle(originalTitle);
   }
 
 }
