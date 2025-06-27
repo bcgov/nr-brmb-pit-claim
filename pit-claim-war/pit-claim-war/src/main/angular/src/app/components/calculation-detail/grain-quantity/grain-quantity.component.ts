@@ -519,6 +519,16 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     return styles;
   }
 
+  showSaveButton() {
+    if (this.calculationDetail && this.calculationDetail.linkedClaimNumber &&
+       this.calculationDetail.calculationVersion !== this.calculationDetail.latestLinkedCalculationVersion) {
+
+        return false
+      }
+
+    return true
+  }
+
   onSave(saveCommentsOnly:boolean) {
       const  updatedClaim = this.getUpdatedClaim(saveCommentsOnly);
       if (this.isFormValid(updatedClaim) )  {

@@ -54,7 +54,8 @@
 
   <div 
     class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
-    *ngIf="calculationDetail.linkedProductId && ( !calculationDetail.linkedClaimNumber || !calculationDetail.linkedClaimCalculationGuid)"> 
+    *ngIf="calculationDetail.linkedProductId && calculationDetail.calculationVersion == 1 && !calculationDetail.latestLinkedClaimCalculationGuid &&
+          ( !calculationDetail.linkedClaimNumber || !calculationDetail.linkedClaimCalculationGuid)"> 
     <div class="ccc-container ccc-warning">
       <div>
         <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
@@ -92,6 +93,32 @@
             calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName }}
             Pedigreed and Non-Pedigreed claims, using the Linked Claim link.
         </span>  
+
+      </div>
+    </div>
+  </div>
+
+  <!-- linked calculations version mismatch -->
+  <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
+    *ngIf="calculationDetail.linkedProductId &&
+        calculationDetail.calculationVersion !== calculationDetail.latestLinkedCalculationVersion "> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'blue'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+
+        <h3 style="color: blue;">
+          Linked calculations version mismatch. The calculation for the claim # {{calculationDetail.claimNumber}} is at version {{calculationDetail.calculationVersion}}
+          but the calculation of the linked claim # {{calculationDetail.linkedClaimNumber}} is at version {{calculationDetail.latestLinkedCalculationVersion}}.
+        </h3>  
+        
+        <span style="color: blue; font-size: 14px;">
+          In CIRRAS rollback or amend the claim with the lower calculation version. Then replace the calculation with the lower version.
+        </span>   
 
       </div>
     </div>
