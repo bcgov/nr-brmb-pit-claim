@@ -229,7 +229,7 @@ export class CalculationDetailStrawberriesPlantComponent extends BaseComponent i
 
 
   onCancel() {
-      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, this.calculationDetail.policyNumber, "false"));
   }
 
   onSave(saveCommentsOnly:boolean) {

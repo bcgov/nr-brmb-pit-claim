@@ -223,7 +223,7 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
 
 
   onCancel() {
-      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, this.calculationDetail.policyNumber, "false"));
   }
 
   onSave(saveCommentsOnly:boolean) {
