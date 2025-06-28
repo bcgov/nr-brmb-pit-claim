@@ -1096,7 +1096,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		if(claimCalculation.getLinkedProductId() != null && claimCalculation.getLinkedClaimCalculationGuid() == null) {
 			//There is a linked product but no linked calculation
 			//Update only possible if the calculations are in version 1
-			if(claimCalculation.getCalculationVersion() > 1) {
+			if(claimCalculation.getCalculationVersion() > 1 && claimCalculation.getLatestLinkedCalculationVersion() !=null && claimCalculation.getCalculationVersion() >= claimCalculation.getLatestLinkedCalculationVersion() ) {
 				throw new ServiceException("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
 			}
 			

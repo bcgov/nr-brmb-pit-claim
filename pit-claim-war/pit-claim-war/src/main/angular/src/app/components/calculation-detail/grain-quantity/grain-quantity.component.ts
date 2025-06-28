@@ -83,6 +83,13 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         this.calculationDetail = changes.calculationDetail.currentValue;
         this.calculationComment = this.calculationDetail.calculationComment
 
+        // reset values 
+        this.calculationDetailNonPedigree = null
+        this.calculationDetailPedigree = null
+        this.linkedCalculationDetail = null
+        this.showNonPedigreeColumn = false  
+        this.showPedigreeColumn = false
+
         if (this.calculationDetail.isPedigreeInd) {
           this.calculationDetailPedigree = this.calculationDetail
           this.showPedigreeColumn = true
@@ -511,7 +518,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
   setStyles(){
-    
     let styles =  {
       'grid-template-columns': '3fr 2fr ' + (this.calculationDetail.linkedProductId? '1fr' : '')  +' 1fr' ,
     }
@@ -769,6 +775,30 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
 
     return false
+  }
+
+
+
+  // If there are two products, the button is only enabled/visible if there is a second calculation 
+  // and the sum of the paid out amount of both calculations equals Quantity Loss Claim.
+  showPrintButton() {
+    if (this.calculationDetail.linkedProductId) {
+      
+      if (this.calculationDetail.linkedClaimCalculationGuid && this.calculationDetailNonPedigree && this.calculationDetailPedigree && 
+        (Math.round( (this.calculationDetailNonPedigree.totalClaimAmount + this.calculationDetailPedigree.totalClaimAmount) * 100) / 100) == (Math.round(this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim  * 100 ) / 100) 
+      ) {
+
+        return true
+
+      } else {
+
+        return false
+
+      }
+
+    } else {
+      return true
+    }
   }
 
 
