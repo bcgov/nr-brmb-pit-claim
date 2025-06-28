@@ -26,12 +26,12 @@ const routesDesktop: Routes = [
     },  
     { path: R.CALCULATION_DETAIL, children: [
       { 
-        path: ':claimNumber', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
+        path: ':policyNumber/:claimNumber', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
         canActivate: [ResourcesAuthGuard],
         canDeactivate: [DeactivateGuard]
       },
       { 
-        path: ':claimNumber/:claimCalculationGuid', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
+        path: ':policyNumber/:claimNumber/:claimCalculationGuid', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
         canActivate: [ResourcesAuthGuard],
         canDeactivate: [DeactivateGuard]
       }

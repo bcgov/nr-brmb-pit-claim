@@ -380,13 +380,16 @@ public class CirrasClaimServiceImpl extends BaseRestServiceClient implements Cir
 	}
 	
 	@Override
-	public void deleteClaimCalculation(ClaimCalculationRsrc resource)
+	public void deleteClaimCalculation(ClaimCalculationRsrc resource, Boolean doDeleteLinkedCalculations)
 	throws CirrasClaimServiceException {
 	
 		GenericRestDAO<ClaimCalculationRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(ClaimCalculationRsrc.class);
 		
+		Map<String, String> queryParams = new HashMap<String, String>();
+		putQueryParam(queryParams, "doDeleteLinkedCalculations", toQueryParam(doDeleteLinkedCalculations));
+		
 		try {
-			dao.Process(ResourceTypes.DELETE_CLAIM_CALCULATION, this.getTransformer(), resource, getWebClient());
+			dao.Process(ResourceTypes.DELETE_CLAIM_CALCULATION, this.getTransformer(), resource, queryParams, getWebClient());
 		} catch (RestDAOException rde) {
 			throw new CirrasClaimServiceException(rde);
 		}

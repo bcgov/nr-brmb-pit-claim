@@ -102,6 +102,10 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
             return this.createErrorHandlingInstructions(null, null, "No Connectivity. Please try again when you have reconnected.");
         } else if (response.status === 500) {
             //return this.createErrorHandlingInstructions(null, null, requestId ? `Server Error (500). RequestId: ${requestId}` : "Server Error (500)");
+            //Show a different message if the error is No verfied yield found
+            if(response.error.messages[0].message.indexOf('No verified yield found') >= 0){
+                return null;
+            }
             return this.createErrorHandlingInstructions(null, null,  `Server Error(500): ${response.error.messages[0].message}`);
         } else if (response.status >= 501) {
             return this.createErrorHandlingInstructions(null, null, `Server Error (${response.status}).`);

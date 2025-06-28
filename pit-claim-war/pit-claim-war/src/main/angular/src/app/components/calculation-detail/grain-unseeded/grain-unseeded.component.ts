@@ -173,7 +173,7 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
     }
     
     onCancel() {
-      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), "false"));
+      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), this.calculationDetail.policyNumber, "false"));
     }
   
     numberOnly(event): boolean {

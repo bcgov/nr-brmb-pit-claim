@@ -14,6 +14,7 @@ import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
 import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
 import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
 import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
+import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
 import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.ClaimCalculationEndpoint;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.endpoints.security.Scopes;
@@ -123,7 +124,7 @@ public class ClaimCalculationEndpointImpl extends BaseEndpointsImpl implements C
 
 	
 	@Override
-	public Response deleteClaimCalculation(String claimCalculationGuid) {
+	public Response deleteClaimCalculation(String claimCalculationGuid, String doDeleteLinkedCalculations) {
 		logger.debug("<deleteClaimCalculation");
 
 		Response response = null;
@@ -135,32 +136,40 @@ public class ClaimCalculationEndpointImpl extends BaseEndpointsImpl implements C
 		}
 			
 		try {
-			ClaimCalculationRsrc current = (ClaimCalculationRsrc) this.cirrasClaimService.getClaimCalculation(
-					claimCalculationGuid, 
-					false,
-					getFactoryContext(), 
-					getWebAdeAuthentication());
-
-			EntityTag currentTag = EntityTag.valueOf(current.getQuotedETag());
-
-			ResponseBuilder responseBuilder = this.evaluatePreconditions(currentTag);
-
-			if (responseBuilder == null) {
-				// Preconditions Are Met
-				
-				String optimisticLock = getIfMatchHeader();
-
-				cirrasClaimService.deleteClaimCalculation(
+			//Throw an error if flag is not set to true
+			if(Boolean.TRUE.equals(toBoolean(doDeleteLinkedCalculations))) {
+				ClaimCalculationRsrc current = (ClaimCalculationRsrc) this.cirrasClaimService.getClaimCalculation(
 						claimCalculationGuid, 
-						optimisticLock, 
+						false,
+						getFactoryContext(), 
 						getWebAdeAuthentication());
-
-				response = Response.status(204).build();
+	
+				EntityTag currentTag = EntityTag.valueOf(current.getQuotedETag());
+	
+				ResponseBuilder responseBuilder = this.evaluatePreconditions(currentTag);
+	
+				if (responseBuilder == null) {
+					// Preconditions Are Met
+					
+					String optimisticLock = getIfMatchHeader();
+	
+					cirrasClaimService.deleteClaimCalculation(
+							claimCalculationGuid, 
+							optimisticLock, 
+							getWebAdeAuthentication());
+	
+					response = Response.status(204).build();
+				} else {
+					// Preconditions Are NOT Met
+	
+					response = responseBuilder.tag(currentTag).build();
+				}
 			} else {
-				// Preconditions Are NOT Met
-
-				response = responseBuilder.tag(currentTag).build();
+				String msg = "doDeleteLinkedCalculations has to be set to true. All linked calculations need to be deleted at the same time";
+				logger.info(msg);
+				throw new ServiceException(msg);
 			}
+
 		} catch (ForbiddenException e) {
 			response = Response.status(Status.FORBIDDEN).build();
 		} catch (ConflictException e) {

@@ -20,6 +20,11 @@
 			<artifactId>cirras-policies-api-rest-client</artifactId>
 		</dependency>
 
+	    <dependency>
+			<groupId>ca.bc.gov.mal.cirras.underwriting</groupId>
+			<artifactId>cirras-underwriting-api-rest-client</artifactId>
+		</dependency>
+
 		<!-- Wildfire OrgUnit -->
 		<dependency>
 			<groupId>ca.bc.gov.nrs.wforg</groupId>
