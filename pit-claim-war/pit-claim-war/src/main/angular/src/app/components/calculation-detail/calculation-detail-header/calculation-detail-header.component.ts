@@ -82,11 +82,23 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
           this.calculationDetail.linkedClaimNumber.toString(),
           this.calculationDetail.linkedClaimCalculationGuid.toString()
         ]);
-    } else {
+      
+        return
+    } 
+    
+    if (this.calculationDetail.latestLinkedClaimCalculationGuid) {
       this.router.navigate([resourceRoute, 
-          this.calculationDetail.linkedClaimNumber.toString()
+          this.calculationDetail.linkedClaimNumber.toString(),
+          this.calculationDetail.latestLinkedClaimCalculationGuid.toString()
         ]);
-    }
+      
+        return
+    } 
+
+    // the linked claim doesn't have a calculation yet
+    this.router.navigate([resourceRoute, 
+        this.calculationDetail.linkedClaimNumber.toString()
+      ]);  
   }
 
   isRefreshAllowedForLinkedCalculations() {
