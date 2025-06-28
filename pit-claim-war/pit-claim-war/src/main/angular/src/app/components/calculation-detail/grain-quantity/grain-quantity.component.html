@@ -1,11 +1,11 @@
-<div class="cirras-claims-base-container page-width-container desktop">
+<div id="grain-quantity" class="cirras-claims-base-container page-width-container desktop">
     <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
   
   
       <cirras-calculation-detail-header 
-        [claimCalculationGuid]="claimCalculationGuid"
         [calculationDetail]="calculationDetail"
         [calculationComment]="calculationComment"
+        [linkedCalculationDetail]="linkedCalculationDetail"
       ></cirras-calculation-detail-header>
   
   
@@ -30,7 +30,7 @@
             <span class="ccc-col-right">
               Primary Peril:
               <mat-form-field appearance="fill">
-                <mat-select formControlName="primaryPerilCode" required >
+                <mat-select formControlName="primaryPerilCode" required (selectionChange)="isMyFormDirty()">
                   <mat-option>(None)</mat-option>
                   <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
                 </mat-select>
@@ -50,7 +50,7 @@
             <span class="ccc-col-right">
                 Secondary Peril:
                 <mat-form-field appearance="fill">
-                  <mat-select formControlName="secondaryPerilCode" >
+                  <mat-select formControlName="secondaryPerilCode" (selectionChange)="isMyFormDirty()">
                       <mat-option>(None)</mat-option>
                       <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
                       >{{ option.description }}</mat-option>
@@ -83,12 +83,17 @@
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.2-2' }}
-                  <!-- TODO: warning icon -->
+                  <span #el matTooltip="Acres don't match with CIRRAS" 
+                    *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">                 
                 {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.2-2' }}
-                <!-- TODO: warning icon -->                
+                <span #el matTooltip="Acres don't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>               
               </div>
     
               <div>
@@ -99,12 +104,16 @@
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.probableYield : "") | number:'1.3-3' }}
-                  <!-- TODO: warning icon -->
+                  <span #el matTooltip="Probable Yield doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncProbableYield" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
                 {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.probableYield : "") | number:'1.3-3' }}
-                  <!-- TODO: warning icon -->
+                <span #el matTooltip="Probable Yield doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncProbableYield" style="margin-left: 10px;">
+                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
               </div>
 
               <div>
@@ -115,12 +124,16 @@
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.deductible : "") | number:'1.0-0' }}%
-                  <!-- TODO: warning icon -->
+                  <span #el matTooltip="Deductible doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncDeductible" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
                 {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.deductible : "") | number:'1.0-0' }}%
-                  <!-- TODO: warning icon -->
+                <span #el matTooltip="Deductible doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncDeductible" style="margin-left: 10px;">
+                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
               </div>
 
               <div>
@@ -131,12 +144,16 @@
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.0-0' }}
-                  <!-- TODO: warning icon -->
+                  <span #el matTooltip="Production Guarantee doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncProductionGuaranteeWeight" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
                 {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.0-0' }}
-                  <!-- TODO: warning icon -->
+                <span #el matTooltip="Production Guarantee doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncProductionGuaranteeWeight" style="margin-left: 10px;">
+                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
               </div>
 
               <div>
@@ -147,12 +164,16 @@
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | number:'1.2-2' }}
-                  <!-- TODO: warning icon -->
+                  <span #el matTooltip="Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsurableValue" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
                 {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | number:'1.2-2' }}
-                <!-- TODO: warning icon -->
+                <span #el matTooltip="Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsurableValue" style="margin-left: 10px;">
+                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
               </div>
   
               <div>
@@ -162,12 +183,16 @@
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.coverageValue : "" ) | currency }}
-                  <!-- TODO: warning icon -->
+                  <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncCoverageValue" style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
                 {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.coverageValue : "" ) | currency }}
-                <!-- TODO: warning icon -->
+                <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncCoverageValue" style="margin-left: 10px;">
+                  <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
               </div>
 
               <div *ngIf="showNonPedigreeColumn && showPedigreeColumn">
@@ -202,12 +227,16 @@
           <div *ngIf="showNonPedigreeColumn" class="ccc-right ccc-border-right"> 
             <span class="right-space">
               {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.totalYieldToCount : "" ) | number:'1.3-3' }}
+              <span #el matTooltip="Total Yield Harvested doesn't match with the Total Yield To Count in the Underwriting App" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncTotalYieldToCount" style="margin-left: 10px;">
+                <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+              </span>
             </span>
-            <!-- TODO: warning icon -->
           </div> 
           <div *ngIf="showPedigreeColumn" class="ccc-right">
             {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.totalYieldToCount : "" ) | number:'1.3-3' }}
-            <!-- TODO: warning icon -->
+            <span #el matTooltip="Total Yield Harvested doesn't match with the Total Yield To Count in the Underwriting App" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncTotalYieldToCount" style="margin-left: 10px;">
+              <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>
           </div>
 
           <div>
@@ -218,7 +247,7 @@
             <mat-form-field appearance="fill">
               <input matInput formControlName="assessedYieldNonPedigree" 
                 (keypress)="numberOnly($event)"
-                (blur)="roundUpToPrecision('assessedYieldNonPedigree',3)" 
+                (blur)="roundUpToPrecision('assessedYieldNonPedigree',3);isMyFormDirty();" 
                 maxlength="14"> 
             </mat-form-field> 
           </div>
@@ -226,7 +255,7 @@
             <mat-form-field appearance="fill">
               <input matInput formControlName="assessedYieldPedigree" maxlength="14"
                 (keypress)="numberOnly($event)" 
-                (blur)="roundUpToPrecision('assessedYieldPedigree',3)">
+                (blur)="roundUpToPrecision('assessedYieldPedigree',3); isMyFormDirty();">
             </mat-form-field> 
           </div>        
 
@@ -288,7 +317,7 @@
               <input matInput 
                 formControlName="damagedAcresNonPedigree" 
                 (keypress)="numberOnly($event)" 
-                (blur)="roundUpToPrecision('damagedAcresNonPedigree',1)"
+                (blur)="roundUpToPrecision('damagedAcresNonPedigree',1);isMyFormDirty();"
                 maxlength="14">
             </mat-form-field>
           </div>
@@ -297,7 +326,7 @@
               <input matInput 
               formControlName="damagedAcresPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('damagedAcresPedigree',1)"
+              (blur)="roundUpToPrecision('damagedAcresPedigree',1);isMyFormDirty();"
               maxlength="14">
             </mat-form-field>
           </div>
@@ -311,15 +340,15 @@
               <input matInput 
               formControlName="seededAcresNonPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('seededAcresNonPedigree',1)"
-              maxlength="14">
+              (blur)="roundUpToPrecision('seededAcresNonPedigree',1);isMyFormDirty();"
+              maxlength="14">	
             </mat-form-field>
           </div>
           <div *ngIf="showEarlyEstDeemedYieldValueRows && showPedigreeColumn" class="ccc-fill ccc-number-double">
             <mat-form-field appearance="fill">
               <input matInput 
               formControlName="seededAcresPedigree" 
-              (blur)="roundUpToPrecision('seededAcresPedigree',1)"
+              (blur)="roundUpToPrecision('seededAcresPedigree',1);isMyFormDirty();"
               (keypress)="numberOnly($event)" 
               maxlength="14">
             </mat-form-field>
@@ -364,7 +393,7 @@
               <input matInput maxlength="14"
               formControlName="inspEarlyEstYieldNonPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('inspEarlyEstYieldNonPedigree', 3)">
+              (blur)="roundUpToPrecision('inspEarlyEstYieldNonPedigree', 3);isMyFormDirty();">
             </mat-form-field>
           </div>
           <div *ngIf="showEarlyEstDeemedYieldValueRows && showPedigreeColumn" class="ccc-fill ccc-number-double">
@@ -372,7 +401,7 @@
               <input matInput maxlength="14"
               formControlName="inspEarlyEstYieldPedigree" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('inspEarlyEstYieldPedigree', 3)">
+              (blur)="roundUpToPrecision('inspEarlyEstYieldPedigree', 3);isMyFormDirty();">
             </mat-form-field>
           </div> 
           <!-- end hidden rows -->
@@ -436,7 +465,7 @@
               <input matInput maxlength="14"
               formControlName="reseedClaim" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('reseedClaim', 2)">
+              (blur)="roundUpToPrecision('reseedClaim', 2); isMyFormDirty();">
             </mat-form-field>
           </div>
   
@@ -471,7 +500,7 @@
               <input matInput maxlength="14"
               formControlName="advancedClaim" 
               (keypress)="numberOnly($event)" 
-              (blur)="roundUpToPrecision('advancedClaim', 2)">
+              (blur)="roundUpToPrecision('advancedClaim', 2); isMyFormDirty();">
             </mat-form-field>
           </div>
 
@@ -491,13 +520,13 @@
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-fill ccc-right ccc-number-double ccc-border-right">
             <mat-form-field appearance="fill" style="max-width: 150px;">
               <mat-label style="font-weight: 200;">Non-Pedigree</mat-label>
-              <input matInput formControlName="totalClaimAmountNonPedigree" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="totalClaimAmountNonPedigree" (keypress)="numberOnly($event)" maxlength="14" (blur)="isMyFormDirty();">
             </mat-form-field>
           </div>
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-fill ccc-number-double">
              <mat-form-field appearance="fill">
               <mat-label id="totAmountPdgree" style="font-weight: 200;">Pedigree</mat-label>
-              <input matInput formControlName="totalClaimAmountPedigree" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="totalClaimAmountPedigree" (keypress)="numberOnly($event)" maxlength="14" (blur)="isMyFormDirty();">
             </mat-form-field>
           </div>
   
@@ -508,7 +537,9 @@
             <label>Comments</label>
             <div class="ccc-entire">
                 <mat-form-field appearance="fill">
-                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()">{{ calculationDetail.calculationComment }} </textarea>
+                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()" (blur)="isMyFormDirty();">
+                      {{ calculationDetail.calculationComment }} 
+                    </textarea>
                 </mat-form-field>
             </div>
         </div>
@@ -521,17 +552,23 @@
               ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload</button>
             </span>
   
-            <!-- <span class="ccc-col-right">
+            <span class="ccc-col-right">
+              <span *ngIf="isUnsaved" style="color:orange;">
+                <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
+                Unsaved Changes
+              </span>
+              &nbsp;
+
               <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
                 (click)="onSubmit()"
               ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
               &nbsp;
-              <button mat-raised-button color="primary"
+              <!-- <button mat-raised-button color="primary"
               *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
                 (click)="onReopen()"
               ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
-              &nbsp;
+              &nbsp; -->
               <button mat-raised-button color="primary"
                   *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT'"
                   (click)="onSave(false)"
@@ -543,10 +580,10 @@
               ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
               &nbsp;
               <button mat-raised-button color="primary"
-                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid && showPrintButton()"
                   (click)="onPrint()"
               ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
-            </span>  -->
+            </span> 
             
           </div>
         </div>
@@ -554,4 +591,14 @@
     </div>
   </div>
   
-
+<!-- Quantity printout -->
+    <calculation-printout-grain-quantity
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQG' &&
+            calculationDetail.claimCalculationGrainQuantityDetail "
+    [calculationDetail]="calculationDetail"
+    [calculationDetailNonPedigree]="calculationDetailNonPedigree"
+    [calculationDetailPedigree]="calculationDetailPedigree"
+    > 
+  </calculation-printout-grain-quantity>

@@ -9,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
 import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
 
 public class OutOfSync {
@@ -23,15 +25,25 @@ public class OutOfSync {
 	private DtoUtils dtoUtils;
 	
 
-	public void calculateOutOfSyncFlags(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, Product product) {
+	public void calculateOutOfSyncFlags(
+			ClaimCalculation claimCalculation, 
+			InsuranceClaim insuranceClaim, 
+			Product product,
+			VerifiedYieldSummary verifiedSummary) {
 		logger.debug("<calculateOutOfSyncFlags");
 
 		if (claimCalculation == null || insuranceClaim == null) {
 			logger.warn("<claimCalculation or insuranceClaim was null. Out of sync flags not set.");
 			return;
 		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				&& (claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
+						|| claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+						|| claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode()))) {
 			logger.warn("<product was null. Out of sync flags not set.");
+			return;
+		} else if (verifiedSummary == null 
+					&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
+			logger.warn("<verified yield was null. Out of sync flags not set.");
 			return;
 		}
 
@@ -62,6 +74,9 @@ public class OutOfSync {
 		
 		// Set Grain Spot Loss Data flags
 		isOutOfSync = grainSpotLossDataOutOfSync(claimCalculation, product, isOutOfSync);
+		
+		// Set Grain Quantity Loss Data flags
+		isOutOfSync = grainQuantityDetailDataOutOfSync(claimCalculation, product, verifiedSummary, isOutOfSync);
 		
 		claimCalculation.setIsOutOfSync(isOutOfSync);
 		
@@ -361,6 +376,85 @@ public class OutOfSync {
 		}
 
 		return isOutOfSync;
+	}	
+	
+	private boolean grainQuantityDetailDataOutOfSync(
+			ClaimCalculation claimCalculation, 
+			Product product,
+			VerifiedYieldSummary verifiedSummary,
+			boolean isOutOfSync) {
+
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())
+				&& claimCalculation.getClaimCalculationGrainQuantityDetail() != null ) {
+			
+			ClaimCalculationGrainQuantityDetail quantityDetail = claimCalculation.getClaimCalculationGrainQuantityDetail();
+			
+			if (dtoUtils.equals("InsuredAcres", product.getAcres(), quantityDetail.getInsuredAcres(), 4)) {
+				quantityDetail.setIsOutOfSyncInsuredAcres(false);
+			} else {
+				quantityDetail.setIsOutOfSyncInsuredAcres(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("ProbableYield", product.getProbableYield(), quantityDetail.getProbableYield(), 4)) {
+				quantityDetail.setIsOutOfSyncProbableYield(false);
+			} else {
+				quantityDetail.setIsOutOfSyncProbableYield(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("Deductible", product.getDeductibleLevel(), quantityDetail.getDeductible())) {
+				quantityDetail.setIsOutOfSyncDeductible(false);
+			} else {
+				quantityDetail.setIsOutOfSyncDeductible(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("InsurableValue", product.getSelectedInsurableValue(), quantityDetail.getInsurableValue(), 4)) {
+				quantityDetail.setIsOutOfSyncInsurableValue(false);
+			} else {
+				quantityDetail.setIsOutOfSyncInsurableValue(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("ProductionGuaranteeWeight", product.getProductionGuarantee(), quantityDetail.getProductionGuaranteeWeight(), 4)) {
+				quantityDetail.setIsOutOfSyncProductionGuaranteeWeight(false);
+			} else {
+				quantityDetail.setIsOutOfSyncProductionGuaranteeWeight(true);
+				isOutOfSync = true;
+			}
+
+			
+			if (dtoUtils.equals("CoverageValue", product.getCoverageDollars(), quantityDetail.getCoverageValue(), 4)) {
+				quantityDetail.setIsOutOfSyncCoverageValue(false);
+			} else {
+				quantityDetail.setIsOutOfSyncCoverageValue(true);
+				isOutOfSync = true;
+			}
+			
+			Double verifiedYieldToCount = getVerifiedYieldToCount(verifiedSummary);
+
+			if (dtoUtils.equals("TotalYieldToCount", verifiedYieldToCount, quantityDetail.getTotalYieldToCount(), 4)) {
+				quantityDetail.setIsOutOfSyncTotalYieldToCount(false);
+			} else {
+				quantityDetail.setIsOutOfSyncTotalYieldToCount(true);
+				isOutOfSync = true;
+			}
+
+			
+		}
+
+		return isOutOfSync;
+	}
+
+	private Double getVerifiedYieldToCount(VerifiedYieldSummary vys) {
+		
+		Double verifiedYieldToCount = 0.0;
+		if ( vys != null && vys.getYieldToCount() != null) { 
+			verifiedYieldToCount = vys.getYieldToCount();
+		}
+		return verifiedYieldToCount;
 	}
 	
 	//

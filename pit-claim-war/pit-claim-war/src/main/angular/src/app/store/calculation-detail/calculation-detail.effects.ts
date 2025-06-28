@@ -50,6 +50,8 @@ import {
   populateClaimsCodeTableCache
 } from "../../utils/app-initializer";
 import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "src/app/utils";
+import { setFormStateUnsaved } from "../application/application.actions";
+import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
 
 @Injectable()
 export class CalculationDetailEffects {
@@ -85,7 +87,19 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
           "response")
           .pipe(
             map((response: any) => {
-              return loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null));
+              
+              if (payload.doRefreshManualClaimData.toLowerCase() == "true"){
+
+                // load the calculation in the store
+                this.store.dispatch(loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null)))
+                
+                // show the unsaved changes message 
+                return setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true )
+                
+              } else {
+                return loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null));
+              }
+              
             }),
             catchError(error => of(loadCalculationDetailError(convertToErrorState(error, "Calculation Detail data"))))
           );
@@ -151,7 +165,10 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
                 .pipe(
                     concatMap((response: any) => {
                       if (updateType == CALCULATION_UPDATE_TYPE.SUBMIT) {
-                        displayLabel = " Calculation was submitted successfully "
+                        displayLabel = " Calculation was submitted successfully."
+                        if (payload.linkedClaimCalculationGuid) {
+                          displayLabel  = displayLabel  + " Please ensure that you also submit the linked calculation, if you haven't done so."
+                        }
                       } else {
                         displayLabel = " Calculation was saved successfully "
                       }

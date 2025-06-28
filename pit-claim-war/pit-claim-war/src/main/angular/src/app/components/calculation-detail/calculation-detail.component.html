@@ -108,14 +108,9 @@
             (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQG' &&
             calculationDetail.claimCalculationGrainQuantityDetail "
       [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
   ></calculation-detail-grain-quantity>
 
-  <!-- <calculation-printout-grain-quantity
-      *ngIf=" calculationDetail && 
-            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
-            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL' &&
-            calculationDetail.claimCalculationGrainSpotLoss "
-    [calculationDetail]="calculationDetail"> 
-  </calculation-printout-grain-quantity> -->
+  <!-- GRAIN QUANTITY Printout is in the upper component -->
 
 </base-wrapper>

@@ -63,7 +63,8 @@ export interface vmClaim {
 export interface vmCalculation {
   etag?:string;
   claimCalculationGuid: string;
-
+  claimCalculationGrainQuantityGuid?: string;
+  
   // calculation
   calculationVersion: number;
   calculationVersionDisplay: string;
@@ -125,6 +126,8 @@ export interface vmCalculation {
   linkedProductId?: number;
   linkedClaimNumber?: number;
   linkedClaimCalculationGuid?: string;
+  latestLinkedCalculationVersion?: number;
+  latestLinkedClaimCalculationGuid?: string;
 
   // out of sync flags
   isOutOfSync?: boolean;

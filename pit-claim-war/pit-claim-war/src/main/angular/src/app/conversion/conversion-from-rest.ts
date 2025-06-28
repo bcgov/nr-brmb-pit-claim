@@ -150,7 +150,8 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       etag: etag,
 
       claimCalculationGuid: calculation.claimCalculationGuid,
-
+      claimCalculationGrainQuantityGuid: calculation.claimCalculationGrainQuantityGuid,
+      
       // calculation
       calculationVersion: calculation.calculationVersion,
       calculationVersionDisplay: calculation.calculationVersion ? 'V' + calculation.calculationVersion : null,
@@ -212,6 +213,8 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       linkedProductId: calculation.linkedProductId,
       linkedClaimNumber: calculation.linkedClaimNumber,
       linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+      latestLinkedCalculationVersion: calculation.latestLinkedCalculationVersion,
+      latestLinkedClaimCalculationGuid: calculation.latestLinkedClaimCalculationGuid,
 
       isOutOfSync: calculation.isOutOfSync,
       isOutOfSyncGrowerNumber: calculation.isOutOfSyncGrowerNumber,

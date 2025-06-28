@@ -19,6 +19,7 @@ export class CalculationDetailComponent implements OnInit {
     @Input() calculationDetail: vmCalculation;
     @Input() loadState: LoadState;
     @Input() errorState: ErrorState[];
+    @Input() isUnsaved: boolean;
 
     claimCalculationGuid: string;
     claimNumber: string;

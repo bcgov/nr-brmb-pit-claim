@@ -401,3 +401,15 @@ export function roundUpDecimals(number, precision) {
   return parseFloat(number).toFixed(precision)
   
 }
+
+  // these functions are used to compare whether the values in a form input are equal to the original value from the database 
+  export function areNotEqual(a, b) { 
+    // a, b -> string, boolean, or numeric values; it also handles null and empty strings
+
+    if ( (a && !b) || (!a && b) || ( a && b && a != b ) ) {
+        return true
+    }
+
+    return false
+  }
+  
