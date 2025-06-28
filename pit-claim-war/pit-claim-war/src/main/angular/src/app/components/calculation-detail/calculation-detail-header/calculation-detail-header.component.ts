@@ -57,7 +57,7 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
 
   onRefresh() {
     // refresh the calculation
-    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, "", "true"));
+    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, "", this.calculationDetail.policyNumber, "true"));
   }
 
   onReplace() {        

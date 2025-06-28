@@ -7,7 +7,9 @@ import { BaseComponent } from '../../common/base/base.component';
   templateUrl: './grain-quantity.component.html',
   styleUrl: './grain-quantity.component.scss'
 })
+
 export class CalculationPrintoutGrainQuantityComponent implements OnChanges {
+
   @Input() calculationDetail: vmCalculation;
   @Input() calculationDetailNonPedigree: vmCalculation;
   @Input() calculationDetailPedigree: vmCalculation;

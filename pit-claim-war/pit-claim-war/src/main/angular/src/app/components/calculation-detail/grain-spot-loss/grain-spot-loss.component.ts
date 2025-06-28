@@ -156,7 +156,7 @@ export class CalculationDetailGrainSpotLossComponent extends BaseComponent imple
 
 
   onCancel() {
-      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+      this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, this.calculationDetail.policyNumber, "false"));
   }
 
   numberOnly(event): boolean {

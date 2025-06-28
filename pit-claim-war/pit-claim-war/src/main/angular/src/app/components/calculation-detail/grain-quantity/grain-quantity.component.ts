@@ -200,6 +200,17 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     })
 
   }
+  
+  goToVerifiedYield(){
+
+ 		let verifiedYieldUrl = this.appConfigService.getConfig().rest["pit_underwriting_ui"]
+
+    if (verifiedYieldUrl.length > 0) {
+      verifiedYieldUrl = verifiedYieldUrl + "/landingpage/" + this.calculationDetail.policyNumber + "/verified_yield"
+      window.open(verifiedYieldUrl, "_blank", "noopener,noreferrer");
+    }
+    
+  }
 
   setFormFields (calcDetail) {
       
@@ -439,7 +450,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   } 
 
   onCancel() {
-    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), "false"));
+    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), this.calculationDetail.policyNumber, "false"));
     this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
   }
 
@@ -767,6 +778,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
 
+
   // If there are two products, the button is only enabled/visible if there is a second calculation 
   // and the sum of the paid out amount of both calculations equals Quantity Loss Claim.
   showPrintButton() {
@@ -788,6 +800,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       return true
     }
   }
+
 
   onPrint() {
     const originalTitle = this.titleService.getTitle()

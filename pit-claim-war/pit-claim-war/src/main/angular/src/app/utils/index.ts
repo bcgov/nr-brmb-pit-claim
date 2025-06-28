@@ -265,11 +265,11 @@ export function requiredIfValidator(predicate) {
 }
 
 export function navigateToCalculation(item: vmCalculation, router: Router) {
-  navigateToCalculationHelper(item.claimNumber.toString(), item.claimCalculationGuid, router);
+  navigateToCalculationHelper(item.policyNumber, item.claimNumber.toString(), item.claimCalculationGuid, router);
 }
 
-export function navigateToCalculationHelper(claimNumber:string, claimCalculationGuid: string, router: Router) {
-  router.navigate([ResourcesRoutes.CALCULATION_DETAIL, claimNumber, claimCalculationGuid]);
+export function navigateToCalculationHelper(policyNumber:string, claimNumber:string, claimCalculationGuid: string, router: Router) {
+  router.navigate([ResourcesRoutes.CALCULATION_DETAIL, policyNumber, claimNumber, claimCalculationGuid]);
 }
 
 export function dollars( val ) {
