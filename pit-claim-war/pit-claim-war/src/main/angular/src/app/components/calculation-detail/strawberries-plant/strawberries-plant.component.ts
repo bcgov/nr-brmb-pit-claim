@@ -10,8 +10,10 @@ import {CodeData, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
-import {dollars, dollarsToNumber, makeNumberOnly, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, getPrintTitle, CLAIM_STATUS_CODE} from "../../../utils"
+import {dollars, dollarsToNumber, makeNumberOnly, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, getPrintTitle, CLAIM_STATUS_CODE, areNotEqual} from "../../../utils"
 import { StrawberriesPlantComponentModel } from "./strawberries-plant.component.model";
+import { setFormStateUnsaved } from "src/app/store/application/application.actions";
+import { UntypedFormGroup } from "@angular/forms";
 
 @Component({
   selector: 'cirras-calculation-detail-strawberries-plant',
@@ -25,6 +27,7 @@ export class CalculationDetailStrawberriesPlantComponent extends BaseComponent i
   @Input() claimCalculationGuid?: string;
   @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
+  @Input() isUnsaved: boolean;
 
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -379,5 +382,41 @@ export class CalculationDetailStrawberriesPlantComponent extends BaseComponent i
   setComment() {
     this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
   }
+
+  isMyFormDirty(){
+        const hasChanged = this.isMyFormReallyDirty()
+    
+        if (hasChanged) {
+          this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+        }
+      }
+    
+      isMyFormReallyDirty(): boolean {
+    
+        if (!this.calculationDetail) return false
+    
+        const frmMain = this.viewModel.formGroup as UntypedFormGroup
+    
+        if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+             areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+             areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+            
+            return true
+        }
+    
+        if (this.calculationDetail.claimCalculationPlantAcres && 
+            ( areNotEqual (this.calculationDetail.claimCalculationPlantAcres.confirmedAcres, frmMain.controls.confirmedAcres.value) ||
+              areNotEqual (this.calculationDetail.claimCalculationPlantAcres.damagedAcres, frmMain.controls.damagedAcres.value) || 
+              areNotEqual (this.calculationDetail.claimCalculationPlantAcres.lessAssessmentReason, frmMain.controls.lessAssessmentReason.value) || 
+              areNotEqual (this.calculationDetail.claimCalculationPlantAcres.lessAssessmentAmount, frmMain.controls.lessAssessmentAmount.value) 
+            )
+          ) {
+    
+          return true
+        }
+    
+        return false
+      }
+
   
 }
