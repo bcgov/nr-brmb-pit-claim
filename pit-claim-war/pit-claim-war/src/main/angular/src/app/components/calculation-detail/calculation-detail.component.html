@@ -4,6 +4,7 @@
     *ngIf=" calculationDetail && (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
     [claimCalculationGuid]="claimCalculationGuid"
     [calculationDetail]="calculationDetail"
+    [isUnsaved]="isUnsaved"
   ></cirras-claims-calculation-detail-grapes>
 
   <cirras-calculation-printout 
@@ -76,6 +77,7 @@
             calculationDetail.claimCalculationGrainUnseeded "
       [claimCalculationGuid]="claimCalculationGuid"
       [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
   ></calculation-detail-grain-unseeded>
 
   <calculation-printout-grain-unseeded
@@ -94,6 +96,7 @@
             calculationDetail.claimCalculationGrainSpotLoss "
       [claimCalculationGuid]="claimCalculationGuid"
       [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
   ></calculation-detail-grain-spot-loss>
 
   <calculation-printout-grain-spot-loss

@@ -29,7 +29,7 @@
             <span class="ccc-col-right">
               Primary Peril:
               <mat-form-field appearance="fill">
-                <mat-select formControlName="primaryPerilCode" required >
+                <mat-select formControlName="primaryPerilCode" required (selectionChange)="isMyFormDirty()" >
                   <mat-option>(None)</mat-option>
                   <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
                 </mat-select>
@@ -49,7 +49,7 @@
             <span class="ccc-col-right">
                 Secondary Peril:
                 <mat-form-field appearance="fill">
-                  <mat-select formControlName="secondaryPerilCode" >
+                  <mat-select formControlName="secondaryPerilCode" (selectionChange)="isMyFormDirty()">
                       <mat-option>(None)</mat-option>
                       <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
                       >{{ option.description }}</mat-option>
@@ -116,7 +116,7 @@
           </div>
           <div class="ccc-fill ccc-number"> 
             <mat-form-field appearance="fill">
-              <input matInput formControlName="adjustedAcres" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="adjustedAcres" (keypress)="numberOnly($event)" maxlength="14" (blur)="isMyFormDirty()">
             </mat-form-field> 
           </div>
   
@@ -126,7 +126,7 @@
           <div class="ccc-border-right"></div>
           <div class="ccc-fill ccc-number"> 
             <mat-form-field appearance="fill">
-              <input matInput formControlName="percentYieldReduction" (keypress)="numberOnly($event)" maxlength="5">%
+              <input matInput formControlName="percentYieldReduction" (keypress)="numberOnly($event)" maxlength="5" (blur)="isMyFormDirty()">%
             </mat-form-field>
           </div> 
   
@@ -179,7 +179,7 @@
             <label>Comments</label>
             <div class="ccc-entire">
                 <mat-form-field appearance="fill">
-                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()">{{ calculationDetail.calculationComment }} </textarea>
+                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()" (blur)="isMyFormDirty()">{{ calculationDetail.calculationComment }} </textarea>
                 </mat-form-field>
             </div>
         </div>
@@ -192,6 +192,10 @@
             </span>
   
             <span class="ccc-col-right">
+              <span *ngIf="isUnsaved" style="color:orange;">
+                <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
+                Unsaved Changes
+              </span>
               <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
                 (click)="onSubmit()"
