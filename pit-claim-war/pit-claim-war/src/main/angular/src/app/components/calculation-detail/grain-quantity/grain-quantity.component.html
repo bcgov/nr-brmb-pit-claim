@@ -534,6 +534,17 @@
             </mat-form-field>
           </div>
   
+          <!-- difference between Line Z and Line Y -->
+          <div *ngIf="showNonPedigreeColumn && showPedigreeColumn">
+            <span class="ccc-expression"></span> 
+          </div>
+          <div  *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-border-right ccc-right" >
+            <span class="ccc-expression">Sum of Z - Y</span>
+          </div>
+          <div  *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-right">
+            {{ difBetweenZandY | number:'1.2-2'  }}
+          </div>
+
         </div>
         </div>
 
