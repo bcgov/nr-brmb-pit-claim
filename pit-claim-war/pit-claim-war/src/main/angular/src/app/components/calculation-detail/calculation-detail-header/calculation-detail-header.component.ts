@@ -78,12 +78,14 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
     let resourceRoute = ResourcesRoutes.CALCULATION_DETAIL
 
     if (this.calculationDetail.linkedClaimCalculationGuid) {
-      this.router.navigate([resourceRoute, 
+      this.router.navigate([resourceRoute,
+          this.calculationDetail.policyNumber.toString(), 
           this.calculationDetail.linkedClaimNumber.toString(),
           this.calculationDetail.linkedClaimCalculationGuid.toString()
         ]);
     } else {
       this.router.navigate([resourceRoute, 
+          this.calculationDetail.policyNumber.toString(),
           this.calculationDetail.linkedClaimNumber.toString()
         ]);
     }
