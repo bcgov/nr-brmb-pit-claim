@@ -133,6 +133,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.viewModel.formGroup.controls.reseedClaim.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.advancedClaim.valueChanges.subscribe(value => this.updateCalculated() )
 
+    this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
+    this.viewModel.formGroup.controls.totalClaimAmountPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
+
   }
 
   ngOnChanges2(changes: SimpleChanges) {
@@ -332,8 +335,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       }
     }
 
-    // Sum of Z - Y
-    this.difBetweenZandY =  this.calculateDiffBeteenSumZandY()
+    // Difference of sum of Z - Y
+    this.calculateDiffBeteenSumZandY()
   }
   
   calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
@@ -471,7 +474,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = result + parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value )
     }
 
-    return result - this.quantityLossClaim
+    this.difBetweenZandY = result - this.quantityLossClaim
   }
 
   onCancel() {
