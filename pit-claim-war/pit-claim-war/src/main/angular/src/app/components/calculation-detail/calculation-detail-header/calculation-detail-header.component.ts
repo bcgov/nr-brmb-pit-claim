@@ -86,7 +86,8 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
     } else {
       this.router.navigate([resourceRoute, 
           this.calculationDetail.policyNumber.toString(),
-          this.calculationDetail.linkedClaimNumber.toString()
+          this.calculationDetail.linkedClaimNumber.toString(),
+          this.calculationDetail.latestLinkedClaimCalculationGuid.toString()
         ]);
     }
   }

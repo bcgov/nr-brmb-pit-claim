@@ -525,6 +525,17 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     return styles;
   }
 
+  showSaveButton() {
+    // forbid save if the versions of the linked calculations don't match
+    if (this.calculationDetail && this.calculationDetail.linkedProductId &&
+        this.calculationDetail.latestLinkedClaimCalculationGuid && !this.calculationDetail.linkedClaimCalculationGuid) {
+
+        return false
+      }
+
+    return true
+  }
+
   onSave(saveCommentsOnly:boolean) {
       const  updatedClaim = this.getUpdatedClaim(saveCommentsOnly);
       if (this.isFormValid(updatedClaim) )  {
@@ -819,4 +830,28 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.titleService.setTitle(originalTitle);
   }
 
+
+  onReopen() {
+    const  updatedClaim = this.getUpdatedClaim(true);
+    if (this.isFormValid(updatedClaim) )  {
+
+        updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.DRAFT;
+        this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+        this.doSyncClaimsCodeTables();
+    }
+  }
+        
+  showReopenButton() {
+
+      //Allow to reopen a calculation if the claim has been amended and is in status In Progress
+      // and the calculation is in status submitted
+      if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.SUBMITTED && 
+          this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && 
+          this.calculationDetail.currentHasChequeReqInd == true){
+          return true
+      } else {
+        return false
+      }
+  }
+  
 }
