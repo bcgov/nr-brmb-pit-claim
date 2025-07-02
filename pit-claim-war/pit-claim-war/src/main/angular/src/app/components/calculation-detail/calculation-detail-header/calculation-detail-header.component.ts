@@ -78,27 +78,18 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
     let resourceRoute = ResourcesRoutes.CALCULATION_DETAIL
 
     if (this.calculationDetail.linkedClaimCalculationGuid) {
-      this.router.navigate([resourceRoute, 
+      this.router.navigate([resourceRoute,
+          this.calculationDetail.policyNumber.toString(), 
           this.calculationDetail.linkedClaimNumber.toString(),
           this.calculationDetail.linkedClaimCalculationGuid.toString()
         ]);
-      
-        return
-    } 
-    
-    if (this.calculationDetail.latestLinkedClaimCalculationGuid) {
+    } else {
       this.router.navigate([resourceRoute, 
+          this.calculationDetail.policyNumber.toString(),
           this.calculationDetail.linkedClaimNumber.toString(),
           this.calculationDetail.latestLinkedClaimCalculationGuid.toString()
         ]);
-      
-        return
-    } 
-
-    // the linked claim doesn't have a calculation yet
-    this.router.navigate([resourceRoute, 
-        this.calculationDetail.linkedClaimNumber.toString()
-      ]);  
+    }
   }
 
   isRefreshAllowedForLinkedCalculations() {
