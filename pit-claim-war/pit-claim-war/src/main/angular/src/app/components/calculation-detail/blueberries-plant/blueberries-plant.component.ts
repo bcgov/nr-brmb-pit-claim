@@ -11,7 +11,9 @@ import {CodeData, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
-import {CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
+import {areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
+import { setFormStateUnsaved } from "src/app/store/application/application.actions";
+import { UntypedFormGroup } from "@angular/forms";
 
 @Component({
   selector: 'cirras-calculation-detail-berries-plant',
@@ -24,6 +26,7 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
   @Input() claimCalculationGuid?: string;
   @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
+  @Input() isUnsaved: boolean;
   
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -365,4 +368,40 @@ numberOnly(event): boolean {
     this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
   }
   
+  isMyFormDirty(){
+      const hasChanged = this.isMyFormReallyDirty()
+  
+      if (hasChanged) {
+        this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+      }
+    }
+  
+    isMyFormReallyDirty(): boolean {
+  
+      if (!this.calculationDetail) return false
+  
+      const frmMain = this.viewModel.formGroup as UntypedFormGroup
+  
+      if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+           areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+           areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+          
+          return true
+      }
+  
+      if (this.calculationDetail.claimCalculationPlantUnits && 
+          ( areNotEqual (this.calculationDetail.claimCalculationPlantUnits.lessAdjustmentReason, frmMain.controls.lessAdjustmentReason.value) ||
+            areNotEqual (this.calculationDetail.claimCalculationPlantUnits.lessAdjustmentUnits, frmMain.controls.lessAdjustmentUnits.value) || 
+            areNotEqual (this.calculationDetail.claimCalculationPlantUnits.damagedUnits, frmMain.controls.damagedUnits.value) || 
+            areNotEqual (this.calculationDetail.claimCalculationPlantUnits.lessAssessmentReason, frmMain.controls.lessAssessmentReason.value) || 
+            areNotEqual (this.calculationDetail.claimCalculationPlantUnits.lessAssessmentUnits, frmMain.controls.lessAssessmentUnits.value) 
+          )
+        ) {
+  
+        return true
+      }
+  
+      return false
+    }
+
 }
