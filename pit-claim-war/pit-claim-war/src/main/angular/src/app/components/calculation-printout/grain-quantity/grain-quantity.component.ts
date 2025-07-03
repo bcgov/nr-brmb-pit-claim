@@ -14,6 +14,8 @@ export class CalculationPrintoutGrainQuantityComponent implements OnChanges {
   @Input() calculationDetailNonPedigree: vmCalculation;
   @Input() calculationDetailPedigree: vmCalculation;
 
+  linkedClaimNumber?: number;
+
   prodGuaranteeMinusAssessmentsNonPedigree: number
   prodGuaranteeMinusAssessmentsPedigree: number
 
@@ -32,10 +34,12 @@ export class CalculationPrintoutGrainQuantityComponent implements OnChanges {
       } else {
         this.showNonPedigreeColumn = true
       }
-      
+
       if (this.calculationDetail.linkedProductId) {
         this.showNonPedigreeColumn = true
         this.showPedigreeColumn = true
+
+        this.linkedClaimNumber = this.calculationDetail.linkedClaimNumber
       }
 
     }

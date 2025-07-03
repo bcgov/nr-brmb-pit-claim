@@ -82,7 +82,7 @@
               </div>
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
-                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.2-2' }}
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.1-1' }}
                   <span #el matTooltip="Acres don't match with CIRRAS" 
                     *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
@@ -90,7 +90,7 @@
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">                 
-                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.2-2' }}
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insuredAcres : "") | number:'1.1-1' }}
                 <span #el matTooltip="Acres don't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>               
@@ -143,14 +143,14 @@
               </div>
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
-                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.0-0' }}
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.3-3' }}
                   <span #el matTooltip="Production Guarantee doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncProductionGuaranteeWeight" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
-                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.0-0' }}
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.productionGuaranteeWeight : "") | number:'1.3-3' }}
                 <span #el matTooltip="Production Guarantee doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncProductionGuaranteeWeight" style="margin-left: 10px;">
                   <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                 </span>
@@ -163,14 +163,14 @@
               </div>
               <div *ngIf="showNonPedigreeColumn" class="ccc-border-right ccc-right"> 
                 <span class="right-space">
-                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | number:'1.2-2' }}
+                  {{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | currency }}
                   <span #el matTooltip="Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsurableValue" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>
                 </span>
               </div>
               <div *ngIf="showPedigreeColumn" class="ccc-right">
-                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | number:'1.2-2' }}
+                {{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.insurableValue : "") | currency }}
                 <span #el matTooltip="Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsurableValue" style="margin-left: 10px;">
                   <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                 </span>
@@ -304,11 +304,11 @@
           </div>
           <div *ngIf="showNonPedigreeColumn" class="ccc-right ccc-border-right">
             <span class="right-space">
-              {{ earlyEstDeemedYieldValueNonPedigree | number:'1.2-2' }}
+              {{ earlyEstDeemedYieldValueNonPedigree | currency }}
             </span>
           </div>
           <div *ngIf="showPedigreeColumn" class="ccc-right">
-            {{ earlyEstDeemedYieldValuePedigree | number:'1.2-2' }}
+            {{ earlyEstDeemedYieldValuePedigree | currency }}
           </div>
 
           <!--  hidden  EarlyEstDeemedYieldValue  rows  -->
@@ -418,11 +418,11 @@
           </div>
           <div *ngIf="showNonPedigreeColumn" class="ccc-right ccc-border-right"> 
             <span class="right-space">
-              {{ yieldValueNonPedigree | number:'1.2-2' }}
+              {{ yieldValueNonPedigree | currency }}
             </span>
           </div> 
           <div *ngIf="showPedigreeColumn" class="ccc-right">
-            {{ yieldValuePedigree | number:'1.2-2' }}
+            {{ yieldValuePedigree | currency }}
           </div>
   
           <div>
@@ -433,11 +433,11 @@
           </div>
           <div *ngIf="showNonPedigreeColumn" class="ccc-right ccc-border-right"> 
             <span class="right-space">
-              {{ yieldValueWithEarlyEstDeemedYieldNonPedigree | number:'1.2-2' }}
+              {{ yieldValueWithEarlyEstDeemedYieldNonPedigree | currency }}
             </span>
           </div> 
           <div *ngIf="showPedigreeColumn" class="ccc-right">
-            {{ yieldValueWithEarlyEstDeemedYieldPedigree | number:'1.2-2' }}
+            {{ yieldValueWithEarlyEstDeemedYieldPedigree | currency }}
           </div>
           
           <div>
@@ -448,7 +448,7 @@
           </div>
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-border-top"></div> 
           <div class="ccc-right ccc-border-top">
-            {{ totalYieldLossValue | number:'1.2-2' }}
+            {{ totalYieldLossValue | currency }}
           </div>
   
         </div>
@@ -480,7 +480,7 @@
             <span class="ccc-expression">  {{ calculationDetail.linkedProductId ? "G - U" : "F - U"}} </span>
           </div>
           <div class="ccc-right"> 
-            {{ maxClaimPayable |  number:'1.2-2'  }} 
+            {{ maxClaimPayable |  currency  }} 
           </div> 
   
           <div>
@@ -490,7 +490,7 @@
             <span class="ccc-expression">T</span>
           </div>
           <div class="ccc-right">
-            {{ totalYieldLossValue | number:'1.2-2' }} 
+            {{ totalYieldLossValue | currency }} 
           </div>
   
           <div>
@@ -515,7 +515,7 @@
             <span class="ccc-expression">Lesser of (V or W) - X</span>
           </div>
           <div class="ccc-right">
-            {{ quantityLossClaim | number:'1.2-2'  }}
+            {{ quantityLossClaim | currency  }}
           </div>
 
           <div *ngIf="showNonPedigreeColumn && showPedigreeColumn">
