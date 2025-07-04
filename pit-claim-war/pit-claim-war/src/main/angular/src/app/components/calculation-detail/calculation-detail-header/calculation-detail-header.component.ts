@@ -112,4 +112,26 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
 
     return true
   }
+
+  calculationAllowsReplace(){
+      //State of calculation and claim allows replace
+      return this.securityUtilService.doesUserHaveScope(this.SCOPES_UI.REPLACE_CALCULATION) && 
+                            this.calculationDetail.calculationStatusCode === 'APPROVED' && 
+                            (
+                              ( this.calculationDetail.currentClaimStatusCode === 'OPEN' && this.calculationDetail.currentHasChequeReqInd == false)
+                              ||
+                              ( this.calculationDetail.currentClaimStatusCode === 'IN PROGRESS' && this.calculationDetail.currentHasChequeReqInd == true)
+                            );
+
+  }
+
+  linkedCalculationAllowsReplace(){
+      //State of linked calculation and claim allows replace
+      //Additional rules if there is a linked calculation: Only show button if the other calculation is in status approved or archived
+      if(this.linkedCalculationDetail){
+        return (this.linkedCalculationDetail.calculationStatusCode === 'APPROVED' || this.linkedCalculationDetail.calculationStatusCode === 'ARCHIVED');
+      }
+    return true;
+  }
+
 }
