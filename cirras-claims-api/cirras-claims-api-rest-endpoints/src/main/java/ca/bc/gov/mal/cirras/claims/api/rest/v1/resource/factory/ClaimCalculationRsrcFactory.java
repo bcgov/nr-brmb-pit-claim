@@ -218,7 +218,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 	// Updates only fields for a linked claim calculation.
 	@Override
-	public void updateCalculationFromLinkedCalculation(ClaimCalculation claimCalculation, Product linkedProduct, ClaimDto linkedClaimDto, ClaimCalculationDto linkedCalcDto, boolean doUpdateGrainQuantity) {
+	public void updateCalculationFromLinkedCalculation(ClaimCalculation claimCalculation, Product linkedProduct, ClaimDto linkedClaimDto, ClaimCalculationDto currLinkedCalcDto, ClaimCalculationDto latestLinkedCalcDto, boolean doUpdateGrainQuantity) {
 
 		if ( linkedProduct != null ) {
 			claimCalculation.setLinkedProductId(linkedProduct.getProductId());
@@ -227,27 +227,29 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		if ( linkedClaimDto != null ) { 
 			claimCalculation.setLinkedClaimNumber(linkedClaimDto.getClaimNumber());
 		}
-		
-		if ( linkedCalcDto != null ) {
+
+		// currLinkedCalcDto is the linked calculation with the same version, if any.
+		if ( currLinkedCalcDto != null ) {
 			
-			if(claimCalculation.getCalculationVersion() == linkedCalcDto.getCalculationVersion()) {
-				claimCalculation.setLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
-			} else {
-				claimCalculation.setLinkedClaimCalculationGuid(null); //Not setting the linked claim calculation guid if the version is different
-			}
-			claimCalculation.setLatestLinkedCalculationVersion(linkedCalcDto.getCalculationVersion());
-			claimCalculation.setLatestLinkedClaimCalculationGuid(linkedCalcDto.getClaimCalculationGuid());
+			claimCalculation.setLinkedClaimCalculationGuid(currLinkedCalcDto.getClaimCalculationGuid());
 			
-			if ( doUpdateGrainQuantity && linkedCalcDto.getClaimCalculationGrainQuantityGuid() != null ) {
+			if ( doUpdateGrainQuantity && currLinkedCalcDto.getClaimCalculationGrainQuantityGuid() != null ) {
 				
+				claimCalculation.setClaimCalculationGrainQuantityGuid(currLinkedCalcDto.getClaimCalculationGrainQuantityGuid());
 				
-				claimCalculation.setClaimCalculationGrainQuantityGuid(linkedCalcDto.getClaimCalculationGrainQuantityGuid());
-				
-				if ( linkedCalcDto.getClaimCalculationGrainQuantity() != null ) {
-					claimCalculation.setClaimCalculationGrainQuantity(createClaimCalculationGrainQuantity(linkedCalcDto.getClaimCalculationGrainQuantity()));
+				if ( currLinkedCalcDto.getClaimCalculationGrainQuantity() != null ) {
+					claimCalculation.setClaimCalculationGrainQuantity(createClaimCalculationGrainQuantity(currLinkedCalcDto.getClaimCalculationGrainQuantity()));
 				}
 			}
-		}		
+		}
+
+		// latesteLinkedCalcDto is the linked calculation with the highest version, if any.
+		if ( latestLinkedCalcDto != null ) {
+			
+			claimCalculation.setLatestLinkedCalculationVersion(latestLinkedCalcDto.getCalculationVersion());
+			claimCalculation.setLatestLinkedClaimCalculationGuid(latestLinkedCalcDto.getClaimCalculationGuid());			
+		}
+	
 	}
 	
 	// Updates only the manually refreshed fields from the Claim.

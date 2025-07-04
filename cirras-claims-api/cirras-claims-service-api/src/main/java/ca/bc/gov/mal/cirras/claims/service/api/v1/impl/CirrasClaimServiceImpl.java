@@ -967,7 +967,12 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		ProductRsrc linkedProductRsrc = null;
 		ClaimDto linkedClaimDto = null;
-		ClaimCalculationDto linkedClaimCalcDto = null;
+		
+		// Linked calculation with the same version, if any.
+		ClaimCalculationDto currLinkedClaimCalcDto = null;
+
+		// Linked calculation with the highest version, if any.
+		ClaimCalculationDto latestLinkedClaimCalcDto = null;
 		
 		if ( linkedCrpDto != null ) {
 			linkedProductRsrc = getProductByCommodityAndCoverage(productListRsrc, linkedCrpDto.getCropCommodityId(), ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode());
@@ -976,16 +981,17 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				linkedClaimDto = claimDao.selectByProductId(linkedProductRsrc.getProductId());
 				
 				if ( linkedClaimDto != null ) { 
-					linkedClaimCalcDto = claimCalculationDao.getLatestVersionOfCalculation(linkedClaimDto.getClaimNumber());
+					latestLinkedClaimCalcDto = claimCalculationDao.getLatestVersionOfCalculation(linkedClaimDto.getClaimNumber());
 					
-					if ( linkedClaimCalcDto != null ) {
-						getSubTableRecords(linkedClaimCalcDto.getClaimCalculationGuid(), linkedClaimCalcDto);
+					currLinkedClaimCalcDto = claimCalculationDao.getByClaimNumberAndVersion(linkedClaimDto.getClaimNumber(), claimCalculation.getCalculationVersion());
+					if ( currLinkedClaimCalcDto != null ) {
+						getSubTableRecords(currLinkedClaimCalcDto.getClaimCalculationGuid(), currLinkedClaimCalcDto);
 					}
 				}
 			}
 		}
 		
-		claimCalculationFactory.updateCalculationFromLinkedCalculation(claimCalculation, linkedProductRsrc, linkedClaimDto, linkedClaimCalcDto, doUpdateGrainQuantity);
+		claimCalculationFactory.updateCalculationFromLinkedCalculation(claimCalculation, linkedProductRsrc, linkedClaimDto, currLinkedClaimCalcDto, latestLinkedClaimCalcDto, doUpdateGrainQuantity);
 	}
 	
 	// Updates fields in claimCalculation from insuranceClaim that are only updated

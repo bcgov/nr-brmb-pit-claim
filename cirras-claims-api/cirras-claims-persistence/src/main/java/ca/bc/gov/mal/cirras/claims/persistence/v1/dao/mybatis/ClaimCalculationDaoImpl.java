@@ -204,6 +204,31 @@ public class ClaimCalculationDaoImpl extends BaseDao implements ClaimCalculation
 		logger.debug(">getCalculationsByGrainQuantityGuid " + dtos);
 		return dtos;		
 	}	
+
+	@Override
+	public ClaimCalculationDto getByClaimNumberAndVersion(Integer claimNumber, Integer calculationVersion) throws DaoException {
+		logger.debug("<getByClaimNumberAndVersion");
+
+		ClaimCalculationDto result = null;
+
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("claimNumber", claimNumber);
+			parameters.put("calculationVersion", calculationVersion);
+
+			result = this.mapper.getByClaimNumberAndVersion(parameters);
+			
+			if(result!=null) {
+				result.resetDirty();
+			}
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">getByClaimNumberAndVersion " + result);
+		return result;
+	}
+	
 	
 	@Override
 	public PagedDtos<ClaimCalculationDto> select(
