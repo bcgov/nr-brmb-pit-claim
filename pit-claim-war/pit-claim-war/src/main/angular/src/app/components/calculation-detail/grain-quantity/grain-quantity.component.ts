@@ -57,6 +57,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   totalClaimAmountNonPedigree: number
   totalClaimAmountPedigree: number
 
+  difBetweenZandY: number
+
   showEarlyEstDeemedYieldValueRows = false
   showNonPedigreeColumn = false  
   showPedigreeColumn = false 
@@ -131,6 +133,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.viewModel.formGroup.controls.reseedClaim.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.advancedClaim.valueChanges.subscribe(value => this.updateCalculated() )
 
+    this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
+    this.viewModel.formGroup.controls.totalClaimAmountPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
+
   }
 
   ngOnChanges2(changes: SimpleChanges) {
@@ -159,6 +164,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         this.setValues(this.calculationDetail)
       }
+
+      this.difBetweenZandY = (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 )  
+                            + (this.calculationDetailPedigree && this.calculationDetailPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 ) 
+                            - this.quantityLossClaim
+
       this.enableDisableFormControls();
 
     }
@@ -324,6 +334,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(this.quantityLossClaim)
       }
     }
+
+    // Difference of sum of Z - Y
+    this.calculateDiffBeteenSumZandY()
   }
   
   calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
@@ -448,6 +461,21 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     result = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim ) )
     return result
   } 
+
+  calculateDiffBeteenSumZandY(){
+
+    let result = 0 
+
+    if ( this.viewModel.formGroup.controls.totalClaimAmountNonPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ))) {
+      result = parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value )
+    }
+
+    if ( this.viewModel.formGroup.controls.totalClaimAmountPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ))) {
+      result = result + parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value )
+    }
+
+    this.difBetweenZandY = result - this.quantityLossClaim
+  }
 
   onCancel() {
     this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), this.calculationDetail.policyNumber, "false"));

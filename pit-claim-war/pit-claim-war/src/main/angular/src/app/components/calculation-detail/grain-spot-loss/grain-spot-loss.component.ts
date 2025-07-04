@@ -6,8 +6,10 @@ import { CalculationDetailGrainSpotLossComponentModel } from './grain-spot-loss.
 import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
+import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'calculation-detail-grain-spot-loss',
@@ -21,7 +23,8 @@ export class CalculationDetailGrainSpotLossComponent extends BaseComponent imple
   @Input() claimCalculationGuid?: string;
   @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
-  
+  @Input() isUnsaved: boolean;
+
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
 
@@ -311,5 +314,40 @@ export class CalculationDetailGrainSpotLossComponent extends BaseComponent imple
     }
     
   }
+
+  
+    isMyFormDirty(){
+          const hasChanged = this.isMyFormReallyDirty()
+      
+          if (hasChanged) {
+            this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+          }
+        }
+      
+        isMyFormReallyDirty(): boolean {
+      
+          if (!this.calculationDetail) return false
+      
+          const frmMain = this.viewModel.formGroup as UntypedFormGroup
+      
+          if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+               areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+               areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+              
+              return true
+          }
+      
+          if (this.calculationDetail.claimCalculationGrainSpotLoss && 
+              ( areNotEqual (this.calculationDetail.claimCalculationGrainSpotLoss.adjustedAcres, frmMain.controls.adjustedAcres.value) ||
+                areNotEqual (this.calculationDetail.claimCalculationGrainSpotLoss.percentYieldReduction, frmMain.controls.percentYieldReduction.value) 
+              )
+            ) {
+      
+            return true
+          }
+      
+          return false
+        }
+
 
 }

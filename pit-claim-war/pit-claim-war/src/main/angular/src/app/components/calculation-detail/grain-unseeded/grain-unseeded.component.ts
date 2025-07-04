@@ -6,8 +6,10 @@ import { GrainUnseededComponentModel } from './grain-unseeded.component.model';
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
-import { CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
+import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'calculation-detail-grain-unseeded',
@@ -21,6 +23,7 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
   displayLabel = "Calculation Detail";
   @Input() claimCalculationGuid?: string;
   @Input() calculationDetail: vmCalculation;
+  @Input() isUnsaved: boolean;
 
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -334,5 +337,37 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
         }
         
       }
+
+      isMyFormDirty(){
+        const hasChanged = this.isMyFormReallyDirty()
     
+        if (hasChanged) {
+          this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+        }
+      }
+    
+      isMyFormReallyDirty(): boolean {
+    
+        if (!this.calculationDetail) return false
+    
+        const frmMain = this.viewModel.formGroup as UntypedFormGroup
+    
+        if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+             areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+            
+            return true
+        }
+    
+        if (this.calculationDetail.claimCalculationGrainUnseeded && 
+            ( areNotEqual (this.calculationDetail.claimCalculationGrainUnseeded.lessAdjustmentAcres, frmMain.controls.lessAdjustmentAcres.value) ||
+              areNotEqual (this.calculationDetail.claimCalculationGrainUnseeded.unseededAcres, frmMain.controls.unseededAcres.value) || 
+              areNotEqual (this.calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres, frmMain.controls.lessAssessmentAcres.value) 
+            )
+          ) {
+    
+          return true
+        }
+    
+        return false
+      }
 }
