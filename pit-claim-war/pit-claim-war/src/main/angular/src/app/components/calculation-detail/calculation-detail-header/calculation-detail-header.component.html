@@ -166,21 +166,15 @@
         Updated On: {{ calculationDetail.updateDate | date:'yyyy-MM-dd' }}
       </span>   
       <span class="ccc-col-right3" >   
-
-        <button mat-raised-button color="primary"            
-        *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.REPLACE_CALCULATION) && 
-          calculationDetail.calculationStatusCode === 'APPROVED' && 
-          (
-            ( calculationDetail.currentClaimStatusCode === 'OPEN' && calculationDetail.currentHasChequeReqInd == false)
-            ||
-            ( calculationDetail.currentClaimStatusCode === 'IN PROGRESS' && calculationDetail.currentHasChequeReqInd == true)
-          )
-          ; else emptySpaces2"
-            (click)="onReplace()"
-        >Replace </button>        
+        <button mat-raised-button color="primary" *ngIf="calculationAllowsReplace() && linkedCalculationAllowsReplace(); else emptySpaces2" (click)="onReplace()">
+          Replace 
+        </button>        
         <ng-template #emptySpaces2>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+          <mat-icon style="vertical-align: middle;" 
+            *ngIf="calculationAllowsReplace() && !linkedCalculationAllowsReplace(); else emptySpaces3"
+            matTooltip="Replace is only possible if both calculations are in status Approved or Archived and the claim is rolled back.">info</mat-icon>
+          <ng-template #emptySpaces3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</ng-template>          
         </ng-template>
     </span>
     </div>	

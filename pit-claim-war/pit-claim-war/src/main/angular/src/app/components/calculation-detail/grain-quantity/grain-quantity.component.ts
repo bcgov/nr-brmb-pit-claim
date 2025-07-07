@@ -68,6 +68,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
   loadPage() {
+
     this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
     this.perilCodeOptions = getCodeOptions("PERIL_CODE");
     this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -107,7 +108,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         if (this.calculationDetail.linkedClaimCalculationGuid) {
           this.loadLinkedCalculation()
-        } 
+        } else {
+          //Reset form fields of the other calculation (Important on Replace)
+          this.resetFormFields(!this.calculationDetail.isPedigreeInd);
+          this.resetValues(!this.calculationDetail.isPedigreeInd);
+        }
         
         setTimeout(() => {
             this.cdr.detectChanges();
@@ -166,7 +171,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       }
 
       this.difBetweenZandY = (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 )  
-                            + (this.calculationDetailPedigree && this.calculationDetailPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 ) 
+                            + (this.calculationDetailPedigree && this.calculationDetailPedigree.totalClaimAmount ? this.calculationDetailPedigree.totalClaimAmount : 0 ) 
                             - this.quantityLossClaim
 
       this.enableDisableFormControls();
@@ -191,6 +196,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     url = url + "?doRefreshManualClaimData=false"
     
     var self = this
+
     return lastValueFrom(this.http.get(url,httpOptions)).then((data: vmCalculation) => {
       if (data.isPedigreeInd) {
         self.calculationDetailPedigree = data
@@ -247,6 +253,29 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   }
 
+  resetFormFields (isPedigreeInd: boolean) {
+      
+    if (isPedigreeInd) {
+
+        this.viewModel.formGroup.controls.assessedYieldPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.damagedAcresPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.seededAcresPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.setValue( null ) 
+
+        this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue( null ) 
+
+      } else {
+        
+        this.viewModel.formGroup.controls.assessedYieldNonPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.damagedAcresNonPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.seededAcresNonPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.setValue( null ) 
+
+        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue( null ) 
+      }
+
+  }
+
   setValues(calcDetail : vmCalculation) {
 
     if (calcDetail.isPedigreeInd) {
@@ -264,6 +293,27 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValueNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
       this.yieldValueWithEarlyEstDeemedYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
       this.totalClaimAmountNonPedigree = calcDetail.totalClaimAmount
+    }
+
+  }
+
+  resetValues(isPedigreeInd: boolean) {
+      
+    if (isPedigreeInd) {
+
+      this.fiftyPercentProductionGuaranteePedigree = null
+      this.calcEarlyEstYieldPedigree = null
+      this.earlyEstDeemedYieldValuePedigree = null
+      this.yieldValuePedigree = null
+      this.yieldValueWithEarlyEstDeemedYieldPedigree = null
+      this.totalClaimAmountPedigree = null
+    } else {
+      this.fiftyPercentProductionGuaranteeNonPedigree = null
+      this.calcEarlyEstYieldNonPedigree = null
+      this.earlyEstDeemedYieldValueNonPedigree = null
+      this.yieldValueNonPedigree = null
+      this.yieldValueWithEarlyEstDeemedYieldNonPedigree = null
+      this.totalClaimAmountNonPedigree = null
     }
 
   }
@@ -386,7 +436,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       seededAcres = parseFloat(ctlSeededAcres.value )
     }
 
-    if (seededAcres > 0 && calcDetail.claimCalculationGrainQuantityDetail && calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) {
+    if (seededAcres > 0 && calcDetail && calcDetail.claimCalculationGrainQuantityDetail && calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) {
       result = 0.5 * calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight * damagedAcres / seededAcres
     }
 
