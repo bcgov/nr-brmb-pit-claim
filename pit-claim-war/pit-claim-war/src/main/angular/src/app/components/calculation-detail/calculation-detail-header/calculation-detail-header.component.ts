@@ -77,29 +77,20 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
   goToLinkedCalulation() {
     let resourceRoute = ResourcesRoutes.CALCULATION_DETAIL
 
-
+    let claimCalculationGuid = "";
 
     if (this.calculationDetail.linkedClaimCalculationGuid) {
-      let claimCalculationGuid = "";
-      if(this.calculationDetail.linkedClaimCalculationGuid){
-        claimCalculationGuid = this.calculationDetail.linkedClaimCalculationGuid.toString()
-      }
-      this.router.navigate([resourceRoute,
-          this.calculationDetail.policyNumber.toString(), 
-          this.calculationDetail.linkedClaimNumber.toString(),
-          claimCalculationGuid
-        ]);
-    } else {
-      let claimCalculationGuid = "";
-      if(this.calculationDetail.latestLinkedClaimCalculationGuid){
-        claimCalculationGuid = this.calculationDetail.latestLinkedClaimCalculationGuid.toString()
-      }
-      this.router.navigate([resourceRoute, 
-          this.calculationDetail.policyNumber.toString(),
-          this.calculationDetail.linkedClaimNumber.toString(),
-          claimCalculationGuid
-        ]);
+      claimCalculationGuid = this.calculationDetail.linkedClaimCalculationGuid.toString()
+    } else if(this.calculationDetail.latestLinkedClaimCalculationGuid){
+      claimCalculationGuid = this.calculationDetail.latestLinkedClaimCalculationGuid.toString()
     }
+
+    this.router.navigate([resourceRoute,
+      this.calculationDetail.policyNumber.toString(), 
+      this.calculationDetail.linkedClaimNumber.toString(),
+      claimCalculationGuid
+    ]);
+
   }
 
   isRefreshAllowedForLinkedCalculations() {
