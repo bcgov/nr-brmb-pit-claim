@@ -648,6 +648,178 @@ public class ClaimCalculationDaoTest {
 		dao.delete(newDto.getClaimCalculationGuid());		
 	}
 	
+
+	@Test 
+	public void testGetByClaimNumberAndVersion() throws Exception {
+
+		String userId = "JUNIT_TEST";
+				
+		ClaimCalculationDto newDto = new ClaimCalculationDto();
+
+		Date transactionDate = new Date();
+		newDto.setPrimaryPerilCode("DROUGHT");
+		newDto.setSecondaryPerilCode("FIRE");
+		newDto.setClaimStatusCode("OPEN");
+		newDto.setCommodityCoverageCode("CQNT");
+		newDto.setCalculationStatusCode("DRAFT");
+		newDto.setInsurancePlanId(1);
+		newDto.setCropCommodityId(1);
+		newDto.setCropYear(2020);
+		newDto.setInsuredByMeasurementType("ACRES");
+		newDto.setPolicyNumber("100100-20");
+		newDto.setContractId(1000);
+		newDto.setClaimNumber(quantityClaimNumber);
+		newDto.setCalculationVersion(1);
+		newDto.setGrowerNumber(11111);
+		newDto.setGrowerName("Name 1");
+		newDto.setGrowerAddressLine1("Line 1");
+		newDto.setGrowerAddressLine2("Line 2");
+		newDto.setGrowerPostalCode("V1V1V1");
+		newDto.setGrowerCity("Victoria");
+		newDto.setGrowerProvince("BC");
+		newDto.setTotalClaimAmount(15000.0);
+		newDto.setCalculationComment("Test Comment");
+		newDto.setSubmittedByUserid("user1");
+		newDto.setSubmittedByName("user 1");
+		newDto.setSubmittedByDate(transactionDate);
+		newDto.setRecommendedByUserid("user2");
+		newDto.setRecommendedByName("user 2");
+		newDto.setRecommendedByDate(transactionDate);
+		newDto.setApprovedByUserid("user3");
+		newDto.setApprovedByName("user 3");
+		newDto.setApprovedByDate(transactionDate);
+		newDto.setCalculateIivInd("Y");
+		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(null);
+		newDto.setIsPedigreeInd(false);
+
+		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
+		//INSERT
+		dao.insert(newDto, userId);
+		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
+		
+		//Get by Claim Number and Version
+		ClaimCalculationDto fetchedDto = dao.getByClaimNumberAndVersion(quantityClaimNumber, 1);
+		
+		Assert.assertEquals("PrimaryPerilCode", newDto.getPrimaryPerilCode(), fetchedDto.getPrimaryPerilCode());
+		Assert.assertEquals("SecondaryPerilCode", newDto.getSecondaryPerilCode(), fetchedDto.getSecondaryPerilCode());
+		Assert.assertEquals("ClaimStatusCode", newDto.getClaimStatusCode(), fetchedDto.getClaimStatusCode());
+		Assert.assertEquals("CommodityCoverageCode", newDto.getCommodityCoverageCode(), fetchedDto.getCommodityCoverageCode());
+		Assert.assertEquals("CalculationStatusCode", newDto.getCalculationStatusCode(), fetchedDto.getCalculationStatusCode());
+		Assert.assertEquals("InsurancePlanId", newDto.getInsurancePlanId(), fetchedDto.getInsurancePlanId());
+		Assert.assertEquals("CropCommodityId", newDto.getCropCommodityId(), fetchedDto.getCropCommodityId());
+		Assert.assertEquals("CropYear", newDto.getCropYear(), fetchedDto.getCropYear());
+		Assert.assertEquals("InsuredByMeasType", newDto.getInsuredByMeasurementType(), fetchedDto.getInsuredByMeasurementType());
+		Assert.assertEquals("PolicyNumber", newDto.getPolicyNumber(), fetchedDto.getPolicyNumber());
+		Assert.assertEquals("ContractId", newDto.getContractId(), fetchedDto.getContractId());
+		Assert.assertEquals("ClaimNumber", newDto.getClaimNumber(), fetchedDto.getClaimNumber());
+		Assert.assertEquals("CalculationVersion", newDto.getCalculationVersion(), fetchedDto.getCalculationVersion());
+		Assert.assertEquals("GrowerNumber", newDto.getGrowerNumber(), fetchedDto.getGrowerNumber());
+		Assert.assertEquals("GrowerName", newDto.getGrowerName(), fetchedDto.getGrowerName());
+		Assert.assertEquals("GrowerAddressLine1", newDto.getGrowerAddressLine1(), fetchedDto.getGrowerAddressLine1());
+		Assert.assertEquals("GrowerAddressLine2", newDto.getGrowerAddressLine2(), fetchedDto.getGrowerAddressLine2());
+		Assert.assertEquals("GrowerPostalCode", newDto.getGrowerPostalCode(), fetchedDto.getGrowerPostalCode());
+		Assert.assertEquals("GrowerCity", newDto.getGrowerCity(), fetchedDto.getGrowerCity());
+		Assert.assertEquals("GrowerProvince", newDto.getGrowerProvince(), fetchedDto.getGrowerProvince());
+		Assert.assertEquals("TotalClaimAmount", newDto.getTotalClaimAmount(), fetchedDto.getTotalClaimAmount());
+		Assert.assertEquals("CalculationComment", newDto.getCalculationComment(), fetchedDto.getCalculationComment());
+		Assert.assertEquals("SubmittedByUserid", newDto.getSubmittedByUserid(), fetchedDto.getSubmittedByUserid());
+		Assert.assertEquals("SubmittedByName", newDto.getSubmittedByName(), fetchedDto.getSubmittedByName());
+		Assert.assertEquals("RecommendedByUserid", newDto.getRecommendedByUserid(), fetchedDto.getRecommendedByUserid());
+		Assert.assertEquals("RecommendedByName", newDto.getRecommendedByName(), fetchedDto.getRecommendedByName());
+		Assert.assertEquals("ApprovedByUserid", newDto.getApprovedByUserid(), fetchedDto.getApprovedByUserid());
+		Assert.assertEquals("ApprovedByName", newDto.getApprovedByName(), fetchedDto.getApprovedByName());
+		Assert.assertEquals("HasChequeReqInd", newDto.getHasChequeReqInd(), fetchedDto.getHasChequeReqInd());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", newDto.getClaimCalculationGrainQuantityGuid(), fetchedDto.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals("IsPedigreeInd", newDto.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
+
+		//Get by Claim Number and Version
+		fetchedDto = dao.getByClaimNumberAndVersion(quantityClaimNumber, 2);   // Non-existent version
+
+		Assert.assertNull(fetchedDto);
+
+		// Create version 2
+		ClaimCalculationDto newDto2 = new ClaimCalculationDto();
+
+		newDto2.setPrimaryPerilCode("DROUGHT");
+		newDto2.setSecondaryPerilCode("FIRE");
+		newDto2.setClaimStatusCode("OPEN");
+		newDto2.setCommodityCoverageCode("CQNT");
+		newDto2.setCalculationStatusCode("DRAFT");
+		newDto2.setInsurancePlanId(1);
+		newDto2.setCropCommodityId(1);
+		newDto2.setCropYear(2020);
+		newDto2.setInsuredByMeasurementType("ACRES");
+		newDto2.setPolicyNumber("100100-20");
+		newDto2.setContractId(1000);
+		newDto2.setClaimNumber(quantityClaimNumber);
+		newDto2.setCalculationVersion(2);
+		newDto2.setGrowerNumber(11111);
+		newDto2.setGrowerName("Name 1");
+		newDto2.setGrowerAddressLine1("Line 1");
+		newDto2.setGrowerAddressLine2("Line 2");
+		newDto2.setGrowerPostalCode("V1V1V1");
+		newDto2.setGrowerCity("Victoria");
+		newDto2.setGrowerProvince("BC");
+		newDto2.setTotalClaimAmount(15000.0);
+		newDto2.setCalculationComment("Test Comment");
+		newDto2.setSubmittedByUserid("user1");
+		newDto2.setSubmittedByName("user 1");
+		newDto2.setSubmittedByDate(transactionDate);
+		newDto2.setRecommendedByUserid("user2");
+		newDto2.setRecommendedByName("user 2");
+		newDto2.setRecommendedByDate(transactionDate);
+		newDto2.setApprovedByUserid("user3");
+		newDto2.setApprovedByName("user 3");
+		newDto2.setApprovedByDate(transactionDate);
+		newDto2.setCalculateIivInd("Y");
+		newDto2.setHasChequeReqInd(true);
+		newDto2.setClaimCalculationGrainQuantityGuid(null);
+		newDto2.setIsPedigreeInd(false);
+
+		//INSERT
+		dao.insert(newDto2, userId);
+		Assert.assertNotNull(newDto2.getClaimCalculationGuid()); 
+
+		//Get by Claim Number and Version
+		fetchedDto = dao.getByClaimNumberAndVersion(quantityClaimNumber, 2);
+		
+		Assert.assertEquals("PrimaryPerilCode", newDto2.getPrimaryPerilCode(), fetchedDto.getPrimaryPerilCode());
+		Assert.assertEquals("SecondaryPerilCode", newDto2.getSecondaryPerilCode(), fetchedDto.getSecondaryPerilCode());
+		Assert.assertEquals("ClaimStatusCode", newDto2.getClaimStatusCode(), fetchedDto.getClaimStatusCode());
+		Assert.assertEquals("CommodityCoverageCode", newDto2.getCommodityCoverageCode(), fetchedDto.getCommodityCoverageCode());
+		Assert.assertEquals("CalculationStatusCode", newDto2.getCalculationStatusCode(), fetchedDto.getCalculationStatusCode());
+		Assert.assertEquals("InsurancePlanId", newDto2.getInsurancePlanId(), fetchedDto.getInsurancePlanId());
+		Assert.assertEquals("CropCommodityId", newDto2.getCropCommodityId(), fetchedDto.getCropCommodityId());
+		Assert.assertEquals("CropYear", newDto2.getCropYear(), fetchedDto.getCropYear());
+		Assert.assertEquals("InsuredByMeasType", newDto2.getInsuredByMeasurementType(), fetchedDto.getInsuredByMeasurementType());
+		Assert.assertEquals("PolicyNumber", newDto2.getPolicyNumber(), fetchedDto.getPolicyNumber());
+		Assert.assertEquals("ContractId", newDto2.getContractId(), fetchedDto.getContractId());
+		Assert.assertEquals("ClaimNumber", newDto2.getClaimNumber(), fetchedDto.getClaimNumber());
+		Assert.assertEquals("CalculationVersion", newDto2.getCalculationVersion(), fetchedDto.getCalculationVersion());
+		Assert.assertEquals("GrowerNumber", newDto2.getGrowerNumber(), fetchedDto.getGrowerNumber());
+		Assert.assertEquals("GrowerName", newDto2.getGrowerName(), fetchedDto.getGrowerName());
+		Assert.assertEquals("GrowerAddressLine1", newDto2.getGrowerAddressLine1(), fetchedDto.getGrowerAddressLine1());
+		Assert.assertEquals("GrowerAddressLine2", newDto2.getGrowerAddressLine2(), fetchedDto.getGrowerAddressLine2());
+		Assert.assertEquals("GrowerPostalCode", newDto2.getGrowerPostalCode(), fetchedDto.getGrowerPostalCode());
+		Assert.assertEquals("GrowerCity", newDto2.getGrowerCity(), fetchedDto.getGrowerCity());
+		Assert.assertEquals("GrowerProvince", newDto2.getGrowerProvince(), fetchedDto.getGrowerProvince());
+		Assert.assertEquals("TotalClaimAmount", newDto2.getTotalClaimAmount(), fetchedDto.getTotalClaimAmount());
+		Assert.assertEquals("CalculationComment", newDto2.getCalculationComment(), fetchedDto.getCalculationComment());
+		Assert.assertEquals("SubmittedByUserid", newDto2.getSubmittedByUserid(), fetchedDto.getSubmittedByUserid());
+		Assert.assertEquals("SubmittedByName", newDto2.getSubmittedByName(), fetchedDto.getSubmittedByName());
+		Assert.assertEquals("RecommendedByUserid", newDto2.getRecommendedByUserid(), fetchedDto.getRecommendedByUserid());
+		Assert.assertEquals("RecommendedByName", newDto2.getRecommendedByName(), fetchedDto.getRecommendedByName());
+		Assert.assertEquals("ApprovedByUserid", newDto2.getApprovedByUserid(), fetchedDto.getApprovedByUserid());
+		Assert.assertEquals("ApprovedByName", newDto2.getApprovedByName(), fetchedDto.getApprovedByName());
+		Assert.assertEquals("HasChequeReqInd", newDto2.getHasChequeReqInd(), fetchedDto.getHasChequeReqInd());
+		Assert.assertEquals("ClaimCalculationGrainQuantityGuid", newDto2.getClaimCalculationGrainQuantityGuid(), fetchedDto.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals("IsPedigreeInd", newDto2.getIsPedigreeInd(), fetchedDto.getIsPedigreeInd());
+		
+		//DELETE
+		dao.delete(newDto.getClaimCalculationGuid());
+		dao.delete(newDto2.getClaimCalculationGuid());
+	}
 	
 	private ClaimCalculationDto getDto() throws Exception {
 		String claimCalculationGuid = "D2CF0984F30C0CC4E053E60A0A0A8DBD";

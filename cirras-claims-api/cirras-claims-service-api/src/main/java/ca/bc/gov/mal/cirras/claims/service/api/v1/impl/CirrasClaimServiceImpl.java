@@ -1098,11 +1098,11 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		//5. On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
 		//   has to be equal to the calculated value on line Y
 		
-		// Linked calculation has a different version number
+		// Linked calculation has a different version number or does not exist at all
 		if(claimCalculation.getLinkedProductId() != null && claimCalculation.getLinkedClaimCalculationGuid() == null) {
 			//There is a linked product but no linked calculation
 			//Update only possible if the calculations are in version 1
-			if(claimCalculation.getCalculationVersion() > 1 && claimCalculation.getLatestLinkedCalculationVersion() !=null && claimCalculation.getCalculationVersion() >= claimCalculation.getLatestLinkedCalculationVersion() ) {
+			if(claimCalculation.getCalculationVersion() > 1) {
 				throw new ServiceException("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
 			}
 			
