@@ -530,7 +530,9 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(null, claimCalculationRsrc.getLinkedClaimCalculationGuid());
 		Assert.assertEquals(linkedClaimNumber, claimCalculationRsrc.getLinkedClaimNumber());
 		Assert.assertEquals(linkedProductId, claimCalculationRsrc.getLinkedProductId());
-		
+		Assert.assertEquals(null, claimCalculationRsrc.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, claimCalculationRsrc.getLatestLinkedCalculationVersion());
+
 		ClaimCalculationGrainQuantity grainQty = claimCalculationRsrc.getClaimCalculationGrainQuantity();
 		ClaimCalculationGrainQuantityDetail grainQtyDetail = claimCalculationRsrc.getClaimCalculationGrainQuantityDetail();
 
@@ -600,6 +602,13 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainQuantity().getClaimCalculationGrainQuantityGuid());
 		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainQuantityDetail().getClaimCalculationGrainQuantityDetailGuid());
 
+		Assert.assertEquals(linkedClaimNumber, createdCalculation.getLinkedClaimNumber());
+		Assert.assertEquals(linkedProductId, createdCalculation.getLinkedProductId());
+		Assert.assertEquals(null, createdCalculation.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, createdCalculation.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, createdCalculation.getLatestLinkedCalculationVersion());
+		
+		
 		Assert.assertEquals(claimCalculationRsrc.getTotalClaimAmount(), createdCalculation.getTotalClaimAmount(), 0.00005);
 		
 		assertGrainQuantity(expectedGrainQuantity, createdCalculation.getClaimCalculationGrainQuantity());
@@ -708,7 +717,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		Assert.assertNotNull(claimCalculationRsrc2);
 		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantity());
-		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGrainQuantityGuid(), claimCalculationRsrc2.getClaimCalculationGrainQuantityGuid());
 		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail());
 		Assert.assertEquals("OPEN", claimCalculationRsrc2.getClaimStatusCode());
 		Assert.assertNotNull(claimCalculationRsrc2.getCalculationComment());
@@ -717,7 +726,10 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(isPedigreeInd, claimCalculationRsrc2.getIsPedigreeInd());
 		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), claimCalculationRsrc2.getLinkedClaimCalculationGuid());
 		Assert.assertEquals(updatedCalculation.getClaimNumber(), claimCalculationRsrc2.getLinkedClaimNumber());
-		
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), claimCalculationRsrc2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(updatedCalculation.getCalculationVersion(), claimCalculationRsrc2.getLatestLinkedCalculationVersion());
+
+
 		ClaimCalculationGrainQuantityDetail grainQtyDetail2 = claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail();
 		
 		//User Entered
@@ -736,6 +748,11 @@ public class ClaimEndpointTest extends EndpointsTest {
 		//Create new calculation
 		ClaimCalculationRsrc createdCalculation2 = service.createClaimCalculation(claimCalculationRsrc2);
 
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), createdCalculation2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), createdCalculation2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(updatedCalculation.getCalculationVersion(), createdCalculation2.getLatestLinkedCalculationVersion());
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGrainQuantityGuid(), createdCalculation2.getClaimCalculationGrainQuantityGuid());
+		
 		assertGrainQuantity(expectedGrainQuantity, createdCalculation2.getClaimCalculationGrainQuantity());
 		assertGrainQuantityDetail(expectedGrainQuantityDetail, createdCalculation2.getClaimCalculationGrainQuantityDetail());
 		
@@ -772,12 +789,32 @@ public class ClaimEndpointTest extends EndpointsTest {
 		} catch ( CirrasClaimServiceException e) {
 			// Expected.
 		}
+
+		// Check linked fields
+		ClaimCalculationListRsrc claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber1, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+		ClaimCalculationRsrc fetchedCalc1 = service.getClaimCalculation(claimCalculations.getCollection().get(0), false);
+
+		claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber2, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+		ClaimCalculationRsrc fetchedCalc2 = service.getClaimCalculation(claimCalculations.getCollection().get(0), false);
+
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGuid(), fetchedCalc1.getClaimCalculationGuid());
+		Assert.assertEquals(createdCalculation2.getClaimCalculationGuid(), fetchedCalc2.getClaimCalculationGuid());
+
+		Assert.assertEquals(fetchedCalc2.getClaimCalculationGuid(), fetchedCalc1.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(fetchedCalc2.getClaimCalculationGuid(), fetchedCalc1.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(fetchedCalc2.getCalculationVersion(), fetchedCalc1.getLatestLinkedCalculationVersion());
+
+		Assert.assertEquals(fetchedCalc1.getClaimCalculationGuid(), fetchedCalc2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(fetchedCalc1.getClaimCalculationGuid(), fetchedCalc2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(fetchedCalc1.getCalculationVersion(), fetchedCalc2.getLatestLinkedCalculationVersion());
+
+		Assert.assertEquals(fetchedCalc1.getClaimCalculationGrainQuantityGuid(), fetchedCalc2.getClaimCalculationGrainQuantityGuid());
 		
 		//Delete calculations
 		service.deleteClaimCalculation(createdCalculation2, true);
 
 		//Check if both calculations are deleted
-		ClaimCalculationListRsrc claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber1, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+		claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber1, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
 		Assert.assertEquals(0, claimCalculations.getCollection().size());
 
 		claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber2, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);

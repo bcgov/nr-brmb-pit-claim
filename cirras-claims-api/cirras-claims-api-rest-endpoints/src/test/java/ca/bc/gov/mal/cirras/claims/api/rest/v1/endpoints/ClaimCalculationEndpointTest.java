@@ -2761,6 +2761,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		
 		// Needs to be manually set to a real, valid GRAIN Quantity claim in CIRRAS db with no existing calculations.
 		ClaimCalculationRsrc calculationToUpdate = createClaimCalculation("37195");
+
+		Assert.assertEquals(null, calculationToUpdate.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, calculationToUpdate.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, calculationToUpdate.getLatestLinkedCalculationVersion());
 		
 		//Original values
 		ClaimCalculationGrainQuantityDetail qtyDetail = calculationToUpdate.getClaimCalculationGrainQuantityDetail();
@@ -2805,6 +2809,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		ClaimCalculationRsrc newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
 
 		replaceClaimCalculationGuid2 = newCalculation.getClaimCalculationGuid();
+
+		Assert.assertEquals(null, newCalculation.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedCalculationVersion());
+		
 		
 		//Check if newCalculation contains the original values from the replaced one
 		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
@@ -2845,6 +2854,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
 
 		replaceClaimCalculationGuid3 = newCalculation.getClaimCalculationGuid();
+
+		Assert.assertEquals(null, newCalculation.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedCalculationVersion());
 		
 		//Check if newCalculation contains the updated values from the replaced one
 		Assert.assertEquals("Copy Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
@@ -2862,6 +2875,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		// Needs to be manually set to a real, valid GRAIN Quantity claim in CIRRAS db with no existing calculations.
 		ClaimCalculationRsrc calculation2 = createClaimCalculation("37196");
 
+		Assert.assertEquals(calculationToUpdate.getClaimCalculationGuid(), calculation2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getClaimCalculationGuid(), calculation2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getCalculationVersion(), calculation2.getLatestLinkedCalculationVersion());
+		
+		
 		//Try to update first calculation, expect error because second calculation is in wrong version
 		try {
 			//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -2883,6 +2901,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		calculation2.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
 		ClaimCalculationRsrc newCalculation2 = service.updateClaimCalculation(calculation2, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
 
+		Assert.assertEquals(newCalculation.getClaimCalculationGuid(), newCalculation2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getClaimCalculationGuid(), newCalculation2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getCalculationVersion(), newCalculation2.getLatestLinkedCalculationVersion());
+		
 		//Check shared data
 		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantityGuid(), newCalculation2.getClaimCalculationGrainQuantityGuid());
 		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantity().getReseedClaim(), newCalculation2.getClaimCalculationGrainQuantity().getReseedClaim());
