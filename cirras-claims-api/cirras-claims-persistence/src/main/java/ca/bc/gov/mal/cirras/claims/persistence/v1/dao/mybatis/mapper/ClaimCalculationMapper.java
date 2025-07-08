@@ -25,4 +25,5 @@ public interface ClaimCalculationMapper {
 	
 	List<ClaimCalculationDto> getCalculationsByGrainQuantityGuid(Map<String, Object> parameters);
 
+	ClaimCalculationDto getByClaimNumberAndVersion(Map<String, Object> parameters);
 }

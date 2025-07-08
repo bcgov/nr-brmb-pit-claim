@@ -57,7 +57,7 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
 
   onRefresh() {
     // refresh the calculation
-    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, "", "true"));
+    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, "", this.calculationDetail.policyNumber, "true"));
   }
 
   onReplace() {        
@@ -77,16 +77,20 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
   goToLinkedCalulation() {
     let resourceRoute = ResourcesRoutes.CALCULATION_DETAIL
 
+    let claimCalculationGuid = "";
+
     if (this.calculationDetail.linkedClaimCalculationGuid) {
-      this.router.navigate([resourceRoute, 
-          this.calculationDetail.linkedClaimNumber.toString(),
-          this.calculationDetail.linkedClaimCalculationGuid.toString()
-        ]);
-    } else {
-      this.router.navigate([resourceRoute, 
-          this.calculationDetail.linkedClaimNumber.toString()
-        ]);
+      claimCalculationGuid = this.calculationDetail.linkedClaimCalculationGuid.toString()
+    } else if(this.calculationDetail.latestLinkedClaimCalculationGuid){
+      claimCalculationGuid = this.calculationDetail.latestLinkedClaimCalculationGuid.toString()
     }
+
+    this.router.navigate([resourceRoute,
+      this.calculationDetail.policyNumber.toString(), 
+      this.calculationDetail.linkedClaimNumber.toString(),
+      claimCalculationGuid
+    ]);
+
   }
 
   isRefreshAllowedForLinkedCalculations() {
@@ -99,4 +103,26 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
 
     return true
   }
+
+  calculationAllowsReplace(){
+      //State of calculation and claim allows replace
+      return this.securityUtilService.doesUserHaveScope(this.SCOPES_UI.REPLACE_CALCULATION) && 
+                            this.calculationDetail.calculationStatusCode === 'APPROVED' && 
+                            (
+                              ( this.calculationDetail.currentClaimStatusCode === 'OPEN' && this.calculationDetail.currentHasChequeReqInd == false)
+                              ||
+                              ( this.calculationDetail.currentClaimStatusCode === 'IN PROGRESS' && this.calculationDetail.currentHasChequeReqInd == true)
+                            );
+
+  }
+
+  linkedCalculationAllowsReplace(){
+      //State of linked calculation and claim allows replace
+      //Additional rules if there is a linked calculation: Only show button if the other calculation is in status approved or archived
+      if(this.linkedCalculationDetail){
+        return (this.linkedCalculationDetail.calculationStatusCode === 'APPROVED' || this.linkedCalculationDetail.calculationStatusCode === 'ARCHIVED');
+      }
+    return true;
+  }
+
 }

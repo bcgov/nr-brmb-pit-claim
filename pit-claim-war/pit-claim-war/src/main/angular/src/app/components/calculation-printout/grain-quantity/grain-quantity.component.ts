@@ -7,10 +7,14 @@ import { BaseComponent } from '../../common/base/base.component';
   templateUrl: './grain-quantity.component.html',
   styleUrl: './grain-quantity.component.scss'
 })
+
 export class CalculationPrintoutGrainQuantityComponent implements OnChanges {
+
   @Input() calculationDetail: vmCalculation;
   @Input() calculationDetailNonPedigree: vmCalculation;
   @Input() calculationDetailPedigree: vmCalculation;
+
+  linkedClaimNumber?: number;
 
   prodGuaranteeMinusAssessmentsNonPedigree: number
   prodGuaranteeMinusAssessmentsPedigree: number
@@ -30,10 +34,12 @@ export class CalculationPrintoutGrainQuantityComponent implements OnChanges {
       } else {
         this.showNonPedigreeColumn = true
       }
-      
+
       if (this.calculationDetail.linkedProductId) {
         this.showNonPedigreeColumn = true
         this.showPedigreeColumn = true
+
+        this.linkedClaimNumber = this.calculationDetail.linkedClaimNumber
       }
 
     }

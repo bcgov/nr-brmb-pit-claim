@@ -57,6 +57,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   totalClaimAmountNonPedigree: number
   totalClaimAmountPedigree: number
 
+  difBetweenZandY: number
+
   showEarlyEstDeemedYieldValueRows = false
   showNonPedigreeColumn = false  
   showPedigreeColumn = false 
@@ -66,6 +68,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
   loadPage() {
+
     this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
     this.perilCodeOptions = getCodeOptions("PERIL_CODE");
     this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -105,7 +108,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         if (this.calculationDetail.linkedClaimCalculationGuid) {
           this.loadLinkedCalculation()
-        } 
+        } else {
+          //Reset form fields of the other calculation (Important on Replace)
+          this.resetFormFields(!this.calculationDetail.isPedigreeInd);
+          this.resetValues(!this.calculationDetail.isPedigreeInd);
+        }
         
         setTimeout(() => {
             this.cdr.detectChanges();
@@ -130,6 +137,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
     this.viewModel.formGroup.controls.reseedClaim.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.advancedClaim.valueChanges.subscribe(value => this.updateCalculated() )
+
+    this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
+    this.viewModel.formGroup.controls.totalClaimAmountPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
 
   }
 
@@ -159,6 +169,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
         this.setValues(this.calculationDetail)
       }
+
+      this.difBetweenZandY = (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 )  
+                            + (this.calculationDetailPedigree && this.calculationDetailPedigree.totalClaimAmount ? this.calculationDetailPedigree.totalClaimAmount : 0 ) 
+                            - this.quantityLossClaim
+
       this.enableDisableFormControls();
 
     }
@@ -181,6 +196,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     url = url + "?doRefreshManualClaimData=false"
     
     var self = this
+
     return lastValueFrom(this.http.get(url,httpOptions)).then((data: vmCalculation) => {
       if (data.isPedigreeInd) {
         self.calculationDetailPedigree = data
@@ -199,6 +215,17 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         });
     })
 
+  }
+  
+  goToVerifiedYield(){
+
+ 		let verifiedYieldUrl = this.appConfigService.getConfig().rest["pit_underwriting_ui"]
+
+    if (verifiedYieldUrl.length > 0) {
+      verifiedYieldUrl = verifiedYieldUrl + "/landingpage/" + this.calculationDetail.policyNumber + "/verified_yield"
+      window.open(verifiedYieldUrl, "_blank", "noopener,noreferrer");
+    }
+    
   }
 
   setFormFields (calcDetail) {
@@ -226,6 +253,29 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   }
 
+  resetFormFields (isPedigreeInd: boolean) {
+      
+    if (isPedigreeInd) {
+
+        this.viewModel.formGroup.controls.assessedYieldPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.damagedAcresPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.seededAcresPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.inspEarlyEstYieldPedigree.setValue( null ) 
+
+        this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue( null ) 
+
+      } else {
+        
+        this.viewModel.formGroup.controls.assessedYieldNonPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.damagedAcresNonPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.seededAcresNonPedigree.setValue( null ) 
+        this.viewModel.formGroup.controls.inspEarlyEstYieldNonPedigree.setValue( null ) 
+
+        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue( null ) 
+      }
+
+  }
+
   setValues(calcDetail : vmCalculation) {
 
     if (calcDetail.isPedigreeInd) {
@@ -243,6 +293,27 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValueNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
       this.yieldValueWithEarlyEstDeemedYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
       this.totalClaimAmountNonPedigree = calcDetail.totalClaimAmount
+    }
+
+  }
+
+  resetValues(isPedigreeInd: boolean) {
+      
+    if (isPedigreeInd) {
+
+      this.fiftyPercentProductionGuaranteePedigree = null
+      this.calcEarlyEstYieldPedigree = null
+      this.earlyEstDeemedYieldValuePedigree = null
+      this.yieldValuePedigree = null
+      this.yieldValueWithEarlyEstDeemedYieldPedigree = null
+      this.totalClaimAmountPedigree = null
+    } else {
+      this.fiftyPercentProductionGuaranteeNonPedigree = null
+      this.calcEarlyEstYieldNonPedigree = null
+      this.earlyEstDeemedYieldValueNonPedigree = null
+      this.yieldValueNonPedigree = null
+      this.yieldValueWithEarlyEstDeemedYieldNonPedigree = null
+      this.totalClaimAmountNonPedigree = null
     }
 
   }
@@ -313,6 +384,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(this.quantityLossClaim)
       }
     }
+
+    // Difference of sum of Z - Y
+    this.calculateDiffBeteenSumZandY()
   }
   
   calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
@@ -362,7 +436,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       seededAcres = parseFloat(ctlSeededAcres.value )
     }
 
-    if (seededAcres > 0 && calcDetail.claimCalculationGrainQuantityDetail && calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) {
+    if (seededAcres > 0 && calcDetail && calcDetail.claimCalculationGrainQuantityDetail && calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight) {
       result = 0.5 * calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight * damagedAcres / seededAcres
     }
 
@@ -438,8 +512,23 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     return result
   } 
 
+  calculateDiffBeteenSumZandY(){
+
+    let result = 0 
+
+    if ( this.viewModel.formGroup.controls.totalClaimAmountNonPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ))) {
+      result = parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value )
+    }
+
+    if ( this.viewModel.formGroup.controls.totalClaimAmountPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ))) {
+      result = result + parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value )
+    }
+
+    this.difBetweenZandY = result - this.quantityLossClaim
+  }
+
   onCancel() {
-    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), "false"));
+    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), this.calculationDetail.policyNumber, "false"));
     this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
   }
 
@@ -512,6 +601,17 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
 
     return styles;
+  }
+
+  showSaveButton() {
+    // forbid save if the versions of the linked calculations don't match
+    if (this.calculationDetail && this.calculationDetail.linkedProductId &&
+        this.calculationDetail.latestLinkedClaimCalculationGuid && !this.calculationDetail.linkedClaimCalculationGuid) {
+
+        return false
+      }
+
+    return true
   }
 
   onSave(saveCommentsOnly:boolean) {
@@ -767,6 +867,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   }
 
 
+
   // If there are two products, the button is only enabled/visible if there is a second calculation 
   // and the sum of the paid out amount of both calculations equals Quantity Loss Claim.
   showPrintButton() {
@@ -789,6 +890,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     }
   }
 
+
   onPrint() {
     const originalTitle = this.titleService.getTitle()
 
@@ -806,4 +908,28 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.titleService.setTitle(originalTitle);
   }
 
+
+  onReopen() {
+    const  updatedClaim = this.getUpdatedClaim(true);
+    if (this.isFormValid(updatedClaim) )  {
+
+        updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.DRAFT;
+        this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+        this.doSyncClaimsCodeTables();
+    }
+  }
+        
+  showReopenButton() {
+
+      //Allow to reopen a calculation if the claim has been amended and is in status In Progress
+      // and the calculation is in status submitted
+      if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.SUBMITTED && 
+          this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && 
+          this.calculationDetail.currentHasChequeReqInd == true){
+          return true
+      } else {
+        return false
+      }
+  }
+  
 }

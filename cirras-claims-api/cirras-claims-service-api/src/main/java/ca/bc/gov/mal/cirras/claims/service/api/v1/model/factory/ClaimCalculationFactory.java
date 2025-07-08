@@ -91,7 +91,7 @@ public interface ClaimCalculationFactory {
 			WebAdeAuthentication authentication
 		) throws FactoryException;
 
-	public void updateCalculationFromLinkedCalculation(ClaimCalculation claimCalculation, Product linkedProduct, ClaimDto linkedClaimDto, ClaimCalculationDto linkedCalcDto, boolean doUpdateGrainQuantity);
+	public void updateCalculationFromLinkedCalculation(ClaimCalculation claimCalculation, Product linkedProduct, ClaimDto linkedClaimDto, ClaimCalculationDto currLinkedCalcDto, ClaimCalculationDto latestLinkedCalcDto, boolean doUpdateGrainQuantity);
 
 	public void updateCalculationFromClaim(
 			ClaimCalculation claimCalculation, 

@@ -29,7 +29,7 @@
           <span class="ccc-col-right">
             Primary Peril:
             <mat-form-field appearance="fill">
-              <mat-select formControlName="primaryPerilCode" required >
+              <mat-select formControlName="primaryPerilCode" required (selectionChange)="isMyFormDirty()">
                 <mat-option>(None)</mat-option>
                 <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
               </mat-select>
@@ -49,7 +49,7 @@
           <span class="ccc-col-right">
               Secondary Peril:
               <mat-form-field appearance="fill">
-                <mat-select formControlName="secondaryPerilCode" >
+                <mat-select formControlName="secondaryPerilCode" (selectionChange)="isMyFormDirty()">
                     <mat-option>(None)</mat-option>
                     <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
                     >{{ option.description }}</mat-option>
@@ -122,7 +122,9 @@
          </div>
          <div class="ccc-right ccc-fill ccc-number">              
            <mat-form-field appearance="fill">
-             <input matInput formControlName="confirmedAcres" (keypress)="numberOnly($event)" maxlength="10">
+             <input matInput formControlName="confirmedAcres" 
+              (keypress)="numberOnly($event)" maxlength="10"
+              (blur)="isMyFormDirty()">
            </mat-form-field>
          </div>
           <div>
@@ -188,7 +190,9 @@
           </div>
           <div class="ccc-right ccc-fill ccc-number">               
             <mat-form-field appearance="fill">
-              <input matInput formControlName="harvestedYield" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="harvestedYield" 
+              (keypress)="numberOnly($event)" maxlength="14"
+              (blur)="isMyFormDirty()">
             </mat-form-field>
           </div>
           <div>
@@ -198,7 +202,9 @@
           </div>
           <div class="ccc-right ccc-fill ccc-number">           
             <mat-form-field appearance="fill">
-              <input matInput formControlName="appraisedYield" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="appraisedYield" 
+              (keypress)="numberOnly($event)" maxlength="14"
+              (blur)="isMyFormDirty()">
             </mat-form-field>
           </div>
           <div>
@@ -208,7 +214,9 @@
           </div>
           <div class="ccc-right ccc-fill ccc-number">              
             <mat-form-field appearance="fill">
-              <input matInput formControlName="abandonedYield" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="abandonedYield" 
+              (keypress)="numberOnly($event)" maxlength="14"
+              (blur)="isMyFormDirty()">
             </mat-form-field>
           </div>
           <div>
@@ -227,7 +235,9 @@
         </div>
         <div class="ccc-right ccc-fill ccc-number">              
           <mat-form-field appearance="fill">
-            <input matInput formControlName="totalYieldFromAdjuster" (keypress)="numberOnly($event)" maxlength="14">
+            <input matInput formControlName="totalYieldFromAdjuster" 
+            (keypress)="numberOnly($event)" maxlength="14"
+            (blur)="isMyFormDirty()">
           </mat-form-field>
         </div>
 
@@ -253,7 +263,9 @@
           </div>
           <div class="ccc-fill ccc-number">  
             <mat-form-field appearance="fill">
-              <input matInput formControlName="yieldAssessment" (keypress)="numberOnly($event)" maxlength="14">
+              <input matInput formControlName="yieldAssessment" 
+              (keypress)="numberOnly($event)" maxlength="14"
+              (blur)="isMyFormDirty()">
             </mat-form-field>
           </div>
           <div>
@@ -308,7 +320,8 @@
                     formControlName="calculationComment" 
                     rows="4" 
                     maxlength="1000"
-                    (keyup)="setComment()">{{ calculationDetail.calculationComment }} </textarea>
+                    (keyup)="setComment()"
+                    (blur)="isMyFormDirty()">{{ calculationDetail.calculationComment }} </textarea>
               </mat-form-field>
           </div>
       </div>
@@ -321,6 +334,11 @@
           </span>
 
           <span class="ccc-col-right">
+            <span *ngIf="isUnsaved" style="color:orange;">
+              <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
+              Unsaved Changes
+            </span>
+            &nbsp;
             <button mat-raised-button color="primary"
               *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton()"
               (click)="onSubmit()"
