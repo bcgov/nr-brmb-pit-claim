@@ -1,7 +1,7 @@
 
 {
     "databaseChangeLog": [
-        { "changeSet": {"author":"mhostettler","id":"6","changes": [
+        { "changeSet": {"author":"mhostettler","id":"7","changes": [
             {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.claim_calculation_grain_basket.sql"}},
             {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.claim_calculation_grain_basket_product.sql"}},
             {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/grants/ccs.ddl.apply_grants.sql"}}
