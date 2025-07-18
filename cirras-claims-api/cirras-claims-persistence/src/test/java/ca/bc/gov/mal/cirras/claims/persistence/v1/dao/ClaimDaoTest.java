@@ -60,6 +60,38 @@ public class ClaimDaoTest {
 		Assert.assertNull(dto); 
 	}
 	
+	@Test
+	public void testSelectQuantityClaimsByProductId() throws Exception {
+		
+		Integer iplId = 1070071; //711519-24
+		
+		ClaimDao dao = persistenceSpringConfig.claimDao();
+		List<ClaimDto> dtos = dao.selectQuantityClaimsByProductId(iplId);
+		
+		Assert.assertNotNull(dtos);
+		
+		Integer countCalculation = 0;
+		
+		for (ClaimDto dto : dtos) {
+			Assert.assertNotNull(dto.getClaimStatusCode()); 
+			Assert.assertNotNull(dto.getCommodityCoverageCode());
+			Assert.assertNotNull(dto.getClaimNumber());
+			if(dto.getClaimNumber().equals(37187)) {
+				//Claim 37187 and a calculation has to exist
+				Assert.assertNotNull(dto.getClaimCalculationGuid());
+				Assert.assertNotNull(dto.getCalculationStatusCode());
+				countCalculation = countCalculation +1;
+			} else {
+				//Only works if all other claims don't have a calculation yet
+				Assert.assertNull(dto.getClaimCalculationGuid());
+				Assert.assertNull(dto.getCalculationStatusCode());
+			}
+		}
+		
+		Assert.assertEquals(1, countCalculation.intValue());
+		
+	}
+	
 	
 	@Test
 	public void testSelectByClaimNumber() throws Exception {

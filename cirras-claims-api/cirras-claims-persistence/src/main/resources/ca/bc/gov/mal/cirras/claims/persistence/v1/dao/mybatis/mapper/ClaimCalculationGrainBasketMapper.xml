@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.mapper.ClaimCalculationGrainBasketMapper">
+
+	<resultMap id="ClaimCalculationGrainBasketDtoMap" type="ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketDto">
+		<id property="claimCalculationGrainBasketGuid" column="claim_calculation_grain_basket_guid" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="claimCalculationGuid" column="claim_calculation_guid" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="grainBasketCoverageValue" column="grain_basket_coverage_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="grainBasketDeductible" column="grain_basket_deductible" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="grainBasketHarvestedValue" column="grain_basket_harvested_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="quantityTotalCoverageValue" column="quantity_total_coverage_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="quantityTotalYieldValue" column="quantity_total_yield_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="quantityTotalClaimAmount" column="quantity_total_claim_amount" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="quantityTotalYieldLossIndemnity" column="quantity_total_yield_loss_indemnity" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="totalYieldCoverageValue" column="total_yield_coverage_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="totalYieldLoss" column="total_yield_loss" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="revisionCount" column="revision_count" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="createUser" column="create_user" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="create_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="update_user" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="update_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT	t.claim_calculation_grain_basket_guid, 
+				t.claim_calculation_guid, 
+				t.grain_basket_coverage_value, 
+				t.grain_basket_deductible, 
+				t.grain_basket_harvested_value, 
+				t.quantity_total_coverage_value, 
+				t.quantity_total_yield_value, 
+				t.quantity_total_claim_amount, 
+				t.quantity_total_yield_loss_indemnity, 
+				t.total_yield_coverage_value, 
+				t.total_yield_loss, 
+				t.revision_count, 
+				t.create_user, 
+				t.create_date, 
+				t.update_user, 
+				t.update_date
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimCalculationGrainBasketDtoMap">
+		<include refid="selectColumns"/>
+		FROM claim_calculation_grain_basket t
+		WHERE t.claim_calculation_grain_basket_guid = #{claimCalculationGrainBasketGuid}
+	</select>
+	
+	<select id="select" resultMap="ClaimCalculationGrainBasketDtoMap">  
+		<include refid="selectColumns"/>
+		FROM claim_calculation_grain_basket t
+		WHERE t.claim_calculation_guid =#{claimCalculationGuid}
+	</select> 
+	
+	<insert id="insert">
+		<selectKey keyProperty="claimCalculationGrainBasketGuid" resultType="java.lang.String" order="BEFORE"> 
+			select replace(cast(gen_random_uuid() as text), '-', '')
+		</selectKey>
+
+		INSERT INTO claim_calculation_grain_basket (
+			claim_calculation_grain_basket_guid,
+			claim_calculation_guid,
+			grain_basket_coverage_value,
+			grain_basket_deductible,
+			grain_basket_harvested_value,
+			quantity_total_coverage_value,
+			quantity_total_yield_value,
+			quantity_total_claim_amount,
+			quantity_total_yield_loss_indemnity,
+			total_yield_coverage_value,
+			total_yield_loss,
+			revision_count,
+			create_user,
+			create_date,
+			update_user,
+			update_date
+		) VALUES (
+		   	#{claimCalculationGrainBasketGuid},
+			#{dto.claimCalculationGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.grainBasketCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.grainBasketDeductible, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.grainBasketHarvestedValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.quantityTotalCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.quantityTotalYieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.quantityTotalClaimAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.quantityTotalYieldLossIndemnity, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.totalYieldCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.totalYieldLoss, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			1,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			now(),
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			now()
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE claim_calculation_grain_basket
+		SET 
+			grain_basket_coverage_value = #{dto.grainBasketCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			grain_basket_deductible = #{dto.grainBasketDeductible, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			grain_basket_harvested_value = #{dto.grainBasketHarvestedValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			quantity_total_coverage_value = #{dto.quantityTotalCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			quantity_total_yield_value = #{dto.quantityTotalYieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			quantity_total_claim_amount = #{dto.quantityTotalClaimAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			quantity_total_yield_loss_indemnity = #{dto.quantityTotalYieldLossIndemnity, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			total_yield_coverage_value = #{dto.totalYieldCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			total_yield_loss = #{dto.totalYieldLoss, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			revision_count = revision_count + 1,
+			update_user = #{dto.updateUser, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			update_date = now()
+		 WHERE claim_calculation_grain_basket_guid = #{claimCalculationGrainBasketGuid}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM claim_calculation_grain_basket WHERE claim_calculation_grain_basket_guid = #{claimCalculationGrainBasketGuid}
+	</delete>
+	
+	<delete id="deleteForClaim">
+		DELETE FROM claim_calculation_grain_basket WHERE claim_calculation_guid = #{claimCalculationGuid}
+	</delete>
+
+	<select id="selectAll" resultMap="ClaimCalculationGrainBasketDtoMap">
+		<include refid="selectColumns"/>
+		FROM claim_calculation_grain_basket t
+	</select>	
+	
+</mapper>
