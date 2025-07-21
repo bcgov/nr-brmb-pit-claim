@@ -121,7 +121,7 @@
 			quantity_claim_amount = #{dto.quantityClaimAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			yield_value = #{dto.yieldValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			revision_count = revision_count + 1,
-			update_user = #{dto.updateUser, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			update_user = #{userId, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
 			update_date = now()
 		 WHERE claim_calc_grain_basket_product_guid = #{claimCalcGrainBasketProductGuid}
 	</update> 

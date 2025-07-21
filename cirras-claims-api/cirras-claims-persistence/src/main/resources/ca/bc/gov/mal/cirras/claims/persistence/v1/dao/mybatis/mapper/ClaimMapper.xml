@@ -101,7 +101,7 @@
 		WHERE T.IPP_ID = #{ippId}
 	</select>
 	
-	<select id="selectQuantityClaimsByProductId" resultMap="ClaimDtoMap">
+	<select id="selectQuantityClaimsByPolicyId" resultMap="ClaimDtoMap">
 		SELECT c.col_id, c.claim_number, c.claim_status_code, c.commodity_coverage_code,
 		cc.claim_calculation_guid, cc.calculation_status_code
 		FROM claim c
@@ -112,7 +112,8 @@
 				GROUP BY claim_number
 			)
 		WHERE c.ipl_id = #{iplId}
-		AND c.commodity_coverage_code = 'CQG'
+		AND c.commodity_coverage_code IN ('CQG', 'CQF', 'CQNT', 'CQSC', 'CQTF', 'CQTFN')
+		ORDER BY c.claim_number
 	</select>
 		
 	<insert id="insert">

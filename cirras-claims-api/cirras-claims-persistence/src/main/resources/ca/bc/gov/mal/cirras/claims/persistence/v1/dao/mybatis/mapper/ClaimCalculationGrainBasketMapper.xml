@@ -110,7 +110,7 @@
 			total_yield_coverage_value = #{dto.totalYieldCoverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			total_yield_loss = #{dto.totalYieldLoss, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			revision_count = revision_count + 1,
-			update_user = #{dto.updateUser, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			update_user = #{userId, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
 			update_date = now()
 		 WHERE claim_calculation_grain_basket_guid = #{claimCalculationGrainBasketGuid}
 	</update> 

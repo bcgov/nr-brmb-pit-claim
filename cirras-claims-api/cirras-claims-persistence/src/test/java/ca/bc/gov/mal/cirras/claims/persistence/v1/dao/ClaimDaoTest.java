@@ -61,12 +61,12 @@ public class ClaimDaoTest {
 	}
 	
 	@Test
-	public void testSelectQuantityClaimsByProductId() throws Exception {
+	public void testSelectQuantityClaimsByPolicyId() throws Exception {
 		
 		Integer iplId = 1070071; //711519-24
 		
 		ClaimDao dao = persistenceSpringConfig.claimDao();
-		List<ClaimDto> dtos = dao.selectQuantityClaimsByProductId(iplId);
+		List<ClaimDto> dtos = dao.selectQuantityClaimsByPolicyId(iplId);
 		
 		Assert.assertNotNull(dtos);
 		

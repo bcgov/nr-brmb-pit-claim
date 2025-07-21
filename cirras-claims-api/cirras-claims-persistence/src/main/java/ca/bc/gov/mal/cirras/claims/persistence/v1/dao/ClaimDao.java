@@ -20,7 +20,7 @@ public interface ClaimDao extends Serializable {
 
 	ClaimDto selectByProductId(Integer ippId) throws DaoException;
 	
-	List<ClaimDto> selectQuantityClaimsByProductId(Integer iplId) throws DaoException;
+	List<ClaimDto> selectQuantityClaimsByPolicyId(Integer iplId) throws DaoException;
 
 	void insert(ClaimDto dto, String userId) throws DaoException;
     

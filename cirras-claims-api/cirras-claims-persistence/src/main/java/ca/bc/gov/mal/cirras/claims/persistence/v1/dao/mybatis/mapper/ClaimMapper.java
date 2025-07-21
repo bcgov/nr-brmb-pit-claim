@@ -13,7 +13,7 @@ public interface ClaimMapper {
 
 	ClaimDto selectByProductId(Map<String, Object> parameters);
 	
-	List<ClaimDto> selectQuantityClaimsByProductId(Map<String, Object> parameters);
+	List<ClaimDto> selectQuantityClaimsByPolicyId(Map<String, Object> parameters);
 	
 	int insert(Map<String, Object> parameters);
 
