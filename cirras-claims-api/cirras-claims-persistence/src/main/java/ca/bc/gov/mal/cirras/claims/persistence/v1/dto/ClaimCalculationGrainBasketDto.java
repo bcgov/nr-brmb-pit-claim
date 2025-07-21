@@ -79,7 +79,7 @@ public class ClaimCalculationGrainBasketDto extends BaseDto<ClaimCalculationGrai
 			result = result&&dtoUtils.equals("grainBasketHarvestedValue", grainBasketHarvestedValue, other.grainBasketHarvestedValue, decimalPrecision);
 			result = result&&dtoUtils.equals("quantityTotalCoverageValue", quantityTotalCoverageValue, other.quantityTotalCoverageValue, decimalPrecision);
 			result = result&&dtoUtils.equals("quantityTotalYieldValue", quantityTotalYieldValue, other.quantityTotalYieldValue, decimalPrecision);
-			result = result&&dtoUtils.equals("quantityTotalClaimAmount", quantityTotalClaimAmount, other.quantityTotalClaimAmount, decimalPrecision);
+			result = result&&dtoUtils.equals("quantityTotalClaimAmount", quantityTotalClaimAmount, other.quantityTotalClaimAmount, 2);
 			result = result&&dtoUtils.equals("quantityTotalYieldLossIndemnity", quantityTotalYieldLossIndemnity, other.quantityTotalYieldLossIndemnity, decimalPrecision);
 			result = result&&dtoUtils.equals("totalYieldCoverageValue", totalYieldCoverageValue, other.totalYieldCoverageValue, decimalPrecision);
 			result = result&&dtoUtils.equals("totalYieldLoss", totalYieldLoss, other.totalYieldLoss, decimalPrecision);
