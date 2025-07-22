@@ -68,7 +68,7 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		
 		Double hundredPercentInsurableValue = 10.0;
 		Double insurableValue = 11.0;
-		Double productionQuarantee = 12.0;
+		Double productionGuarantee = 12.0;
 		Double coverageValue = 13.0;
 		Double totalYieldToCount = 14.0;
 		Double assessedYield = 15.0;
@@ -82,7 +82,7 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		newDto.setClaimCalculationGuid(claimCalculationGuid);
 		newDto.setHundredPercentInsurableValue(hundredPercentInsurableValue);
 		newDto.setInsurableValue(insurableValue);
-		newDto.setProductionQuarantee(productionQuarantee);
+		newDto.setProductionGuarantee(productionGuarantee);
 		newDto.setCoverageValue(coverageValue);
 		newDto.setTotalYieldToCount(totalYieldToCount);
 		newDto.setAssessedYield(assessedYield);
@@ -105,7 +105,7 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		//UPDATE
 		fetchedDto.setHundredPercentInsurableValue(hundredPercentInsurableValue + 1);
 		fetchedDto.setInsurableValue(insurableValue + 1);
-		fetchedDto.setProductionQuarantee(productionQuarantee + 1);
+		fetchedDto.setProductionGuarantee(productionGuarantee + 1);
 		fetchedDto.setCoverageValue(coverageValue + 1);
 		fetchedDto.setTotalYieldToCount(totalYieldToCount + 1);
 		fetchedDto.setAssessedYield(assessedYield + 1);
@@ -148,7 +148,7 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 
 		Double hundredPercentInsurableValue = 10.0;
 		Double insurableValue = 11.0;
-		Double productionQuarantee = 12.0;
+		Double productionGuarantee = 12.0;
 		Double coverageValue = 13.0;
 		Double totalYieldToCount = 14.0;
 		Double assessedYield = 15.0;
@@ -162,7 +162,7 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		newDto.setClaimCalculationGuid(claimCalculationGuid);
 		newDto.setHundredPercentInsurableValue(hundredPercentInsurableValue);
 		newDto.setInsurableValue(insurableValue);
-		newDto.setProductionQuarantee(productionQuarantee);
+		newDto.setProductionGuarantee(productionGuarantee);
 		newDto.setCoverageValue(coverageValue);
 		newDto.setTotalYieldToCount(totalYieldToCount);
 		newDto.setAssessedYield(assessedYield);
@@ -201,7 +201,7 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		Assert.assertEquals("CropCommodityId", expectedDto.getCropCommodityId(), actualDto.getCropCommodityId());
 		Assert.assertEquals("HundredPercentInsurableValue", expectedDto.getHundredPercentInsurableValue(), actualDto.getHundredPercentInsurableValue());
 		Assert.assertEquals("InsurableValue", expectedDto.getInsurableValue(), actualDto.getInsurableValue());
-		Assert.assertEquals("ProductionQuarantee", expectedDto.getProductionQuarantee(), actualDto.getProductionQuarantee());
+		Assert.assertEquals("ProductionGuarantee", expectedDto.getProductionGuarantee(), actualDto.getProductionGuarantee());
 		Assert.assertEquals("CoverageValue", expectedDto.getCoverageValue(), actualDto.getCoverageValue());
 		Assert.assertEquals("TotalYieldToCount", expectedDto.getTotalYieldToCount(), actualDto.getTotalYieldToCount());
 		Assert.assertEquals("AssessedYield", expectedDto.getAssessedYield(), actualDto.getAssessedYield());

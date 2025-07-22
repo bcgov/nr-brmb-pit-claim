@@ -20,9 +20,17 @@ public class ClaimCalculationGrainBasketProduct implements Serializable {
 	private Double quantityClaimAmount;
 	private Double yieldValue;
 
+	//Extended fields
 	private String cropCommodityName;
 	private Boolean isPedigreeInd;
 
+	//Set from latest quantity claim and calculation.
+	private Integer quantityColId;
+	private Integer quantityClaimNumber;
+	private String quantityClaimStatusCode;
+	private String quantityCommodityCoverageCode;
+	private String quantityLatestClaimCalculationGuid;
+	private String quantityLatestCalculationStatusCode;
 	
 	// Out of sync flags
 	// TODO
@@ -118,5 +126,45 @@ public class ClaimCalculationGrainBasketProduct implements Serializable {
 		this.isPedigreeInd = isPedigreeInd;
 	}
 
+	public Integer getQuantityColId() {
+		return quantityColId;
+	}
+	public void setQuantityColId(Integer quantityColId) {
+		this.quantityColId = quantityColId;
+	}
 
+	public Integer getQuantityClaimNumber() {
+		return quantityClaimNumber;
+	}
+	public void setQuantityClaimNumber(Integer quantityClaimNumber) {
+		this.quantityClaimNumber = quantityClaimNumber;
+	}
+
+	public String getQuantityClaimStatusCode() {
+		return quantityClaimStatusCode;
+	}
+	public void setQuantityClaimStatusCode(String quantityClaimStatusCode) {
+		this.quantityClaimStatusCode = quantityClaimStatusCode;
+	}
+
+	public String getQuantityCommodityCoverageCode() {
+		return quantityCommodityCoverageCode;
+	}
+	public void setQuantityCommodityCoverageCode(String quantityCommodityCoverageCode) {
+		this.quantityCommodityCoverageCode = quantityCommodityCoverageCode;
+	}
+
+	public String getQuantityLatestClaimCalculationGuid() {
+		return quantityLatestClaimCalculationGuid;
+	}
+	public void setQuantityLatestClaimCalculationGuid(String quantityLatestClaimCalculationGuid) {
+		this.quantityLatestClaimCalculationGuid = quantityLatestClaimCalculationGuid;
+	}
+
+	public String getQuantityLatestCalculationStatusCode() {
+		return quantityLatestCalculationStatusCode;
+	}
+	public void setQuantityLatestCalculationStatusCode(String quantityLatestCalculationStatusCode) {
+		this.quantityLatestCalculationStatusCode = quantityLatestCalculationStatusCode;
+	}
 }

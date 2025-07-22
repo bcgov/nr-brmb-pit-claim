@@ -19,7 +19,7 @@ public class ClaimCalculationGrainBasketProductDto extends BaseDto<ClaimCalculat
 	private Integer cropCommodityId;
 	private Double hundredPercentInsurableValue;
 	private Double insurableValue;
-	private Double productionQuarantee;
+	private Double productionGuarantee;
 	private Double coverageValue;
 	private Double totalYieldToCount;
 	private Double assessedYield;
@@ -44,7 +44,7 @@ public class ClaimCalculationGrainBasketProductDto extends BaseDto<ClaimCalculat
 		this.cropCommodityId = dto.cropCommodityId;
 		this.hundredPercentInsurableValue = dto.hundredPercentInsurableValue;
 		this.insurableValue = dto.insurableValue;
-		this.productionQuarantee = dto.productionQuarantee;
+		this.productionGuarantee = dto.productionGuarantee;
 		this.coverageValue = dto.coverageValue;
 		this.totalYieldToCount = dto.totalYieldToCount;
 		this.assessedYield = dto.assessedYield;
@@ -82,7 +82,7 @@ public class ClaimCalculationGrainBasketProductDto extends BaseDto<ClaimCalculat
 			result = result&&dtoUtils.equals("cropCommodityId", cropCommodityId, other.cropCommodityId);
 			result = result&&dtoUtils.equals("hundredPercentInsurableValue", hundredPercentInsurableValue, other.hundredPercentInsurableValue, decimalPrecision);
 			result = result&&dtoUtils.equals("insurableValue", insurableValue, other.insurableValue, decimalPrecision);
-			result = result&&dtoUtils.equals("productionQuarantee", productionQuarantee, other.productionQuarantee, decimalPrecision);
+			result = result&&dtoUtils.equals("productionGuarantee", productionGuarantee, other.productionGuarantee, decimalPrecision);
 			result = result&&dtoUtils.equals("coverageValue", coverageValue, other.coverageValue, decimalPrecision);
 			result = result&&dtoUtils.equals("totalYieldToCount", totalYieldToCount, other.totalYieldToCount, decimalPrecision);
 			result = result&&dtoUtils.equals("assessedYield", assessedYield, other.assessedYield, decimalPrecision);
@@ -145,12 +145,12 @@ public class ClaimCalculationGrainBasketProductDto extends BaseDto<ClaimCalculat
 		this.insurableValue = insurableValue;
 	}
 
-	public Double getProductionQuarantee() {
-		return productionQuarantee;
+	public Double getProductionGuarantee() {
+		return productionGuarantee;
 	}
 
-	public void setProductionQuarantee(Double productionQuarantee) {
-		this.productionQuarantee = productionQuarantee;
+	public void setProductionGuarantee(Double productionGuarantee) {
+		this.productionGuarantee = productionGuarantee;
 	}
 
 	public Double getCoverageValue() {

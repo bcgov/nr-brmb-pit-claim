@@ -9,7 +9,7 @@
 		<result property="cropCommodityId" column="crop_commodity_id" javaType="java.lang.Integer" jdbcType="NUMERIC" />
 		<result property="hundredPercentInsurableValue" column="hundred_percent_insurable_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
 		<result property="insurableValue" column="insurable_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
-		<result property="productionQuarantee" column="production_quarantee" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="productionGuarantee" column="production_guarantee" javaType="java.lang.Double" jdbcType="NUMERIC" />
 		<result property="coverageValue" column="coverage_value" javaType="java.lang.Double" jdbcType="NUMERIC" />
 		<result property="totalYieldToCount" column="total_yield_to_count" javaType="java.lang.Double" jdbcType="NUMERIC" />
 		<result property="assessedYield" column="assessed_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
@@ -33,7 +33,7 @@
 				t.crop_commodity_id, 
 				t.hundred_percent_insurable_value, 
 				t.insurable_value, 
-				t.production_quarantee, 
+				t.production_guarantee, 
 				t.coverage_value, 
 				t.total_yield_to_count, 
 				t.assessed_yield, 
@@ -78,7 +78,7 @@
 			crop_commodity_id,
 			hundred_percent_insurable_value,
 			insurable_value,
-			production_quarantee,
+			production_guarantee,
 			coverage_value,
 			total_yield_to_count,
 			assessed_yield,
@@ -95,7 +95,7 @@
 			#{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
 			#{dto.hundredPercentInsurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
 			#{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
-			#{dto.productionQuarantee, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.productionGuarantee, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
 			#{dto.coverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
 			#{dto.totalYieldToCount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
 			#{dto.assessedYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
@@ -114,7 +114,7 @@
 		SET 
 			hundred_percent_insurable_value = #{dto.hundredPercentInsurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			insurable_value = #{dto.insurableValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
-			production_quarantee = #{dto.productionQuarantee, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			production_guarantee = #{dto.productionGuarantee, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			coverage_value = #{dto.coverageValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			total_yield_to_count = #{dto.totalYieldToCount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
 			assessed_yield = #{dto.assessedYield, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
