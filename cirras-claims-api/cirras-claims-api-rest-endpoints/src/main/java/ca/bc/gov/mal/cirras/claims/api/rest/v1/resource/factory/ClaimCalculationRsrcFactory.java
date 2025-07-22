@@ -25,6 +25,8 @@ import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasket;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
@@ -54,6 +56,7 @@ import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
 import ca.bc.gov.mal.cirras.underwriting.model.v1.UnderwritingComment;
 import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldAmendment;
 import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldGrainBasket;
 import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
 
 public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements ClaimCalculationFactory {
@@ -134,9 +137,13 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 			CropCommodityDto crpDto,
 			CropCommodityDto linkedCrpDto,
 			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
 			FactoryContext context, 
 			WebAdeAuthentication authentication) throws FactoryException {
-
+		
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
 		// Add policy data to the insurance claim resource
@@ -200,7 +207,30 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 				resource.setClaimCalculationGrainQuantityDetail(createClaimCalculationGrainQuantityDetailFromClaim(productRsrc, crpDto, linkedCrpDto, verifiedYield));
 				populateCommentForGrainQuantity(resource, crpDto, linkedCrpDto, verifiedYield);
 			}
-		
+
+			// Add a grain basket objects if the insurance plan is grain and coverage is grain basket
+			else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+
+				resource.setClaimCalculationGrainBasket(createClaimCalculationGrainBasketFromClaim(productRsrc, verifiedYield));
+
+				if (quantityProducts != null) {
+					List<ClaimCalculationGrainBasketProduct> modelProducts = new ArrayList<ClaimCalculationGrainBasketProduct>();
+
+					for (ProductRsrc quantityProduct : quantityProducts) {
+						
+						ClaimDto quantityClaimDto = quantityClaimMap.get(quantityProduct.getCropCommodityId());
+						CropCommodityDto quantityCrpDto = quantityCropMap.get(quantityProduct.getCropCommodityId());
+						CropCommodityDto quantityLinkedCrpDto = quantityLinkedCropMap.get(quantityProduct.getCropCommodityId());
+						
+						ClaimCalculationGrainBasketProduct modelProduct = createClaimCalculationGrainBasketProductFromClaim(quantityProduct, quantityClaimDto, quantityCrpDto, quantityLinkedCrpDto, verifiedYield);
+						modelProducts.add(modelProduct);
+					}
+
+					resource.setClaimCalculationGrainBasketProducts(modelProducts);					
+				}
+			
+			}
+			
 		}
 
 		String eTag = getEtag(resource);
@@ -707,7 +737,91 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		return model;
 	}
-	
+
+	private ClaimCalculationGrainBasket createClaimCalculationGrainBasketFromClaim(ProductRsrc productRsrc, VerifiedYieldContractSimple verifiedYield) {
+
+		ClaimCalculationGrainBasket model = new ClaimCalculationGrainBasket();
+
+		// From CIRRAS
+		model.setGrainBasketCoverageValue(productRsrc.getCoverageDollars());
+		model.setGrainBasketDeductible(productRsrc.getDeductibleLevel());
+		
+		// From CUWS
+		VerifiedYieldGrainBasket vygb = verifiedYield.getVerifiedYieldGrainBasket();
+		if ( vygb != null ) {
+			model.setGrainBasketHarvestedValue(vygb.getHarvestedValue());
+		} else {
+			throw new FactoryException("Did not find Verified Yield Grain Basket");
+		}
+		
+		// Calculated
+		model.setQuantityTotalClaimAmount(null);
+		model.setQuantityTotalCoverageValue(null);
+		model.setQuantityTotalYieldLossIndemnity(null);
+		model.setQuantityTotalYieldValue(null);
+		model.setTotalYieldCoverageValue(null);
+		model.setTotalYieldLoss(null);
+
+		return model;
+	}
+
+	private ClaimCalculationGrainBasketProduct createClaimCalculationGrainBasketProductFromClaim(ProductRsrc productRsrc, ClaimDto claimDto, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
+		
+		ClaimCalculationGrainBasketProduct model = new ClaimCalculationGrainBasketProduct();
+
+		// From CIRRAS
+		model.setCoverageValue(productRsrc.getCoverageDollars());
+		model.setCropCommodityId(productRsrc.getCropCommodityId());
+		model.setCropCommodityName(productRsrc.getCommodityName());
+		model.setHundredPercentInsurableValue(productRsrc.getInsurableValueHundredPercent());
+		model.setInsurableValue(productRsrc.getSelectedInsurableValue());
+		model.setIsPedigreeInd(crpDto.getIsPedigreeInd());
+		model.setProductionGuarantee(productRsrc.getProductionGuarantee());
+
+		// From CCS
+		if ( claimDto != null ) {
+			model.setAssessedYield(null); // TODO
+			model.setQuantityClaimAmount(null); // TODO
+			model.setQuantityClaimNumber(claimDto.getClaimNumber());
+			model.setQuantityClaimStatusCode(claimDto.getClaimStatusCode());
+			model.setQuantityColId(claimDto.getColId());
+			model.setQuantityCommodityCoverageCode(claimDto.getCommodityCoverageCode());
+			model.setQuantityLatestCalculationStatusCode(claimDto.getCalculationStatusCode());
+			model.setQuantityLatestClaimCalculationGuid(claimDto.getClaimCalculationGuid());
+		}
+		
+		// From CUWS
+		// CUWS stores yield data always using the non-pedigree crop id, whereas CCS stores Calculations for pedigree commodities using that crop id. So we have to account for this mis-match 
+		// here when filtering for Verified Yield.
+		Integer vysCropCommodityId = null;
+		if ( crpDto.getIsPedigreeInd() ) {
+			vysCropCommodityId = linkedCrpDto.getCropCommodityId();
+		} else {
+			vysCropCommodityId = crpDto.getCropCommodityId();
+		}
+		
+		
+		VerifiedYieldSummary vys = null;
+		if ( verifiedYield.getVerifiedYieldSummaries() != null ) {
+			for ( VerifiedYieldSummary currVys : verifiedYield.getVerifiedYieldSummaries() ) {
+				if ( currVys.getCropCommodityId().equals(vysCropCommodityId) && currVys.getIsPedigreeInd().equals(crpDto.getIsPedigreeInd()) ) {
+					vys = currVys;
+					break;
+				}
+			}
+		}
+
+		if ( vys != null ) { 
+			model.setTotalYieldToCount(vys.getYieldToCount());
+		} else {
+			throw new FactoryException("Did not find Verified Yield Summary for " + crpDto.getCommodityName());
+		}
+		
+		// Calculated
+		model.setYieldValue(null);
+		
+		return model;
+	}
 	
 	@Override
 	public ClaimCalculation getCalculationFromCalculation(ClaimCalculation claimCalculation, FactoryContext context,
