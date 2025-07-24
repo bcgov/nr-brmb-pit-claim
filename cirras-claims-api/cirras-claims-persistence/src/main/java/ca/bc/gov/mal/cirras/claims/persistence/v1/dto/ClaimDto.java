@@ -67,6 +67,8 @@ public class ClaimDto extends BaseDto<ClaimDto> {
 	private String calculationStatusCode;
 	private String calculationStatus;
 
+	private ClaimCalculationDto claimCalculationDto;
+	
 	
 	public ClaimDto() {
 	}
@@ -103,6 +105,11 @@ public class ClaimDto extends BaseDto<ClaimDto> {
 		this.createDate = dto.createDate;
 		this.updateUser = dto.updateUser;
 		this.updateDate = dto.updateDate;
+
+		if ( dto.claimCalculationDto != null ) {
+			this.claimCalculationDto = dto.claimCalculationDto.copy();
+		}
+	
 	}
 	
 
@@ -434,5 +441,12 @@ public class ClaimDto extends BaseDto<ClaimDto> {
 		return calculationStatus;
 	}
 
+	public ClaimCalculationDto getClaimCalculationDto() {
+		return claimCalculationDto;
+	}
+
+	public void setClaimCalculationDto(ClaimCalculationDto claimCalculationDto) {
+		this.claimCalculationDto = claimCalculationDto;
+	}
 
 }

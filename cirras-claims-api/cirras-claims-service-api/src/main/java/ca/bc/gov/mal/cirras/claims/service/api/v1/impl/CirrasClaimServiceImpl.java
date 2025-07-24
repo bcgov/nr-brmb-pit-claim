@@ -378,39 +378,28 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 						throw new ServiceException("No product found for " + claimNumber);
 					}
 					
-					quantityProducts = new ArrayList<ProductRsrc>();
+					quantityProducts = getProductsByCoverageAndStatus(productListRsrc, ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode(), ClaimsServiceEnums.ProductStatusCodes.FINAL.toString());
 					quantityClaimMap = new HashMap<Integer, ClaimDto>();
 					quantityCropMap = new HashMap<Integer, CropCommodityDto>();
 					quantityLinkedCropMap = new HashMap<Integer, CropCommodityDto>();
 
-					for ( ProductRsrc prd : productListRsrc.getCollection() ) {
-						if ( prd.getCommodityCoverageCode().equals(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode()) ) {
-							quantityProducts.add(prd);
-						
-							CropCommodityDto qtyCrpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
-							if ( qtyCrpDto == null ) {
-								throw new ServiceException("No commodity found for " + prd.getCommodityName());
-							} else {
-								quantityCropMap.put(prd.getCropCommodityId(), qtyCrpDto);
-							}
+					for ( ProductRsrc prd : quantityProducts ) {
 
-							CropCommodityDto qtyLinkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
-							if ( qtyLinkedCrpDto != null ) {
-								quantityLinkedCropMap.put(prd.getCropCommodityId(), qtyLinkedCrpDto);
-							}
-						}						
+						CropCommodityDto qtyCrpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
+						if ( qtyCrpDto == null ) {
+							throw new ServiceException("No commodity found for " + prd.getCommodityName());
+						} else {
+							quantityCropMap.put(prd.getCropCommodityId(), qtyCrpDto);
+						}
+
+						CropCommodityDto qtyLinkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
+						if ( qtyLinkedCrpDto != null ) {
+							quantityLinkedCropMap.put(prd.getCropCommodityId(), qtyLinkedCrpDto);
+						}
 					}
 					
 					if ( !quantityProducts.isEmpty() ) {
-						List<ClaimDto> quantityClaims = claimDao.selectQuantityClaimsByPolicyId(policyClaimRsrc.getInsurancePolicyId());
-						
-						if ( quantityClaims != null ) {
-							for ( ClaimDto qtyClaimDto : quantityClaims ) {
-								if ( quantityClaimMap.put(qtyClaimDto.getCropCommodityId(), qtyClaimDto) != null ) {
-									throw new ServiceException("Found multiple quantity claims for the same commodity");
-								}
-							}
-						}				
+						quantityClaimMap = loadQuantityClaims(policyClaimRsrc.getInsurancePolicyId());
 					}
 
 					verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, false, true, true);
@@ -733,22 +722,12 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			if (dto.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
 				dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
 
-				// TODO: Create function?
 				ClaimDto gbClaimDto = claimDao.selectByClaimNumber(dto.getClaimNumber());
 				if ( gbClaimDto == null ) { 
 					throw new ServiceException("No claim found for " + dto.getClaimNumber());
 				}
 				
-				quantityClaimMap = new HashMap<Integer, ClaimDto>();
-				List<ClaimDto> quantityClaims = claimDao.selectQuantityClaimsByPolicyId(gbClaimDto.getIplId()); // TODO: Allow lookup by contractId?
-				
-				if ( quantityClaims != null ) {
-					for ( ClaimDto qtyClaimDto : quantityClaims ) {
-						if ( quantityClaimMap.put(qtyClaimDto.getCropCommodityId(), qtyClaimDto) != null ) {
-							throw new ServiceException("Found multiple quantity claims for the same commodity");
-						}
-					}
-				}
+				quantityClaimMap = loadQuantityClaims(gbClaimDto.getIplId());
 			}
 
 			result = claimCalculationFactory.getClaimCalculation(dto, quantityClaimMap, factoryContext, authentication);
@@ -1082,6 +1061,40 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		return product;
 	}
 
+	private List<ProductRsrc> getProductsByCoverageAndStatus(ProductListRsrc productList, String commodityCoverageCode, String productStatusCode) {
+
+		List<ProductRsrc> quantityProducts = new ArrayList<ProductRsrc>();
+		for ( ProductRsrc prd : productList.getCollection() ) {
+			if ( prd.getCommodityCoverageCode().equals(commodityCoverageCode) && prd.getProductStatusCode().equals(productStatusCode) ) {
+				quantityProducts.add(prd);
+			}
+		}
+		
+		return quantityProducts;
+	}
+
+	private Map<Integer, ClaimDto> loadQuantityClaims(Integer policyId) throws DaoException {
+
+		Map<Integer, ClaimDto> quantityClaimMap = new HashMap<Integer, ClaimDto>();
+		List<ClaimDto> quantityClaims = claimDao.selectQuantityClaimsByPolicyId(policyId);
+		
+		if ( quantityClaims != null ) {
+			for ( ClaimDto qtyClaimDto : quantityClaims ) {
+				if ( quantityClaimMap.put(qtyClaimDto.getCropCommodityId(), qtyClaimDto) != null ) {
+					throw new ServiceException("Found multiple quantity claims for the same commodity");
+				}
+				
+				if ( qtyClaimDto.getClaimCalculationGuid() != null ) {
+					ClaimCalculationDto qtyClaimCalcDto = claimCalculationDao.fetch(qtyClaimDto.getClaimCalculationGuid());
+					getSubTableRecords(qtyClaimDto.getClaimCalculationGuid(), qtyClaimCalcDto);
+					qtyClaimDto.setClaimCalculationDto(qtyClaimCalcDto);
+				}
+			}
+		}
+		
+		return quantityClaimMap;
+	}
+	
 	private void updateFromLinkedCalculation(ClaimCalculation claimCalculation, InsuranceClaimRsrc policyClaimRsrc, ProductListRsrc productListRsrc, CropCommodityDto linkedCrpDto, boolean doUpdateGrainQuantity) throws DaoException {
 
 		ProductRsrc linkedProductRsrc = null;

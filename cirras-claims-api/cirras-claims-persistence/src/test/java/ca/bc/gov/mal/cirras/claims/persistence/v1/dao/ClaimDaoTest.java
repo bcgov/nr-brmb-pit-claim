@@ -75,6 +75,7 @@ public class ClaimDaoTest {
 		for (ClaimDto dto : dtos) {
 			Assert.assertNotNull(dto.getClaimStatusCode()); 
 			Assert.assertNotNull(dto.getCommodityCoverageCode());
+			Assert.assertNotNull(dto.getCropCommodityId());
 			Assert.assertNotNull(dto.getClaimNumber());
 			if(dto.getClaimNumber().equals(37187)) {
 				//Claim 37187 and a calculation has to exist

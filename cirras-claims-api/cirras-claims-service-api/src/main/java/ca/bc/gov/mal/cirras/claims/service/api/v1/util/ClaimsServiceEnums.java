@@ -84,6 +84,11 @@ public class ClaimsServiceEnums {
 		UNKNOWN
 	}
 
+	public enum ProductStatusCodes {
+		OFFER,
+		PENDING,
+		FINAL
+	}
 	
 	public enum TransactionTypes{
 		Inserted("INSERTED"),

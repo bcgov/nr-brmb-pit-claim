@@ -251,9 +251,9 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 					resource.setClaimCalculationGrainBasketProducts(modelProducts);					
 				}
-			
-			}
-			
+
+				populateCommentForGrainBasket(resource, verifiedYield);
+			}			
 		}
 
 		String eTag = getEtag(resource);
@@ -607,6 +607,20 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		
 	}
 
+	private void populateCommentForGrainBasket(ClaimCalculationRsrc resource, VerifiedYieldContractSimple verifiedYield) {
+		
+		StringBuilder commentStr = new StringBuilder();
+
+		if ( verifiedYield.getVerifiedYieldGrainBasket() != null && verifiedYield.getVerifiedYieldGrainBasket().getComment() != null ) {
+			commentStr.append("Verified Yield Grain Basket:\n")
+	                  .append(verifiedYield.getVerifiedYieldGrainBasket().getComment());
+		}
+
+		if ( commentStr.length() > 0 ) {
+			resource.setCalculationComment(commentStr.toString());
+		}
+	}
+	
 	private ClaimCalculationVariety createClaimCalculationVarietyFromClaim(
 			ca.bc.gov.mal.cirras.policies.model.v1.Variety policiesVariety) {
 		ClaimCalculationVariety model = new ClaimCalculationVariety();
@@ -803,14 +817,18 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		// From CCS
 		if ( claimDto != null ) {
-			model.setAssessedYield(null); // TODO
-			model.setQuantityClaimAmount(null); // TODO
 			model.setQuantityClaimNumber(claimDto.getClaimNumber());
 			model.setQuantityClaimStatusCode(claimDto.getClaimStatusCode());
 			model.setQuantityColId(claimDto.getColId());
 			model.setQuantityCommodityCoverageCode(claimDto.getCommodityCoverageCode());
 			model.setQuantityLatestCalculationStatusCode(claimDto.getCalculationStatusCode());
 			model.setQuantityLatestClaimCalculationGuid(claimDto.getClaimCalculationGuid());
+
+			// Only populate from APPROVED calculations.
+			if ( ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(claimDto.getCalculationStatusCode()) ) {
+				model.setQuantityClaimAmount(claimDto.getClaimCalculationDto().getTotalClaimAmount());
+				model.setAssessedYield(claimDto.getClaimCalculationDto().getClaimCalculationGrainQuantityDetail().getAssessedYield());
+			}
 		}
 		
 		// From CUWS
