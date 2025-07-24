@@ -40,6 +40,8 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketProductDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDetailDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainSpotLossDto;
@@ -62,7 +64,7 @@ import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
 public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements ClaimCalculationFactory {
 
 	@Override
-	public ClaimCalculation getClaimCalculation(ClaimCalculationDto dto, FactoryContext context,
+	public ClaimCalculation getClaimCalculation(ClaimCalculationDto dto, Map<Integer, ClaimDto> quantityClaimMap, FactoryContext context,
 			WebAdeAuthentication authentication) throws FactoryException {
 
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
@@ -120,6 +122,27 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		if(dto.getClaimCalculationGrainQuantityDetail() != null) {
 			resource.setClaimCalculationGrainQuantityDetail(createClaimCalculationGrainQuantityDetail(dto.getClaimCalculationGrainQuantityDetail()));
 		}
+
+		//Add grain basket
+		if(dto.getClaimCalculationGrainBasket() != null) {
+			resource.setClaimCalculationGrainBasket(createClaimCalculationGrainBasket(dto.getClaimCalculationGrainBasket()));
+		}
+
+		//Add grain basket products
+		if (!dto.getClaimCalculationGrainBasketProducts().isEmpty()) {
+			List<ClaimCalculationGrainBasketProduct> modelProducts = new ArrayList<ClaimCalculationGrainBasketProduct>();
+
+			for (ClaimCalculationGrainBasketProductDto pDto : dto.getClaimCalculationGrainBasketProducts()) {
+
+				ClaimDto quantityClaimDto = quantityClaimMap.get(pDto.getCropCommodityId());
+				
+				ClaimCalculationGrainBasketProduct modelProduct = createClaimCalculationGrainBasketProduct(pDto, quantityClaimDto);
+				modelProducts.add(modelProduct);
+			}
+
+			resource.setClaimCalculationGrainBasketProducts(modelProducts);
+		}
+
 		
 		String eTag = getEtag(resource);
 		resource.setETag(eTag);
@@ -1767,6 +1790,56 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 
 		return model;
 	}
+
+	private ClaimCalculationGrainBasket createClaimCalculationGrainBasket(ClaimCalculationGrainBasketDto dto) {
+		ClaimCalculationGrainBasket model = new ClaimCalculationGrainBasket();
+
+		model.setClaimCalculationGrainBasketGuid(dto.getClaimCalculationGrainBasketGuid());
+		model.setClaimCalculationGuid(dto.getClaimCalculationGuid());
+		model.setGrainBasketCoverageValue(dto.getGrainBasketCoverageValue());
+		model.setGrainBasketDeductible(dto.getGrainBasketDeductible());
+		model.setGrainBasketHarvestedValue(dto.getGrainBasketHarvestedValue());
+		model.setQuantityTotalClaimAmount(dto.getQuantityTotalClaimAmount());
+		model.setQuantityTotalCoverageValue(dto.getQuantityTotalCoverageValue());
+		model.setQuantityTotalYieldLossIndemnity(dto.getQuantityTotalYieldLossIndemnity());
+		model.setQuantityTotalYieldValue(dto.getQuantityTotalYieldValue());
+		model.setTotalYieldCoverageValue(dto.getTotalYieldCoverageValue());
+		model.setTotalYieldLoss(dto.getTotalYieldLoss());
+		
+		return model;
+	}
+	
+	private ClaimCalculationGrainBasketProduct createClaimCalculationGrainBasketProduct(ClaimCalculationGrainBasketProductDto dto, ClaimDto qtyClaimDto) {
+		ClaimCalculationGrainBasketProduct model = new ClaimCalculationGrainBasketProduct();
+
+		// From ClaimCalculationGrainBasketProductDto
+		model.setAssessedYield(dto.getAssessedYield());
+		model.setClaimCalcGrainBasketProductGuid(dto.getClaimCalcGrainBasketProductGuid());
+		model.setClaimCalculationGuid(dto.getClaimCalculationGuid());
+		model.setCoverageValue(dto.getCoverageValue());
+		model.setCropCommodityId(dto.getCropCommodityId());
+		model.setCropCommodityName(dto.getCropCommodityName());
+		model.setHundredPercentInsurableValue(dto.getHundredPercentInsurableValue());
+		model.setInsurableValue(dto.getInsurableValue());
+		model.setIsPedigreeInd(dto.getIsPedigreeInd());
+		model.setProductionGuarantee(dto.getProductionGuarantee());
+		model.setQuantityClaimAmount(dto.getQuantityClaimAmount());
+		model.setTotalYieldToCount(dto.getTotalYieldToCount());
+		model.setYieldValue(dto.getYieldValue());
+
+		// From ClaimDto
+		if ( qtyClaimDto != null ) { 
+			model.setQuantityClaimNumber(qtyClaimDto.getClaimNumber());
+			model.setQuantityClaimStatusCode(qtyClaimDto.getClaimStatusCode());
+			model.setQuantityColId(qtyClaimDto.getColId());
+			model.setQuantityCommodityCoverageCode(qtyClaimDto.getCommodityCoverageCode());
+			model.setQuantityLatestCalculationStatusCode(qtyClaimDto.getCalculationStatusCode());
+			model.setQuantityLatestClaimCalculationGuid(qtyClaimDto.getClaimCalculationGuid());
+		}
+		
+		return model;
+	}
+
 	
 	private void populateResource(ClaimCalculationRsrc resource, ClaimCalculationDto dto) {
 

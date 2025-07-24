@@ -39,6 +39,8 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.CropCommodityDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationUserDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketProductDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDetailDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainSpotLossDto;
@@ -726,7 +728,30 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			// Get Subtable Records
 			getSubTableRecords(claimCalculationGuid, dto);
 
-			result = claimCalculationFactory.getClaimCalculation(dto, factoryContext, authentication);
+			// Load data for Grain Basket.
+			Map<Integer, ClaimDto> quantityClaimMap = null;       // Maps crop id to Claim.
+			if (dto.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+				dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+
+				// TODO: Create function?
+				ClaimDto gbClaimDto = claimDao.selectByClaimNumber(dto.getClaimNumber());
+				if ( gbClaimDto == null ) { 
+					throw new ServiceException("No claim found for " + dto.getClaimNumber());
+				}
+				
+				quantityClaimMap = new HashMap<Integer, ClaimDto>();
+				List<ClaimDto> quantityClaims = claimDao.selectQuantityClaimsByPolicyId(gbClaimDto.getIplId()); // TODO: Allow lookup by contractId?
+				
+				if ( quantityClaims != null ) {
+					for ( ClaimDto qtyClaimDto : quantityClaims ) {
+						if ( quantityClaimMap.put(qtyClaimDto.getCropCommodityId(), qtyClaimDto) != null ) {
+							throw new ServiceException("Found multiple quantity claims for the same commodity");
+						}
+					}
+				}
+			}
+
+			result = claimCalculationFactory.getClaimCalculation(dto, quantityClaimMap, factoryContext, authentication);
 
 			String claimNumber = result.getClaimNumber().toString();
 			InsuranceClaimRsrc policyClaimRsrc = null;
@@ -754,8 +779,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					// Get Subtable Records
 					getSubTableRecords(claimCalculationGuid, dto);
 
-					result = claimCalculationFactory.getClaimCalculation(dto, factoryContext, authentication);
-
+					result = claimCalculationFactory.getClaimCalculation(dto, quantityClaimMap, factoryContext, authentication);
 				}
 				
 				//If a calculation is in status Approved, then the normally automatically synched claim-related fields, particularly 
@@ -966,6 +990,17 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			
 			ClaimCalculationGrainQuantityDetailDto grainQuantityDetailDto = claimCalculationGrainQuantityDetailDao.select(claimCalculationGuid);
 			dto.setClaimCalculationGrainQuantityDetail(grainQuantityDetailDto);
+		}
+
+		// Get Grain Basket
+		if(dto.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) 
+				&& dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+						
+			ClaimCalculationGrainBasketDto grainBasketDto = claimCalculationGrainBasketDao.select(claimCalculationGuid);
+			dto.setClaimCalculationGrainBasket(grainBasketDto);
+
+			List<ClaimCalculationGrainBasketProductDto> products = claimCalculationGrainBasketProductDao.select(claimCalculationGuid);
+			dto.setClaimCalculationGrainBasketProducts(products);		
 		}
 	}
 

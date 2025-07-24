@@ -41,6 +41,7 @@ public interface ClaimCalculationFactory {
 
 	ClaimCalculation getClaimCalculation(
 		ClaimCalculationDto dto, 
+		Map<Integer, ClaimDto> quantityClaimMap,
 		FactoryContext context, 
 		WebAdeAuthentication authentication
 	) throws FactoryException;

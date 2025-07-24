@@ -232,8 +232,9 @@ public class CirrasDataSyncServiceImpl implements CirrasDataSyncService {
 			// No need to compare or update if there is no calculation
 			// This is quite possible and ok because not all claims have a calculation yet.
 			// It's still a successful transaction
+			// TODO
 			if (claimCalculationDto != null) {
-				ClaimCalculation calculation = claimCalculationFactory.getClaimCalculation(claimCalculationDto,
+				ClaimCalculation calculation = claimCalculationFactory.getClaimCalculation(claimCalculationDto, null,
 						factoryContext, authentication);
 
 				updateClaimAndCalculationStatus(calculation, syncClaim, claimCalculationDto, authentication,

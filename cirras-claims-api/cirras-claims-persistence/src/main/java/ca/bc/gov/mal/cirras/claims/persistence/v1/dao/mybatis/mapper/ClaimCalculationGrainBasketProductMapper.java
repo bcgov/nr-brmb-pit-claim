@@ -17,7 +17,7 @@ public interface ClaimCalculationGrainBasketProductMapper {
     
     int deleteForClaim(Map<String, Object> parameters);
     
-    ClaimCalculationGrainBasketProductDto select(Map<String, Object> parameters);
+    List<ClaimCalculationGrainBasketProductDto> select(Map<String, Object> parameters);
 
     List<ClaimCalculationGrainBasketProductDto> selectAll();	
     

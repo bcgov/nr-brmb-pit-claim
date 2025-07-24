@@ -65,6 +65,7 @@
 		JOIN crop_commodity cc ON cc.crop_commodity_id = t.crop_commodity_id
 		LEFT JOIN crop_commodity_pedigree_xref ccpx ON ccpx.crop_commodity_id_pedigree = t.crop_commodity_id
 		WHERE t.claim_calculation_guid = #{claimCalculationGuid}
+		ORDER BY cc.commodity_name
 	</select> 
 	
 	<insert id="insert">

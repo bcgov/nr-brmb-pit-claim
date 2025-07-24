@@ -124,12 +124,14 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		assertGrainBasketProduct(fetchedDto, updatedDto, false);
 		
 		//SELECT
-		ClaimCalculationGrainBasketProductDto dto = dao.select(claimCalculationGuid);
-		Assert.assertNotNull(dto);
+		List<ClaimCalculationGrainBasketProductDto> dtos = dao.select(claimCalculationGuid);
+		Assert.assertNotNull(dtos);
+		Assert.assertEquals(1, dtos.size());
+		ClaimCalculationGrainBasketProductDto dto = dtos.get(0);
 		assertGrainBasketProduct(dto, updatedDto, false);
 		
 		//SELECT ALL
-		List<ClaimCalculationGrainBasketProductDto> dtos = dao.selectAll();
+		dtos = dao.selectAll();
 		Assert.assertNotNull(dtos);
 		Assert.assertEquals(1, dtos.size());
 		
@@ -178,15 +180,17 @@ public class ClaimCalculationGrainBasketProductDaoTest {
 		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
 
 		//SELECT
-		ClaimCalculationGrainBasketProductDto dto = dao.select(claimCalculationGuid);
-		Assert.assertNotNull(dto); //Not Null
+		List<ClaimCalculationGrainBasketProductDto> dtos = dao.select(claimCalculationGuid);
+		Assert.assertNotNull(dtos); //Not Null
+		Assert.assertEquals(1, dtos.size());
 		
 		//DELETE FOR CLAIM
 		dao.deleteForClaim(claimCalculationGuid);
 		
 		//SELECT
-		dto = dao.select(claimCalculationGuid);
-		Assert.assertNull(dto); //Null
+		dtos = dao.select(claimCalculationGuid);
+		Assert.assertNotNull(dtos); //Not Null
+		Assert.assertEquals(0, dtos.size());
 	}
 	
 	private void assertGrainBasketProduct(ClaimCalculationGrainBasketProductDto expectedDto, 
