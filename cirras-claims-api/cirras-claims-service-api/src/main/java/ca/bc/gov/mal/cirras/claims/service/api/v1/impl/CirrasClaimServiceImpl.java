@@ -14,6 +14,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.Claim;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimList;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
@@ -543,7 +544,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		// Insert Grain Quantity Detail data
 		createGrainQuantityDetail(claimCalculation, userId, claimCalculationGuid);
-}
+		
+		// Insert Grain Basket data
+		createGrainBasket(claimCalculation, userId, claimCalculationGuid);
+
+		// Insert Grain Basket Products data
+		createGrainBasketProducts(claimCalculation, userId, claimCalculationGuid);
+	}
 
 	private void createPlantAcres(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
 			throws DaoException {
@@ -649,6 +656,40 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			dtoGrainQuantityDetail.setClaimCalculationGrainQuantityDetailGuid(null);
 			dtoGrainQuantityDetail.setClaimCalculationGuid(claimCalculationGuid);
 			claimCalculationGrainQuantityDetailDao.insert(dtoGrainQuantityDetail, userId);
+		}
+	}
+
+	private void createGrainBasket(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Basket Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+				
+			ClaimCalculationGrainBasketDto dtoGrainBasket = claimCalculationFactory.createDto(claimCalculation.getClaimCalculationGrainBasket());
+
+			dtoGrainBasket.setClaimCalculationGrainBasketGuid(null);
+			dtoGrainBasket.setClaimCalculationGuid(claimCalculationGuid);
+			claimCalculationGrainBasketDao.insert(dtoGrainBasket, userId);
+		}
+	}
+	
+	private void createGrainBasketProducts(ClaimCalculation claimCalculation, String userId, String claimCalculationGuid)
+			throws DaoException {
+		//
+		// Insert Grain Basket Product Data
+		//
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+			
+			for ( ClaimCalculationGrainBasketProduct modelGrainBasketProduct : claimCalculation.getClaimCalculationGrainBasketProducts() ) {
+				ClaimCalculationGrainBasketProductDto dtoGrainBasketProduct = claimCalculationFactory.createDto(modelGrainBasketProduct);
+	
+				dtoGrainBasketProduct.setClaimCalcGrainBasketProductGuid(null);
+				dtoGrainBasketProduct.setClaimCalculationGuid(claimCalculationGuid);
+				claimCalculationGrainBasketProductDao.insert(dtoGrainBasketProduct, userId);
+			}
 		}
 	}
 	
@@ -1173,6 +1214,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			calculateTotals(claimCalculation);
 			
 			checkForLinkedCalculations(updateType, claimCalculation);
+			checkForSubmitAllowed(updateType, claimCalculation);
 
 			ClaimCalculationDto dto = claimCalculationDao.fetch(claimCalculationGuid);
 
@@ -1266,6 +1308,38 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		}
 	}
 
+	private void checkForSubmitAllowed(String updateType, ClaimCalculation claimCalculation) {
+
+		if ( ClaimsServiceEnums.UpdateTypes.SUBMIT.toString().equals(updateType) ) {
+
+			// Submit rules for Grain Basket
+			if ( claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+				 claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
+	
+				// Total Claim Amount must be between 0 and Coverage Value
+				Double totalClaimAmount = claimCalculation.getTotalClaimAmount();
+				Double coverageValue = notNull(claimCalculation.getClaimCalculationGrainBasket().getGrainBasketCoverageValue(), 0.0);
+				if ( totalClaimAmount == null || Double.compare(totalClaimAmount, 0.0) < 0 || Double.compare(totalClaimAmount, coverageValue) > 0 ) {
+					throw new ServiceException("The calculation can't be submitted because the Total Claim Amount must be between 0 and the Coverage Value.");
+				}
+				
+				// All Quantity Products with Claims must have APPROVED calculations.
+				boolean hasUnapprovedQtyClaim = false;
+				for ( ClaimCalculationGrainBasketProduct prd : claimCalculation.getClaimCalculationGrainBasketProducts() ) {
+					if ( prd.getQuantityClaimNumber() != null && !ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(prd.getQuantityLatestCalculationStatusCode()) ) {
+						hasUnapprovedQtyClaim = true;
+						break;
+					}
+				}
+				
+				if ( hasUnapprovedQtyClaim ) {
+					throw new ServiceException("The calculation can't be submitted until all Quantity Claim Calculations for this Policy have been Approved.");
+				}
+			}
+		}
+	}
+	
+	
 	private void submitCalculation(ClaimCalculation claimCalculation, String userId) throws CirrasPolicyServiceException, ValidationFailureException {
 
 		logger.debug("<cirrasPolicyService call");
@@ -1325,6 +1399,12 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 		//Update Grain Quantity Detail
 		updateGrainQuantityDetail(claimCalculation, userId);
+
+		//Update Grain Basket
+		updateGrainBasket(claimCalculation, userId);		
+
+		//Update Grain Basket Products
+		updateGrainBasketProducts(claimCalculation, userId);
 	}
 
 	private void updatePlantAcres(ClaimCalculation claimCalculation, String userId)
@@ -1438,7 +1518,36 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			claimCalculationGrainQuantityDetailDao.update(dtoGrainQuantityDetail, userId);
 		}
 	}
-	
+
+	private void updateGrainBasket(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Basket Data
+		//
+		if (claimCalculation.getClaimCalculationGrainBasket() != null) {
+			ClaimCalculationGrainBasketDto dtoGrainBasket = claimCalculationGrainBasketDao.fetch(claimCalculation.getClaimCalculationGrainBasket().getClaimCalculationGrainBasketGuid());
+
+			claimCalculationFactory.updateDto(dtoGrainBasket, claimCalculation.getClaimCalculationGrainBasket());
+
+			claimCalculationGrainBasketDao.update(dtoGrainBasket, userId);
+		}
+	}
+
+	private void updateGrainBasketProducts(ClaimCalculation claimCalculation, String userId)
+			throws DaoException, NotFoundDaoException {
+		//
+		// Update Grain Basket Products Data
+		//
+		if (claimCalculation.getClaimCalculationGrainBasketProducts() != null && 
+			claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+			claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+
+			// There is no user-entered data, so just delete all records then re-create.
+			claimCalculationGrainBasketProductDao.deleteForClaim(claimCalculation.getClaimCalculationGuid());
+			createGrainBasketProducts(claimCalculation, userId, claimCalculation.getClaimCalculationGuid());
+		}
+	}
+
 	private void updateBerriesQuantity(ClaimCalculation claimCalculation, String userId)
 			throws DaoException, NotFoundDaoException {
 		//
