@@ -102,7 +102,7 @@
 	</select>
 	
 	<select id="selectQuantityClaimsByPolicyId" resultMap="ClaimDtoMap">
-		SELECT c.col_id, c.claim_number, c.claim_status_code, c.commodity_coverage_code,
+		SELECT c.col_id, c.claim_number, c.claim_status_code, c.commodity_coverage_code, c.crop_commodity_id, 
 		cc.claim_calculation_guid, cc.calculation_status_code
 		FROM claim c
 		LEFT JOIN claim_calculation cc ON cc.claim_number = c.claim_number AND cc.calculation_version = 
@@ -113,7 +113,7 @@
 			)
 		WHERE c.ipl_id = #{iplId}
 		AND c.commodity_coverage_code IN ('CQG', 'CQF', 'CQNT', 'CQSC', 'CQTF', 'CQTFN')
-		ORDER BY c.claim_number
+		ORDER BY c.crop_commodity_id
 	</select>
 		
 	<insert id="insert">

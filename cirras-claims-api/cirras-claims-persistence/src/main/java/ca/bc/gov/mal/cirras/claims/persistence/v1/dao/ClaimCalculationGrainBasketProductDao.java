@@ -21,7 +21,7 @@ public interface ClaimCalculationGrainBasketProductDao extends Serializable {
     
     void deleteForClaim(String claimCalculationGuid) throws DaoException;
     
-    ClaimCalculationGrainBasketProductDto select(String claimCalculationGuid) throws DaoException;
+    List<ClaimCalculationGrainBasketProductDto> select(String claimCalculationGuid) throws DaoException;
 
     List<ClaimCalculationGrainBasketProductDto> selectAll() throws DaoException;
 }

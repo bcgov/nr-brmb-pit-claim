@@ -50,8 +50,8 @@ public class ClaimCalculationGrainBasketProductDaoImpl extends BaseDao implement
 	}
 
 	@Override
-	public ClaimCalculationGrainBasketProductDto select(String claimCalculationGuid) throws DaoException {
-		ClaimCalculationGrainBasketProductDto result = null;
+	public List<ClaimCalculationGrainBasketProductDto> select(String claimCalculationGuid) throws DaoException {
+		List<ClaimCalculationGrainBasketProductDto> result = null;
 
 		try {
 			Map<String, Object> parameters = new HashMap<String, Object>();

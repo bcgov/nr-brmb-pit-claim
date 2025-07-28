@@ -89,6 +89,8 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	private ClaimCalculationGrainSpotLossDto claimCalculationGrainSpotLossDto;
 	private ClaimCalculationGrainQuantityDto claimCalculationGrainQuantityDto;
 	private ClaimCalculationGrainQuantityDetailDto claimCalculationGrainQuantityDetailDto;
+	private ClaimCalculationGrainBasketDto claimCalculationGrainBasketDto;
+	private List<ClaimCalculationGrainBasketProductDto> claimCalculationGrainBasketProductDtos = new ArrayList<ClaimCalculationGrainBasketProductDto>();
 	
 	public ClaimCalculationDto() {
 	}
@@ -166,6 +168,18 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 
 		if ( dto.claimCalculationGrainQuantityDetailDto != null) {
 			this.claimCalculationGrainQuantityDetailDto = dto.claimCalculationGrainQuantityDetailDto.copy();
+		}
+
+		if ( dto.claimCalculationGrainBasketDto != null) {
+			this.claimCalculationGrainBasketDto = dto.claimCalculationGrainBasketDto.copy();
+		}
+
+		this.claimCalculationGrainBasketProductDtos = new ArrayList<ClaimCalculationGrainBasketProductDto>();
+		
+		if (dto.claimCalculationGrainBasketProductDtos != null) {
+			for(ClaimCalculationGrainBasketProductDto pDto : dto.claimCalculationGrainBasketProductDtos) {
+				this.claimCalculationGrainBasketProductDtos.add(pDto.copy());
+			}
 		}
 		
 		if ( dto.claimCalculationGrapesDto != null) {
@@ -527,6 +541,23 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.claimCalculationGrainQuantityDetailDto = claimCalculationGrainQuantityDetailDto;
 	}
 
+	public ClaimCalculationGrainBasketDto getClaimCalculationGrainBasket() {
+		return claimCalculationGrainBasketDto;
+	}
+
+	public void setClaimCalculationGrainBasket(ClaimCalculationGrainBasketDto claimCalculationGrainBasketDto) {
+		this.claimCalculationGrainBasketDto = claimCalculationGrainBasketDto;
+	}
+	
+	public List<ClaimCalculationGrainBasketProductDto> getClaimCalculationGrainBasketProducts() {
+		return claimCalculationGrainBasketProductDtos;
+	}
+
+	public void setClaimCalculationGrainBasketProducts(List<ClaimCalculationGrainBasketProductDto> claimCalculationGrainBasketProductDtos) {
+		this.claimCalculationGrainBasketProductDtos = claimCalculationGrainBasketProductDtos;
+	}
+
+	
 	public String getSubmittedByUserid() {
 		return submittedByUserid;
 	}

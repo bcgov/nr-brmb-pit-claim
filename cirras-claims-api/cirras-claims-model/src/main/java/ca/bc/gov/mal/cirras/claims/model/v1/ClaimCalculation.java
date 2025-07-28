@@ -228,4 +228,10 @@ public interface ClaimCalculation extends Serializable {
 	public ClaimCalculationGrainQuantityDetail getClaimCalculationGrainQuantityDetail();
 	public void setClaimCalculationGrainQuantityDetail(ClaimCalculationGrainQuantityDetail claimCalculationGrainQuantityDetail);
 
+	public ClaimCalculationGrainBasket getClaimCalculationGrainBasket();
+	public void setClaimCalculationGrainBasket(ClaimCalculationGrainBasket claimCalculationGrainBasket);
+
+	public List<ClaimCalculationGrainBasketProduct> getClaimCalculationGrainBasketProducts();
+	public void setClaimCalculationGrainBasketProducts(List<ClaimCalculationGrainBasketProduct> claimCalculationGrainBasketProducts);
+	
 }

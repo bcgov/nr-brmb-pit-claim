@@ -5,6 +5,10 @@ import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
 import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+
+import java.util.List;
+import java.util.Map;
+
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
@@ -37,6 +41,7 @@ public interface ClaimCalculationFactory {
 
 	ClaimCalculation getClaimCalculation(
 		ClaimCalculationDto dto, 
+		Map<Integer, ClaimDto> quantityClaimMap,
 		FactoryContext context, 
 		WebAdeAuthentication authentication
 	) throws FactoryException;
@@ -87,6 +92,10 @@ public interface ClaimCalculationFactory {
 			CropCommodityDto crpDto,
 			CropCommodityDto linkedCrpDto,
 			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
 			FactoryContext context, 
 			WebAdeAuthentication authentication
 		) throws FactoryException;

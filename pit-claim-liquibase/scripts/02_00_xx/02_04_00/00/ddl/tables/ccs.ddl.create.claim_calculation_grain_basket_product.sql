@@ -4,7 +4,7 @@ CREATE TABLE ccs.claim_calculation_grain_basket_product(
     CROP_COMMODITY_ID                     numeric(9, 0)     NOT NULL,
     hundred_percent_insurable_value         numeric(14, 4)    NOT NULL,
     insurable_value                         numeric(14, 4)    NOT NULL,
-    production_quarantee                    numeric(14, 4)    NOT NULL,
+    production_guarantee                    numeric(14, 4)    NOT NULL,
     coverage_value                          numeric(14, 4)    NOT NULL,
     total_yield_to_count                    numeric(14, 4),
     assessed_yield                          numeric(14, 4),
@@ -30,7 +30,7 @@ COMMENT ON COLUMN ccs.claim_calculation_grain_basket_product.hundred_percent_ins
 ;
 COMMENT ON COLUMN ccs.claim_calculation_grain_basket_product.insurable_value IS 'insurable value is the selected IV from the quantity product: q_selected_insurable_value'
 ;
-COMMENT ON COLUMN ccs.claim_calculation_grain_basket_product.production_quarantee IS 'production quarantee is the production guarantee from the quantity product: q_production_guarantee'
+COMMENT ON COLUMN ccs.claim_calculation_grain_basket_product.production_guarantee IS 'production guarantee is the production guarantee from the quantity product: q_production_guarantee'
 ;
 COMMENT ON COLUMN ccs.claim_calculation_grain_basket_product.coverage_value IS 'coverage value is the coverage dollars from the quantity product: coverage_amount'
 ;
