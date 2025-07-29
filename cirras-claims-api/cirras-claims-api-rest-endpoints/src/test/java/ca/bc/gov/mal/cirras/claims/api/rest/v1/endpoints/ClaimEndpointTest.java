@@ -1024,7 +1024,8 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		// From CUWS        
         expectedGB.setGrainBasketHarvestedValue(34971.215);                                              // VerifiedYieldGrainBasket.getHarvestedValue()
-        String calculationComment = "Verified Yield Grain Basket:\nTest comment for Grain Basket";      // VerifiedYieldGrainBasket.comment
+        String expectedCalculationComment = "Verified Yield Grain Basket:\nTest comment for Grain Basket";      // VerifiedYieldGrainBasket.comment
+        Double expectedTotalClaimAmount = null;
         
         // Quantity
         List<ClaimCalculationGrainBasketProduct> expectedProductList = new ArrayList<ClaimCalculationGrainBasketProduct>();
@@ -1103,13 +1104,87 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		Assert.assertEquals(claimNumber1, claimCalculationRsrc.getClaimNumber().toString());
 		Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
-		Assert.assertEquals(calculationComment, claimCalculationRsrc.getCalculationComment());
+		Assert.assertEquals(expectedCalculationComment, claimCalculationRsrc.getCalculationComment());
 		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainBasket());
 		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainBasketProducts());
 
 		assertGrainBasket(expectedGB, claimCalculationRsrc.getClaimCalculationGrainBasket());
 		assertGrainBasketProductList(expectedProductList, claimCalculationRsrc.getClaimCalculationGrainBasketProducts());
+
+		Assert.assertEquals(expectedTotalClaimAmount, claimCalculationRsrc.getTotalClaimAmount());
 		
+		//Create new calculation
+		//User Entered
+		expectedCalculationComment = "test comment 1 2 3";
+		claimCalculationRsrc.setCalculationComment(expectedCalculationComment);
+
+		//Expected calculated values
+		expectedPrd = expectedProductList.get(0);
+		
+		// yield_value: total_yield_to_count x hundred_percent_insurable_value
+		expectedPrd.setYieldValue(14195.0);
+		
+		expectedPrd = expectedProductList.get(1);
+		expectedPrd.setYieldValue(20776.215);
+
+		// quantity_total_coverage_value: sum(claim_calculation_grain_basket_product.coverage_value)
+		expectedGB.setQuantityTotalCoverageValue(35849.0);
+		
+		// quantity_total_yield_value: sum(claim_calculation_grain_basket_product.yield_value)
+		expectedGB.setQuantityTotalYieldValue(34971.215);
+		
+		// quantity_total_claim_amount: sum(claim_calculation_grain_basket_product.quantity_claim_amount)
+		expectedGB.setQuantityTotalClaimAmount(2249.55);
+		
+		// quantity_total_yield_loss_indemnity: sum((production_guarantee - assessed_yield - total_yield_to_count) x insurable_value from claim_calculation_grain_basket_product)
+		expectedGB.setQuantityTotalYieldLossIndemnity(4038.5565);
+
+		// total_yield_coverage_value: grain_basket_coverage_value + quantity_total_coverage_value
+		expectedGB.setTotalYieldCoverageValue(63732.0);
+
+		// total_yield_loss: total_yield_coverage_value - quantity_total_yield_value
+		expectedGB.setTotalYieldLoss(28760.785);
+
+		// total_claim_amount: total_yield_loss - quantity_total_yield_loss_indemnity
+		expectedTotalClaimAmount = 24722.23;
+
+		ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+
+		Assert.assertEquals(claimNumber1, createdCalculation.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", createdCalculation.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, createdCalculation.getCalculationComment());
+		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, createdCalculation.getClaimCalculationGrainBasket());
+		assertGrainBasketProductList(expectedProductList, createdCalculation.getClaimCalculationGrainBasketProducts());
+
+		Assert.assertEquals(expectedTotalClaimAmount, createdCalculation.getTotalClaimAmount());
+
+		
+		//update calculation - no change to source data
+		//User Entered
+		expectedCalculationComment = "test comment 4 5 6";
+		createdCalculation.setCalculationComment(expectedCalculationComment);
+
+		ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
+
+		Assert.assertEquals(claimNumber1, updatedCalculation.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", updatedCalculation.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, updatedCalculation.getCalculationComment());
+		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, updatedCalculation.getClaimCalculationGrainBasket());
+		assertGrainBasketProductList(expectedProductList, updatedCalculation.getClaimCalculationGrainBasketProducts());
+
+		Assert.assertEquals(expectedTotalClaimAmount, updatedCalculation.getTotalClaimAmount());
+
+		//update calculation - change to source data to change calculated values
+		// TODO
+		
+		//Delete calculation
+		deleteClaimCalculation(claimNumber1);
 		
 		logger.debug(">testGetInsertUpdateDeleteGrainBasketClaim()");
 	}

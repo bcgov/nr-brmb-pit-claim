@@ -14,6 +14,7 @@ import ca.bc.gov.mal.cirras.claims.model.v1.Claim;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimList;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasket;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
@@ -1850,6 +1851,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 			calculateTotalsGrainQuantity(claimCalculation);
+		} else if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+			calculateTotalsGrainBasket(claimCalculation);
 		}
 	}
 
@@ -2035,6 +2039,98 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		Double calcProdGuaranteeWeight = notNull(productionGuaranteeWeight, 0.0) - notNull(assessedYield, 0.0);
 		return Math.max(0, calcProdGuaranteeWeight) * notNull(insurableValue, 0.0);
 	}
+
+	private void calculateTotalsGrainBasket(ClaimCalculation claimCalculation) {
+		
+		calculateTotalsGrainBasketProducts(claimCalculation);
+
+		ClaimCalculationGrainBasket grainBasket = claimCalculation.getClaimCalculationGrainBasket();
+
+		// Aggregate totals from products
+		Double quantityTotalCoverageValue = 0.0;
+		Double quantityTotalYieldValue = 0.0;
+		Double quantityTotalClaimAmount = 0.0;
+		Double quantityTotalYieldLossIndemnity = 0.0;
+		
+		for ( ClaimCalculationGrainBasketProduct prd : claimCalculation.getClaimCalculationGrainBasketProducts() ) {
+
+			// quantity_total_coverage_value: sum(claim_calculation_grain_basket_product.coverage_value)
+			if ( prd.getCoverageValue() != null ) {
+				quantityTotalCoverageValue += prd.getCoverageValue();
+			}
+			
+			// quantity_total_yield_value: sum(claim_calculation_grain_basket_product.yield_value)
+			if ( prd.getYieldValue() != null ) {
+				quantityTotalYieldValue += prd.getYieldValue();
+			}
+			
+			// quantity_total_claim_amount: sum(claim_calculation_grain_basket_product.quantity_claim_amount)
+			if ( prd.getQuantityClaimAmount() != null ) {
+				quantityTotalClaimAmount += prd.getQuantityClaimAmount();
+			}
+			
+			// quantity_total_yield_loss_indemnity: sum((production_guarantee - assessed_yield - total_yield_to_count) x insurable_value from claim_calculation_grain_basket_product)
+			if ( prd.getProductionGuarantee() != null && prd.getInsurableValue() != null ) {
+
+				Double assessedYield = notNull(prd.getAssessedYield(), 0.0);
+				Double totalYieldToCount = notNull(prd.getTotalYieldToCount(), 0.0);
+
+				// TODO: Check if negative?
+				quantityTotalYieldLossIndemnity += (prd.getProductionGuarantee() - assessedYield - totalYieldToCount) * prd.getInsurableValue();
+			}			
+		}
+		
+		grainBasket.setQuantityTotalCoverageValue(quantityTotalCoverageValue);
+		grainBasket.setQuantityTotalYieldValue(quantityTotalYieldValue);
+		grainBasket.setQuantityTotalClaimAmount(quantityTotalClaimAmount);
+		grainBasket.setQuantityTotalYieldLossIndemnity(quantityTotalYieldLossIndemnity);
+		
+		
+		// Calculate Grain Basket values
+		
+		// total_yield_coverage_value: grain_basket_coverage_value + quantity_total_coverage_value
+		Double totalYieldCoverageValue = 0.0;
+		if ( grainBasket.getGrainBasketCoverageValue() != null && grainBasket.getQuantityTotalCoverageValue() != null ) {
+			totalYieldCoverageValue = grainBasket.getGrainBasketCoverageValue() + grainBasket.getQuantityTotalCoverageValue();
+		}
+
+		grainBasket.setTotalYieldCoverageValue(totalYieldCoverageValue);
+		
+
+		// total_yield_loss: total_yield_coverage_value - quantity_total_yield_value
+		Double totalYieldLoss = 0.0;
+		if ( grainBasket.getTotalYieldCoverageValue() != null && grainBasket.getQuantityTotalYieldValue() != null ) {
+			// TODO: Check if negative
+			totalYieldLoss = grainBasket.getTotalYieldCoverageValue() - grainBasket.getQuantityTotalYieldValue();
+		}
+
+		grainBasket.setTotalYieldLoss(totalYieldLoss);
+		
+		// total_claim_amount: total_yield_loss - quantity_total_yield_loss_indemnity
+		Double totalClaimAmount = 0.0;
+		if ( grainBasket.getTotalYieldLoss() != null && grainBasket.getQuantityTotalYieldLossIndemnity() != null ) {
+			// TODO: Check if negative
+			totalClaimAmount = grainBasket.getTotalYieldLoss() - grainBasket.getQuantityTotalYieldLossIndemnity();
+		}
+
+		claimCalculation.setTotalClaimAmount(totalClaimAmount);
+	}
+
+	private void calculateTotalsGrainBasketProducts(ClaimCalculation claimCalculation) {
+		
+		for ( ClaimCalculationGrainBasketProduct prd : claimCalculation.getClaimCalculationGrainBasketProducts() ) {
+
+			// yield_value: total_yield_to_count x hundred_percent_insurable_value
+			Double yieldValue = 0.0;
+			if ( prd.getTotalYieldToCount() != null && prd.getHundredPercentInsurableValue() != null ) {
+				yieldValue = prd.getTotalYieldToCount() * prd.getHundredPercentInsurableValue();
+			}
+			
+			prd.setYieldValue(yieldValue);
+		}
+		
+	}
+	
 	
 	private void calculateTotalsPlantUnits(ClaimCalculation claimCalculation) {
 		ClaimCalculationPlantUnits plantUnits = claimCalculation.getClaimCalculationPlantUnits();
