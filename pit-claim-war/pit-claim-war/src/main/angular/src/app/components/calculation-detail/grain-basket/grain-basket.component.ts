@@ -8,6 +8,7 @@ import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculat
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 import { UntypedFormGroup } from '@angular/forms';
 import { CalculationDetailGrainBasketComponentModel } from './grain-basket.component.model';
+import { makeTitleCase } from 'src/app/utils';
 
 @Component({
   selector: 'calculation-detail-grain-basket',
@@ -26,6 +27,13 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   perilCodeOptions: (CodeData|Option)[];
 
   calculationComment: string = ""
+
+  totalYieldCoverageValue: number         // Sum of grain_basket_coverage_value and quantity_total_coverage_value
+  quantityTotalYieldValue: number         // Sum of claim_calculation_grain_basket_product.yield_value
+  totalYieldLoss: number                  // total_yield_coverage_value - quantity_total_yield_value
+  quantityTotalYieldLossIndemnity: number // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
+  totalClaimAmount: number                // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
+
 
   initModels() {
       this.viewModel = new CalculationDetailGrainBasketComponentModel(this.sanitizer, this.fb, this.calculationDetail);
@@ -110,4 +118,14 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
     setComment() {
       this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
     }
+
+    getCmdtyName(str) {
+
+      if (str.indexOf(" - PEDIGREED") > 1 ) {
+        str = str.substring(0, str.indexOf(" - PEDIGREED")) 
+      }
+
+      return makeTitleCase(str)
+    }
+
 }
