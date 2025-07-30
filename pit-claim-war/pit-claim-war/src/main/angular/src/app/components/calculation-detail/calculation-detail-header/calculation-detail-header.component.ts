@@ -125,4 +125,23 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
     return true;
   }
 
+  hasUnapprovedQuantityCalculation() {
+
+    if (this.calculationDetail && this.calculationDetail.claimCalculationGrainBasketProducts) {
+
+      for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++) {
+
+        if (! (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG" && 
+              this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber &&
+              this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid &&
+              this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode == "APPROVED"  ))
+        
+              return true
+      }
+    }
+
+    return false
+  }
+
+  
 }

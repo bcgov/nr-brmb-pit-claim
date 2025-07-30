@@ -28,6 +28,7 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
 
   calculationComment: string = ""
 
+  quantityTotalCoverageValue: number
   totalYieldCoverageValue: number         // Sum of grain_basket_coverage_value and quantity_total_coverage_value
   quantityTotalYieldValue: number         // Sum of claim_calculation_grain_basket_product.yield_value
   totalYieldLoss: number                  // total_yield_coverage_value - quantity_total_yield_value
@@ -122,17 +123,22 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
 
     calculateValues() {
 
-      let quantityTotalCoverageValue = 0
+      this.quantityTotalCoverageValue = 0
       this.quantityTotalYieldValue = 0
       this.quantityTotalYieldLossIndemnity = 0
 
+      let yield_value = 0
+
       for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
-        quantityTotalCoverageValue = quantityTotalCoverageValue + 
+        this.quantityTotalCoverageValue = this.quantityTotalCoverageValue + 
                                       this.calculationDetail.claimCalculationGrainBasketProducts[i].coverageValue
       
+        // total_yield_to_count x hundred_percent_insurable_value
+        yield_value = yield_value + 
+                      this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount * this.calculationDetail.claimCalculationGrainBasketProducts[i].hundredPercentInsurableValue
+
         // Sum of claim_calculation_grain_basket_product.yield_value
-        this.quantityTotalYieldValue = this.quantityTotalYieldValue + 
-                                        this.calculationDetail.claimCalculationGrainBasketProducts[i].yieldValue
+        this.quantityTotalYieldValue = this.quantityTotalYieldValue + yield_value
 
         // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
         this.quantityTotalYieldLossIndemnity = this.quantityTotalYieldLossIndemnity + 
@@ -143,13 +149,15 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
       //  (Grain Basket + Quantity Coverage For All Commodities) 
       // Sum of grain_basket_coverage_value and quantity_total_coverage_value
       this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue + 
-                                      quantityTotalCoverageValue
+                                      this.quantityTotalCoverageValue
 
       // total_yield_coverage_value - quantity_total_yield_value
-      this.totalYieldLoss = this.totalYieldCoverageValue - this.quantityTotalYieldValue 
+      this.totalYieldLoss = Math.max(0 , this.totalYieldCoverageValue - this.quantityTotalYieldValue)
+
+      this.quantityTotalYieldLossIndemnity = Math.max(0, this.quantityTotalYieldLossIndemnity) // zero it out if it's negative
 
       // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
-      this.totalClaimAmount = this.totalYieldLoss - this.quantityTotalYieldLossIndemnity            
+      this.totalClaimAmount = Math.max(0, this.totalYieldLoss - this.quantityTotalYieldLossIndemnity )           
 
     }
 

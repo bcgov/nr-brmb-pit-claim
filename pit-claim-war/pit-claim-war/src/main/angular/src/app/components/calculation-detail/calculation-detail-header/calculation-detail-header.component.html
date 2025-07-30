@@ -253,3 +253,25 @@
       </div>
     </div>
   </div>
+
+  <!-- FOR Grain Basket Calculations: 
+   All related quantity calculations must be APPROVED in order to submit the Grain Basket calculation.-->
+   <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: red;" 
+    *ngIf="calculationDetail && calculationDetail.commodityCoverageCode === 'GB' && hasUnapprovedQuantityCalculation() "> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'red', 'font-size':'x-large'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+        <h3 style="color: red;">
+          All quantity calculations must be APPROVED in order to submit the Grain Basket calculation.
+        </h3>      
+        <!-- <span style="color: red; font-size: 14px;">
+          
+        </span>    -->
+      </div>
+    </div>
+  </div>

@@ -95,7 +95,7 @@
               </div>
               <div></div>
               <div class="ccc-right">                 
-                {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalCoverageValue : "") | currency }}
+                {{ quantityTotalCoverageValue | currency }}
                 <!-- <span #el matTooltip="Acres don't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>-->
@@ -171,7 +171,7 @@
             </div>
 
             <div class="ccc-justify-center ccc-border-top  "> 
-              {{ quantityTotalYieldValue }}            
+              {{ quantityTotalYieldValue | currency }}            
             </div> 
 
             </div>
@@ -190,7 +190,7 @@
           <div class="ccc-border-right ccc-right">       
             <span class="ccc-expression">C - D</span>    
           </div>
-          <div class="ccc-fill ccc-number-double" > 
+          <div class="ccc-right" > 
             {{ totalYieldLoss | currency }}
           </div>
   
