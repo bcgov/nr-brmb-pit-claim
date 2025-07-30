@@ -1316,14 +1316,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			// Submit rules for Grain Basket
 			if ( claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
 				 claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
-	
-				// Total Claim Amount must be between 0 and Coverage Value
-				Double totalClaimAmount = claimCalculation.getTotalClaimAmount();
-				Double coverageValue = notNull(claimCalculation.getClaimCalculationGrainBasket().getGrainBasketCoverageValue(), 0.0);
-				if ( totalClaimAmount == null || Double.compare(totalClaimAmount, 0.0) < 0 || Double.compare(totalClaimAmount, coverageValue) > 0 ) {
-					throw new ServiceException("The calculation can't be submitted because the Total Claim Amount must be between 0 and the Coverage Value.");
-				}
-				
+					
 				// All Quantity Products with Claims must have APPROVED calculations.
 				boolean hasUnapprovedQtyClaim = false;
 				for ( ClaimCalculationGrainBasketProduct prd : claimCalculation.getClaimCalculationGrainBasketProducts() ) {
@@ -2075,8 +2068,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				Double assessedYield = notNull(prd.getAssessedYield(), 0.0);
 				Double totalYieldToCount = notNull(prd.getTotalYieldToCount(), 0.0);
 
-				// TODO: Check if negative?
-				quantityTotalYieldLossIndemnity += (prd.getProductionGuarantee() - assessedYield - totalYieldToCount) * prd.getInsurableValue();
+				Double yieldLossIndemnity = (prd.getProductionGuarantee() - assessedYield - totalYieldToCount) * prd.getInsurableValue();
+
+				quantityTotalYieldLossIndemnity += Math.max(0.0, yieldLossIndemnity);
 			}			
 		}
 		
@@ -2100,8 +2094,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		// total_yield_loss: total_yield_coverage_value - quantity_total_yield_value
 		Double totalYieldLoss = 0.0;
 		if ( grainBasket.getTotalYieldCoverageValue() != null && grainBasket.getQuantityTotalYieldValue() != null ) {
-			// TODO: Check if negative
-			totalYieldLoss = grainBasket.getTotalYieldCoverageValue() - grainBasket.getQuantityTotalYieldValue();
+			totalYieldLoss = Math.max(0.0, grainBasket.getTotalYieldCoverageValue() - grainBasket.getQuantityTotalYieldValue());
 		}
 
 		grainBasket.setTotalYieldLoss(totalYieldLoss);
@@ -2109,8 +2102,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		// total_claim_amount: total_yield_loss - quantity_total_yield_loss_indemnity
 		Double totalClaimAmount = 0.0;
 		if ( grainBasket.getTotalYieldLoss() != null && grainBasket.getQuantityTotalYieldLossIndemnity() != null ) {
-			// TODO: Check if negative
-			totalClaimAmount = grainBasket.getTotalYieldLoss() - grainBasket.getQuantityTotalYieldLossIndemnity();
+			totalClaimAmount = Math.max(0.0, grainBasket.getTotalYieldLoss() - grainBasket.getQuantityTotalYieldLossIndemnity());
 		}
 
 		claimCalculation.setTotalClaimAmount(totalClaimAmount);
