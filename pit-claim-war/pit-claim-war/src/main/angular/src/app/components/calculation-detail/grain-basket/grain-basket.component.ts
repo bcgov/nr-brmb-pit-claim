@@ -68,13 +68,6 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   
     ngOnInit() {
       super.ngOnInit()
-  
-      // this.viewModel.formGroup.controls.assessedYieldNonPedigree.valueChanges.subscribe(value => this.updateCalculated() )
-      // this.viewModel.formGroup.controls.assessedYieldPedigree.valueChanges.subscribe(value => this.updateCalculated() )
-      
-      // this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
-      // this.viewModel.formGroup.controls.totalClaimAmountPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
-  
     }
   
     ngOnChanges2(changes: SimpleChanges) {
@@ -85,23 +78,22 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
         this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )  
         this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
   
-      //   if (!this.calculationDetail.claimCalculationGrainQuantityDetail.claimCalculationGrainQuantityDetailGuid) {
+        if (!this.calculationDetail.claimCalculationGrainBasket.claimCalculationGrainBasketGuid) {
   
-      //     // calculate values for new calculations only
-      //     this.totalCoverageValue = this.calculationDetail.claimCalculationGrainQuantityDetail.coverageValue
-      //     this.calculateValues()
+          // calculate values for new calculations only
+          this.calculateValues()
   
-      //   } else {
-      //     // set the total calculated values
-      //     this.totalCoverageValue = this.calculationDetail.claimCalculationGrainQuantity.totalCoverageValue
-      //     this.productionGuaranteeAmount = this.calculationDetail.claimCalculationGrainQuantity.productionGuaranteeAmount
-      //     this.totalYieldLossValue = this.calculationDetail.claimCalculationGrainQuantity.totalYieldLossValue
-      //     this.quantityLossClaim = this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim
+        } else {
+          // set the total calculated values
+          this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.totalYieldCoverageValue
+          this.quantityTotalYieldValue = this.calculationDetail.claimCalculationGrainBasket.quantityTotalYieldValue
+          this.totalYieldLoss = this.calculationDetail.claimCalculationGrainBasket.totalYieldLoss
+          this.quantityTotalYieldLossIndemnity = this.calculationDetail.claimCalculationGrainBasket.quantityTotalYieldLossIndemnity
+          this.totalClaimAmount = this.calculationDetail.totalClaimAmount  
+        }
   
-      //     this.setValues(this.calculationDetail)
-      //   }
-  
-      //   this.enableDisableFormControls();
+        // TODO
+        // this.enableDisableFormControls();
   
       }
     }
@@ -128,4 +120,38 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
       return makeTitleCase(str)
     }
 
+    calculateValues() {
+
+      let quantityTotalCoverageValue = 0
+      this.quantityTotalYieldValue = 0
+      this.quantityTotalYieldLossIndemnity = 0
+
+      for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
+        quantityTotalCoverageValue = quantityTotalCoverageValue + 
+                                      this.calculationDetail.claimCalculationGrainBasketProducts[i].coverageValue
+      
+        // Sum of claim_calculation_grain_basket_product.yield_value
+        this.quantityTotalYieldValue = this.quantityTotalYieldValue + 
+                                        this.calculationDetail.claimCalculationGrainBasketProducts[i].yieldValue
+
+        // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
+        this.quantityTotalYieldLossIndemnity = this.quantityTotalYieldLossIndemnity + 
+                                                this.calculationDetail.claimCalculationGrainBasketProducts[i].insurableValue * ( this.calculationDetail.claimCalculationGrainBasketProducts[i].productionGuarantee - this.calculationDetail.claimCalculationGrainBasketProducts[i].assessedYield - this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount) 
+
+      }
+
+      //  (Grain Basket + Quantity Coverage For All Commodities) 
+      // Sum of grain_basket_coverage_value and quantity_total_coverage_value
+      this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue + 
+                                      quantityTotalCoverageValue
+
+      // total_yield_coverage_value - quantity_total_yield_value
+      this.totalYieldLoss = this.totalYieldCoverageValue - this.quantityTotalYieldValue 
+
+      // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
+      this.totalClaimAmount = this.totalYieldLoss - this.quantityTotalYieldLossIndemnity            
+
+    }
+
+    
 }
