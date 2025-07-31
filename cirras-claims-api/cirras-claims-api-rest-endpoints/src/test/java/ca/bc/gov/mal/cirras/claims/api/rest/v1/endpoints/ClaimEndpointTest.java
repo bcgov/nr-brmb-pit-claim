@@ -1246,7 +1246,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			logger.warn("Skipping tests");
 			return;
 		}
-
+		
 		// Grain Basket Claim
         String claimNumber1 = "37233";       // Set to Open Grain Basket Claim without a calculation.
         currentClaimNumber = claimNumber1;
@@ -1421,14 +1421,20 @@ public class ClaimEndpointTest extends EndpointsTest {
 		
 		Assert.assertEquals(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString(), quantityCalc.getCalculationStatusCode());
 
+		// Reload to get updated etag.
+		createdCalculation = service.getClaimCalculation(createdCalculation, false);
+		
 		try {
 			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
 			Assert.fail("Submit allowed with unapproved quantity claim calculation.");
 		} catch ( CirrasClaimServiceException e) {
 			Assert.assertNotNull(e.getMessage());
-			Assert.assertTrue(e.getMessage().contains("The calculation can't be submitted until all Quantity Claim Calculations for this Policy have been Approved."));
+			Assert.assertTrue(e.getMessage(), e.getMessage().contains("The calculation can't be submitted until all Quantity Claim Calculations for this Policy have been Approved."));
 		}
 
+		// For some reason this needs to be reloaded to get updated etag.
+		quantityCalc = service.getClaimCalculation(quantityCalc, false);
+		
 		quantityCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
 		quantityCalc = service.updateClaimCalculation(quantityCalc, null);
 		Assert.assertEquals(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString(), quantityCalc.getCalculationStatusCode());
