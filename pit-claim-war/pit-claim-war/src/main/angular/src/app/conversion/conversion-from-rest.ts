@@ -234,7 +234,9 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
       claimCalculationGrainQuantity: calculation.claimCalculationGrainQuantity,
       claimCalculationGrainQuantityDetail: calculation.claimCalculationGrainQuantityDetail,
+      claimCalculationGrainBasket: calculation.claimCalculationGrainBasket,
       varieties: calculation.varieties,
+      claimCalculationGrainBasketProducts: calculation.claimCalculationGrainBasketProducts,
       currentClaimStatusCode: calculation.currentClaimStatusCode
 
   };  

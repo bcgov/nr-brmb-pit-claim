@@ -21,6 +21,8 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
 
   title: string;
   
+  displayGBErrorMessage: string 
+
   ngOnInit() {
     super.ngOnInit()
   }
@@ -125,4 +127,42 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
     return true;
   }
 
+  hasUnapprovedQuantityCalculation() {
+    let result = false 
+
+    this.displayGBErrorMessage = ""
+
+    if (this.calculationDetail && this.calculationDetail.claimCalculationGrainBasketProducts) {
+
+      for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++) {
+      
+        // if this policy has quantity products
+        if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG") {
+
+          // if the policy has qty product but no qty claim -> no message
+
+          // if this policy has qty claim but no calculation -> display message
+          if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber && !this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid) {
+            
+            this.displayGBErrorMessage = this.displayGBErrorMessage + 
+              "<p> Quantity claim # " + this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber + " has no calculation. Please create a calculation for that claim and approve it. </p>"
+            result = true
+          }
+
+          // if this policy has qty calculation but it's not approved -> display message
+          if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid && 
+             this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED") {
+            
+            this.displayGBErrorMessage = this.displayGBErrorMessage + 
+              "<p> The calculation for the quantity claim # " + this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber + " is not approved. Please approve the claim in CIRRAS. </p>"
+            result = true
+          }
+        }
+      }
+    }
+
+    return result
+  }
+
+  
 }
