@@ -254,7 +254,7 @@
     </div>
   </div>
 
-  <!-- FOR Grain Basket Calculations: 
+  <!-- FOR Grain Basket Calculations only: 
    All related quantity calculations must be APPROVED in order to submit the Grain Basket calculation.-->
    <div 
     class="ccc-row-group ccc-row-group-bordered" style="border-color: red;" 
@@ -269,9 +269,7 @@
         <h3 style="color: red;">
           All quantity calculations must be APPROVED in order to submit the Grain Basket calculation.
         </h3>      
-        <!-- <span style="color: red; font-size: 14px;">
-          
-        </span>    -->
+        <span style="color: red; font-size: 14px;" [innerHtml]="displayGBErrorMessage"></span>   
       </div>
     </div>
   </div>
