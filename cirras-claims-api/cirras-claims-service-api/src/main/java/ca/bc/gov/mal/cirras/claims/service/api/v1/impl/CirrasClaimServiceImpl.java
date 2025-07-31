@@ -815,6 +815,11 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				ProductListRsrc productListRsrc = null;
 				VerifiedYieldContractSimpleRsrc verifiedYieldRsrc = null;
 
+				// Populated for Grain Basket only.
+				List<ProductRsrc> quantityProducts = null;
+				Map<Integer, CropCommodityDto> quantityCropMap = null;   // Maps crop id to CropCommodity
+				Map<Integer, CropCommodityDto> quantityLinkedCropMap = null;  // Maps crop id to linked CropCommodity.
+				
 				if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 						&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) 
 				{
@@ -858,7 +863,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					// Set fields from linked calculation, if any.
 					updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, false);
 				}
-
 				
 				if (!ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(result.getCalculationStatusCode())
 						&& !ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString().equals(result.getCalculationStatusCode())) {
@@ -884,8 +888,50 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if policyProductRsrc is null.
 							logger.error("getCirrasClaimProducts: Error when getting product " + policyClaimRsrc.getPurchaseId() + " from CIRRAS for Claim Number " + policyClaimRsrc.getClaimNumber() + ": " + e);
 						}
+					} else if ( policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
+
+						try { 
+							productListRsrc = getCirrasClaimProducts(policyClaimRsrc.getInsurancePolicyId().toString(), true, null, null);
+							if (productListRsrc != null) {
+								policyProductRsrc = getProductById(productListRsrc, policyClaimRsrc.getPurchaseId());
+							
+								quantityProducts = getProductsByCoverageAndStatus(productListRsrc, ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode(), ClaimsServiceEnums.ProductStatusCodes.FINAL.toString());
+								quantityCropMap = new HashMap<Integer, CropCommodityDto>();
+								quantityLinkedCropMap = new HashMap<Integer, CropCommodityDto>();
+		
+								for ( ProductRsrc prd : quantityProducts ) {
+
+									// TODO: Should this be a function?
+									CropCommodityDto qtyCrpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
+									if ( qtyCrpDto == null ) {
+										throw new ServiceException("No commodity found for " + prd.getCommodityName());
+									} else {
+										quantityCropMap.put(prd.getCropCommodityId(), qtyCrpDto);
+									}
+		
+									CropCommodityDto qtyLinkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
+									if ( qtyLinkedCrpDto != null ) {
+										quantityLinkedCropMap.put(prd.getCropCommodityId(), qtyLinkedCrpDto);
+									}
+								}
+							}
+
+							verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, false, true, true);
+							if (verifiedYieldRsrc == null ) {
+								// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
+								logger.error("No Verified Yield found for " + claimNumber);
+							}
+						} catch (CirrasPolicyServiceException e) {
+							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if policyProductRsrc is null.
+							logger.error("getCirrasClaimProducts: Error when getting product " + policyClaimRsrc.getPurchaseId() + " from CIRRAS for Claim Number " + policyClaimRsrc.getClaimNumber() + ": " + e);
+						} catch (CirrasUnderwritingServiceException e) {
+							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
+							logger.error("getUnderwritingVerifiedYield: Error when getting verified yield from CUWS for Claim Number " + claimNumber + ": " + e);
+						}						
 					}
-					
+
+					// TODO: Move?
 					VerifiedYieldSummary verifiedSummary = getVerifiedYieldSummary(verifiedYieldRsrc, crpDto, linkedCrpDto);
 					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
