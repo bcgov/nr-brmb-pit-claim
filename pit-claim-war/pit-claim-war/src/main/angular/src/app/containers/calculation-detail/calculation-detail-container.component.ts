@@ -11,7 +11,8 @@ import {
 
 import {
     selectCalculationDetailMetadataErrorState,
-    selectCalculationDetailMetadataLoadState
+    selectCalculationDetailMetadataLoadState,
+    selectFormStateUnsaved
 } from "../../store/application/application.selectors";
 import {ErrorState, LoadState} from "../../store/application/application.state";
 
@@ -22,6 +23,7 @@ import {ErrorState, LoadState} from "../../store/application/application.state";
             [calculationDetail]="calculationDetail$ | async"
             [loadState]="loadState$ | async"
             [errorState]="errorState$ | async"
+            [isUnsaved]="isUnsaved$ | async"
         ></cirras-claims-calculation-detail>`, 
     providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
 })
@@ -31,6 +33,7 @@ export class CalculationDetailContainer extends BaseContainer  {
 
     loadState$: Observable<LoadState> = this.store.pipe(select(selectCalculationDetailMetadataLoadState()));
     errorState$: Observable<ErrorState[]> = this.store.pipe(select(selectCalculationDetailMetadataErrorState()));
+    isUnsaved$: Observable<boolean> = this.store.pipe(select(selectFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID)));
 
     getAssociatedComponentIds(): string[] {
         return [

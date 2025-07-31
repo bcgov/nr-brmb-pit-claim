@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrapes;
@@ -31,6 +33,7 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private String claimCalculationGuid;
 
 	// calculation
+	private String claimCalculationGrainQuantityGuid;
 	private Integer calculationVersion;
 	private Double totalClaimAmount;
 	private String calculationStatusCode;
@@ -52,6 +55,7 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private String coverageName;
 	private Integer cropCommodityId;
 	private String commodityName;
+	private Boolean isPedigreeInd;
 	private String primaryPerilCode;
 	private String secondaryPerilCode;
 	private String claimStatusCode;
@@ -90,6 +94,14 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	// coverage
 	private String insuredByMeasurementType;
 
+	// Linked Product and Claim
+	private Integer linkedProductId;
+	private Integer linkedClaimNumber;
+	private String linkedClaimCalculationGuid;
+	private String linkedLatestClaimCalculationGuid;
+	private Integer latestLinkedCalculationVersion;
+	
+	
 	// Out of sync flags
 	private Boolean isOutOfSync;
 	private Boolean isOutOfSyncGrowerNumber;
@@ -109,6 +121,8 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private ClaimCalculationGrapes claimCalculationGrapes;
 	private ClaimCalculationGrainUnseeded claimCalculationGrainUnseeded;
 	private ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss;
+	private ClaimCalculationGrainQuantity claimCalculationGrainQuantity;
+	private ClaimCalculationGrainQuantityDetail claimCalculationGrainQuantityDetail;
 	
 	private List<ClaimCalculationVariety> varieties = new ArrayList<ClaimCalculationVariety>();	
 	
@@ -121,6 +135,14 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 		this.claimCalculationGuid = claimCalculationGuid;
 	}
 
+	public String getClaimCalculationGrainQuantityGuid() {
+		return claimCalculationGrainQuantityGuid;
+	}
+
+	public void setClaimCalculationGrainQuantityGuid(String claimCalculationGrainQuantityGuid) {
+		this.claimCalculationGrainQuantityGuid = claimCalculationGrainQuantityGuid;
+	}
+	
 	public Integer getGrowerNumber() {
 		return growerNumber;
 	}
@@ -392,6 +414,22 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	public void setClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss) {
 		this.claimCalculationGrainSpotLoss = claimCalculationGrainSpotLoss;
 	}
+
+	public ClaimCalculationGrainQuantity getClaimCalculationGrainQuantity() {
+		return claimCalculationGrainQuantity;
+	}
+
+	public void setClaimCalculationGrainQuantity(ClaimCalculationGrainQuantity claimCalculationGrainQuantity) {
+		this.claimCalculationGrainQuantity = claimCalculationGrainQuantity;
+	}
+
+	public ClaimCalculationGrainQuantityDetail getClaimCalculationGrainQuantityDetail() {
+		return claimCalculationGrainQuantityDetail;
+	}
+
+	public void setClaimCalculationGrainQuantityDetail(ClaimCalculationGrainQuantityDetail claimCalculationGrainQuantityDetail) {
+		this.claimCalculationGrainQuantityDetail = claimCalculationGrainQuantityDetail;
+	}
 	
 	public String getSubmittedByUserid() {
 		return submittedByUserid;
@@ -538,6 +576,14 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 		this.commodityName = commodityName;
 	}
 
+	public Boolean getIsPedigreeInd() {
+		return isPedigreeInd;
+	}
+
+	public void setIsPedigreeInd(Boolean isPedigreeInd) {
+		this.isPedigreeInd = isPedigreeInd;
+	}
+	
 	public String getCoverageName() {
 		return coverageName;
 	}
@@ -560,6 +606,46 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	
 	public void setCalculateIivInd(String calculateIivInd) {
 		this.calculateIivInd = calculateIivInd;
+	}
+	
+	public Integer getLinkedProductId() {
+		return linkedProductId;
+	}
+
+	public void setLinkedProductId(Integer linkedProductId) {
+		this.linkedProductId = linkedProductId;
+	}
+
+	public Integer getLinkedClaimNumber() {
+		return linkedClaimNumber;
+	}
+
+	public void setLinkedClaimNumber(Integer linkedClaimNumber) {
+		this.linkedClaimNumber = linkedClaimNumber;
+	}
+
+	public String getLinkedClaimCalculationGuid() {
+		return linkedClaimCalculationGuid;
+	}
+
+	public void setLinkedClaimCalculationGuid(String linkedClaimCalculationGuid) {
+		this.linkedClaimCalculationGuid = linkedClaimCalculationGuid;
+	}
+
+	public String getLatestLinkedClaimCalculationGuid() {
+		return linkedLatestClaimCalculationGuid;
+	}
+
+	public void setLatestLinkedClaimCalculationGuid(String linkedLatestClaimCalculationGuid) {
+		this.linkedLatestClaimCalculationGuid = linkedLatestClaimCalculationGuid;
+	}
+
+	public Integer getLatestLinkedCalculationVersion() {
+		return latestLinkedCalculationVersion;
+	}
+
+	public void setLatestLinkedCalculationVersion(Integer latestLinkedCalculationVersion) {
+		this.latestLinkedCalculationVersion = latestLinkedCalculationVersion;
 	}
 	
 	public Boolean getIsOutOfSync() {
@@ -633,4 +719,5 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	public void setIsOutOfSyncVarietyAdded(Boolean isOutOfSyncVarietyAdded) {
 		this.isOutOfSyncVarietyAdded = isOutOfSyncVarietyAdded;
 	}
+
 }

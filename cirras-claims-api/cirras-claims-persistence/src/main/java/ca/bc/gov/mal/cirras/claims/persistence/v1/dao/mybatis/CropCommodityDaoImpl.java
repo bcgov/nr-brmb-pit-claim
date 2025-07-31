@@ -46,6 +46,29 @@ public class CropCommodityDaoImpl extends BaseDao implements CropCommodityDao {
 		logger.debug(">fetch " + result);
 		return result;
 	}
+
+	@Override
+	public CropCommodityDto getLinkedCommodityByPedigree(Integer cropCommodityId) throws DaoException {
+		logger.debug("<getLinkedCommodityByPedigree");
+
+		CropCommodityDto result = null;
+
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("cropCommodityId", cropCommodityId);
+			result = this.mapper.getLinkedCommodityByPedigree(parameters);
+			
+			if(result!=null) {
+				result.resetDirty();
+			}
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">getLinkedCommodityByPedigree " + result);
+		return result;
+	}
+	
 	
 	@Override
 	public void insert(CropCommodityDto dto, String userId) throws DaoException {

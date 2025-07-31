@@ -30,7 +30,7 @@ import {
 } from "./calculation-detail.actions";
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
 import {UUID} from "angular2-uuid";
-import {TokenService} from "@wf1/wfcc-core-lib";
+import {AppConfigService, TokenService} from "@wf1/wfcc-core-lib";
 import {
   convertToCalculation,
   convertToErrorState
@@ -41,7 +41,9 @@ import {
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 import {
+  displayErrorMessage,
   displaySaveSuccessSnackbar,
+  displaySuccessSnackbar,
 } from "../../utils/user-feedback-utils";
 import {vmCalculation} from "../../conversion/models";
 import {
@@ -49,6 +51,9 @@ import {
   populateClaimsCodeTableCache
 } from "../../utils/app-initializer";
 import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "src/app/utils";
+import { setFormStateUnsaved } from "../application/application.actions";
+import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Injectable()
 export class CalculationDetailEffects {
@@ -59,7 +64,8 @@ export class CalculationDetailEffects {
     private tokenService: TokenService,
     private injector: Injector,        
     private cirrasClaimsAPIService: CirrasClaimsAPIService,
-    private snackbarService: MatSnackBar) {
+    private snackbarService: MatSnackBar,
+    private appConfigService: AppConfigService) {
   }
 
 loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
@@ -84,7 +90,19 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
           "response")
           .pipe(
             map((response: any) => {
-              return loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null));
+              
+              if (payload.doRefreshManualClaimData.toLowerCase() == "true"){
+
+                // load the calculation in the store
+                this.store.dispatch(loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null)))
+                
+                // show the unsaved changes message 
+                return setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true )
+                
+              } else {
+                return loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null));
+              }
+              
             }),
             catchError(error => of(loadCalculationDetailError(convertToErrorState(error, "Calculation Detail data"))))
           );
@@ -104,7 +122,21 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
             map((response: any) => {
               return loadCalculationDetailSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null));
             }),
-            catchError(error => of(loadCalculationDetailError(convertToErrorState(error, "Calculation Detail data"))))
+            catchError(
+              error =>{
+                //Only do this if error message contains 'No verified yield found'
+                if(error && error.error && error.error.messages && error.error.messages.length > 0 && error.error.messages[0].message.indexOf('No verified yield found') >= 0){
+
+                  let verifiedYieldUrl = this.appConfigService.getConfig().rest["pit_underwriting_ui"]
+                  if (verifiedYieldUrl.length > 0) {
+                    verifiedYieldUrl = verifiedYieldUrl + "/landingpage/" + payload.policyNumber + "/verified_yield"
+                  }
+                  let verifiedYieldMissingText = "No verified yield found for " + payload.claimNumber + ". Use this URL to check the verified yield of the policy: " + verifiedYieldUrl
+                  displayErrorMessage(this.snackbarService, verifiedYieldMissingText) 
+                }
+              return of(loadCalculationDetailError(convertToErrorState(error, "Calculation Detail data")))
+            })
+            //catchError(error => of(loadCalculationDetailError(convertToErrorState(error, "Calculation Detail data"))))
           );
 
       }
@@ -149,7 +181,15 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
                   "response")
                 .pipe(
                     concatMap((response: any) => {
-                      displaySaveSuccessSnackbar(this.snackbarService, displayLabel);
+                      if (updateType == CALCULATION_UPDATE_TYPE.SUBMIT) {
+                        displayLabel = " Calculation was submitted successfully."
+                        if (payload.linkedClaimCalculationGuid) {
+                          displayLabel  = displayLabel  + " Please ensure that you also submit the linked calculation, if you haven't done so."
+                        }
+                      } else {
+                        displayLabel = " Calculation was saved successfully "
+                      }
+                      displaySuccessSnackbar(this.snackbarService, displayLabel);
                         return [                            
                             updateCalculationDetailMetadataSuccess(convertToCalculation(response.body, response.headers ? response.headers.get("ETag") : null))
                         ]

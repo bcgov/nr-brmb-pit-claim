@@ -117,6 +117,11 @@ spec:
                 configMapKeyRef:
                   name: cirras-claims-api-config-#{ENV}#
                   key: CIRRAS_POLICIES_API_URL
+            - name: CIRRAS_UNDERWRITING_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-api-config-#{ENV}#
+                  key: CIRRAS_UNDERWRITING_API_URL
             - name: TZ
               valueFrom:
                 configMapKeyRef:

@@ -10,6 +10,8 @@ public interface ClaimMapper {
 	ClaimDto fetch(Map<String, Object> parameters);
 	
 	ClaimDto selectByClaimNumber(Map<String, Object> parameters);
+
+	ClaimDto selectByProductId(Map<String, Object> parameters);
 	
 	int insert(Map<String, Object> parameters);
 

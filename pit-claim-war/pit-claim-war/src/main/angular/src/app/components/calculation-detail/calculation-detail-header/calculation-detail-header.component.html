@@ -38,8 +38,87 @@
         {{ calculationDetail.growerCity }}, {{ calculationDetail.growerProvince }}, {{ calculationDetail.growerPostalCode }}
       </div>
       <div></div>                
-      <div class="ccc-right">
-        Claim: {{ calculationDetail.claimNumber }}
+      <div class="ccc-right" style="display: grid;">
+        <div class="ccc-right">
+          Claim: {{ calculationDetail.claimNumber }} 
+        </div>
+        <div *ngIf="calculationDetail.linkedClaimNumber" class="ccc-right">
+          Linked Claim: &nbsp;
+          <a (click)="goToLinkedCalulation()" style="cursor: pointer;">
+            {{ calculationDetail.linkedClaimNumber }}
+          </a> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
+    *ngIf="calculationDetail.linkedProductId && calculationDetail.calculationVersion == 1 && !calculationDetail.latestLinkedClaimCalculationGuid &&
+          ( !calculationDetail.linkedClaimNumber || !calculationDetail.linkedClaimCalculationGuid)"> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'blue'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+        <!-- Product but no claim messages -->
+        <h3 *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue;">
+          There are two quantity products for this commodity on this policy. However, no claim exists for the
+            {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName}}  
+            {{ calculationDetail.isPedigreeInd ? "Non-Pedigreed" : "Pedigreed"}} commodity. 
+        </h3>     
+        
+        <span *ngIf="calculationDetail.linkedProductId && !calculationDetail.linkedClaimNumber" style="color: blue; font-size: 14px;">
+          Please create a claim in CIRRAS for the 
+          {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            ( calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) + " Non-Pedigreed") : 
+            (calculationDetail.commodityName + " Pedigreed") }}
+            commodity.
+        </span>   
+
+        <!-- Claim but no calculation messages -->
+        <h3 *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue;">
+          There are two quantity products for this commodity on this policy. However, no calculation exists for the
+            {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName}}  
+            {{ calculationDetail.isPedigreeInd ? "Non-Pedigreed" : "Pedigreed"}} claim. 
+        </h3>     
+                
+        <span *ngIf="calculationDetail.linkedProductId && calculationDetail.linkedClaimNumber && !calculationDetail.linkedClaimCalculationGuid" style="color: blue; font-size: 14px;">
+          Please create a calculation for each of the  
+          {{ ( (calculationDetail.commodityName).toLowerCase().indexOf("pedigreed") > -1) ? 
+            calculationDetail.commodityName.substr(0, ((calculationDetail.commodityName).toLowerCase()).indexOf("pedigreed") - 1) : calculationDetail.commodityName }}
+            Pedigreed and Non-Pedigreed claims, using the Linked Claim link.
+        </span>  
+
+      </div>
+    </div>
+  </div>
+
+  <!-- linked calculations version mismatch  -->
+  <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: blue;" 
+    *ngIf="calculationDetail.linkedProductId && calculationDetail.latestLinkedClaimCalculationGuid && !calculationDetail.linkedClaimCalculationGuid"> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'blue'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+
+        <h3 style="color: blue;">
+          Linked calculations version mismatch. The calculation for the claim # {{calculationDetail.claimNumber}} is at version {{calculationDetail.calculationVersion}}
+          but the calculation of the linked claim # {{calculationDetail.linkedClaimNumber}} is at version {{calculationDetail.latestLinkedCalculationVersion}}.
+        </h3>  
+        
+        <span style="color: blue; font-size: 14px;">
+          In CIRRAS, approve and rollback, or amend the claim with the lower calculation version. Then replace the calculation with the lower version.
+        </span>   
+
       </div>
     </div>
   </div>
@@ -61,11 +140,11 @@
         <br /><br/>
       </span>
       <span class="ccc-col-right3">    
-          <button mat-raised-button color="primary"
 
+          <button mat-raised-button color="primary"
           *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.REFRESH_DATA) && 
                 (calculationDetail.calculationStatusCode === 'DRAFT' ) && 
-                calculationDetail.isOutOfSync ; else emptySpaces"
+                calculationDetail.isOutOfSync && isRefreshAllowedForLinkedCalculations() ; else emptySpaces"
               (click)="onRefresh()"
           ><mat-icon style="padding-right: 4px;">refresh</mat-icon>Refresh</button>
       
@@ -73,6 +152,8 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
             &nbsp;&nbsp;&nbsp;  
           </ng-template>
+
+
       </span>
     </div>              
     <div class="ccc-row">
@@ -85,21 +166,15 @@
         Updated On: {{ calculationDetail.updateDate | date:'yyyy-MM-dd' }}
       </span>   
       <span class="ccc-col-right3" >   
-
-        <button mat-raised-button color="primary"            
-        *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.REPLACE_CALCULATION) && 
-          calculationDetail.calculationStatusCode === 'APPROVED' && 
-          (
-            ( calculationDetail.currentClaimStatusCode === 'OPEN' && calculationDetail.currentHasChequeReqInd == false)
-            ||
-            ( calculationDetail.currentClaimStatusCode === 'IN PROGRESS' && calculationDetail.currentHasChequeReqInd == true)
-          )
-          ; else emptySpaces2"
-            (click)="onReplace()"
-        >Replace </button>        
+        <button mat-raised-button color="primary" *ngIf="calculationAllowsReplace() && linkedCalculationAllowsReplace(); else emptySpaces2" (click)="onReplace()">
+          Replace 
+        </button>        
         <ng-template #emptySpaces2>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+          <mat-icon style="vertical-align: middle;" 
+            *ngIf="calculationAllowsReplace() && !linkedCalculationAllowsReplace(); else emptySpaces3"
+            matTooltip="Replace is only possible if both calculations are in status Approved or Archived and the claim is rolled back.">info</mat-icon>
+          <ng-template #emptySpaces3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</ng-template>          
         </ng-template>
     </span>
     </div>	
@@ -157,3 +232,24 @@
     </div>
   </div>
   
+<!-- refresh not possible because the linked calculation is not editable -->
+   <div 
+    class="ccc-row-group ccc-row-group-bordered" style="border-color: red;" 
+    *ngIf="calculationDetail && calculationDetail.calculationStatusCode === 'DRAFT' && calculationDetail.isOutOfSync &&
+          linkedCalculationDetail && linkedCalculationDetail.calculationStatusCode !== 'DRAFT' "> 
+    <div class="ccc-container ccc-warning">
+      <div>
+        <span #el matTooltip="" style="margin-left: 10px; margin-right: 50px;">
+          <mat-icon [ngStyle]="{'color':'red', 'font-size':'x-large'}">warning</mat-icon>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+        <h3 style="color: red;">
+          Refreshing this calculation is not possible because the linked calculation is not editable.
+        </h3>      
+        <span style="color: red; font-size: 14px;">
+          Roll back the linked claim # {{ linkedCalculationDetail.claimNumber }} in CIRRAS to resolve this issue.
+        </span>   
+      </div>
+    </div>
+  </div>

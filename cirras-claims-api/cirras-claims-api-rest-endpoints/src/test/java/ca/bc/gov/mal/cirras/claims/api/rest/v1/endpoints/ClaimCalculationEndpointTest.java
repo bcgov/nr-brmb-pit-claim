@@ -23,11 +23,13 @@ import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationListRsrc
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimListRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimRsrc;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.api.rest.test.EndpointsTest;
+import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
 
 public class ClaimCalculationEndpointTest extends EndpointsTest {
@@ -437,7 +439,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 				if(tempRsrc.getCalculationVersion() == 1) {
 					ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(tempRsrc, false);
 					//Delete claim
-					service.deleteClaimCalculation(calculationToDel);
+					service.deleteClaimCalculation(calculationToDel, true);
 					break;
 				}
 			}
@@ -453,7 +455,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 					
 					if ( searchResults.getCollection().get(i).getClaimCalculationGuid().equals(claimCalculationGuid) ) {
 						ClaimCalculationRsrc calculationToDel = service.getClaimCalculation(searchResults.getCollection().get(i), false);
-						service.deleteClaimCalculation(calculationToDel);
+						service.deleteClaimCalculation(calculationToDel, true);
 					}
 				}
 			}
@@ -534,7 +536,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		ClaimCalculationListRsrc searchResults = service.getClaimCalculations(topLevelEndpoints, "28082", null, null, null, null, null, null, null, null, pageNumber, pageRowCount);
 		ClaimCalculationRsrc claimCalc = searchResults.getCollection().get(0);
 		claimCalc = service.getClaimCalculation(claimCalc, false);
-		service.deleteClaimCalculation(claimCalc);		
+		service.deleteClaimCalculation(claimCalc, true);		
 	}
 	
 	@Test
@@ -693,7 +695,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testClaimCalculationOutOfSyncFlags");
 	}
@@ -766,7 +768,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrapesClaimCalculationOutOfSyncFlags");
 	}
@@ -858,7 +860,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testBerriesClaimCalculationOutOfSyncFlags");
 	}
@@ -931,7 +933,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Coverage Amount not correct", originalMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -955,10 +957,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testBerriesClaimCalculationReplace");
 	}	
@@ -1027,7 +1029,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantUnitsClaimCalculationOutOfSyncFlags");
 	}
@@ -1087,7 +1089,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantUnitsClaimCalculationRefresh");
 	}
@@ -1144,7 +1146,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationPlantUnits().getInsurableValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -1163,10 +1165,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationPlantUnits().getInsurableValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testPlantUnitsClaimCalculationReplace");
 	}	
@@ -1278,7 +1280,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantAcresClaimCalculationOutOfSyncFlags");
 	}	
@@ -1338,7 +1340,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testPlantAcresClaimCalculationRefresh");
 	}
@@ -1395,7 +1397,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationPlantAcres().getInsurableValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -1414,10 +1416,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationPlantAcres().getInsurableValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testPlantAcresClaimCalculationReplace");
 	}	
@@ -1541,7 +1543,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		}
 		
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGetClaimCalculationRefresh");
 	}
@@ -1599,7 +1601,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);		
 		
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrapesClaimCalculationRefresh");
 	}
@@ -1682,7 +1684,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		checkVarieties(cropVarietyId, averagePrice, null, averagePriceFinal, newCalculation, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -1703,10 +1705,10 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		checkVarieties(cropVarietyId, averagePriceNew, averagePriceOverride, null, newCalculation, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
 
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testGrapesClaimCalculationReplace");
 	}
@@ -1991,7 +1993,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);		
 		
 		//4. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testBerriesClaimCalculationRefresh");
 	}
@@ -2166,7 +2168,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrainUnseededClaimCalculationOutOfSyncFlags");
 	}
@@ -2229,7 +2231,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 				
 		logger.debug(">testGrainUnseededClaimCalculationRefresh");
 	}
@@ -2295,7 +2297,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value not correct", originalInsurableValue, newCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -2317,11 +2319,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Insurable Value not correct", updatedInsurableValue, newCalculation.getClaimCalculationGrainUnseeded().getInsurableValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testGrainUnseededClaimCalculationReplace");
 	}
@@ -2392,7 +2394,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		assertOutOfSyncFlagsNull(claimCalc);
 		
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testGrainSpotLossClaimCalculationOutOfSyncFlags");
 	}
@@ -2456,7 +2458,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
 		//3. Delete the Claim Calculation.
-		service.deleteClaimCalculation(claimCalc);
+		service.deleteClaimCalculation(claimCalc, true);
 				
 		logger.debug(">testGrainSpotLossClaimCalculationRefresh");
 	}	
@@ -2521,7 +2523,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Coverage Value not correct", originalCoverageValue, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
 		
 		//Delete new calculation
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Reset calculation to be replaced to approved
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
@@ -2543,14 +2545,407 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("Copy Coverage Value not correct", updatedCoverageValue, newCalculation.getClaimCalculationGrainSpotLoss().getCoverageValue());
 		
 		//Delete - Clean up
-		service.deleteClaimCalculation(newCalculation);
+		service.deleteClaimCalculation(newCalculation, true);
 		
 		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
 		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
-		service.deleteClaimCalculation(calculationToUpdate);
+		service.deleteClaimCalculation(calculationToUpdate, true);
 
 		logger.debug(">testGrainSpotLossClaimCalculationReplace");
 	}
+	
+	@Test
+	public void testGrainQuantityClaimCalculationOutOfSyncFlags() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainQuantityClaimCalculationOutOfSyncFlags");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+
+		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
+		// Needs to be manually set to a real, valid GRAIN Quantity Claim in CIRRAS db with no existing calculations.
+		String testClaimNumber = "37195";  
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		outOfSyncClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc claimCalc = service.getClaim(claim);
+
+		claimCalc = service.createClaimCalculation(claimCalc);
+
+		outOfSyncClaimCalculationGuid = claimCalc.getClaimCalculationGuid();
+		
+		assertOutOfSyncFlagsFalse(claimCalc);
+		
+		//2. Update ClaimCalculation, setting each field to check the corresponding Out of Sync flag.
+		//Insured Acres
+		Double oldInsuredAcres = claimCalc.getClaimCalculationGrainQuantityDetail().getInsuredAcres();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setInsuredAcres(oldInsuredAcres - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailInsuredAcres");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setInsuredAcres(oldInsuredAcres);
+
+		//Probable Yield
+		Double oldProbableYield = claimCalc.getClaimCalculationGrainQuantityDetail().getProbableYield();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setProbableYield(oldProbableYield - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailProbableYield");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setProbableYield(oldProbableYield);
+
+		//Deductible
+		Integer oldDeductible = claimCalc.getClaimCalculationGrainQuantityDetail().getDeductible();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setDeductible(oldDeductible - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailDeductible");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setDeductible(oldDeductible);
+
+		//Production Guarantee Weight
+		Double oldProductionGuaranteeWeight = claimCalc.getClaimCalculationGrainQuantityDetail().getProductionGuaranteeWeight();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setProductionGuaranteeWeight(oldProductionGuaranteeWeight - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailProductionGuaranteeWeight");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setProductionGuaranteeWeight(oldProductionGuaranteeWeight);
+
+		//Insurable Value
+		Double oldInsurableValue = claimCalc.getClaimCalculationGrainQuantityDetail().getInsurableValue();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setInsurableValue(oldInsurableValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailInsurableValue");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setInsurableValue(oldInsurableValue);
+
+		//Coverage Value
+		Double oldCoverageValue = claimCalc.getClaimCalculationGrainQuantityDetail().getCoverageValue();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setCoverageValue(oldCoverageValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailCoverageValue");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setCoverageValue(oldCoverageValue);
+
+		//Total Yield To Count
+		Double oldTotalYieldToCount = claimCalc.getClaimCalculationGrainQuantityDetail().getTotalYieldToCount();
+		claimCalc.getClaimCalculationGrainQuantityDetail().setTotalYieldToCount(oldTotalYieldToCount - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainQuantityDetailTotalYieldToCount");
+		claimCalc.getClaimCalculationGrainQuantityDetail().setTotalYieldToCount(oldTotalYieldToCount);
+		
+		/*Precondition error
+		  	If the subsequent statement is commented out the error happens on delete
+		  	otherwise it happens when updating ARCHIVED
+		  	
+		  	If the subsequent statement is commented out AND one of the APPROVED or ARCHIVED is commented out
+		  	the script finishes without errors
+		  	
+		  	If I comment out both APPROVED AND ARCHIVED and run the Coverage Value and Total Yield To Count again
+		  	no errors
+		  	
+		  	For testing I executed this query 3 times in a row and the precondition failed on the third one without
+		  	ever executing the updateClaimCalculation with Approved or Archived.
+		  	
+		  	claimCalc = service.updateClaimCalculation(claimCalc, null);				
+			assertOutOfSyncFlagsFalse(claimCalc);
+			
+			This seems to be a unit test issue and couldn't be reproduced in the app itself so far.
+		  	
+		*/
+		claimCalc = service.updateClaimCalculation(claimCalc, null);				
+		assertOutOfSyncFlagsFalse(claimCalc);
+		
+		//3. Out of sync flags not set for certain statuses.
+		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsNull(claimCalc);
+
+		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsNull(claimCalc);		
+
+		//4. Delete the Claim Calculation.
+		service.deleteClaimCalculation(claimCalc, true);
+		
+		logger.debug(">testGrainQuantityClaimCalculationOutOfSyncFlags");
+	}	
+	
+	@Test
+	public void testGrainQuantityClaimCalculationRefresh() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainQuantityClaimCalculationRefresh");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
+		String testClaimNumber = "37195";  // Needs to be manually set to a real, valid GRAIN UNSEEDED claim in CIRRAS db with no existing calculations.
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		outOfSyncClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc claimCalc = service.getClaim(claim);
+
+		claimCalc = service.createClaimCalculation(claimCalc);
+
+		outOfSyncClaimCalculationGuid = claimCalc.getClaimCalculationGuid();
+		
+		assertOutOfSyncFlagsGrainQuantity(claimCalc, false);
+		
+		//2. Update ClaimCalculation, setting each field to be out of sync with claim.
+		ClaimCalculationGrainQuantityDetail qtyDetail = claimCalc.getClaimCalculationGrainQuantityDetail();
+
+		//Insured Acres
+		Double oldInsuredAcres = qtyDetail.getInsuredAcres();
+		qtyDetail.setInsuredAcres(oldInsuredAcres - 1);
+
+		//Probable Yield
+		Double oldProbableYield = qtyDetail.getProbableYield();
+		qtyDetail.setProbableYield(oldProbableYield - 1);
+
+		//Deductible
+		Integer oldDeductible = qtyDetail.getDeductible();
+		qtyDetail.setDeductible(oldDeductible - 1);
+
+		//Production Guarantee Weight
+		Double oldProductionGuaranteeWeight = qtyDetail.getProductionGuaranteeWeight();
+		qtyDetail.setProductionGuaranteeWeight(oldProductionGuaranteeWeight - 1);
+
+		//Insurable Value
+		Double oldInsurableValue = qtyDetail.getInsurableValue();
+		qtyDetail.setInsurableValue(oldInsurableValue - 1);
+
+		//Coverage Value
+		Double oldCoverageValue = qtyDetail.getCoverageValue();
+		qtyDetail.setCoverageValue(oldCoverageValue - 1);
+
+		//Total Yield To Count
+		Double oldTotalYieldToCount = qtyDetail.getTotalYieldToCount();
+		qtyDetail.setTotalYieldToCount(oldTotalYieldToCount - 1);
+		
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+
+		assertOutOfSyncFlagsGrainQuantity(claimCalc, true);
+
+		claimCalc = service.getClaimCalculation(claimCalc, true);
+		
+		assertOutOfSyncFlagsGrainQuantity(claimCalc, false);
+		
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+
+		//3. Delete the Claim Calculation.
+		service.deleteClaimCalculation(claimCalc, true);
+				
+		logger.debug(">testGrainQuantityClaimCalculationRefresh");
+	}
+	
+
+	@Test
+	public void testGrainQuantityClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainQuantityClaimCalculationReplace");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		// Needs to be manually set to a real, valid GRAIN Quantity claim in CIRRAS db with no existing calculations.
+		ClaimCalculationRsrc calculationToUpdate = createClaimCalculation("37195");
+
+		Assert.assertEquals(null, calculationToUpdate.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, calculationToUpdate.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, calculationToUpdate.getLatestLinkedCalculationVersion());
+		
+		//Original values
+		ClaimCalculationGrainQuantityDetail qtyDetail = calculationToUpdate.getClaimCalculationGrainQuantityDetail();
+
+		Double originalInsuredAcres = qtyDetail.getInsuredAcres();
+		Double originalProbableYield = qtyDetail.getProbableYield();
+		Integer originalDeductible = qtyDetail.getDeductible();
+		Double originalProductionGuaranteeWeight = qtyDetail.getProductionGuaranteeWeight();
+		Double originalInsurableValue = qtyDetail.getInsurableValue();
+		Double originalCoverageValue = qtyDetail.getCoverageValue();
+		Double originalTotalYieldToCount = qtyDetail.getTotalYieldToCount();
+
+		//Update values for pulled in data to test if replacing NEW and COPY works correctly
+		Double updatedInsuredAcres = originalInsuredAcres - 5;
+		Double updatedProbableYield = originalProbableYield + 0.1;
+		Integer updatedDeductible = originalDeductible + 10;
+		Double updatedProductionGuaranteeWeight = originalProductionGuaranteeWeight + 10;
+		Double updatedInsurableValue = originalInsurableValue + 5;
+		Double updatedCoverageValue = originalCoverageValue - 5;
+		Double updatedTotalYieldToCount = originalTotalYieldToCount + 5;
+		
+		Double reseedClaim = 100.0;
+		Double advancedClaim = 50.0;
+		
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setInsuredAcres(updatedInsuredAcres);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setProbableYield(updatedProbableYield);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setDeductible(updatedDeductible);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setProductionGuaranteeWeight(updatedProductionGuaranteeWeight);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setInsurableValue(updatedInsurableValue);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setCoverageValue(updatedCoverageValue);
+		calculationToUpdate.getClaimCalculationGrainQuantityDetail().setTotalYieldToCount(updatedTotalYieldToCount);
+		calculationToUpdate.getClaimCalculationGrainQuantity().setReseedClaim(reseedClaim);
+		calculationToUpdate.getClaimCalculationGrainQuantity().setAdvancedClaim(advancedClaim);
+		
+		//Saving updated values
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		//NEW
+		//Update calculation
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		replaceClaimCalculationGuid2 = newCalculation.getClaimCalculationGuid();
+
+		Assert.assertEquals(null, newCalculation.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedCalculationVersion());
+		
+		
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals(originalInsuredAcres, newCalculation.getClaimCalculationGrainQuantityDetail().getInsuredAcres());
+		Assert.assertEquals(originalProbableYield, newCalculation.getClaimCalculationGrainQuantityDetail().getProbableYield());
+		Assert.assertEquals(originalDeductible, newCalculation.getClaimCalculationGrainQuantityDetail().getDeductible());
+		Assert.assertEquals(originalProductionGuaranteeWeight, newCalculation.getClaimCalculationGrainQuantityDetail().getProductionGuaranteeWeight());
+		Assert.assertEquals(originalInsurableValue, newCalculation.getClaimCalculationGrainQuantityDetail().getInsurableValue());
+		Assert.assertEquals(originalCoverageValue, newCalculation.getClaimCalculationGrainQuantityDetail().getCoverageValue());
+		Assert.assertEquals(originalTotalYieldToCount, newCalculation.getClaimCalculationGrainQuantityDetail().getTotalYieldToCount());
+		Assert.assertNull(newCalculation.getClaimCalculationGrainQuantity().getReseedClaim());
+		Assert.assertNull(newCalculation.getClaimCalculationGrainQuantity().getAdvancedClaim());
+		
+		//Try to update, expect error because second calculation is missing
+		try {
+			//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+			newCalculation = service.getClaimCalculation(newCalculation, false);
+			newCalculation = service.updateClaimCalculation(newCalculation, null);
+			Assert.fail("updateClaimCalculation should have thrown an exception because the calculation can't be saved because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists."));
+		}
+		
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation, true);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+		
+		//COPY
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		replaceClaimCalculationGuid3 = newCalculation.getClaimCalculationGuid();
+
+		Assert.assertEquals(null, newCalculation.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(null, newCalculation.getLatestLinkedCalculationVersion());
+		
+		//Check if newCalculation contains the updated values from the replaced one
+		Assert.assertEquals("Copy Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals(updatedInsuredAcres, newCalculation.getClaimCalculationGrainQuantityDetail().getInsuredAcres());
+		Assert.assertEquals(updatedProbableYield, newCalculation.getClaimCalculationGrainQuantityDetail().getProbableYield());
+		Assert.assertEquals(updatedDeductible, newCalculation.getClaimCalculationGrainQuantityDetail().getDeductible());
+		Assert.assertEquals(updatedProductionGuaranteeWeight, newCalculation.getClaimCalculationGrainQuantityDetail().getProductionGuaranteeWeight());
+		Assert.assertEquals(updatedInsurableValue, newCalculation.getClaimCalculationGrainQuantityDetail().getInsurableValue());
+		Assert.assertEquals(updatedCoverageValue, newCalculation.getClaimCalculationGrainQuantityDetail().getCoverageValue());
+		Assert.assertEquals(updatedTotalYieldToCount, newCalculation.getClaimCalculationGrainQuantityDetail().getTotalYieldToCount());
+		Assert.assertEquals(reseedClaim, newCalculation.getClaimCalculationGrainQuantity().getReseedClaim());
+		Assert.assertEquals(advancedClaim, newCalculation.getClaimCalculationGrainQuantity().getAdvancedClaim());
+		
+		//Add second calculation *********************************************************************************************
+		// Needs to be manually set to a real, valid GRAIN Quantity claim in CIRRAS db with no existing calculations.
+		ClaimCalculationRsrc calculation2 = createClaimCalculation("37196");
+
+		Assert.assertEquals(calculationToUpdate.getClaimCalculationGuid(), calculation2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getClaimCalculationGuid(), calculation2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getCalculationVersion(), calculation2.getLatestLinkedCalculationVersion());
+		
+		
+		//Try to update first calculation, expect error because second calculation is in wrong version
+		try {
+			//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+			newCalculation = service.getClaimCalculation(newCalculation, false);
+			newCalculation = service.updateClaimCalculation(newCalculation, null);
+			Assert.fail("updateClaimCalculation should have thrown an exception because the calculation can't be saved because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be updated because there are two quantity products for this commodity on this policy. However, no calculation with the same version exists."));
+		}
+		
+		//Archive second calculation
+		calculation2 = service.getClaimCalculation(calculation2, false);
+		calculation2.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculation2 = service.updateClaimCalculation(calculation2, null);
+		
+		calculation2 = service.getClaimCalculation(calculation2, false);
+		calculation2.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation2 = service.updateClaimCalculation(calculation2, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		Assert.assertEquals(newCalculation.getClaimCalculationGuid(), newCalculation2.getLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getClaimCalculationGuid(), newCalculation2.getLatestLinkedClaimCalculationGuid());
+		Assert.assertEquals(newCalculation.getCalculationVersion(), newCalculation2.getLatestLinkedCalculationVersion());
+		
+		//Check shared data
+		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantityGuid(), newCalculation2.getClaimCalculationGrainQuantityGuid());
+		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantity().getReseedClaim(), newCalculation2.getClaimCalculationGrainQuantity().getReseedClaim());
+		Assert.assertEquals(newCalculation.getClaimCalculationGrainQuantity().getAdvancedClaim(), newCalculation2.getClaimCalculationGrainQuantity().getAdvancedClaim());
+
+		//Update comment of one of the calculations - no errors expected because now there are two calculations 
+		newCalculation2 = service.getClaimCalculation(newCalculation2, false);
+		newCalculation2.setCalculationComment("test");
+		newCalculation2 = service.updateClaimCalculation(newCalculation2, null);
+		
+		Assert.assertEquals("test", newCalculation2.getCalculationComment());
+		
+		//Delete - Clean up
+		newCalculation2 = service.getClaimCalculation(newCalculation2, false);
+		service.deleteClaimCalculation(newCalculation2, true);
+		
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
+
+		logger.debug(">testGrainQuantityClaimCalculationReplace");
+	}
+
+	private ClaimCalculationRsrc createClaimCalculation(String claimNumber) throws CirrasClaimServiceException, ValidationException {
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", claimNumber.equals("TODO"));
+
+		replaceClaimNumber = Integer.valueOf(claimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, claimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc calculationToUpdate = service.getClaim(claim);
+		calculationToUpdate = service.createClaimCalculation(calculationToUpdate);
+		
+		replaceClaimCalculationGuid1 = calculationToUpdate.getClaimCalculationGuid();
+		return calculationToUpdate;
+	}	
 	
 	private boolean isInteger(double number) {
 	    return number % 1 == 0;// if the modulus(remainder of the division) of the argument(number) with 1 is 0 then return true otherwise false.
@@ -2626,6 +3021,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		if ( c.getClaimCalculationGrainUnseeded() != null ) { 
 			assertOutOfSyncFlagsGrainUnseeded(c, false);
 		}
+		
+		if( c.getClaimCalculationGrainQuantityDetail() != null) {
+			assertOutOfSyncFlagsGrainQuantity(c, false);
+		}
+		
 	}
 
 	private void assertOutOfSyncFlagsNull(ClaimCalculationRsrc c) {
@@ -2677,7 +3077,19 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 			Assert.assertNull("IsOutOfSyncDeductibleLevel", c.getClaimCalculationGrainUnseeded().getIsOutOfSyncDeductibleLevel());
 			Assert.assertNull("IsOutOfSyncInsurableValue", c.getClaimCalculationGrainUnseeded().getIsOutOfSyncInsurableValue());		
 		}
-		
+
+		//grain quantity
+		if(c.getClaimCalculationGrainQuantityDetail() != null) {
+			
+			Assert.assertNull("IsOutOfSyncInsuredAcres", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncInsuredAcres());
+			Assert.assertNull("IsOutOfSyncProbableYield", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncProbableYield());
+			Assert.assertNull("IsOutOfSyncDeductible", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncDeductible());
+			Assert.assertNull("IsOutOfSyncProductionGuaranteeWeight", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncProductionGuaranteeWeight());
+			Assert.assertNull("IsOutOfSyncInsurableValue", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncInsurableValue());
+			Assert.assertNull("IsOutOfSyncCoverageValue", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncCoverageValue());
+			Assert.assertNull("IsOutOfSyncTotalYieldToCount", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncTotalYieldToCount());
+		}
+
 		for (ClaimCalculationVariety v : c.getVarieties()) {
 			Assert.assertNull(v.getVarietyName() + " IsOutOfSyncAvgPrice", v.getIsOutOfSyncAvgPrice());
 			Assert.assertNull(v.getVarietyName() + " IsOutOfSyncVarietyRemoved", v.getIsOutOfSyncVarietyRemoved());
@@ -2740,6 +3152,19 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("IsOutOfSyncInsuredAcres", flagValue, c.getClaimCalculationGrainSpotLoss().getIsOutOfSyncInsuredAcres());
 		Assert.assertEquals("IsOutOfSyncCoverageAmtPerAcre", flagValue, c.getClaimCalculationGrainSpotLoss().getIsOutOfSyncCoverageAmtPerAcre());
 		Assert.assertEquals("IsOutOfSyncCoverageValue", flagValue, c.getClaimCalculationGrainSpotLoss().getIsOutOfSyncCoverageValue());
+	}	
+	
+	private void assertOutOfSyncFlagsGrainQuantity(ClaimCalculationRsrc c, boolean flagValue) {
+
+		Assert.assertEquals("IsOutOfSync", flagValue, c.getIsOutOfSync());
+		Assert.assertEquals("IsOutOfSyncInsuredAcres", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncInsuredAcres());
+		Assert.assertEquals("IsOutOfSyncProbableYield", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncProbableYield());
+		Assert.assertEquals("IsOutOfSyncDeductible", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncDeductible());
+		Assert.assertEquals("IsOutOfSyncProductionGuaranteeWeight", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncProductionGuaranteeWeight());
+		Assert.assertEquals("IsOutOfSyncInsurableValue", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncInsurableValue());
+		Assert.assertEquals("IsOutOfSyncCoverageValue", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncCoverageValue());
+		Assert.assertEquals("IsOutOfSyncTotalYieldToCount", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncTotalYieldToCount());
+		
 	}
 	
 	private void assertOutOfSyncFlagsFalseExceptOne(ClaimCalculationRsrc c, String f) {

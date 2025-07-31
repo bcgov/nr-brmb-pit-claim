@@ -30,6 +30,7 @@ public class ClaimDaoTest {
 	private PersistenceSpringConfig persistenceSpringConfig;
 
 	private Integer colId = 1038112;
+	private Integer ippId = 1205576;
 	
 	@Test
 	public void testFetchClaim() throws Exception {
@@ -42,6 +43,23 @@ public class ClaimDaoTest {
 		Assert.assertEquals(colId, dto.getColId());
 		 		
 	}
+
+	@Test
+	public void testSelectByProductId() throws Exception {
+		
+		ClaimDao dao = persistenceSpringConfig.claimDao();
+		ClaimDto dto = dao.selectByProductId(ippId);
+		
+		Assert.assertNotNull(dto); 
+		Assert.assertEquals(colId, dto.getColId());
+		Assert.assertEquals(ippId, dto.getIppId());
+		
+		// Search for non-existent product id
+		dto = dao.selectByProductId(999999999);
+		
+		Assert.assertNull(dto); 
+	}
+	
 	
 	@Test
 	public void testSelectByClaimNumber() throws Exception {

@@ -28,8 +28,14 @@
       pitClaimRestUri = pitClaimRestUri.substring(0, pitClaimRestUri.length() - 1); //Strip off trailing slash, if it exists.
     }
 
+    String pitUnderwritingUiUrl = EnvironmentVariable.getVariable("PIT_UNDERWRITING_UI_URL");
+    if (pitUnderwritingUiUrl.endsWith("/")) {
+      pitUnderwritingUiUrl = pitUnderwritingUiUrl.substring(0, pitUnderwritingUiUrl.length() - 1); //Strip off trailing slash, if it exists.
+    }
+
     json = json.append("\"rest\":{");
-    json = json.append("\"cirras_claims\":\"").append(pitClaimRestUri).append("\"");
+    json = json.append("\"cirras_claims\":\"").append(pitClaimRestUri).append("\"").append(",");
+    json = json.append("\"pit_underwriting_ui\":\"").append(pitUnderwritingUiUrl).append("\"");
     json = json.append("},");
 
     String WEBADE_OAUTH2_AUTHORIZE_URL = EnvironmentVariable.getVariable("WEBADE_OAUTH2_AUTHORIZE_URL");

@@ -12,10 +12,11 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       etag: calculation.etag,
 
       claimCalculationGuid: calculation.claimCalculationGuid ? calculation.claimCalculationGuid : null,
-
+      claimCalculationGrainQuantityGuid: calculation.claimCalculationGrainQuantityGuid,
+      
       // calculation
       calculationVersion: calculation.calculationVersion ? calculation.calculationVersion : null,
-      totalClaimAmount: calculation.totalClaimAmount ? calculation.totalClaimAmount : null,
+      totalClaimAmount: calculation.totalClaimAmount ? calculation.totalClaimAmount : 0,
       calculationStatusCode: calculation.calculationStatusCode ? calculation.calculationStatusCode : null,
       calculationComment: calculation.calculationComment ? calculation.calculationComment : null,
       revisionCount: calculation.revisionCount ? calculation.revisionCount : null,
@@ -31,6 +32,7 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       coverageName: calculation.coverageName ? calculation.coverageName : null,
       cropCommodityId: calculation.cropCommodityId ? calculation.cropCommodityId : null,
       commodityName: calculation.commodityName ? calculation.commodityName : null,
+      isPedigreeInd: calculation.isPedigreeInd ? calculation.isPedigreeInd : null,
       primaryPerilCode: calculation.primaryPerilCode ? calculation.primaryPerilCode : null,
       secondaryPerilCode: calculation.secondaryPerilCode ? calculation.secondaryPerilCode : null,
       claimStatusCode: calculation.claimStatusCode ? calculation.claimStatusCode : null,
@@ -67,6 +69,13 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       
       insuredByMeasurementType: calculation.insuredByMeasurementType ? calculation.insuredByMeasurementType : null,
 
+      // linked product / claim / calculation
+      linkedProductId: calculation.linkedProductId,
+      linkedClaimNumber: calculation.linkedClaimNumber,
+      linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+      latestLinkedCalculationVersion: calculation.latestLinkedCalculationVersion,
+      latestLinkedClaimCalculationGuid: calculation.latestLinkedClaimCalculationGuid,
+
       currentClaimStatusCode: calculation.currentClaimStatusCode? calculation.currentClaimStatusCode : null,
       varieties: calculation.varieties ? calculation.varieties.map(item => convertToCalculationVarietiesRsrc(item)) : [],
 
@@ -76,6 +85,8 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       claimCalculationGrapes: calculation.claimCalculationGrapes,
       claimCalculationGrainUnseeded: calculation.claimCalculationGrainUnseeded,
       claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
+      claimCalculationGrainQuantity: calculation.claimCalculationGrainQuantity,
+      claimCalculationGrainQuantityDetail: calculation.claimCalculationGrainQuantityDetail,        
 
       type: "ClaimCalculationRsrc"
   };
