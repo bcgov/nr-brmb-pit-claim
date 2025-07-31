@@ -35,131 +35,170 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   quantityTotalYieldLossIndemnity: number // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
   totalClaimAmount: number                // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
 
+  hasUnapprovedQuantityCalculation: boolean = false
 
   initModels() {
-      this.viewModel = new CalculationDetailGrainBasketComponentModel(this.sanitizer, this.fb, this.calculationDetail);
-    }
-  
-    loadPage() {
-      this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
-      this.perilCodeOptions = getCodeOptions("PERIL_CODE");
-      this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
-      this.updateView();
-    }
-  
-    getViewModel(): CalculationDetailGrainBasketComponentModel  { 
-        return <CalculationDetailGrainBasketComponentModel>this.viewModel;
-    }
-  
-    ngOnChanges(changes: SimpleChanges) {
-      super.ngOnChanges(changes);
-  
-      if (changes.calculationDetail) {
-          this.calculationDetail = changes.calculationDetail.currentValue;
-          this.calculationComment = this.calculationDetail.calculationComment
-  
-          
-          setTimeout(() => {
-              this.cdr.detectChanges();
-          });
-      }
-  
-      this.ngOnChanges2(changes);
-    }
-  
-    ngOnInit() {
-      super.ngOnInit()
-    }
-  
-    ngOnChanges2(changes: SimpleChanges) {
-  
-      if ( changes.calculationDetail && this.calculationDetail ) {
-  
-        this.viewModel.formGroup.controls.primaryPerilCode.setValue( this.calculationDetail.primaryPerilCode )
-        this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )  
-        this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
-  
-        if (!this.calculationDetail.claimCalculationGrainBasket.claimCalculationGrainBasketGuid) {
-  
-          // calculate values for new calculations only
-          this.calculateValues()
-  
-        } else {
-          // set the total calculated values
-          this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.totalYieldCoverageValue
-          this.quantityTotalYieldValue = this.calculationDetail.claimCalculationGrainBasket.quantityTotalYieldValue
-          this.totalYieldLoss = this.calculationDetail.claimCalculationGrainBasket.totalYieldLoss
-          this.quantityTotalYieldLossIndemnity = this.calculationDetail.claimCalculationGrainBasket.quantityTotalYieldLossIndemnity
-          this.totalClaimAmount = this.calculationDetail.totalClaimAmount  
-        }
-  
-        // TODO
-        // this.enableDisableFormControls();
-  
-      }
-    }
-  
-    ngAfterViewInit() {
-      super.ngAfterViewInit();
+    this.viewModel = new CalculationDetailGrainBasketComponentModel(this.sanitizer, this.fb, this.calculationDetail);
+  }
+
+  loadPage() {
+    this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
+    this.perilCodeOptions = getCodeOptions("PERIL_CODE");
+    this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
+    this.updateView();
+  }
+
+  getViewModel(): CalculationDetailGrainBasketComponentModel  { 
+      return <CalculationDetailGrainBasketComponentModel>this.viewModel;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+
+    if (changes.calculationDetail) {
+        this.calculationDetail = changes.calculationDetail.currentValue;
+        this.calculationComment = this.calculationDetail.calculationComment
+
+        
+        setTimeout(() => {
+            this.cdr.detectChanges();
+        });
     }
 
-    onCancel() {
-      this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), this.calculationDetail.policyNumber, "false"));
-      this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
-    }
+    this.ngOnChanges2(changes);
+  }
 
-    setComment() {
-      this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
-    }
+  ngOnInit() {
+    super.ngOnInit()
+  }
 
-    getCmdtyName(str) {
+  ngOnChanges2(changes: SimpleChanges) {
 
-      if (str.indexOf(" - PEDIGREED") > 1 ) {
-        str = str.substring(0, str.indexOf(" - PEDIGREED")) 
+    if ( changes.calculationDetail && this.calculationDetail ) {
+
+      this.viewModel.formGroup.controls.primaryPerilCode.setValue( this.calculationDetail.primaryPerilCode )
+      this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )  
+      this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )  
+
+      if (!this.calculationDetail.claimCalculationGrainBasket.claimCalculationGrainBasketGuid) {
+
+        // calculate values for new calculations only
+        this.calculateValues()
+
+      } else {
+        // set the total calculated values
+        this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.totalYieldCoverageValue
+        this.quantityTotalYieldValue = this.calculationDetail.claimCalculationGrainBasket.quantityTotalYieldValue
+        this.totalYieldLoss = this.calculationDetail.claimCalculationGrainBasket.totalYieldLoss
+        this.quantityTotalYieldLossIndemnity = this.calculationDetail.claimCalculationGrainBasket.quantityTotalYieldLossIndemnity
+        this.totalClaimAmount = this.calculationDetail.totalClaimAmount  
       }
 
-      return makeTitleCase(str)
-    }
+      this.checkForUnapprovedQuantityCalculation()
 
-    calculateValues() {
-
-      this.quantityTotalCoverageValue = 0
-      this.quantityTotalYieldValue = 0
-      this.quantityTotalYieldLossIndemnity = 0
-
-      let yield_value = 0
-
-      for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
-        this.quantityTotalCoverageValue = this.quantityTotalCoverageValue + 
-                                      this.calculationDetail.claimCalculationGrainBasketProducts[i].coverageValue
-      
-        // total_yield_to_count x hundred_percent_insurable_value
-        yield_value = yield_value + 
-                      this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount * this.calculationDetail.claimCalculationGrainBasketProducts[i].hundredPercentInsurableValue
-
-        // Sum of claim_calculation_grain_basket_product.yield_value
-        this.quantityTotalYieldValue = this.quantityTotalYieldValue + yield_value
-
-        // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
-        this.quantityTotalYieldLossIndemnity = this.quantityTotalYieldLossIndemnity + 
-                                                this.calculationDetail.claimCalculationGrainBasketProducts[i].insurableValue * ( this.calculationDetail.claimCalculationGrainBasketProducts[i].productionGuarantee - this.calculationDetail.claimCalculationGrainBasketProducts[i].assessedYield - this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount) 
-
-      }
-
-      //  (Grain Basket + Quantity Coverage For All Commodities) 
-      // Sum of grain_basket_coverage_value and quantity_total_coverage_value
-      this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue + 
-                                      this.quantityTotalCoverageValue
-
-      // total_yield_coverage_value - quantity_total_yield_value
-      this.totalYieldLoss = Math.max(0 , this.totalYieldCoverageValue - this.quantityTotalYieldValue)
-
-      this.quantityTotalYieldLossIndemnity = Math.max(0, this.quantityTotalYieldLossIndemnity) // zero it out if it's negative
-
-      // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
-      this.totalClaimAmount = Math.max(0, this.totalYieldLoss - this.quantityTotalYieldLossIndemnity )           
+      // TODO
+      // this.enableDisableFormControls();
 
     }
+  }
+  
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
+  }
 
+  onCancel() {
+    this.store.dispatch(loadCalculationDetail(this.calculationDetail.claimCalculationGuid, this.displayLabel, this.calculationDetail.claimNumber.toString(), this.calculationDetail.policyNumber, "false"));
+    this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
+  }
+
+  setComment() {
+    this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+  }
+
+  getCmdtyName(str) {
+
+    if (str.indexOf(" - PEDIGREED") > 1 ) {
+      str = str.substring(0, str.indexOf(" - PEDIGREED")) 
+    }
+
+    return makeTitleCase(str)
+  }
+
+  calculateValues() {
+
+    this.quantityTotalCoverageValue = 0
+    this.quantityTotalYieldValue = 0
+    this.quantityTotalYieldLossIndemnity = 0
+
+    let yield_value = 0
+
+    for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
+      this.quantityTotalCoverageValue = this.quantityTotalCoverageValue + 
+                                    this.calculationDetail.claimCalculationGrainBasketProducts[i].coverageValue
     
+      // total_yield_to_count x hundred_percent_insurable_value
+      yield_value = this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount * this.calculationDetail.claimCalculationGrainBasketProducts[i].hundredPercentInsurableValue
+
+      // Sum of claim_calculation_grain_basket_product.yield_value
+      this.quantityTotalYieldValue = this.quantityTotalYieldValue + yield_value
+
+      // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
+      let qtyYieldLossIndemnity = this.calculationDetail.claimCalculationGrainBasketProducts[i].insurableValue * ( this.calculationDetail.claimCalculationGrainBasketProducts[i].productionGuarantee - this.calculationDetail.claimCalculationGrainBasketProducts[i].assessedYield - this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount) 
+      this.quantityTotalYieldLossIndemnity = this.quantityTotalYieldLossIndemnity + Math.max(0, qtyYieldLossIndemnity)
+      
+    }
+
+    //  (Grain Basket + Quantity Coverage For All Commodities) 
+    // Sum of grain_basket_coverage_value and quantity_total_coverage_value
+    this.totalYieldCoverageValue = this.calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue + 
+                                    this.quantityTotalCoverageValue
+
+    // total_yield_coverage_value - quantity_total_yield_value
+    this.totalYieldLoss = Math.max(0 , this.totalYieldCoverageValue - this.quantityTotalYieldValue)
+
+    // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
+    this.totalClaimAmount = Math.max(0, this.totalYieldLoss - this.quantityTotalYieldLossIndemnity )           
+
+  }
+
+  checkForUnapprovedQuantityCalculation() {
+    this.hasUnapprovedQuantityCalculation = false 
+
+    if (this.calculationDetail && this.calculationDetail.claimCalculationGrainBasketProducts) {
+
+      for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++) {
+      
+        // if this policy has quantity products
+        if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG") {
+
+          // if the policy has qty product but no qty claim -> no message
+
+          // if this policy has qty claim but no calculation -> display message
+          if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber && !this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid) {
+            
+            this.hasUnapprovedQuantityCalculation = true
+          }
+
+          // if this policy has qty calculation but it's not approved -> display message
+          if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid && 
+             this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED") {
+            
+            this.hasUnapprovedQuantityCalculation = true
+          }
+        }
+      }
+    }
+  }
+
+  showQtyTotYieldValueWarning() {
+    // if Total Yield Value is different than the Harvested Value pulled from the Inventory & Yield app then show warning
+    
+    if ( (Math.round ( this.quantityTotalYieldValue * 100) / 100) !== (Math.round(this.calculationDetail.claimCalculationGrainBasket.grainBasketHarvestedValue  * 100 ) / 100) ) {
+        return true
+    } else {
+      return false
+    }
+  }
+
+  
 }

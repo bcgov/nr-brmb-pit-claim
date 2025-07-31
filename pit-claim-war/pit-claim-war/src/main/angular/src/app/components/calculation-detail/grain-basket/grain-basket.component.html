@@ -77,17 +77,10 @@
               <div class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketDeductible : "") | number:'1.0-0' }}%
-                  <!-- <span #el matTooltip="Acres don't match with CIRRAS" 
-                    *ngIf="calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                  </span> -->
                 </span>
               </div>
               <div class="ccc-right">                 
                 {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue : "") | currency }}
-                <!-- <span #el matTooltip="Acres don't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                  </span> -->
               </div>
 
               <div>
@@ -96,9 +89,6 @@
               <div></div>
               <div class="ccc-right">                 
                 {{ quantityTotalCoverageValue | currency }}
-                <!-- <span #el matTooltip="Acres don't match with CIRRAS" *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" style="margin-left: 10px;">
-                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                  </span>-->
               </div>
 
               <div>
@@ -160,7 +150,7 @@
                     {{ product.hundredPercentInsurableValue | currency }}
                 </div>
                 <div class=" ccc-justify-center"> 
-                    {{ product.coverageValue | currency }}             
+                    {{ product.yieldValue | currency }}             
                 </div>                        
                                 
             </div>
@@ -170,8 +160,14 @@
                   Total Yield Value 
             </div>
 
-            <div class="ccc-justify-center ccc-border-top  "> 
-              {{ quantityTotalYieldValue | currency }}            
+            <!-- *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" -->
+            <div class="ccc-justify-center ccc-border-top"> 
+              <span #el matTooltip="Total Yield Value doesn't match the Harvested Value pulled from the Inventory & Yield app → Verified Yield → Basket Coverage table" 
+                *ngIf="!hasUnapprovedQuantityCalculation && showQtyTotYieldValueWarning()"
+                style="margin-right: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
+              <span *ngIf="!hasUnapprovedQuantityCalculation">{{ quantityTotalYieldValue | currency }} </span>        
             </div> 
 
             </div>
@@ -191,7 +187,7 @@
             <span class="ccc-expression">C - D</span>    
           </div>
           <div class="ccc-right" > 
-            {{ totalYieldLoss | currency }}
+            <span *ngIf="!hasUnapprovedQuantityCalculation">{{ totalYieldLoss | currency }}</span>
           </div>
   
           <div class="ccc-border-right" style="grid-column-start: 1; grid-column-end: 3;">
@@ -205,10 +201,10 @@
             <span class="ccc-expression">G</span> Grain Basket Claim
           </div>
           <div class="ccc-border-right ccc-right">
-            <span class="ccc-expression">F - G</span>
+            <span class="ccc-expression">E - F</span>
           </div>
           <div class="ccc-right">
-            {{ totalClaimAmount | currency }}
+            <span *ngIf="!hasUnapprovedQuantityCalculation">{{ totalClaimAmount | currency }}</span>
           </div>
 
         </div>
