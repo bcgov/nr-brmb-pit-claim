@@ -310,7 +310,12 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	public void updateCalculationFromClaim(ClaimCalculation claimCalculation,
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
 			Product product,
-			VerifiedYieldSummary verifiedSummary
+			VerifiedYieldSummary verifiedSummary,   // TODO: Remove?
+			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap
 	) {
 
 		// Update ClaimCalculation fields
@@ -359,6 +364,9 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 				updateClaimCalculationGrainSpotLossFromClaim(claimCalculation, product);
 			} else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 				updateClaimCalculationGrainQuantityFromClaim(claimCalculation, product, verifiedSummary);
+			} else if (claim.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())) {
+				updateClaimCalculationGrainBasketFromClaim(claimCalculation, product, verifiedYield);
+				updateClaimCalculationGrainBasketProductsFromClaim(claimCalculation, product, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
 			}
 		}
 
@@ -491,6 +499,48 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		}
 
 	}
+
+	private void updateClaimCalculationGrainBasketFromClaim(ClaimCalculation claimCalculation, Product product, VerifiedYieldContractSimple verifiedYield) {
+
+		ClaimCalculationGrainBasket grainBasket = claimCalculation.getClaimCalculationGrainBasket();
+
+		//From CIRRAS
+		grainBasket.setGrainBasketCoverageValue(product.getCoverageDollars());
+		grainBasket.setGrainBasketDeductible(product.getDeductibleLevel());
+
+		// From CUWS
+		VerifiedYieldGrainBasket vygb = verifiedYield.getVerifiedYieldGrainBasket();
+		if ( vygb != null ) {
+			grainBasket.setGrainBasketHarvestedValue(vygb.getHarvestedValue());
+		} else {
+			throw new FactoryException("Did not find Verified Yield Grain Basket");
+		}		
+	}
+
+	// Since this contains no user-entered data, the existing products are cleared and re-created from up to date source data.
+	private void updateClaimCalculationGrainBasketProductsFromClaim(ClaimCalculation claimCalculation, 
+			                                                        Product product, 
+			                                                        VerifiedYieldContractSimple verifiedYield, 
+			                                                        List<ProductRsrc> quantityProducts,
+			                                                        Map<Integer, ClaimDto> quantityClaimMap,
+			                                                        Map<Integer, CropCommodityDto> quantityCropMap,
+			                                                        Map<Integer, CropCommodityDto> quantityLinkedCropMap) {
+
+		List<ClaimCalculationGrainBasketProduct> modelProducts = new ArrayList<ClaimCalculationGrainBasketProduct>();
+	
+		for (ProductRsrc quantityProduct : quantityProducts) {
+			
+			ClaimDto quantityClaimDto = quantityClaimMap.get(quantityProduct.getCropCommodityId());
+			CropCommodityDto quantityCrpDto = quantityCropMap.get(quantityProduct.getCropCommodityId());
+			CropCommodityDto quantityLinkedCrpDto = quantityLinkedCropMap.get(quantityProduct.getCropCommodityId());
+			
+			ClaimCalculationGrainBasketProduct modelProduct = createClaimCalculationGrainBasketProductFromClaim(quantityProduct, quantityClaimDto, quantityCrpDto, quantityLinkedCrpDto, verifiedYield);
+			modelProducts.add(modelProduct);
+		}
+	
+		claimCalculation.setClaimCalculationGrainBasketProducts(modelProducts);					
+	}
+	
 	
 	private void populateResource(ClaimCalculationRsrc resource,
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,

@@ -113,7 +113,13 @@ public interface ClaimCalculationFactory {
 			ClaimCalculation claimCalculation, 
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim, 
 			Product product,
-			VerifiedYieldSummary verifiedSummary);
+			VerifiedYieldSummary verifiedSummary,
+			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+	);
 
 	public ClaimCalculation getCalculationFromCalculation(
 			ClaimCalculation claimCalculation,

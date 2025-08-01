@@ -33,7 +33,20 @@ public class ClaimCalculationGrainBasketProduct implements Serializable {
 	private String quantityLatestCalculationStatusCode;
 	
 	// Out of sync flags
-	// TODO
+	// From CIRRAS
+	private Boolean isOutOfSyncProductRemoved;
+	private Boolean isOutOfSyncCoverageValue;
+	private Boolean isOutOfSyncHundredPercentInsurableValue;
+	private Boolean isOutOfSyncInsurableValue;
+	private Boolean isOutOfSyncProductionGuarantee;
+	
+	// From CUWS
+	private Boolean isOutOfSyncTotalYieldToCount;
+	
+	// From CCS
+	private Boolean isOutOfSyncQuantityClaimAmount;
+	private Boolean isOutOfSyncAssessedYield;
+
 	
 	public String getClaimCalcGrainBasketProductGuid() {
 		return claimCalcGrainBasketProductGuid;
@@ -166,5 +179,61 @@ public class ClaimCalculationGrainBasketProduct implements Serializable {
 	}
 	public void setQuantityLatestCalculationStatusCode(String quantityLatestCalculationStatusCode) {
 		this.quantityLatestCalculationStatusCode = quantityLatestCalculationStatusCode;
+	}
+	
+	public Boolean getIsOutOfSyncProductRemoved() {
+		return isOutOfSyncProductRemoved;
+	}
+	public void setIsOutOfSyncProductRemoved(Boolean isOutOfSyncProductRemoved) {
+		this.isOutOfSyncProductRemoved = isOutOfSyncProductRemoved;
+	}
+	
+	public Boolean getIsOutOfSyncCoverageValue() {
+		return isOutOfSyncCoverageValue;
+	}
+	public void setIsOutOfSyncCoverageValue(Boolean isOutOfSyncCoverageValue) {
+		this.isOutOfSyncCoverageValue = isOutOfSyncCoverageValue;
+	}
+	
+	public Boolean getIsOutOfSyncHundredPercentInsurableValue() {
+		return isOutOfSyncHundredPercentInsurableValue;
+	}
+	public void setIsOutOfSyncHundredPercentInsurableValue(Boolean isOutOfSyncHundredPercentInsurableValue) {
+		this.isOutOfSyncHundredPercentInsurableValue = isOutOfSyncHundredPercentInsurableValue;
+	}
+	
+	public Boolean getIsOutOfSyncInsurableValue() {
+		return isOutOfSyncInsurableValue;
+	}
+	public void setIsOutOfSyncInsurableValue(Boolean isOutOfSyncInsurableValue) {
+		this.isOutOfSyncInsurableValue = isOutOfSyncInsurableValue;
+	}
+	
+	public Boolean getIsOutOfSyncProductionGuarantee() {
+		return isOutOfSyncProductionGuarantee;
+	}
+	public void setIsOutOfSyncProductionGuarantee(Boolean isOutOfSyncProductionGuarantee) {
+		this.isOutOfSyncProductionGuarantee = isOutOfSyncProductionGuarantee;
+	}
+	
+	public Boolean getIsOutOfSyncTotalYieldToCount() {
+		return isOutOfSyncTotalYieldToCount;
+	}
+	public void setIsOutOfSyncTotalYieldToCount(Boolean isOutOfSyncTotalYieldToCount) {
+		this.isOutOfSyncTotalYieldToCount = isOutOfSyncTotalYieldToCount;
+	}
+	
+	public Boolean getIsOutOfSyncQuantityClaimAmount() {
+		return isOutOfSyncQuantityClaimAmount;
+	}
+	public void setIsOutOfSyncQuantityClaimAmount(Boolean isOutOfSyncQuantityClaimAmount) {
+		this.isOutOfSyncQuantityClaimAmount = isOutOfSyncQuantityClaimAmount;
+	}
+	
+	public Boolean getIsOutOfSyncAssessedYield() {
+		return isOutOfSyncAssessedYield;
+	}
+	public void setIsOutOfSyncAssessedYield(Boolean isOutOfSyncAssessedYield) {
+		this.isOutOfSyncAssessedYield = isOutOfSyncAssessedYield;
 	}
 }

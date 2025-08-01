@@ -935,7 +935,7 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					VerifiedYieldSummary verifiedSummary = getVerifiedYieldSummary(verifiedYieldRsrc, crpDto, linkedCrpDto);
 					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
-						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc, verifiedSummary);
+						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc, verifiedSummary, verifiedYieldRsrc, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
 					}
 	
 					// Sets the out of sync flags for any fields in the calculation that are out of
@@ -1220,8 +1220,13 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 			ClaimCalculation claimCalculation, 
 			InsuranceClaim insuranceClaim, 
 			Product product,
-			VerifiedYieldSummary verifiedSummary)
-			throws ServiceException, DaoException {
+			VerifiedYieldSummary verifiedSummary,
+			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+	) throws ServiceException, DaoException {
 		logger.debug("<refreshManualClaimData");
 
 		if (claimCalculation == null || insuranceClaim == null) {
@@ -1229,9 +1234,14 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
 			throw new ServiceException("Unable to refresh Claim data. Product was not loaded.");
+		} else if ( (product == null || verifiedYield == null || quantityProducts == null || quantityClaimMap == null || quantityCropMap == null || quantityLinkedCropMap == null) && 
+				claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
+				claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
+			throw new ServiceException("Unable to refresh Claim data. Product or Verified Yield was not loaded.");
 		}
+		// TODO: Add checks for other coverages?
 		
-		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product, verifiedSummary);
+		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product, verifiedSummary, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
 
 		// Recalculate.
 		calculateVarietyInsurableValues(claimCalculation);
