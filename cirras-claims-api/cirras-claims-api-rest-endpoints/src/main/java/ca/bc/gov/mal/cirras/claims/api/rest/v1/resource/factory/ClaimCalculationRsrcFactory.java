@@ -1385,6 +1385,22 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		dto.setYieldValueWithEarlyEstDeemedYield(model.getYieldValueWithEarlyEstDeemedYield());
 		
 	}
+
+	@Override
+	public void updateDto(ClaimCalculationGrainBasketDto dto, ClaimCalculationGrainBasket model) {
+
+		dto.setGrainBasketCoverageValue(model.getGrainBasketCoverageValue());
+		dto.setGrainBasketDeductible(model.getGrainBasketDeductible());
+		dto.setGrainBasketHarvestedValue(model.getGrainBasketHarvestedValue());
+		dto.setQuantityTotalClaimAmount(model.getQuantityTotalClaimAmount());
+		dto.setQuantityTotalCoverageValue(model.getQuantityTotalCoverageValue());
+		dto.setQuantityTotalYieldLossIndemnity(model.getQuantityTotalYieldLossIndemnity());
+		dto.setQuantityTotalYieldValue(model.getQuantityTotalYieldValue());
+		dto.setTotalYieldCoverageValue(model.getTotalYieldCoverageValue());
+		dto.setTotalYieldLoss(model.getTotalYieldLoss());
+
+	}
+	
 	
 	@Override
 	public void updateDto(ClaimCalculationGrapesDto dto, ClaimCalculationGrapes model) {
@@ -1605,7 +1621,43 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		dto.setYieldValueWithEarlyEstDeemedYield(model.getYieldValueWithEarlyEstDeemedYield());
 
 		return dto;
-	}	
+	}
+
+	@Override
+	public ClaimCalculationGrainBasketDto createDto(ClaimCalculationGrainBasket model) {
+		ClaimCalculationGrainBasketDto dto = new ClaimCalculationGrainBasketDto();
+
+		dto.setGrainBasketCoverageValue(model.getGrainBasketCoverageValue());
+		dto.setGrainBasketDeductible(model.getGrainBasketDeductible());
+		dto.setGrainBasketHarvestedValue(model.getGrainBasketHarvestedValue());
+		dto.setQuantityTotalClaimAmount(model.getQuantityTotalClaimAmount());
+		dto.setQuantityTotalCoverageValue(model.getQuantityTotalCoverageValue());
+		dto.setQuantityTotalYieldLossIndemnity(model.getQuantityTotalYieldLossIndemnity());
+		dto.setQuantityTotalYieldValue(model.getQuantityTotalYieldValue());
+		dto.setTotalYieldCoverageValue(model.getTotalYieldCoverageValue());
+		dto.setTotalYieldLoss(model.getTotalYieldLoss());
+
+		return dto;
+	}
+
+	@Override
+	public ClaimCalculationGrainBasketProductDto createDto(ClaimCalculationGrainBasketProduct model) {
+		ClaimCalculationGrainBasketProductDto dto = new ClaimCalculationGrainBasketProductDto();
+
+		dto.setAssessedYield(model.getAssessedYield());
+		dto.setCoverageValue(model.getCoverageValue());
+		dto.setCropCommodityId(model.getCropCommodityId());
+		dto.setCropCommodityName(model.getCropCommodityName());
+		dto.setHundredPercentInsurableValue(model.getHundredPercentInsurableValue());
+		dto.setInsurableValue(model.getInsurableValue());
+		dto.setIsPedigreeInd(model.getIsPedigreeInd());
+		dto.setProductionGuarantee(model.getProductionGuarantee());
+		dto.setQuantityClaimAmount(model.getQuantityClaimAmount());
+		dto.setTotalYieldToCount(model.getTotalYieldToCount());
+		dto.setYieldValue(model.getYieldValue());
+
+		return dto;
+	}
 	
 	@Override
 	public ClaimCalculationGrapesDto createDto(ClaimCalculationGrapes model) {

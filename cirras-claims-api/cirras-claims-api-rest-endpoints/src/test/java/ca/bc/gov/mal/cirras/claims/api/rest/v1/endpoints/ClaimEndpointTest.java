@@ -1024,7 +1024,8 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		// From CUWS        
         expectedGB.setGrainBasketHarvestedValue(34971.215);                                              // VerifiedYieldGrainBasket.getHarvestedValue()
-        String calculationComment = "Verified Yield Grain Basket:\nTest comment for Grain Basket";      // VerifiedYieldGrainBasket.comment
+        String expectedCalculationComment = "Verified Yield Grain Basket:\nTest comment for Grain Basket";      // VerifiedYieldGrainBasket.comment
+        Double expectedTotalClaimAmount = null;
         
         // Quantity
         List<ClaimCalculationGrainBasketProduct> expectedProductList = new ArrayList<ClaimCalculationGrainBasketProduct>();
@@ -1103,21 +1104,356 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 		Assert.assertEquals(claimNumber1, claimCalculationRsrc.getClaimNumber().toString());
 		Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
-		Assert.assertEquals(calculationComment, claimCalculationRsrc.getCalculationComment());
+		Assert.assertEquals(expectedCalculationComment, claimCalculationRsrc.getCalculationComment());
 		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainBasket());
 		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainBasketProducts());
 
-		assertGrainBasket(expectedGB, claimCalculationRsrc.getClaimCalculationGrainBasket());
-		assertGrainBasketProductList(expectedProductList, claimCalculationRsrc.getClaimCalculationGrainBasketProducts());
+		assertGrainBasket(expectedGB, claimCalculationRsrc.getClaimCalculationGrainBasket(), false);
+		assertGrainBasketProductList(expectedProductList, claimCalculationRsrc.getClaimCalculationGrainBasketProducts(), false);
+
+		Assert.assertEquals(expectedTotalClaimAmount, claimCalculationRsrc.getTotalClaimAmount());
 		
+		//Create new calculation
+		//User Entered
+		expectedCalculationComment = "test comment 1 2 3";
+		claimCalculationRsrc.setCalculationComment(expectedCalculationComment);
+
+		//Expected calculated values
+		expectedPrd = expectedProductList.get(0);
+
+		// CCS stores commodity names in mixed-case, whereas CIRRAS stores as upper-case.
+        expectedPrd.setCropCommodityName("Barley");		
+		
+		// yield_value: total_yield_to_count x hundred_percent_insurable_value
+		expectedPrd.setYieldValue(14195.0);
+		
+		expectedPrd = expectedProductList.get(1);
+
+        expectedPrd.setCropCommodityName("Canola - Pedigreed");
+		expectedPrd.setYieldValue(20776.215);
+
+		// quantity_total_coverage_value: sum(claim_calculation_grain_basket_product.coverage_value)
+		expectedGB.setQuantityTotalCoverageValue(35849.0);
+		
+		// quantity_total_yield_value: sum(claim_calculation_grain_basket_product.yield_value)
+		expectedGB.setQuantityTotalYieldValue(34971.215);
+		
+		// quantity_total_claim_amount: sum(claim_calculation_grain_basket_product.quantity_claim_amount)
+		expectedGB.setQuantityTotalClaimAmount(2249.55);
+		
+		// quantity_total_yield_loss_indemnity: sum((production_guarantee - assessed_yield - total_yield_to_count) x insurable_value from claim_calculation_grain_basket_product)
+		expectedGB.setQuantityTotalYieldLossIndemnity(4038.5565);
+
+		// total_yield_coverage_value: grain_basket_coverage_value + quantity_total_coverage_value
+		expectedGB.setTotalYieldCoverageValue(63732.0);
+
+		// total_yield_loss: total_yield_coverage_value - quantity_total_yield_value
+		expectedGB.setTotalYieldLoss(28760.785);
+
+		// total_claim_amount: total_yield_loss - quantity_total_yield_loss_indemnity
+		expectedTotalClaimAmount = 24722.23;
+
+		ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+
+		Assert.assertEquals(claimNumber1, createdCalculation.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", createdCalculation.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, createdCalculation.getCalculationComment());
+		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, createdCalculation.getClaimCalculationGrainBasket(), true);
+		assertGrainBasketProductList(expectedProductList, createdCalculation.getClaimCalculationGrainBasketProducts(), true);
+
+		Assert.assertEquals(expectedTotalClaimAmount, createdCalculation.getTotalClaimAmount());
+
+		
+		//update calculation - no change to source data
+		//User Entered
+		expectedCalculationComment = "test comment 4 5 6";
+		createdCalculation.setCalculationComment(expectedCalculationComment);
+
+		ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
+
+		Assert.assertEquals(claimNumber1, updatedCalculation.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", updatedCalculation.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, updatedCalculation.getCalculationComment());
+		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, updatedCalculation.getClaimCalculationGrainBasket(), true);
+		assertGrainBasketProductList(expectedProductList, updatedCalculation.getClaimCalculationGrainBasketProducts(), true);
+
+		Assert.assertEquals(expectedTotalClaimAmount, updatedCalculation.getTotalClaimAmount());
+
+		//update calculation - change to source data to change calculated values
+		// Set high to try and cause negative values.
+		updatedCalculation.getClaimCalculationGrainBasketProducts().get(1).setTotalYieldToCount(98.76);
+		
+		//Expected calculated values
+		expectedPrd = expectedProductList.get(1);
+
+		expectedPrd.setTotalYieldToCount(98.76);
+		
+		// yield_value: total_yield_to_count x hundred_percent_insurable_value
+		expectedPrd.setYieldValue(80291.88);
+
+		// quantity_total_coverage_value: sum(claim_calculation_grain_basket_product.coverage_value)
+		expectedGB.setQuantityTotalCoverageValue(35849.0);
+		
+		// quantity_total_yield_value: sum(claim_calculation_grain_basket_product.yield_value)
+		expectedGB.setQuantityTotalYieldValue(94486.88);
+		
+		// quantity_total_claim_amount: sum(claim_calculation_grain_basket_product.quantity_claim_amount)
+		expectedGB.setQuantityTotalClaimAmount(2249.55);
+		
+		// quantity_total_yield_loss_indemnity: sum((production_guarantee - assessed_yield - total_yield_to_count) x insurable_value from claim_calculation_grain_basket_product)
+		expectedGB.setQuantityTotalYieldLossIndemnity(2249.55);    // The calc for Canola - Pedigreed will be negative, so will be excluded from this sum.
+
+		// total_yield_coverage_value: grain_basket_coverage_value + quantity_total_coverage_value
+		expectedGB.setTotalYieldCoverageValue(63732.0);
+		
+		// total_yield_loss: total_yield_coverage_value - quantity_total_yield_value
+		expectedGB.setTotalYieldLoss(0.0);  // Calc will be negative, so this will be set to 0.
+
+		// total_claim_amount: total_yield_loss - quantity_total_yield_loss_indemnity
+		expectedTotalClaimAmount = 0.0;     // Calc will be negative, so this will be set to 0.
+
+
+		updatedCalculation = service.updateClaimCalculation(updatedCalculation, null);
+
+		Assert.assertEquals(claimNumber1, updatedCalculation.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", updatedCalculation.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, updatedCalculation.getCalculationComment());
+		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(updatedCalculation.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, updatedCalculation.getClaimCalculationGrainBasket(), true);
+		assertGrainBasketProductList(expectedProductList, updatedCalculation.getClaimCalculationGrainBasketProducts(), true);
+
+		Assert.assertEquals(expectedTotalClaimAmount, updatedCalculation.getTotalClaimAmount());
+		
+		//Delete calculation
+		deleteClaimCalculation(claimNumber1);
 		
 		logger.debug(">testGetInsertUpdateDeleteGrainBasketClaim()");
 	}
-	
-	private void assertGrainBasket(ClaimCalculationGrainBasket expected, ClaimCalculationGrainBasket actual) {
 
-		Assert.assertNull(actual.getClaimCalculationGrainBasketGuid());
-		Assert.assertNull(actual.getClaimCalculationGuid());
+	@Test
+	public void testSubmitGrainBasketClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testSubmitGrainBasketClaim()");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		// Grain Basket Claim
+        String claimNumber1 = "37233";       // Set to Open Grain Basket Claim without a calculation.
+        currentClaimNumber = claimNumber1;
+		String policyNumber = null;
+		
+		//Values for Claim number 37233
+        
+        // Grain Basket
+        ClaimCalculationGrainBasket expectedGB = new ClaimCalculationGrainBasket();
+
+        expectedGB.setClaimCalculationGrainBasketGuid(null);
+        expectedGB.setClaimCalculationGuid(null);
+        expectedGB.setQuantityTotalClaimAmount(null);
+        expectedGB.setQuantityTotalCoverageValue(null);
+        expectedGB.setQuantityTotalYieldLossIndemnity(null);
+        expectedGB.setQuantityTotalYieldValue(null);
+        expectedGB.setTotalYieldCoverageValue(null);
+        expectedGB.setTotalYieldLoss(null);
+
+		// From CIRRAS
+        expectedGB.setGrainBasketCoverageValue(27883.0);         // ProductRsrc.getCoverageDollars()
+        expectedGB.setGrainBasketDeductible(20);                 // ProductRsrc.getDeductibleLevel()
+
+		// From CUWS        
+        expectedGB.setGrainBasketHarvestedValue(34971.215);                                              // VerifiedYieldGrainBasket.getHarvestedValue()
+        String expectedCalculationComment = "Verified Yield Grain Basket:\nTest comment for Grain Basket";      // VerifiedYieldGrainBasket.comment
+        Double expectedTotalClaimAmount = null;
+        
+        // Quantity
+        List<ClaimCalculationGrainBasketProduct> expectedProductList = new ArrayList<ClaimCalculationGrainBasketProduct>();
+
+        // Commodity: BARLEY - with approved claim calculation
+        ClaimCalculationGrainBasketProduct expectedPrd = new ClaimCalculationGrainBasketProduct();
+
+        expectedPrd.setClaimCalcGrainBasketProductGuid(null);
+        expectedPrd.setClaimCalculationGuid(null);
+        expectedPrd.setYieldValue(null);
+        
+		// From CIRRAS
+        expectedPrd.setCoverageValue(15441.0);                  // ProductRsrc.getCoverageDollars()
+        expectedPrd.setCropCommodityId(16);                     // ProductRsrc.getCropCommodityId()
+        expectedPrd.setCropCommodityName("BARLEY");             // ProductRsrc.getCommodityName()
+        expectedPrd.setHundredPercentInsurableValue(250.0);     // ProductRsrc.getInsurableValueHundredPercent()
+        expectedPrd.setInsurableValue(225.0);                   // ProductRsrc.getSelectedInsurableValue()
+        expectedPrd.setIsPedigreeInd(false);
+        expectedPrd.setProductionGuarantee(69.0);               // ProductRsrc.getProductionGuarantee()
+
+        
+        // From CUWS        
+        expectedPrd.setTotalYieldToCount(56.78);                // VerifiedYieldSummary.getYieldToCount()
+        
+        // From CCS
+        expectedPrd.setAssessedYield(2.222);                                                     // ClaimDto.getClaimCalculationDto().getClaimCalculationGrainQuantityDetail().getAssessedYield()
+        expectedPrd.setQuantityClaimAmount(2249.55);                                             // ClaimDto.getClaimCalculationDto().getTotalClaimAmount()
+        expectedPrd.setQuantityClaimNumber(37232);                                               // ClaimDto.getClaimNumber()
+        expectedPrd.setQuantityClaimStatusCode("APPROVED");                                      // ClaimDto.getClaimStatusCode()
+        expectedPrd.setQuantityColId(1047232);                                                   // ClaimDto.getColId()
+        expectedPrd.setQuantityCommodityCoverageCode("CQG");                                     // ClaimDto.getCommodityCoverageCode()
+        expectedPrd.setQuantityLatestCalculationStatusCode("APPROVED");                          // ClaimDto.getCalculationStatusCode()
+        expectedPrd.setQuantityLatestClaimCalculationGuid("b5f20abcc16749fb8666472ff2472b11");   // ClaimDto.getClaimCalculationGuid()
+
+        expectedProductList.add(expectedPrd);
+        
+        // Commodity: CANOLA - PEDIGREED - with no claim
+        expectedPrd = new ClaimCalculationGrainBasketProduct();
+
+        expectedPrd.setClaimCalcGrainBasketProductGuid(null);
+        expectedPrd.setClaimCalculationGuid(null);
+        expectedPrd.setYieldValue(null);
+        
+		// From CIRRAS
+        expectedPrd.setCoverageValue(20408.0);                              // ProductRsrc.getCoverageDollars()
+        expectedPrd.setCropCommodityId(19);                                 // ProductRsrc.getCropCommodityId()
+        expectedPrd.setCropCommodityName("CANOLA - PEDIGREED");             // ProductRsrc.getCommodityName()
+        expectedPrd.setHundredPercentInsurableValue(813.0);                 // ProductRsrc.getInsurableValueHundredPercent()
+        expectedPrd.setInsurableValue(731.7);                               // ProductRsrc.getSelectedInsurableValue()
+        expectedPrd.setIsPedigreeInd(true);
+        expectedPrd.setProductionGuarantee(28.0);                           // ProductRsrc.getProductionGuarantee()
+
+        
+        // From CUWS        
+        expectedPrd.setTotalYieldToCount(25.555);             // VerifiedYieldSummary.getYieldToCount()
+        
+        // From CCS
+        expectedPrd.setAssessedYield(null);                        // ClaimDto.getClaimCalculationDto().getClaimCalculationGrainQuantityDetail().getAssessedYield()
+        expectedPrd.setQuantityClaimAmount(null);                  // ClaimDto.getClaimCalculationDto().getTotalClaimAmount()
+        expectedPrd.setQuantityClaimNumber(null);                  // ClaimDto.getClaimNumber()
+        expectedPrd.setQuantityClaimStatusCode(null);              // ClaimDto.getClaimStatusCode()
+        expectedPrd.setQuantityColId(null);                        // ClaimDto.getColId()
+        expectedPrd.setQuantityCommodityCoverageCode(null);        // ClaimDto.getCommodityCoverageCode()
+        expectedPrd.setQuantityLatestCalculationStatusCode(null);  // ClaimDto.getCalculationStatusCode()
+        expectedPrd.setQuantityLatestClaimCalculationGuid(null);   // ClaimDto.getClaimCalculationGuid()
+
+        expectedProductList.add(expectedPrd);
+
+        // Get Claim
+        ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber1, policyNumber, null, null, null, pageNumber, pageRowCount);
+		Assert.assertEquals(1, searchResults.getCollection().size());
+		
+		ClaimRsrc claimRsrc = searchResults.getCollection().get(0);
+		//Only works if there is no calculation yet
+		ClaimCalculationRsrc claimCalculationRsrc = service.getClaim(claimRsrc);
+
+		Assert.assertEquals(claimNumber1, claimCalculationRsrc.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, claimCalculationRsrc.getCalculationComment());
+		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, claimCalculationRsrc.getClaimCalculationGrainBasket(), false);
+		assertGrainBasketProductList(expectedProductList, claimCalculationRsrc.getClaimCalculationGrainBasketProducts(), false);
+
+		Assert.assertEquals(expectedTotalClaimAmount, claimCalculationRsrc.getTotalClaimAmount());
+		
+		//Create new calculation
+
+		//Expected calculated values
+		expectedPrd = expectedProductList.get(0);
+
+		// CCS stores commodity names in mixed-case, whereas CIRRAS stores as upper-case.
+        expectedPrd.setCropCommodityName("Barley");		
+		
+		// yield_value: total_yield_to_count x hundred_percent_insurable_value
+		expectedPrd.setYieldValue(14195.0);
+		
+		expectedPrd = expectedProductList.get(1);
+
+        expectedPrd.setCropCommodityName("Canola - Pedigreed");
+		expectedPrd.setYieldValue(20776.215);
+
+		// quantity_total_coverage_value: sum(claim_calculation_grain_basket_product.coverage_value)
+		expectedGB.setQuantityTotalCoverageValue(35849.0);
+		
+		// quantity_total_yield_value: sum(claim_calculation_grain_basket_product.yield_value)
+		expectedGB.setQuantityTotalYieldValue(34971.215);
+		
+		// quantity_total_claim_amount: sum(claim_calculation_grain_basket_product.quantity_claim_amount)
+		expectedGB.setQuantityTotalClaimAmount(2249.55);
+		
+		// quantity_total_yield_loss_indemnity: sum((production_guarantee - assessed_yield - total_yield_to_count) x insurable_value from claim_calculation_grain_basket_product)
+		expectedGB.setQuantityTotalYieldLossIndemnity(4038.5565);
+
+		// total_yield_coverage_value: grain_basket_coverage_value + quantity_total_coverage_value
+		expectedGB.setTotalYieldCoverageValue(63732.0);
+
+		// total_yield_loss: total_yield_coverage_value - quantity_total_yield_value
+		expectedGB.setTotalYieldLoss(28760.785);
+
+		// total_claim_amount: total_yield_loss - quantity_total_yield_loss_indemnity
+		expectedTotalClaimAmount = 24722.23;
+
+		ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+
+		Assert.assertEquals(claimNumber1, createdCalculation.getClaimNumber().toString());
+		Assert.assertEquals("OPEN", createdCalculation.getClaimStatusCode());
+		Assert.assertEquals(expectedCalculationComment, createdCalculation.getCalculationComment());
+		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(createdCalculation.getClaimCalculationGrainBasketProducts());
+
+		assertGrainBasket(expectedGB, createdCalculation.getClaimCalculationGrainBasket(), true);
+		assertGrainBasketProductList(expectedProductList, createdCalculation.getClaimCalculationGrainBasketProducts(), true);
+
+		Assert.assertEquals(expectedTotalClaimAmount, createdCalculation.getTotalClaimAmount());
+
+
+		//update calculation - try to submit with unapproved quantity calc.
+		ClaimCalculationListRsrc quantityCalculations = service.getClaimCalculations(topLevelEndpoints, expectedProductList.get(0).getQuantityClaimNumber().toString(), null, null, null, null, null, null, null, null, pageNumber, pageRowCount);
+		ClaimCalculationRsrc quantityCalc = service.getClaimCalculation(quantityCalculations.getCollection().get(0), false);
+		Assert.assertEquals(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString(), quantityCalc.getCalculationStatusCode());
+		quantityCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		quantityCalc = service.updateClaimCalculation(quantityCalc, null);
+		
+		Assert.assertEquals(ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString(), quantityCalc.getCalculationStatusCode());
+
+		// Reload to get updated etag.
+		createdCalculation = service.getClaimCalculation(createdCalculation, false);
+		
+		try {
+			ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
+			Assert.fail("Submit allowed with unapproved quantity claim calculation.");
+		} catch ( CirrasClaimServiceException e) {
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage(), e.getMessage().contains("The calculation can't be submitted until all Quantity Claim Calculations for this Policy have been Approved."));
+		}
+
+		// For some reason this needs to be reloaded to get updated etag.
+		quantityCalc = service.getClaimCalculation(quantityCalc, false);
+		
+		quantityCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		quantityCalc = service.updateClaimCalculation(quantityCalc, null);
+		Assert.assertEquals(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString(), quantityCalc.getCalculationStatusCode());
+		
+		//Delete calculation
+		deleteClaimCalculation(claimNumber1);
+		
+		logger.debug(">testSubmitGrainBasketClaim()");
+	}
+	
+	private void assertGrainBasket(ClaimCalculationGrainBasket expected, ClaimCalculationGrainBasket actual, boolean checkGuidsNotNull) {
+
+		if ( checkGuidsNotNull ) {
+			Assert.assertNotNull(actual.getClaimCalculationGrainBasketGuid());
+			Assert.assertNotNull(actual.getClaimCalculationGuid());
+		} else {
+			Assert.assertNull(actual.getClaimCalculationGrainBasketGuid());
+			Assert.assertNull(actual.getClaimCalculationGuid());
+		}
 
 		Assert.assertEquals(expected.getGrainBasketCoverageValue(), actual.getGrainBasketCoverageValue(), 0.00005);
 		Assert.assertEquals(expected.getGrainBasketDeductible(), actual.getGrainBasketDeductible());
@@ -1131,7 +1467,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 
 	}
 
-	private void assertGrainBasketProductList(List<ClaimCalculationGrainBasketProduct> expected, List<ClaimCalculationGrainBasketProduct> actual) {
+	private void assertGrainBasketProductList(List<ClaimCalculationGrainBasketProduct> expected, List<ClaimCalculationGrainBasketProduct> actual, boolean checkGuidsNotNull) {
 
 		if ( expected == null && actual == null ) {
 			return;
@@ -1143,15 +1479,20 @@ public class ClaimEndpointTest extends EndpointsTest {
 		Assert.assertEquals(expected.size(), actual.size());
 
 		for ( int i = 0; i < expected.size(); i++ ) {
-			assertGrainBasketProduct(expected.get(i), actual.get(i));
+			assertGrainBasketProduct(expected.get(i), actual.get(i), checkGuidsNotNull);
 		}
 	
 	}
 	
-	private void assertGrainBasketProduct(ClaimCalculationGrainBasketProduct expected, ClaimCalculationGrainBasketProduct actual) {
+	private void assertGrainBasketProduct(ClaimCalculationGrainBasketProduct expected, ClaimCalculationGrainBasketProduct actual, boolean checkGuidsNotNull) {
 
-		Assert.assertNull(actual.getClaimCalcGrainBasketProductGuid());
-		Assert.assertNull(actual.getClaimCalculationGuid());
+		if ( checkGuidsNotNull ) {
+			Assert.assertNotNull(actual.getClaimCalcGrainBasketProductGuid());
+			Assert.assertNotNull(actual.getClaimCalculationGuid());
+		} else {
+			Assert.assertNull(actual.getClaimCalcGrainBasketProductGuid());
+			Assert.assertNull(actual.getClaimCalculationGuid());
+		}
 		
 		Assert.assertEquals(expected.getAssessedYield(), actual.getAssessedYield());
 		Assert.assertEquals(expected.getCoverageValue(), actual.getCoverageValue(), 0.00005);

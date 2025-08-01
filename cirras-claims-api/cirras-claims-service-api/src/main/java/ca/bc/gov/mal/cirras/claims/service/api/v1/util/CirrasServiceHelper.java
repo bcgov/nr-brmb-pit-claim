@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainBasketDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainBasketProductDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDetailDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainSpotLossDao;
@@ -49,6 +51,8 @@ public class CirrasServiceHelper {
 	private ClaimCalculationGrainSpotLossDao claimCalculationGrainSpotLossDao;
 	private ClaimCalculationGrainQuantityDao claimCalculationGrainQuantityDao;
 	private ClaimCalculationGrainQuantityDetailDao claimCalculationGrainQuantityDetailDao;
+	private ClaimCalculationGrainBasketDao claimCalculationGrainBasketDao;
+	private ClaimCalculationGrainBasketProductDao claimCalculationGrainBasketProductDao;
 	private ClaimCalculationUserDao claimCalculationUserDao;
 
 	public void setClaimCalculationDao(ClaimCalculationDao claimCalculationDao) {
@@ -81,6 +85,14 @@ public class CirrasServiceHelper {
 
 	public void setClaimCalculationGrainQuantityDetailDao(ClaimCalculationGrainQuantityDetailDao claimCalculationGrainQuantityDetailDao) {
 		this.claimCalculationGrainQuantityDetailDao = claimCalculationGrainQuantityDetailDao;
+	}
+
+	public void setClaimCalculationGrainBasketDao(ClaimCalculationGrainBasketDao claimCalculationGrainBasketDao) {
+		this.claimCalculationGrainBasketDao = claimCalculationGrainBasketDao;
+	}
+
+	public void setClaimCalculationGrainBasketProductDao(ClaimCalculationGrainBasketProductDao claimCalculationGrainBasketProductDao) {
+		this.claimCalculationGrainBasketProductDao = claimCalculationGrainBasketProductDao;
 	}
 	
 	public void setClaimCalculationPlantUnitsDao(ClaimCalculationPlantUnitsDao claimCalculationPlantUnitsDao) {
@@ -189,6 +201,8 @@ public class CirrasServiceHelper {
 			claimCalculationGrainUnseededDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationGrainSpotLossDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationGrainQuantityDetailDao.deleteForClaim(claimCalculationGuid);
+			claimCalculationGrainBasketProductDao.deleteForClaim(claimCalculationGuid);
+			claimCalculationGrainBasketDao.deleteForClaim(claimCalculationGuid);
 			claimCalculationDao.delete(claimCalculationGuid);
 			
 			//Grain Quantity sub table might be used by another calculation
