@@ -33,6 +33,7 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   quantityTotalYieldValue: number         // Sum of claim_calculation_grain_basket_product.yield_value
   totalYieldLoss: number                  // total_yield_coverage_value - quantity_total_yield_value
   quantityTotalYieldLossIndemnity: number // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
+  totalApprovedQuantityClaims: number // sum of all Quantity Claims linked to that policy in the claims calculator, which have status Approved.
   totalClaimAmount: number                // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
 
   hasUnapprovedQuantityCalculation: boolean = false
@@ -129,10 +130,12 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
     this.quantityTotalCoverageValue = 0
     this.quantityTotalYieldValue = 0
     this.quantityTotalYieldLossIndemnity = 0
+    this.totalApprovedQuantityClaims = 0
 
     let yield_value = 0
 
     for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
+      
       this.quantityTotalCoverageValue = this.quantityTotalCoverageValue + 
                                     this.calculationDetail.claimCalculationGrainBasketProducts[i].coverageValue
     
@@ -145,6 +148,8 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
       // sum((production_quarantee - assessed_yield - total_yield_to_count) x insurable_value) from claim_calculation_grain_basket_product
       let qtyYieldLossIndemnity = this.calculationDetail.claimCalculationGrainBasketProducts[i].insurableValue * ( this.calculationDetail.claimCalculationGrainBasketProducts[i].productionGuarantee - this.calculationDetail.claimCalculationGrainBasketProducts[i].assessedYield - this.calculationDetail.claimCalculationGrainBasketProducts[i].totalYieldToCount) 
       this.quantityTotalYieldLossIndemnity = this.quantityTotalYieldLossIndemnity + Math.max(0, qtyYieldLossIndemnity)
+
+      this.totalApprovedQuantityClaims = this.totalApprovedQuantityClaims + this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimAmount
       
     }
 
@@ -171,15 +176,7 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
         // if this policy has quantity products
         if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG") {
 
-          // if the policy has qty product but no qty claim -> no message
-
-          // if this policy has qty claim but no calculation -> display message
-          if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber && !this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid) {
-            
-            this.hasUnapprovedQuantityCalculation = true
-          }
-
-          // if this policy has qty calculation but it's not approved -> display message
+          // if this policy has qty calculation but it's not approved -> hide all calculations that depend on qty claim being approved
           if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid && 
              this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED") {
             
@@ -200,5 +197,14 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
     }
   }
 
-  
+  showIndemnitiesWarning() {
+    // display a warning sign if quantityTotalYieldLossIndemnity and totalApprovedQuantityClaims are different
+    // they are just calculated in two different ways
+    if ( (Math.round ( this.quantityTotalYieldLossIndemnity * 100) / 100) !== (Math.round(this.totalApprovedQuantityClaims  * 100 ) / 100) ) {
+        return true
+    } else {
+      return false
+    }
+
+  }
 }

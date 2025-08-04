@@ -141,7 +141,7 @@
                     {{ product.isPedigreeInd ? "Pedigreed" : "Non-Pedigreed"}}
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
-                    {{ product.quantityClaimAmount}}
+                    {{ product.quantityClaimAmount | currency}}
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
                     {{ product.totalYieldToCount}}
@@ -150,17 +150,23 @@
                     {{ product.hundredPercentInsurableValue | currency }}
                 </div>
                 <div class=" ccc-justify-center"> 
-                    {{ product.yieldValue | currency }}             
+                    <!-- if the backend has calculated the yieldValue then show the backend calculation otherwise calculate it in the front end-->
+                    {{ (product.yieldValue ? product.yieldValue : product.totalYieldToCount * product.hundredPercentInsurableValue ) | currency }}             
                 </div>                        
                                 
             </div>
 
-            <div><span class="ccc-expression">D</span></div>
-            <div class="ccc-border-right ccc-border-top  left-justified" style="grid-column-start: 2; grid-column-end: 7;">
-                  Total Yield Value 
+            <div class="ccc-border-right ccc-border-top ccc-justify-right" style="grid-column-start: 1; grid-column-end: 4;">
+              Sum of All approved QTY Claims
+            </div>
+            <div class="ccc-border-right ccc-border-top ccc-justify-center">
+              <span>{{ totalApprovedQuantityClaims | currency}}</span>
+            </div>
+            <div class="ccc-border-right border-left ccc-border-top  ccc-justify-right" style="grid-column-start: 6; grid-column-end: 7;">
+              <span *ngIf="!hasUnapprovedQuantityCalculation" class="ccc-expression">D</span>
+                Total Yield Value
             </div>
 
-            <!-- *ngIf="calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.isOutOfSyncInsuredAcres" -->
             <div class="ccc-justify-center ccc-border-top"> 
               <span #el matTooltip="Total Yield Value doesn't match the Harvested Value pulled from the Inventory & Yield app → Verified Yield → Basket Coverage table" 
                 *ngIf="!hasUnapprovedQuantityCalculation && showQtyTotYieldValueWarning()"
@@ -194,7 +200,13 @@
             <span class="ccc-expression">F</span> Less: Quantity Coverage Yield Loss Indemnities For All Commodities
           </div>
           <div class="ccc-right"> 
-            {{ quantityTotalYieldLossIndemnity | currency }}
+            <span #el matTooltip="The sum of all approved Quantity Claims does not match 
+            the sum( ( ProductionGuarantee - AssessedYield - YieldToCount ) * SelectedInsurableValue )" 
+                *ngIf="!hasUnapprovedQuantityCalculation && showIndemnitiesWarning()"
+                style="margin-right: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>
+            <span *ngIf="!hasUnapprovedQuantityCalculation">{{ quantityTotalYieldLossIndemnity | currency }}</span>
           </div> 
   
           <div>
@@ -215,7 +227,7 @@
             <label>Comments</label>
             <div class="ccc-entire">
                 <mat-form-field appearance="fill">
-                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()" (blur)="isMyFormDirty();">
+                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()">
                       {{ calculationDetail.calculationComment }} 
                     </textarea>
                 </mat-form-field>
