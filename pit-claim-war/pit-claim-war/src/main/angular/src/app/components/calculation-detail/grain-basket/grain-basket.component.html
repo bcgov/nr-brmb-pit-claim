@@ -86,9 +86,9 @@
               <div>
                 <span class="ccc-expression">B</span> Quantity Coverage For All Commodities
               </div>
-              <div></div>
-              <div class="ccc-right">                 
-                {{ quantityTotalCoverageValue | currency }}
+              <div class="ccc-border-right"></div>
+              <div class="ccc-right">    
+                {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalCoverageValue : quantityTotalCoverageValue) | currency }}
               </div>
 
               <div>
