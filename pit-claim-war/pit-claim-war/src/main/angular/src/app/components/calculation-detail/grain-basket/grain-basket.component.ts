@@ -8,7 +8,7 @@ import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMet
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 import { UntypedFormGroup } from '@angular/forms';
 import { CalculationDetailGrainBasketComponentModel } from './grain-basket.component.model';
-import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeTitleCase } from 'src/app/utils';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeTitleCase } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 
 @Component({
@@ -332,5 +332,22 @@ enableDisableFormControls() {
     }
   
   
+    onPrint() {
+      const originalTitle = this.titleService.getTitle()
+  
+      const title = getPrintTitle(this.calculationDetail.commodityName, 
+                                  this.calculationDetail.coverageName, 
+                                  this.calculationDetail.claimNumber,
+                                  this.calculationDetail.policyNumber,
+                                  this.calculationDetail.growerNumber)
+  
+  
+      this.titleService.setTitle(title);
+  
+      window.print()
+  
+      this.titleService.setTitle(originalTitle);
+    }
 
+    
 }

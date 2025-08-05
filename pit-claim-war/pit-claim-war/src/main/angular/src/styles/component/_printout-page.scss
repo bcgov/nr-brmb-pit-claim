@@ -129,6 +129,14 @@
     display: block !important;
   }
 
+  calculation-detail-grain-basket {
+    display: none !important;
+  }
+
+  calculation-printout-grain-basket  {
+    display: block !important;
+  }
+
   #core-interface-container mat-sidenav-container mat-sidenav-content {
     top: 0px !important;
     font-family: 'Noto Sans', Verdana, Arial, sans-serif;  /* font set for entire printout */ //'BCSans', 
