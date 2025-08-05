@@ -310,7 +310,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 	public void updateCalculationFromClaim(ClaimCalculation claimCalculation,
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
 			Product product,
-			VerifiedYieldSummary verifiedSummary,   // TODO: Remove?
+			VerifiedYieldSummary verifiedSummary,
 			VerifiedYieldContractSimple verifiedYield,
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,

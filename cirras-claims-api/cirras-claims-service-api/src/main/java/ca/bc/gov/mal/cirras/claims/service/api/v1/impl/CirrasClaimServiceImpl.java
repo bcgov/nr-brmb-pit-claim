@@ -382,23 +382,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					
 					quantityProducts = getProductsByCoverageAndStatus(productListRsrc, ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode(), ClaimsServiceEnums.ProductStatusCodes.FINAL.toString());
 					quantityClaimMap = new HashMap<Integer, ClaimDto>();
-					quantityCropMap = new HashMap<Integer, CropCommodityDto>();
-					quantityLinkedCropMap = new HashMap<Integer, CropCommodityDto>();
-
-					for ( ProductRsrc prd : quantityProducts ) {
-
-						CropCommodityDto qtyCrpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
-						if ( qtyCrpDto == null ) {
-							throw new ServiceException("No commodity found for " + prd.getCommodityName());
-						} else {
-							quantityCropMap.put(prd.getCropCommodityId(), qtyCrpDto);
-						}
-
-						CropCommodityDto qtyLinkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
-						if ( qtyLinkedCrpDto != null ) {
-							quantityLinkedCropMap.put(prd.getCropCommodityId(), qtyLinkedCrpDto);
-						}
-					}
+					quantityCropMap = loadProductCropMap(quantityProducts);
+					quantityLinkedCropMap = loadProductLinkedCropMap(quantityProducts);
 					
 					if ( !quantityProducts.isEmpty() ) {
 						quantityClaimMap = loadQuantityClaims(policyClaimRsrc.getInsurancePolicyId());
@@ -895,26 +880,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							productListRsrc = getCirrasClaimProducts(policyClaimRsrc.getInsurancePolicyId().toString(), true, null, null);
 							if (productListRsrc != null) {
 								policyProductRsrc = getProductById(productListRsrc, policyClaimRsrc.getPurchaseId());
-							
 								quantityProducts = getProductsByCoverageAndStatus(productListRsrc, ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode(), ClaimsServiceEnums.ProductStatusCodes.FINAL.toString());
-								quantityCropMap = new HashMap<Integer, CropCommodityDto>();
-								quantityLinkedCropMap = new HashMap<Integer, CropCommodityDto>();
-		
-								for ( ProductRsrc prd : quantityProducts ) {
-
-									// TODO: Should this be a function?
-									CropCommodityDto qtyCrpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
-									if ( qtyCrpDto == null ) {
-										throw new ServiceException("No commodity found for " + prd.getCommodityName());
-									} else {
-										quantityCropMap.put(prd.getCropCommodityId(), qtyCrpDto);
-									}
-		
-									CropCommodityDto qtyLinkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
-									if ( qtyLinkedCrpDto != null ) {
-										quantityLinkedCropMap.put(prd.getCropCommodityId(), qtyLinkedCrpDto);
-									}
-								}
+								quantityCropMap = loadProductCropMap(quantityProducts);
+								quantityLinkedCropMap = loadProductLinkedCropMap(quantityProducts);
 							}
 
 							verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, false, true, true);
@@ -931,7 +899,6 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 						}						
 					}
 
-					// TODO: Move?
 					VerifiedYieldSummary verifiedSummary = getVerifiedYieldSummary(verifiedYieldRsrc, crpDto, linkedCrpDto);
 					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
@@ -1182,6 +1149,38 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		
 		return quantityClaimMap;
 	}
+
+	// Loads the CropCommodityDto for every product in products.
+	private Map<Integer, CropCommodityDto> loadProductCropMap(List<ProductRsrc> products) throws DaoException {
+
+		Map<Integer, CropCommodityDto> productCropMap = new HashMap<Integer, CropCommodityDto>();   // Maps crop id to CropCommodity
+
+		for ( ProductRsrc prd : products ) {
+			CropCommodityDto crpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
+			if ( crpDto == null ) {
+				throw new ServiceException("No commodity found for " + prd.getCommodityName());
+			} else {
+				productCropMap.put(prd.getCropCommodityId(), crpDto);
+			}
+		}		
+
+		return productCropMap;
+	}
+
+	// Loads the linked CropCommodityDto, if one exists, for every product in products.
+	private Map<Integer, CropCommodityDto> loadProductLinkedCropMap(List<ProductRsrc> products) throws DaoException {
+
+		Map<Integer, CropCommodityDto> productLinkedCropMap = new HashMap<Integer, CropCommodityDto>();  // Maps crop id to linked CropCommodity.
+
+		for ( ProductRsrc prd : products ) {
+			CropCommodityDto linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
+			if ( linkedCrpDto != null ) {
+				productLinkedCropMap.put(prd.getCropCommodityId(), linkedCrpDto);
+			}
+		}
+		
+		return productLinkedCropMap;
+	}
 	
 	private void updateFromLinkedCalculation(ClaimCalculation claimCalculation, InsuranceClaimRsrc policyClaimRsrc, ProductListRsrc productListRsrc, CropCommodityDto linkedCrpDto, boolean doUpdateGrainQuantity) throws DaoException {
 
@@ -1232,14 +1231,15 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		if (claimCalculation == null || insuranceClaim == null) {
 			throw new ServiceException("Unable to refresh Claim data. Claim or Claim Calculation was not loaded.");
 		} else if (product == null && claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
-				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())) {
+				&& (claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode()) 
+				|| claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
+				|| claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode()))) {
 			throw new ServiceException("Unable to refresh Claim data. Product was not loaded.");
 		} else if ( (product == null || verifiedYield == null || quantityProducts == null || quantityClaimMap == null || quantityCropMap == null || quantityLinkedCropMap == null) && 
 				claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
 				claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
 			throw new ServiceException("Unable to refresh Claim data. Product or Verified Yield was not loaded.");
 		}
-		// TODO: Add checks for other coverages?
 		
 		claimCalculationFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product, verifiedSummary, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
 
