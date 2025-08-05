@@ -37,7 +37,13 @@ public class OutOfSync {
 			ClaimCalculation claimCalculation, 
 			InsuranceClaim insuranceClaim, 
 			Product product,
-			VerifiedYieldSummary verifiedSummary) {
+			VerifiedYieldSummary verifiedSummary,
+			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+	) {
 		logger.debug("<calculateOutOfSyncFlags");
 
 		if (claimCalculation == null || insuranceClaim == null) {
@@ -53,8 +59,12 @@ public class OutOfSync {
 					&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 			logger.warn("<verified yield was null. Out of sync flags not set.");
 			return;
+		} else if ( (product == null || verifiedYield == null || quantityProducts == null || quantityClaimMap == null || quantityCropMap == null || quantityLinkedCropMap == null) && 
+				claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
+			logger.warn("<product, verifiedYield, or other required Grain Basket data was null. Out of sync flags not set.");
+			return;
 		}
-		// TODO: Add additional checks.
 
 		dtoUtils = new DtoUtils(logger);
 
@@ -86,12 +96,12 @@ public class OutOfSync {
 		
 		// Set Grain Quantity Loss Data flags
 		isOutOfSync = grainQuantityDetailDataOutOfSync(claimCalculation, product, verifiedSummary, isOutOfSync);
-
+		
 		// Set Grain Basket Data flags
-		isOutOfSync = grainBasketDataOutOfSync(claimCalculation, product, null, isOutOfSync); // TODO: Add missing params.
+		isOutOfSync = grainBasketDataOutOfSync(claimCalculation, product, verifiedYield, isOutOfSync);
 
 		// Set Grain Basket Product Data flags
-		isOutOfSync = grainBasketProductsDataOutOfSync(claimCalculation, null, null, null, null, null, isOutOfSync);  // TODO: Add missing params.
+		isOutOfSync = grainBasketProductsDataOutOfSync(claimCalculation, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap, isOutOfSync);
 		
 		claimCalculation.setIsOutOfSync(isOutOfSync);
 		
