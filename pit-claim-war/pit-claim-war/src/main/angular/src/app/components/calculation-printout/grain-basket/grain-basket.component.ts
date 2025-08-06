@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { vmCalculation } from 'src/app/conversion/models';
 import { makeTitleCase } from 'src/app/utils';
 
@@ -7,9 +7,28 @@ import { makeTitleCase } from 'src/app/utils';
   templateUrl: './grain-basket.component.html',
   styleUrl: './grain-basket.component.scss'
 })
-export class CalculationPrintoutGrainBasketComponent {
+export class CalculationPrintoutGrainBasketComponent  implements OnChanges {
   @Input() calculationDetail: vmCalculation;
 
+  hasPdgCmdty: boolean = false;
+
+  ngOnChanges(changes: SimpleChanges) {
+    
+      if (changes.calculationDetail) {
+          this.calculationDetail = changes.calculationDetail.currentValue;
+           
+        if (this.calculationDetail){
+           let el = this.calculationDetail.claimCalculationGrainBasketProducts.find (x => x.isPedigreeInd == true )
+
+            if (el) {
+              this.hasPdgCmdty = true
+            }
+        }
+
+      }
+  
+      
+    }
 
   getCmdtyName(str) {
 
@@ -20,6 +39,5 @@ export class CalculationPrintoutGrainBasketComponent {
     return makeTitleCase(str)
   }
 
-  //TODO add a check if there is a pedigreed commodity. If no, then hid the Seeds column
 
 }

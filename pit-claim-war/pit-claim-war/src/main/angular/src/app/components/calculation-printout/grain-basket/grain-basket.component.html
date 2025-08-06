@@ -63,7 +63,7 @@
                       <tr>
                         <td></td>
                         <td style="font-weight: bold;"> &nbsp;Commodity</td>
-                        <td style="text-align: center;font-weight: bold;">Seeds</td>
+                        <td *ngIf="hasPdgCmdty" style="text-align: center;font-weight: bold;">Seeds</td>
                         <td style="text-align: center;font-weight: bold;">Yield <br />To Count</td>
                         <td style="text-align: center;font-weight: bold;">100% Insurable <br />Value/Tonne</td>
                         <td style="text-align: center;font-weight: bold;">Value</td>
@@ -74,7 +74,7 @@
                         <td>
                              &nbsp;{{ getCmdtyName(product.cropCommodityName) }}
                         </td>
-                        <td style="text-align: center;">
+                        <td *ngIf="hasPdgCmdty" style="text-align: center;">
                             {{ product.isPedigreeInd ? "Pedigreed" : "Non-Pedigreed"}}
                         </td>
                         <td style="text-align: center;">
@@ -93,10 +93,12 @@
                       <!-- final row -->
                       <tr>
                         <td class="td-abc-label">D</td>
-                        <td colspan="4">
+                        <td *ngIf="hasPdgCmdty" colspan="4">
                           &nbsp;Total Yield Value
-                        </td>
-                        
+                        </td>    
+                        <td *ngIf="!hasPdgCmdty" colspan="3">
+                          &nbsp;Total Yield Value
+                        </td>                     
                         <td style="text-align: center;">
                             {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalYieldValue : "") | currency }}
                         </td>
