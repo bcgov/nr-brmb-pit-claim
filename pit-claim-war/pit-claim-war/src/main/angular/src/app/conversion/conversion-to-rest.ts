@@ -87,6 +87,8 @@ export function convertToCalculationRsrc(calculation: vmCalculation): Calculatio
       claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
       claimCalculationGrainQuantity: calculation.claimCalculationGrainQuantity,
       claimCalculationGrainQuantityDetail: calculation.claimCalculationGrainQuantityDetail,        
+      claimCalculationGrainBasket: calculation.claimCalculationGrainBasket,
+      claimCalculationGrainBasketProducts: calculation.claimCalculationGrainBasketProducts,
 
       type: "ClaimCalculationRsrc"
   };
