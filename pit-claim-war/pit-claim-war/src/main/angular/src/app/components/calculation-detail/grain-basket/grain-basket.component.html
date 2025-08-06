@@ -163,17 +163,17 @@
               <span>{{ totalApprovedQuantityClaims | currency}}</span>
             </div>
             <div class="ccc-border-right border-left ccc-border-top  ccc-justify-right" style="grid-column-start: 6; grid-column-end: 7;">
-              <span *ngIf="!hasUnapprovedQuantityCalculation" class="ccc-expression">D</span>
+              <span class="ccc-expression">D</span>
                 Total Yield Value
             </div>
 
             <div class="ccc-justify-center ccc-border-top"> 
               <span #el matTooltip="Total Yield Value doesn't match the Harvested Value pulled from the Inventory & Yield app → Verified Yield → Basket Coverage table" 
-                *ngIf="!hasUnapprovedQuantityCalculation && showQtyTotYieldValueWarning()"
+                *ngIf="showQtyTotYieldValueWarning()"
                 style="margin-right: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>
-              <span *ngIf="!hasUnapprovedQuantityCalculation">{{ quantityTotalYieldValue | currency }} </span>        
+              {{ quantityTotalYieldValue | currency }}       
             </div> 
 
             </div>
@@ -193,7 +193,7 @@
             <span class="ccc-expression">C - D</span>    
           </div>
           <div class="ccc-right" > 
-            <span *ngIf="!hasUnapprovedQuantityCalculation">{{ totalYieldLoss | currency }}</span>
+            {{ totalYieldLoss | currency }}
           </div>
   
           <div class="ccc-border-right" style="grid-column-start: 1; grid-column-end: 3;">
@@ -202,11 +202,11 @@
           <div class="ccc-right"> 
             <span #el matTooltip="The sum of all approved Quantity Claims does not match 
             the sum( ( ProductionGuarantee - AssessedYield - YieldToCount ) * SelectedInsurableValue )" 
-                *ngIf="!hasUnapprovedQuantityCalculation && showIndemnitiesWarning()"
+                *ngIf="showIndemnitiesWarning()"
                 style="margin-right: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
             </span>
-            <span *ngIf="!hasUnapprovedQuantityCalculation">{{ quantityTotalYieldLossIndemnity | currency }}</span>
+            {{ quantityTotalYieldLossIndemnity | currency }}
           </div> 
   
           <div>
@@ -216,7 +216,7 @@
             <span class="ccc-expression">E - F</span>
           </div>
           <div class="ccc-right">
-            <span *ngIf="!hasUnapprovedQuantityCalculation">{{ totalClaimAmount | currency }}</span>
+            {{ totalClaimAmount | currency }}
           </div>
 
         </div>
@@ -250,7 +250,7 @@
               &nbsp;
  
               <button mat-raised-button color="primary"
-                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && !hasUnapprovedQuantityCalculation"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton()"
                 (click)="onSubmit()"
               ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
               &nbsp;

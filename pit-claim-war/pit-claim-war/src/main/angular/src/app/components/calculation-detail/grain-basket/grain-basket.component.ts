@@ -37,8 +37,6 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   totalApprovedQuantityClaims: number // sum of all Quantity Claims linked to that policy in the claims calculator, which have status Approved.
   totalClaimAmount: number                // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
 
-  hasUnapprovedQuantityCalculation: boolean = false
-
   initModels() {
     this.viewModel = new CalculationDetailGrainBasketComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
@@ -97,7 +95,6 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
         this.totalClaimAmount = this.calculationDetail.totalClaimAmount  
       }
 
-      this.checkForUnapprovedQuantityCalculation()
 
       this.enableDisableFormControls();
 
@@ -166,27 +163,6 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
     // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
     this.totalClaimAmount = Math.max(0, this.totalYieldLoss - this.quantityTotalYieldLossIndemnity )           
 
-  }
-
-  checkForUnapprovedQuantityCalculation() {
-    this.hasUnapprovedQuantityCalculation = false 
-
-    if (this.calculationDetail && this.calculationDetail.claimCalculationGrainBasketProducts) {
-
-      for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++) {
-      
-        // if this policy has quantity products
-        if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG") {
-
-          // if this policy has qty calculation but it's not approved -> hide all calculations that depend on qty claim being approved
-          if (this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestClaimCalculationGuid && 
-             this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED") {
-            
-            this.hasUnapprovedQuantityCalculation = true
-          }
-        }
-      }
-    }
   }
 
   showQtyTotYieldValueWarning() {
@@ -270,32 +246,38 @@ enableDisableFormControls() {
       this.store.dispatch(syncClaimsCodeTables());
     }
   
-    showSubmitButton() {
-  
-      if (this.calculationDetail.isOutOfSync == null) {
-          return false
-      }
-  
-      if (this.calculationDetail.linkedProductId && !this.calculationDetail.linkedClaimCalculationGuid) {
-        // if linked, the linked calculation should be saved first before we allow submit
+  showSubmitButton() {
+
+    // Submit button is not visible if there is an unapproved quantity calculation
+    for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
+
+      if ( this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG"
+        && this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED"){
+        
         return false
+      
       }
-  
-      if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
-          (
-            (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
-            || 
-            (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
-          )
-      ) {
-            return true
-  
-      } else {
-  
-        return false
-      }
-  
     }
+    // the usual restrictions valid for all calculators
+    if (this.calculationDetail.isOutOfSync == null) {
+        return false
+    }
+    
+    if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
+        (
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
+          || 
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
+        )
+    ) {
+          return true
+
+    } else {
+
+      return false
+    }
+
+  }
   
     onSubmit() {
       let  updatedClaim = this.getUpdatedClaim(false);
