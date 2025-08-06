@@ -4,11 +4,12 @@ import {CodeData, Option} from "../../../store/application/application.state";
 import { BaseComponent } from '../../common/base/base.component';
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
-import { loadCalculationDetail } from 'src/app/store/calculation-detail/calculation-detail.actions';
+import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 import { UntypedFormGroup } from '@angular/forms';
 import { CalculationDetailGrainBasketComponentModel } from './grain-basket.component.model';
-import { makeTitleCase } from 'src/app/utils';
+import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, makeTitleCase } from 'src/app/utils';
+import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 
 @Component({
   selector: 'calculation-detail-grain-basket',
@@ -94,8 +95,8 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
         this.totalClaimAmount = this.calculationDetail.totalClaimAmount  
       }
 
-      // TODO
-      // this.enableDisableFormControls();
+
+      this.enableDisableFormControls();
 
     }
   }
@@ -111,6 +112,7 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
 
   setComment() {
     this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+    this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
   }
 
   getCmdtyName(str) {
@@ -174,6 +176,7 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   }
 
   showIndemnitiesWarning() {
+    
     // display a warning sign if quantityTotalYieldLossIndemnity and totalApprovedQuantityClaims are different
     // they are just calculated in two different ways
     if ( (Math.round ( this.quantityTotalYieldLossIndemnity * 100) / 100) !== (Math.round(this.totalApprovedQuantityClaims  * 100 ) / 100) ) {
@@ -183,4 +186,134 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
     }
 
   }
+
+enableDisableFormControls() {
+    if(this.calculationDetail){
+
+      if(this.calculationDetail.calculationStatusCode == CALCULATION_STATUS_CODE.DRAFT){
+        this.viewModel.formGroup.controls.primaryPerilCode.enable()
+        this.viewModel.formGroup.controls.secondaryPerilCode.enable()
+      } else {
+        this.viewModel.formGroup.controls.primaryPerilCode.disable()
+        this.viewModel.formGroup.controls.secondaryPerilCode.disable()
+      }
+    }
+  }
+
+  onSave(saveCommentsOnly:boolean) {
+        const  updatedClaim = this.getUpdatedClaim(saveCommentsOnly);
+        if (this.isFormValid(updatedClaim) )  {
+  
+            this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+            this.doSyncClaimsCodeTables();
+  
+            this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, false ));
+        }
+    }
+  
+    getUpdatedClaim(saveCommentsOnly:boolean) {
+      // making a deep copy here
+      let updatedCalculation :vmCalculation = JSON.parse(JSON.stringify(this.calculationDetail));
+  
+      if (saveCommentsOnly) {
+  
+          updatedCalculation.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+  
+      } else {
+        // user fields
+        updatedCalculation.primaryPerilCode = this.viewModel.formGroup.controls.primaryPerilCode.value
+        updatedCalculation.secondaryPerilCode = this.viewModel.formGroup.controls.secondaryPerilCode.value
+  
+        updatedCalculation.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+      }
+  
+      return updatedCalculation
+    }
+         
+    isFormValid (claimForm: vmCalculation) { 
+  
+      if (!claimForm.primaryPerilCode )  {
+  
+          displayErrorMessage(this.snackbarService, "Please choose a primary peril")
+          return false
+  
+      } 
+      
+      return true
+    }
+  
+    doSyncClaimsCodeTables(){
+      this.store.dispatch(syncClaimsCodeTables());
+    }
+  
+  showSubmitButton() {
+
+    // Submit button is not visible if there is an unapproved quantity calculation
+    for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
+
+      if ( this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG"
+        && this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber
+        && this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED"){
+        
+        return false
+      
+      }
+    }
+    // the usual restrictions valid for all calculators
+    if (this.calculationDetail.isOutOfSync == null) {
+        return false
+    }
+    
+    if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
+        (
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
+          || 
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
+        )
+    ) {
+          return true
+
+    } else {
+
+      return false
+    }
+
+  }
+  
+    onSubmit() {
+      let  updatedClaim = this.getUpdatedClaim(false);
+  
+      if (this.isFormValid(updatedClaim) )  {
+  
+          updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.SUBMITTED;
+          this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, CALCULATION_UPDATE_TYPE.SUBMIT))
+  
+      }
+    }
+  
+    isMyFormDirty(){
+      const hasChanged = this.isMyFormReallyDirty()
+  
+      if (hasChanged) {
+        this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+      }
+    }
+  
+    isMyFormReallyDirty(): boolean {
+  
+      if (!this.calculationDetail) return false
+  
+      const frmMain = this.viewModel.formGroup as UntypedFormGroup
+  
+      if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+           areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+           areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+          
+          return true
+      }  
+      return false
+    }
+  
+  
+
 }

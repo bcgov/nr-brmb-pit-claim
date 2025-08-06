@@ -248,19 +248,19 @@
                 Unsaved Changes
               </span>
               &nbsp;
-<!-- 
+ 
               <button mat-raised-button color="primary"
-                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() "
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton()"
                 (click)="onSubmit()"
               ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
               &nbsp;
-              <button mat-raised-button color="primary"
-              *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
+              <!--<button mat-raised-button color="primary"
+               *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
                 (click)="onReopen()"
               ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
-              &nbsp;
+              &nbsp; -->
               <button mat-raised-button color="primary"
-                  *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT' && showSaveButton()"
+                  *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT'"
                   (click)="onSave(false)"
               ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
               &nbsp;
@@ -269,10 +269,10 @@
                   (click)="onSave(true)"
               ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
               &nbsp;
-              <button mat-raised-button color="primary"
+              <!-- <button mat-raised-button color="primary"
                 *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid && showPrintButton()"
                   (click)="onPrint()"
-              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button> -->
+              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>  -->
             </span>
             
           </div> 
