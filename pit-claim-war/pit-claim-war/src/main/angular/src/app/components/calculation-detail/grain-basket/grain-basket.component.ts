@@ -246,32 +246,38 @@ enableDisableFormControls() {
       this.store.dispatch(syncClaimsCodeTables());
     }
   
-    showSubmitButton() {
-  
-      if (this.calculationDetail.isOutOfSync == null) {
-          return false
-      }
-  
-      if (this.calculationDetail.linkedProductId && !this.calculationDetail.linkedClaimCalculationGuid) {
-        // if linked, the linked calculation should be saved first before we allow submit
+  showSubmitButton() {
+
+    // Submit button is not visible if there is an unapproved quantity calculation
+    for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
+
+      if ( this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG"
+        && this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED"){
+        
         return false
+      
       }
-  
-      if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
-          (
-            (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
-            || 
-            (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
-          )
-      ) {
-            return true
-  
-      } else {
-  
-        return false
-      }
-  
     }
+    // the usual restrictions valid for all calculators
+    if (this.calculationDetail.isOutOfSync == null) {
+        return false
+    }
+    
+    if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.DRAFT && 
+        (
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.OPEN && this.calculationDetail.currentHasChequeReqInd == false ) 
+          || 
+          (this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && this.calculationDetail.currentHasChequeReqInd == true ) 
+        )
+    ) {
+          return true
+
+    } else {
+
+      return false
+    }
+
+  }
   
     onSubmit() {
       let  updatedClaim = this.getUpdatedClaim(false);

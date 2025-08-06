@@ -250,7 +250,7 @@
               &nbsp;
  
               <button mat-raised-button color="primary"
-                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && !hasUnapprovedQuantityCalculation"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton()"
                 (click)="onSubmit()"
               ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
               &nbsp;
