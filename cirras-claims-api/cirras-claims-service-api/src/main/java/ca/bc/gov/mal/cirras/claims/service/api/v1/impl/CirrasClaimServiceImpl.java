@@ -2,9 +2,11 @@ package ca.bc.gov.mal.cirras.claims.service.api.v1.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -382,8 +384,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 					
 					quantityProducts = getProductsByCoverageAndStatus(productListRsrc, ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode(), ClaimsServiceEnums.ProductStatusCodes.FINAL.toString());
 					quantityClaimMap = new HashMap<Integer, ClaimDto>();
-					quantityCropMap = loadProductCropMap(quantityProducts);
-					quantityLinkedCropMap = loadProductLinkedCropMap(quantityProducts);
+					quantityCropMap = loadProductCropMap(quantityProducts, null);
+					quantityLinkedCropMap = loadProductLinkedCropMap(quantityProducts, null);
 					
 					if ( !quantityProducts.isEmpty() ) {
 						quantityClaimMap = loadQuantityClaims(policyClaimRsrc.getInsurancePolicyId());
@@ -881,8 +883,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 							if (productListRsrc != null) {
 								policyProductRsrc = getProductById(productListRsrc, policyClaimRsrc.getPurchaseId());
 								quantityProducts = getProductsByCoverageAndStatus(productListRsrc, ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode(), ClaimsServiceEnums.ProductStatusCodes.FINAL.toString());
-								quantityCropMap = loadProductCropMap(quantityProducts);
-								quantityLinkedCropMap = loadProductLinkedCropMap(quantityProducts);
+								quantityCropMap = loadProductCropMap(quantityProducts, result.getClaimCalculationGrainBasketProducts());
+								quantityLinkedCropMap = loadProductLinkedCropMap(quantityProducts, result.getClaimCalculationGrainBasketProducts());
 							}
 
 							verifiedYieldRsrc = getUnderwritingVerifiedYield(policyClaimRsrc, null, null, false, false, true, true);
@@ -1151,31 +1153,55 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 	}
 
 	// Loads the CropCommodityDto for every product in products.
-	private Map<Integer, CropCommodityDto> loadProductCropMap(List<ProductRsrc> products) throws DaoException {
+	private Map<Integer, CropCommodityDto> loadProductCropMap(List<ProductRsrc> products, List<ClaimCalculationGrainBasketProduct> gbProducts) throws DaoException {
 
 		Map<Integer, CropCommodityDto> productCropMap = new HashMap<Integer, CropCommodityDto>();   // Maps crop id to CropCommodity
-
+		Set<Integer> cropIds = new HashSet<Integer>();                                              // Contains cropIds from products and gbProducts.
+		
 		for ( ProductRsrc prd : products ) {
-			CropCommodityDto crpDto = cropCommodityDao.fetch(prd.getCropCommodityId());						
+			cropIds.add(prd.getCropCommodityId());
+		}
+
+		// If gpProducts is set, it may contain crop ids not in products, if a Product was removed from CIRRAS.
+		if ( gbProducts != null ) {
+			for ( ClaimCalculationGrainBasketProduct gbPrd : gbProducts ) {
+				cropIds.add(gbPrd.getCropCommodityId());
+			}
+		}
+		
+		for ( Integer cropCommodityId : cropIds ) {
+			CropCommodityDto crpDto = cropCommodityDao.fetch(cropCommodityId);
 			if ( crpDto == null ) {
-				throw new ServiceException("No commodity found for " + prd.getCommodityName());
+				throw new ServiceException("No commodity found for " + cropCommodityId);
 			} else {
-				productCropMap.put(prd.getCropCommodityId(), crpDto);
+				productCropMap.put(cropCommodityId, crpDto);
 			}
 		}		
-
+		
 		return productCropMap;
 	}
 
 	// Loads the linked CropCommodityDto, if one exists, for every product in products.
-	private Map<Integer, CropCommodityDto> loadProductLinkedCropMap(List<ProductRsrc> products) throws DaoException {
+	private Map<Integer, CropCommodityDto> loadProductLinkedCropMap(List<ProductRsrc> products, List<ClaimCalculationGrainBasketProduct> gbProducts) throws DaoException {
 
 		Map<Integer, CropCommodityDto> productLinkedCropMap = new HashMap<Integer, CropCommodityDto>();  // Maps crop id to linked CropCommodity.
+		Set<Integer> cropIds = new HashSet<Integer>();                                              // Contains cropIds from products and gbProducts.
 
 		for ( ProductRsrc prd : products ) {
-			CropCommodityDto linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(prd.getCropCommodityId());
+			cropIds.add(prd.getCropCommodityId());
+		}
+
+		// If gpProducts is set, it may contain crop ids not in products, if a Product was removed from CIRRAS.
+		if ( gbProducts != null ) {
+			for ( ClaimCalculationGrainBasketProduct gbPrd : gbProducts ) {
+				cropIds.add(gbPrd.getCropCommodityId());
+			}
+		}		
+		
+		for ( Integer cropCommodityId : cropIds ) {
+			CropCommodityDto linkedCrpDto = cropCommodityDao.getLinkedCommodityByPedigree(cropCommodityId);
 			if ( linkedCrpDto != null ) {
-				productLinkedCropMap.put(prd.getCropCommodityId(), linkedCrpDto);
+				productLinkedCropMap.put(cropCommodityId, linkedCrpDto);
 			}
 		}
 		
