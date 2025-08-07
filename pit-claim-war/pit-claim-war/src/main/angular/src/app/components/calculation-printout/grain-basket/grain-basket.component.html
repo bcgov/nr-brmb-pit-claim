@@ -67,7 +67,6 @@
                         <td style="text-align: center;font-weight: bold;">Yield <br />To Count</td>
                         <td style="text-align: center;font-weight: bold;">100% Insurable <br />Value/Tonne</td>
                         <td style="text-align: center;font-weight: bold;">Value</td>
-                        <td style="text-align: center;font-weight: bold;">Quantity Claim <br />Amount</td>
                       </tr>
                       <tr *ngFor="let product of calculationDetail.claimCalculationGrainBasketProducts">
                         <td class="td-abc-label"></td>
@@ -85,9 +84,6 @@
                         </td>
                         <td style="text-align: center;">
                             {{ product.yieldValue | currency }}
-                        </td>
-                        <td style="text-align: center;">
-                             {{ product.quantityClaimAmount | currency}}
                         </td>
                       </tr>
                       <!-- final row -->
@@ -109,8 +105,6 @@
                 </div>    
               </div>
 
-
-              <!-- TODO
               <div class="print-page-break-inside">
                 <div style="padding-left: 10px; font-weight: bold;">Claim Determination</div>
                 <div style="margin-left: 10px; margin-bottom: 20px; margin-right: 10px; margin-top: 3px; padding: 0px; border-radius: 0px; border: none">
@@ -118,50 +112,40 @@
                     <tbody>
 
                       <tr>
-                        <td class="td-abc-label">I</td>
-                        <td><span style="padding-left: 10px;">Unseeded Acres</span></td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.unseededAcres | number:'1.2-2' }}</td>
+                        <td class="td-abc-label">E</td>
+                        <td>
+                          <span style="padding-left: 10px;">Yield Loss</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">C - D</span>
+                        </td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">
+                          {{ (calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.totalYieldLoss : "") | currency }}
+                        </td>
                       </tr>
 
                       <tr>
-                        <td class="td-abc-label">J</td>
+                        <td class="td-abc-label">F</td>
                         <td>
-                          <span style="padding-left: 20px;">Less Assessment</span>
+                          <span style="padding-left: 20px;">Less: Quantity Coverage Yield Loss Indemnities For All Commodities</span>
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.lessAssessmentAcres | number:'1.2-2' }}</td>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">
+                          {{ (calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalYieldLossIndemnity : "") | currency }}
+                        </td>
                       </tr>
 
                       <tr>
-                        <td class="td-abc-label">K</td>
+                        <td class="td-abc-label">G</td>
                         <td>
-                          <span style="padding-left: 20px;">Less Deductible Acres</span>
-                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">E</span>
+                          <span style="padding-left: 20px;">Grain Basket Claim</span>
+                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">E - F</span>
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.deductibleAcres | number:'1.2-2' }}</td>
-                      </tr>
-
-                      <tr>
-                        <td class="td-abc-label">L</td>
-                        <td>
-                            <span style="padding-left: 10px;">Eligible Unseeded Acres</span>
-                            <span style="float: right; padding-right: 10px; letter-spacing: 3px;">I - J - K</span>
+                        <td style="text-align: right; padding-right: 10px; width: 100px;">
+                          {{ (calculationDetail ? this.calculationDetail.totalClaimAmount   : "") | currency }}
                         </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.claimCalculationGrainUnseeded.eligibleUnseededAcres | number:'1.2-2' }}</td>
                       </tr>
-
-                      <tr>
-                        <td class="td-abc-label">M</td>
-                        <td>
-                          <span style="padding-left: 10px;">Plant Loss Claim</span>
-                          <span style="float: right; padding-right: 10px; letter-spacing: 3px;">L x G</span>
-                        </td>
-                        <td style="text-align: right; padding-right: 10px; width: 100px;">{{ calculationDetail.totalClaimAmount | number:'1.2-2'  }}</td>
-                      </tr>
-
                     </tbody>
                   </table>
                 </div>    
-              </div> -->
+              </div>
 
               <cirras-calculation-printout-footer 
                 [calculationDetail]="calculationDetail"
