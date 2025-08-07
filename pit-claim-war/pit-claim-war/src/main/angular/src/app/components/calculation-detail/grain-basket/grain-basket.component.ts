@@ -252,6 +252,7 @@ enableDisableFormControls() {
     for (let i = 0; i < this.calculationDetail.claimCalculationGrainBasketProducts.length; i++ ) {
 
       if ( this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityCommodityCoverageCode == "CQG"
+        && this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityClaimNumber
         && this.calculationDetail.claimCalculationGrainBasketProducts[i].quantityLatestCalculationStatusCode !== "APPROVED"){
         
         return false
