@@ -30,6 +30,9 @@
     display: none !important;
   }
 
+  calculation-printout-grain-basket {
+    display: none !important;
+  }
 }
 
 
@@ -126,6 +129,14 @@
   }
 
   calculation-printout-grain-quantity  {
+    display: block !important;
+  }
+
+  calculation-detail-grain-basket {
+    display: none !important;
+  }
+
+  calculation-printout-grain-basket  {
     display: block !important;
   }
 
