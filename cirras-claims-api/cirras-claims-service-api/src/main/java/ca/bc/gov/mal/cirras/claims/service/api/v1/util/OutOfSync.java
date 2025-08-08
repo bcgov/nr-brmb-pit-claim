@@ -2,6 +2,7 @@ package ca.bc.gov.mal.cirras.claims.service.api.v1.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,13 +10,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasket;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.CropCommodityDto;
+import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
+import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldGrainBasket;
 import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
 import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
 
@@ -29,7 +37,13 @@ public class OutOfSync {
 			ClaimCalculation claimCalculation, 
 			InsuranceClaim insuranceClaim, 
 			Product product,
-			VerifiedYieldSummary verifiedSummary) {
+			VerifiedYieldSummary verifiedSummary,
+			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+	) {
 		logger.debug("<calculateOutOfSyncFlags");
 
 		if (claimCalculation == null || insuranceClaim == null) {
@@ -44,6 +58,11 @@ public class OutOfSync {
 		} else if (verifiedSummary == null 
 					&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
 			logger.warn("<verified yield was null. Out of sync flags not set.");
+			return;
+		} else if ( (product == null || verifiedYield == null || quantityProducts == null || quantityClaimMap == null || quantityCropMap == null || quantityLinkedCropMap == null) && 
+				claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode()) ) {
+			logger.warn("<product, verifiedYield, or other required Grain Basket data was null. Out of sync flags not set.");
 			return;
 		}
 
@@ -77,6 +96,12 @@ public class OutOfSync {
 		
 		// Set Grain Quantity Loss Data flags
 		isOutOfSync = grainQuantityDetailDataOutOfSync(claimCalculation, product, verifiedSummary, isOutOfSync);
+		
+		// Set Grain Basket Data flags
+		isOutOfSync = grainBasketDataOutOfSync(claimCalculation, product, verifiedYield, isOutOfSync);
+
+		// Set Grain Basket Product Data flags
+		isOutOfSync = grainBasketProductsDataOutOfSync(claimCalculation, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap, isOutOfSync);
 		
 		claimCalculation.setIsOutOfSync(isOutOfSync);
 		
@@ -447,7 +472,7 @@ public class OutOfSync {
 
 		return isOutOfSync;
 	}
-
+	
 	private Double getVerifiedYieldToCount(VerifiedYieldSummary vys) {
 		
 		Double verifiedYieldToCount = 0.0;
@@ -456,6 +481,176 @@ public class OutOfSync {
 		}
 		return verifiedYieldToCount;
 	}
+
+	private boolean grainBasketDataOutOfSync(
+			ClaimCalculation claimCalculation, 
+			Product product,
+			VerifiedYieldContractSimple verifiedYield,
+			boolean isOutOfSync) {
+
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())
+				&& claimCalculation.getClaimCalculationGrainBasket() != null ) {
+			
+			ClaimCalculationGrainBasket grainBasket = claimCalculation.getClaimCalculationGrainBasket();
+			
+			if (dtoUtils.equals("GrainBasketCoverageValue", product.getCoverageDollars(), grainBasket.getGrainBasketCoverageValue(), 4)) {
+				grainBasket.setIsOutOfSyncGrainBasketCoverageValue(false);
+			} else {
+				grainBasket.setIsOutOfSyncGrainBasketCoverageValue(true);
+				isOutOfSync = true;
+			}
+
+			if (dtoUtils.equals("GrainBasketDeductible", product.getDeductibleLevel(), grainBasket.getGrainBasketDeductible())) {
+				grainBasket.setIsOutOfSyncGrainBasketDeductible(false);
+			} else {
+				grainBasket.setIsOutOfSyncGrainBasketDeductible(true);
+				isOutOfSync = true;
+			}
+
+			VerifiedYieldGrainBasket vygb = verifiedYield.getVerifiedYieldGrainBasket();
+			if (vygb != null && dtoUtils.equals("GrainBasketHarvestedValue", vygb.getHarvestedValue(), grainBasket.getGrainBasketHarvestedValue(), 4)) {
+				grainBasket.setIsOutOfSyncGrainBasketHarvestedValue(false);
+			} else {
+				grainBasket.setIsOutOfSyncGrainBasketHarvestedValue(true);
+				isOutOfSync = true;
+			}
+		}
+
+		return isOutOfSync;
+	}
+
+	private boolean grainBasketProductsDataOutOfSync(ClaimCalculation claimCalculation, 
+			                                         VerifiedYieldContractSimple verifiedYield,
+			                                         List<ProductRsrc> quantityProducts,
+			                                         Map<Integer, ClaimDto> quantityClaimMap,
+			                                         Map<Integer, CropCommodityDto> quantityCropMap,
+			                                         Map<Integer, CropCommodityDto> quantityLinkedCropMap,
+			                                         boolean isOutOfSync) {
+
+		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
+				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())
+				&& claimCalculation.getClaimCalculationGrainBasketProducts() != null ) {
+		
+			Set<Integer> claimCalcProductCommodityIds = new HashSet<Integer>();
+			Map<Integer, ProductRsrc> insProductCommodityMap = new HashMap<Integer, ProductRsrc>();
+	
+			// Store calculation grain basket products
+			for (ClaimCalculationGrainBasketProduct product : claimCalculation.getClaimCalculationGrainBasketProducts()) {
+				claimCalcProductCommodityIds.add(product.getCropCommodityId());
+			}
+	
+			// Store CIRRAS products
+			for (ProductRsrc prd : quantityProducts) {
+				insProductCommodityMap.put(prd.getCropCommodityId(), prd);
+			}
+	
+			// Checks if the products in CIRRAS match the products in the calculation
+			if (claimCalcProductCommodityIds.containsAll(insProductCommodityMap.keySet())) {
+				claimCalculation.setIsOutOfSyncGrainBasketProductAdded(false);
+			} else {
+				claimCalculation.setIsOutOfSyncGrainBasketProductAdded(true);
+				isOutOfSync = true;
+			}
+	
+			for (ClaimCalculationGrainBasketProduct claimCalcPrd : claimCalculation.getClaimCalculationGrainBasketProducts()) {
+
+				ProductRsrc insPrd = insProductCommodityMap.get(claimCalcPrd.getCropCommodityId());
+
+				ClaimDto quantityClaimDto = quantityClaimMap.get(claimCalcPrd.getCropCommodityId());
+				CropCommodityDto quantityCrpDto = quantityCropMap.get(claimCalcPrd.getCropCommodityId());
+				CropCommodityDto quantityLinkedCrpDto = quantityLinkedCropMap.get(claimCalcPrd.getCropCommodityId());
+				
+
+				if (insPrd != null) {
+					claimCalcPrd.setIsOutOfSyncProductRemoved(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncProductRemoved(true);
+					isOutOfSync = true;
+				}
+
+				// From CIRRAS
+				if (insPrd != null && dtoUtils.equals("CoverageValue", insPrd.getCoverageDollars(), claimCalcPrd.getCoverageValue(), 4)) {
+					claimCalcPrd.setIsOutOfSyncCoverageValue(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncCoverageValue(true);
+					isOutOfSync = true;
+				}
+
+				if (insPrd != null && dtoUtils.equals("HundredPercentInsurableValue", insPrd.getInsurableValueHundredPercent(), claimCalcPrd.getHundredPercentInsurableValue(), 4)) {
+					claimCalcPrd.setIsOutOfSyncHundredPercentInsurableValue(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncHundredPercentInsurableValue(true);
+					isOutOfSync = true;
+				}
+
+				if (insPrd != null && dtoUtils.equals("InsurableValue", insPrd.getSelectedInsurableValue(), claimCalcPrd.getInsurableValue(), 4)) {
+					claimCalcPrd.setIsOutOfSyncInsurableValue(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncInsurableValue(true);
+					isOutOfSync = true;
+				}
+
+				if (insPrd != null && dtoUtils.equals("ProductionGuarantee", insPrd.getProductionGuarantee(), claimCalcPrd.getProductionGuarantee(), 4)) {
+					claimCalcPrd.setIsOutOfSyncProductionGuarantee(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncProductionGuarantee(true);
+					isOutOfSync = true;
+				}
+
+				// From CUWS
+				// CUWS stores yield data always using the non-pedigree crop id, whereas CCS stores Calculations for pedigree commodities using that crop id. So we have to account for this mis-match 
+				// here when filtering for Verified Yield.
+				Integer vysCropCommodityId = null;
+				if ( quantityCrpDto.getIsPedigreeInd() ) {
+					vysCropCommodityId = quantityLinkedCrpDto.getCropCommodityId();
+				} else {
+					vysCropCommodityId = quantityCrpDto.getCropCommodityId();
+				}
+				
+				VerifiedYieldSummary vys = null;
+				if ( verifiedYield.getVerifiedYieldSummaries() != null ) {
+					for ( VerifiedYieldSummary currVys : verifiedYield.getVerifiedYieldSummaries() ) {
+						if ( currVys.getCropCommodityId().equals(vysCropCommodityId) && currVys.getIsPedigreeInd().equals(quantityCrpDto.getIsPedigreeInd()) ) {
+							vys = currVys;
+							break;
+						}
+					}
+				}
+				
+				if (vys != null && dtoUtils.equals("TotalYieldToCount", vys.getYieldToCount(), claimCalcPrd.getTotalYieldToCount(), 4)) {
+					claimCalcPrd.setIsOutOfSyncTotalYieldToCount(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncTotalYieldToCount(true);
+					isOutOfSync = true;
+				}
+
+				// From CCS
+				Double qtyTotalClaimAmount = null;
+				Double qtyAssessedYield = null;
+				if ( quantityClaimDto != null && ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(quantityClaimDto.getCalculationStatusCode())) {
+					qtyTotalClaimAmount = quantityClaimDto.getClaimCalculationDto().getTotalClaimAmount();
+					qtyAssessedYield = quantityClaimDto.getClaimCalculationDto().getClaimCalculationGrainQuantityDetail().getAssessedYield();
+				}
+				
+				if (dtoUtils.equals("QuantityClaimAmount", qtyTotalClaimAmount, claimCalcPrd.getQuantityClaimAmount(), 2)) {
+					claimCalcPrd.setIsOutOfSyncQuantityClaimAmount(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncQuantityClaimAmount(true);
+					isOutOfSync = true;
+				}
+
+				if (dtoUtils.equals("AssessedYield", qtyAssessedYield, claimCalcPrd.getAssessedYield(), 4)) {
+					claimCalcPrd.setIsOutOfSyncAssessedYield(false);
+				} else {
+					claimCalcPrd.setIsOutOfSyncAssessedYield(true);
+					isOutOfSync = true;
+				}
+			}
+		}
+		return isOutOfSync;
+	}
+	
 	
 	//
 	//Checks if general claim data is out of sync

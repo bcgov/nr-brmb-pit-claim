@@ -23,6 +23,7 @@ import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationListRsrc
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimListRsrc;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.ClaimRsrc;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainUnseeded;
@@ -2928,6 +2929,301 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		logger.debug(">testGrainQuantityClaimCalculationReplace");
 	}
 
+	@Test
+	public void testGrainBasketClaimCalculationOutOfSyncFlags() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainBasketClaimCalculationOutOfSyncFlags");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+
+		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
+		// Needs to be manually set to a real, valid GRAIN Basket claim in CIRRAS db with no existing calculations, and two final quantity products, currently assumed to be BARLEY and CANOLA - PEDIGREED.
+		String testClaimNumber = "37233";  
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		outOfSyncClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc claimCalc = service.getClaim(claim);
+
+		claimCalc = service.createClaimCalculation(claimCalc);
+
+		outOfSyncClaimCalculationGuid = claimCalc.getClaimCalculationGuid();
+		
+		assertOutOfSyncFlagsFalse(claimCalc);
+		
+		//2. Update ClaimCalculation, setting each field to check the corresponding Out of Sync flag.
+
+		// A. ClaimCalculationGrainBasket
+
+		//GrainBasketCoverageValue
+		Double oldGrainBasketCoverageValue = claimCalc.getClaimCalculationGrainBasket().getGrainBasketCoverageValue();
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketCoverageValue(oldGrainBasketCoverageValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketGrainBasketCoverageValue");
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketCoverageValue(oldGrainBasketCoverageValue);
+		
+		//GrainBasketDeductible
+		Integer oldGrainBasketDeductible = claimCalc.getClaimCalculationGrainBasket().getGrainBasketDeductible();
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketDeductible(oldGrainBasketDeductible - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketGrainBasketDeductible");
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketDeductible(oldGrainBasketDeductible);
+
+		//GrainBasketHarvestedValue
+		Double oldGrainBasketHarvestedValue = claimCalc.getClaimCalculationGrainBasket().getGrainBasketHarvestedValue();
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketHarvestedValue(oldGrainBasketHarvestedValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketGrainBasketHarvestedValue");
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketHarvestedValue(oldGrainBasketHarvestedValue);
+		
+		// ClaimCalculationGrainBasketProduct
+
+		//AssessedYield - First Product
+		Double oldAssessedYield = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getAssessedYield();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setAssessedYield(oldAssessedYield == null ? 1.2 : (oldAssessedYield - 1));
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductAssessedYield", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setAssessedYield(oldAssessedYield);
+
+		//AssessedYield - Second Product
+		oldAssessedYield = claimCalc.getClaimCalculationGrainBasketProducts().get(1).getAssessedYield();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(1).setAssessedYield(oldAssessedYield == null ? 1.2 : (oldAssessedYield - 1));
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductAssessedYield", claimCalc.getClaimCalculationGrainBasketProducts().get(1).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(1).setAssessedYield(oldAssessedYield);
+		
+		//CoverageValue
+		Double oldCoverageValue = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCoverageValue();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setCoverageValue(oldCoverageValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductCoverageValue", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setCoverageValue(oldCoverageValue);
+		
+		//HundredPercentInsurableValue
+		Double oldHundredPercentInsurableValue = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getHundredPercentInsurableValue();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setHundredPercentInsurableValue(oldHundredPercentInsurableValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductHundredPercentInsurableValue", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setHundredPercentInsurableValue(oldHundredPercentInsurableValue);
+
+		//InsurableValue
+		Double oldInsurableValue = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getInsurableValue();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setInsurableValue(oldInsurableValue - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductInsurableValue", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setInsurableValue(oldInsurableValue);
+		
+		//ProductionGuarantee
+		Double oldProductionGuarantee = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getProductionGuarantee();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setProductionGuarantee(oldProductionGuarantee - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductProductionGuarantee", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setProductionGuarantee(oldProductionGuarantee);
+
+		//QuantityClaimAmount - First Product
+		Double oldQuantityClaimAmount = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getQuantityClaimAmount();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setQuantityClaimAmount(oldQuantityClaimAmount == null ? 3.4 : (oldQuantityClaimAmount - 1));
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductQuantityClaimAmount", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setQuantityClaimAmount(oldQuantityClaimAmount);
+		
+		//QuantityClaimAmount - Second Product
+		oldQuantityClaimAmount = claimCalc.getClaimCalculationGrainBasketProducts().get(1).getQuantityClaimAmount();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(1).setQuantityClaimAmount(oldQuantityClaimAmount == null ? 3.4 : (oldQuantityClaimAmount - 1));
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductQuantityClaimAmount", claimCalc.getClaimCalculationGrainBasketProducts().get(1).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(1).setQuantityClaimAmount(oldQuantityClaimAmount);
+		
+		//TotalYieldToCount
+		Double oldTotalYieldToCount = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getTotalYieldToCount();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setTotalYieldToCount(oldTotalYieldToCount - 1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductTotalYieldToCount", claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCropCommodityId());
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setTotalYieldToCount(oldTotalYieldToCount);
+
+		//GrainBasketProductAdded
+		ClaimCalculationGrainBasketProduct oldProduct = claimCalc.getClaimCalculationGrainBasketProducts().remove(1);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductAdded");
+		oldProduct.setClaimCalcGrainBasketProductGuid(null);
+		oldProduct.setClaimCalculationGuid(null);
+		claimCalc.getClaimCalculationGrainBasketProducts().add(oldProduct);
+		
+		//ProductRemoved
+		ClaimCalculationGrainBasketProduct newProduct = new ClaimCalculationGrainBasketProduct();
+		newProduct.setAssessedYield(oldProduct.getAssessedYield());
+		newProduct.setCoverageValue(oldProduct.getCoverageValue());
+		newProduct.setCropCommodityId(21); // Pick a commodity that does not already exist on the policy, and with a name that is ordered after the existing products.
+		newProduct.setCropCommodityName("Field Pea");
+		newProduct.setHundredPercentInsurableValue(oldProduct.getHundredPercentInsurableValue());
+		newProduct.setInsurableValue(oldProduct.getInsurableValue());
+		newProduct.setIsPedigreeInd(false);
+		newProduct.setProductionGuarantee(oldProduct.getProductionGuarantee());
+		newProduct.setQuantityClaimAmount(null);
+		newProduct.setQuantityClaimNumber(null);
+		newProduct.setQuantityClaimStatusCode(null);
+		newProduct.setQuantityColId(null);
+		newProduct.setQuantityCommodityCoverageCode(null);
+		newProduct.setQuantityLatestCalculationStatusCode(null);
+		newProduct.setQuantityLatestClaimCalculationGuid(null);
+		newProduct.setTotalYieldToCount(11.22);
+		newProduct.setYieldValue(oldProduct.getYieldValue());
+		
+		claimCalc.getClaimCalculationGrainBasketProducts().add(newProduct);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "GrainBasketProductProductRemoved", newProduct.getCropCommodityId());
+		ClaimCalculationGrainBasketProduct removedProduct = claimCalc.getClaimCalculationGrainBasketProducts().remove(2);
+		Assert.assertEquals(newProduct.getCropCommodityId(), removedProduct.getCropCommodityId());  // Verify this is the one that was just added.
+				
+		claimCalc = service.updateClaimCalculation(claimCalc, null);				
+		assertOutOfSyncFlagsFalse(claimCalc);
+
+		//3. Out of sync flags not set for certain statuses.
+		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsNull(claimCalc);
+
+		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsNull(claimCalc);
+		
+		//3. Delete the Claim Calculation.
+		service.deleteClaimCalculation(claimCalc, true);
+		
+		logger.debug(">testGrainBasketClaimCalculationOutOfSyncFlags");
+	}
+
+	@Test
+	public void testGrainBasketClaimCalculationRefresh() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainBasketClaimCalculationRefresh");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+
+		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
+		// Needs to be manually set to a real, valid GRAIN Basket claim in CIRRAS db with no existing calculations, and two final quantity products, currently assumed to be BARLEY and CANOLA - PEDIGREED.
+		String testClaimNumber = "37233";  
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		outOfSyncClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc claimCalc = service.getClaim(claim);
+
+		claimCalc = service.createClaimCalculation(claimCalc);
+
+		outOfSyncClaimCalculationGuid = claimCalc.getClaimCalculationGuid();
+		
+		assertOutOfSyncFlagsGrainBasket(claimCalc, false);
+		assertOutOfSyncFlagsGrainBasketProducts(claimCalc, false, null);
+		
+		//2. Update ClaimCalculation, setting each field to be out of sync with claim.
+
+		// A. ClaimCalculationGrainBasket
+
+		//GrainBasketCoverageValue
+		Double oldGrainBasketCoverageValue = claimCalc.getClaimCalculationGrainBasket().getGrainBasketCoverageValue();
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketCoverageValue(oldGrainBasketCoverageValue - 1);
+		
+		//GrainBasketDeductible
+		Integer oldGrainBasketDeductible = claimCalc.getClaimCalculationGrainBasket().getGrainBasketDeductible();
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketDeductible(oldGrainBasketDeductible - 1);
+
+		//GrainBasketHarvestedValue
+		Double oldGrainBasketHarvestedValue = claimCalc.getClaimCalculationGrainBasket().getGrainBasketHarvestedValue();
+		claimCalc.getClaimCalculationGrainBasket().setGrainBasketHarvestedValue(oldGrainBasketHarvestedValue - 1);
+		
+		// ClaimCalculationGrainBasketProduct
+
+		//AssessedYield
+		Double oldAssessedYield = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getAssessedYield();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setAssessedYield(oldAssessedYield == null ? 1.2 : (oldAssessedYield - 1));
+		
+		//CoverageValue
+		Double oldCoverageValue = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getCoverageValue();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setCoverageValue(oldCoverageValue - 1);
+		
+		//HundredPercentInsurableValue
+		Double oldHundredPercentInsurableValue = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getHundredPercentInsurableValue();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setHundredPercentInsurableValue(oldHundredPercentInsurableValue - 1);
+
+		//InsurableValue
+		Double oldInsurableValue = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getInsurableValue();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setInsurableValue(oldInsurableValue - 1);
+		
+		//ProductionGuarantee
+		Double oldProductionGuarantee = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getProductionGuarantee();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setProductionGuarantee(oldProductionGuarantee - 1);
+
+		//QuantityClaimAmount
+		Double oldQuantityClaimAmount = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getQuantityClaimAmount();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setQuantityClaimAmount(oldQuantityClaimAmount == null ? 3.4 : (oldQuantityClaimAmount - 1));
+				
+		//TotalYieldToCount
+		Double oldTotalYieldToCount = claimCalc.getClaimCalculationGrainBasketProducts().get(0).getTotalYieldToCount();
+		claimCalc.getClaimCalculationGrainBasketProducts().get(0).setTotalYieldToCount(oldTotalYieldToCount - 1);
+
+		//GrainBasketProductAdded
+		ClaimCalculationGrainBasketProduct oldProduct = claimCalc.getClaimCalculationGrainBasketProducts().remove(1);
+		
+		//ProductRemoved
+		ClaimCalculationGrainBasketProduct newProduct = new ClaimCalculationGrainBasketProduct();
+		newProduct.setAssessedYield(99.88);
+		newProduct.setCoverageValue(oldProduct.getCoverageValue());
+		newProduct.setCropCommodityId(21); // Pick a commodity that does not already exist on the policy, and with a name that is ordered after the existing products.
+		newProduct.setCropCommodityName("Field Pea");
+		newProduct.setHundredPercentInsurableValue(oldProduct.getHundredPercentInsurableValue());
+		newProduct.setInsurableValue(oldProduct.getInsurableValue());
+		newProduct.setIsPedigreeInd(false);
+		newProduct.setProductionGuarantee(oldProduct.getProductionGuarantee());
+		newProduct.setQuantityClaimAmount(77.66);
+		newProduct.setQuantityClaimNumber(null);
+		newProduct.setQuantityClaimStatusCode(null);
+		newProduct.setQuantityColId(null);
+		newProduct.setQuantityCommodityCoverageCode(null);
+		newProduct.setQuantityLatestCalculationStatusCode(null);
+		newProduct.setQuantityLatestClaimCalculationGuid(null);
+		newProduct.setTotalYieldToCount(11.22);
+		newProduct.setYieldValue(oldProduct.getYieldValue());
+		
+		claimCalc.getClaimCalculationGrainBasketProducts().add(newProduct);
+				
+		claimCalc = service.updateClaimCalculation(claimCalc, null);				
+
+		assertOutOfSyncFlagsGrainBasket(claimCalc, true);
+		assertOutOfSyncFlagsGrainBasketProducts(claimCalc, true, newProduct.getCropCommodityId());
+		
+		claimCalc = service.getClaimCalculation(claimCalc, true);
+		
+		assertOutOfSyncFlagsGrainBasket(claimCalc, false);
+		assertOutOfSyncFlagsGrainBasketProducts(claimCalc, false, null);
+
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		
+		//3. Delete the Claim Calculation.
+		service.deleteClaimCalculation(claimCalc, true);
+		
+		logger.debug(">testGrainBasketClaimCalculationRefresh");	
+	}
+	
+	
 	private ClaimCalculationRsrc createClaimCalculation(String claimNumber) throws CirrasClaimServiceException, ValidationException {
 		
 		Assert.assertFalse("testClaimNumber must be set before this test can be run", claimNumber.equals("TODO"));
@@ -3026,6 +3322,14 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 			assertOutOfSyncFlagsGrainQuantity(c, false);
 		}
 		
+		if( c.getClaimCalculationGrainBasket() != null ) {
+			assertOutOfSyncFlagsGrainBasket(c, false);
+		}
+		
+		if( c.getClaimCalculationGrainBasketProducts() != null ) {
+			assertOutOfSyncFlagsGrainBasketProducts(c, false, null);
+		}
+		
 	}
 
 	private void assertOutOfSyncFlagsNull(ClaimCalculationRsrc c) {
@@ -3090,6 +3394,28 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 			Assert.assertNull("IsOutOfSyncTotalYieldToCount", c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncTotalYieldToCount());
 		}
 
+		//grain basket
+		if(c.getClaimCalculationGrainBasket() != null) {
+			Assert.assertNull("IsOutOfSyncGrainBasketProductAdded", c.getIsOutOfSyncGrainBasketProductAdded());
+			
+			Assert.assertNull("IsOutOfSyncGrainBasketCoverageValue", c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketCoverageValue());
+			Assert.assertNull("IsOutOfSyncGrainBasketDeductible", c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketDeductible());
+			Assert.assertNull("IsOutOfSyncGrainBasketHarvestedValue", c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketHarvestedValue());
+		}
+		
+		if ( c.getClaimCalculationGrainBasketProducts() != null ) {
+			for ( ClaimCalculationGrainBasketProduct p : c.getClaimCalculationGrainBasketProducts() ) {
+				Assert.assertNull("IsOutOfSyncAssessedYield", p.getIsOutOfSyncAssessedYield());
+				Assert.assertNull("IsOutOfSyncCoverageValue", p.getIsOutOfSyncCoverageValue());
+				Assert.assertNull("IsOutOfSyncHundredPercentInsurableValue", p.getIsOutOfSyncHundredPercentInsurableValue());
+				Assert.assertNull("IsOutOfSyncInsurableValue", p.getIsOutOfSyncInsurableValue());
+				Assert.assertNull("IsOutOfSyncProductionGuarantee", p.getIsOutOfSyncProductionGuarantee());
+				Assert.assertNull("IsOutOfSyncProductRemoved", p.getIsOutOfSyncProductRemoved());
+				Assert.assertNull("IsOutOfSyncQuantityClaimAmount", p.getIsOutOfSyncQuantityClaimAmount());
+				Assert.assertNull("IsOutOfSyncTotalYieldToCount", p.getIsOutOfSyncTotalYieldToCount());
+			}
+		}
+		
 		for (ClaimCalculationVariety v : c.getVarieties()) {
 			Assert.assertNull(v.getVarietyName() + " IsOutOfSyncAvgPrice", v.getIsOutOfSyncAvgPrice());
 			Assert.assertNull(v.getVarietyName() + " IsOutOfSyncVarietyRemoved", v.getIsOutOfSyncVarietyRemoved());
@@ -3166,12 +3492,40 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("IsOutOfSyncTotalYieldToCount", flagValue, c.getClaimCalculationGrainQuantityDetail().getIsOutOfSyncTotalYieldToCount());
 		
 	}
+
+	private void assertOutOfSyncFlagsGrainBasket(ClaimCalculationRsrc c, boolean flagValue) {
+
+		Assert.assertEquals("IsOutOfSync", flagValue, c.getIsOutOfSync());
+		Assert.assertEquals("IsOutOfSyncGrainBasketProductAdded", flagValue, c.getIsOutOfSyncGrainBasketProductAdded());
+
+		Assert.assertEquals("IsOutOfSyncGrainBasketCoverageValue", flagValue, c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketCoverageValue());
+		Assert.assertEquals("IsOutOfSyncGrainBasketDeductible", flagValue, c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketDeductible());
+		Assert.assertEquals("IsOutOfSyncGrainBasketHarvestedValue", flagValue, c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketHarvestedValue());
+	}	
+	
+
+	private void assertOutOfSyncFlagsGrainBasketProducts(ClaimCalculationRsrc c, boolean flagValue, Integer removedForCropId) {
+
+		Assert.assertEquals("IsOutOfSync", flagValue, c.getIsOutOfSync());
+
+		for ( ClaimCalculationGrainBasketProduct p : c.getClaimCalculationGrainBasketProducts() ) {
+			Assert.assertEquals("IsOutOfSyncAssessedYield", flagValue, p.getIsOutOfSyncAssessedYield());
+			Assert.assertEquals("IsOutOfSyncCoverageValue", flagValue, p.getIsOutOfSyncCoverageValue());
+			Assert.assertEquals("IsOutOfSyncHundredPercentInsurableValue", flagValue, p.getIsOutOfSyncHundredPercentInsurableValue());
+			Assert.assertEquals("IsOutOfSyncInsurableValue", flagValue, p.getIsOutOfSyncInsurableValue());
+			Assert.assertEquals("IsOutOfSyncProductionGuarantee", flagValue, p.getIsOutOfSyncProductionGuarantee());
+			Assert.assertEquals("IsOutOfSyncProductRemoved", flagValue && p.getCropCommodityId().equals(removedForCropId), p.getIsOutOfSyncProductRemoved());
+			Assert.assertEquals("IsOutOfSyncQuantityClaimAmount", flagValue, p.getIsOutOfSyncQuantityClaimAmount());
+			Assert.assertEquals("IsOutOfSyncTotalYieldToCount", flagValue, p.getIsOutOfSyncTotalYieldToCount());
+		}
+	}	
+	
 	
 	private void assertOutOfSyncFlagsFalseExceptOne(ClaimCalculationRsrc c, String f) {
 		assertOutOfSyncFlagsFalseExceptOne(c, f, null);		
 	}
 	
-	private void assertOutOfSyncFlagsFalseExceptOne(ClaimCalculationRsrc c, String f, Integer varietyId) {
+	private void assertOutOfSyncFlagsFalseExceptOne(ClaimCalculationRsrc c, String f, Integer varietyOrCommodityId) {
 
 		Assert.assertEquals("IsOutOfSync", true, c.getIsOutOfSync());
 		Assert.assertEquals("IsOutOfSyncGrowerAddrLine1", f.equals("GrowerAddrLine1"), c.getIsOutOfSyncGrowerAddrLine1());
@@ -3231,10 +3585,34 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 			Assert.assertEquals("IsOutOfSyncCoverageAmtPerAcre", f.equals("GrainSpotLossCoverageAmtPerAcre"), c.getClaimCalculationGrainSpotLoss().getIsOutOfSyncCoverageAmtPerAcre());
 			Assert.assertEquals("IsOutOfSyncCoverageValue", f.equals("GrainSpotLossCoverageValue"), c.getClaimCalculationGrainSpotLoss().getIsOutOfSyncCoverageValue());
 		}
+
+		//grain basket
+		if(c.getClaimCalculationGrainBasket() != null) {
+			Assert.assertEquals("IsOutOfSyncGrainBasketProductAdded", f.equals("GrainBasketProductAdded"), c.getIsOutOfSyncGrainBasketProductAdded());
+
+			Assert.assertEquals("IsOutOfSyncGrainBasketCoverageValue", f.equals("GrainBasketGrainBasketCoverageValue"), c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketCoverageValue());
+			Assert.assertEquals("IsOutOfSyncGrainBasketDeductible", f.equals("GrainBasketGrainBasketDeductible"), c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketDeductible());
+			Assert.assertEquals("IsOutOfSyncGrainBasketHarvestedValue", f.equals("GrainBasketGrainBasketHarvestedValue"), c.getClaimCalculationGrainBasket().getIsOutOfSyncGrainBasketHarvestedValue());
+		}
+
+		//grain basket products
+		if(c.getClaimCalculationGrainBasketProducts() != null) {
+
+			for ( ClaimCalculationGrainBasketProduct p : c.getClaimCalculationGrainBasketProducts() ) {
+				Assert.assertEquals("IsOutOfSyncAssessedYield", (f.equals("GrainBasketProductAssessedYield") && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncAssessedYield());
+				Assert.assertEquals("IsOutOfSyncCoverageValue", ((f.equals("GrainBasketProductCoverageValue") || f.equals("GrainBasketProductProductRemoved")) && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncCoverageValue());
+				Assert.assertEquals("IsOutOfSyncHundredPercentInsurableValue", ((f.equals("GrainBasketProductHundredPercentInsurableValue") || f.equals("GrainBasketProductProductRemoved")) && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncHundredPercentInsurableValue());
+				Assert.assertEquals("IsOutOfSyncInsurableValue", ((f.equals("GrainBasketProductInsurableValue") || f.equals("GrainBasketProductProductRemoved")) && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncInsurableValue());
+				Assert.assertEquals("IsOutOfSyncProductionGuarantee", ((f.equals("GrainBasketProductProductionGuarantee") || f.equals("GrainBasketProductProductRemoved")) && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncProductionGuarantee());
+				Assert.assertEquals("IsOutOfSyncProductRemoved", (f.equals("GrainBasketProductProductRemoved") && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncProductRemoved());
+				Assert.assertEquals("IsOutOfSyncQuantityClaimAmount", (f.equals("GrainBasketProductQuantityClaimAmount") && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncQuantityClaimAmount());
+				Assert.assertEquals("IsOutOfSyncTotalYieldToCount", ((f.equals("GrainBasketProductTotalYieldToCount") || f.equals("GrainBasketProductProductRemoved")) && p.getCropCommodityId().equals(varietyOrCommodityId)), p.getIsOutOfSyncTotalYieldToCount());
+			}			
+		}
 		
 		for (ClaimCalculationVariety v : c.getVarieties()) {
-			Assert.assertEquals(v.getVarietyName() + " IsOutOfSyncAvgPrice", (f.equals("AvgPrice") && v.getCropVarietyId().equals(varietyId)), v.getIsOutOfSyncAvgPrice());
-			Assert.assertEquals(v.getVarietyName() + " IsOutOfSyncVarietyRemoved", (f.equals("VarietyRemoved") && v.getCropVarietyId().equals(varietyId)), v.getIsOutOfSyncVarietyRemoved());
+			Assert.assertEquals(v.getVarietyName() + " IsOutOfSyncAvgPrice", (f.equals("AvgPrice") && v.getCropVarietyId().equals(varietyOrCommodityId)), v.getIsOutOfSyncAvgPrice());
+			Assert.assertEquals(v.getVarietyName() + " IsOutOfSyncVarietyRemoved", (f.equals("VarietyRemoved") && v.getCropVarietyId().equals(varietyOrCommodityId)), v.getIsOutOfSyncVarietyRemoved());
 		}		
 
 	}

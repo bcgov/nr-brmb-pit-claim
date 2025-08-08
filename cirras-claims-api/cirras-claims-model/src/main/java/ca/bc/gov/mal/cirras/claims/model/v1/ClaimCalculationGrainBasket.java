@@ -22,7 +22,13 @@ public class ClaimCalculationGrainBasket implements Serializable {
 	private Double totalYieldLoss;
 
 	// Out of sync flags
-	// TODO
+	// From CIRRAS
+	private Boolean isOutOfSyncGrainBasketCoverageValue;
+	private Boolean isOutOfSyncGrainBasketDeductible;
+
+	// From CUWS
+	private Boolean isOutOfSyncGrainBasketHarvestedValue;
+	
 
 	public String getClaimCalculationGrainBasketGuid() {
 		return claimCalculationGrainBasketGuid;
@@ -100,6 +106,25 @@ public class ClaimCalculationGrainBasket implements Serializable {
 	public void setTotalYieldLoss(Double totalYieldLoss) {
 		this.totalYieldLoss = totalYieldLoss;
 	}
-	
 
+	public Boolean getIsOutOfSyncGrainBasketCoverageValue() {
+		return isOutOfSyncGrainBasketCoverageValue;
+	}
+	public void setIsOutOfSyncGrainBasketCoverageValue(Boolean isOutOfSyncGrainBasketCoverageValue) {
+		this.isOutOfSyncGrainBasketCoverageValue = isOutOfSyncGrainBasketCoverageValue;
+	}
+
+	public Boolean getIsOutOfSyncGrainBasketDeductible() {
+		return isOutOfSyncGrainBasketDeductible;
+	}
+	public void setIsOutOfSyncGrainBasketDeductible(Boolean isOutOfSyncGrainBasketDeductible) {
+		this.isOutOfSyncGrainBasketDeductible = isOutOfSyncGrainBasketDeductible;
+	}
+
+	public Boolean getIsOutOfSyncGrainBasketHarvestedValue() {
+		return isOutOfSyncGrainBasketHarvestedValue;
+	}
+	public void setIsOutOfSyncGrainBasketHarvestedValue(Boolean isOutOfSyncGrainBasketHarvestedValue) {
+		this.isOutOfSyncGrainBasketHarvestedValue = isOutOfSyncGrainBasketHarvestedValue;
+	}
 }

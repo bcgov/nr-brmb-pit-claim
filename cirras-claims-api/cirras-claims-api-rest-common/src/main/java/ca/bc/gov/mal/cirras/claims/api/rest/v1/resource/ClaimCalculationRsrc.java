@@ -115,6 +115,7 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private Boolean isOutOfSyncGrowerProvince;
 	private Boolean isOutOfSyncCoverageAmount;
 	private Boolean isOutOfSyncVarietyAdded;
+	private Boolean isOutOfSyncGrainBasketProductAdded;
 	
 	//Sub table models specific values
 	private ClaimCalculationBerries claimCalculationBerries;
@@ -738,6 +739,14 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	
 	public void setIsOutOfSyncVarietyAdded(Boolean isOutOfSyncVarietyAdded) {
 		this.isOutOfSyncVarietyAdded = isOutOfSyncVarietyAdded;
+	}
+
+	public Boolean getIsOutOfSyncGrainBasketProductAdded() {
+		return isOutOfSyncGrainBasketProductAdded;
+	}
+
+	public void setIsOutOfSyncGrainBasketProductAdded(Boolean isOutOfSyncGrainBasketProductAdded) {
+		this.isOutOfSyncGrainBasketProductAdded = isOutOfSyncGrainBasketProductAdded;
 	}
 
 }

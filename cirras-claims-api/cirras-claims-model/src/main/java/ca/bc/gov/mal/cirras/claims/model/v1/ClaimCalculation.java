@@ -200,6 +200,9 @@ public interface ClaimCalculation extends Serializable {
 
 	public Boolean getIsOutOfSyncVarietyAdded();	
 	public void setIsOutOfSyncVarietyAdded(Boolean isOutOfSyncVarietyAdded);
+
+	public Boolean getIsOutOfSyncGrainBasketProductAdded();
+	public void setIsOutOfSyncGrainBasketProductAdded(Boolean isOutOfSyncGrainBasketProductAdded);
 	
 	List<ClaimCalculationVariety> getVarieties();
 	void setVarieties(List<ClaimCalculationVariety> value);
