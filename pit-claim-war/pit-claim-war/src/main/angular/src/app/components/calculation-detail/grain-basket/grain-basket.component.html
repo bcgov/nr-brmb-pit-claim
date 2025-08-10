@@ -86,9 +86,9 @@
               <div>
                 <span class="ccc-expression">B</span> Quantity Coverage For All Commodities
               </div>
-              <div></div>
-              <div class="ccc-right">                 
-                {{ quantityTotalCoverageValue | currency }}
+              <div class="ccc-border-right"></div>
+              <div class="ccc-right">    
+                {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalCoverageValue : quantityTotalCoverageValue) | currency }}
               </div>
 
               <div>
@@ -269,10 +269,10 @@
                   (click)="onSave(true)"
               ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
               &nbsp;
-              <!-- <button mat-raised-button color="primary"
-                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid && showPrintButton()"
+              <button mat-raised-button color="primary"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
                   (click)="onPrint()"
-              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>  -->
+              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button> 
             </span>
             
           </div> 
