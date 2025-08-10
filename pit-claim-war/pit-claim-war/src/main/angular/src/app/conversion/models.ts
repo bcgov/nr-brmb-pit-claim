@@ -141,6 +141,7 @@ export interface vmCalculation {
   isOutOfSyncGrowerCity?: boolean;
   isOutOfSyncGrowerProvince?: boolean;
   isOutOfSyncVarietyAdded?: boolean;
+  isOutOfSyncGrainBasketProductAdded?: boolean;
   
   claimCalculationBerries?: ClaimCalculationBerries;
   claimCalculationPlantUnits?: ClaimCalculationPlantUnits;

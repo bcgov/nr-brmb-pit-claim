@@ -37,6 +37,8 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   totalApprovedQuantityClaims: number // sum of all Quantity Claims linked to that policy in the claims calculator, which have status Approved.
   totalClaimAmount: number                // claim_calculation_grain_basket.yield_loss - quantity_total_yield_loss_indemnity
 
+  tooltipIndemnitiesWarning: string = ""
+
   initModels() {
     this.viewModel = new CalculationDetailGrainBasketComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
@@ -176,15 +178,34 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   }
 
   showIndemnitiesWarning() {
-    
+    this.tooltipIndemnitiesWarning = ""
+
     // display a warning sign if quantityTotalYieldLossIndemnity and totalApprovedQuantityClaims are different
     // they are just calculated in two different ways
     if ( (Math.round ( this.quantityTotalYieldLossIndemnity * 100) / 100) !== (Math.round(this.totalApprovedQuantityClaims  * 100 ) / 100) ) {
-        return true
-    } else {
-      return false
+      this.tooltipIndemnitiesWarning = "The sum of all approved Quantity Claims does not match the sum( ( ProductionGuarantee - AssessedYield - YieldToCount ) * SelectedInsurableValue )"
+      return true
+    } 
+
+    let el = this.calculationDetail.claimCalculationGrainBasketProducts.find( x => x.isOutOfSyncInsurableValue == true)
+    if (el) {
+      this.tooltipIndemnitiesWarning = "Selected IV for some of the product(s) does not match CIRRAS"
+      return true
     }
 
+    el = this.calculationDetail.claimCalculationGrainBasketProducts.find( x => x.isOutOfSyncProductionGuarantee == true)
+    if (el) {
+      this.tooltipIndemnitiesWarning = "Production Guarantee for some of the product(s) does not match CIRRAS"
+      return true
+    }
+    
+    el = this.calculationDetail.claimCalculationGrainBasketProducts.find( x => x.isOutOfSyncAssessedYield == true)
+    if (el) {
+      this.tooltipIndemnitiesWarning = "Assessed Yield for some of the product(s) does not match Verified Yield in the Inventory and Yield App."
+      return true
+    }
+
+    return false
   }
 
 enableDisableFormControls() {
@@ -332,5 +353,16 @@ enableDisableFormControls() {
       this.titleService.setTitle(originalTitle);
     }
 
-    
+  // refresh warnings 
+  displayWarningOnCmdtyCvrgAll() {
+
+    // find at least on element where 100%_InsurableValue is out of sync with CIRRAS
+    let el = this.calculationDetail.claimCalculationGrainBasketProducts.find(x => x.isOutOfSyncHundredPercentInsurableValue == true)
+
+    if (el) {
+      return true
+    }
+
+    return false // default
+  }
 }
