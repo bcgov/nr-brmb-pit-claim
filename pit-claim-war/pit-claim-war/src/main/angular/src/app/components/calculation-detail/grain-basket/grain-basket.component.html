@@ -77,10 +77,27 @@
               <div class="ccc-border-right ccc-right"> 
                 <span class="right-space">
                   {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketDeductible : "") | number:'1.0-0' }}%
+                
+                  <span #el matTooltip="Deductible doesn't match with CIRRAS" 
+                    *ngIf="calculationDetail && 
+                          calculationDetail.claimCalculationGrainBasket && 
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible == true" 
+                    style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </span>
               </div>
               <div class="ccc-right">                 
                 {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue : "") | currency }}
+                <span #el matTooltip="Grain Basket Coverage doesn't match with CIRRAS" 
+                  *ngIf="calculationDetail &&
+                          calculationDetail.claimCalculationGrainBasket &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue == true" 
+                  style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
               </div>
 
               <div>
@@ -89,6 +106,11 @@
               <div class="ccc-border-right"></div>
               <div class="ccc-right">    
                 {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalCoverageValue : quantityTotalCoverageValue) | currency }}
+                  <span #el matTooltip="The Coverage Value for at least one commodity is out of sync with CIRRAS" 
+                    *ngIf="displayWarningOnCmdtyCvrgAll()" 
+                    style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
               </div>
 
               <div>
@@ -112,6 +134,19 @@
                 *ngIf="calculationDetail && calculationDetail.claimCalculationGrainBasketProducts"> 
 
             <div></div>
+
+          <!-- commodity warning -->
+          <div class="ccc-row-group ccc-row-group-bordered" *ngIf="calculationDetail.isOutOfSyncGrainBasketProductAdded">
+            <div class="ccc-row">
+                <span class="ccc-col-left">
+                  Grain Basket product added in CIRRAS       
+                  <span #el matTooltip="Grain Basket product added in CIRRAS">                    
+                    <mat-icon [ngStyle]="{'color':'orange', 'vertical-align': 'bottom'}">warning</mat-icon>
+                  </span>
+              </span>
+            </div>
+          </div>
+
             <div class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-left">
                Commodity
             </div>
@@ -136,18 +171,36 @@
                 <div></div>
                 <div class="ccc-border-right left-justified">
                     &nbsp;{{ getCmdtyName(product.cropCommodityName) }}
+
+                  <span #el matTooltip="Product removed in CIRRAS"
+                        *ngIf="product.isOutOfSyncProductRemoved"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>   
+
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
                     {{ product.isPedigreeInd ? "Pedigreed" : "Non-Pedigreed"}}
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
                     {{ product.quantityClaimAmount | currency}}
+                    <span #el matTooltip="Quantity Claim Amount does not match the amount in the approved quantity claim."
+                        *ngIf="product.isOutOfSyncQuantityClaimAmount"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span>
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
                     {{ product.totalYieldToCount}}
+                    <span #el matTooltip="Total Yield To Count does not match Verified yield in the Inventory and Yield App"
+                        *ngIf="product.isOutOfSyncTotalYieldToCount"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>  
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
                     {{ product.hundredPercentInsurableValue | currency }}
+                    <span #el matTooltip="100% Insurable Value does not with CIRRAS"
+                        *ngIf="product.isOutOfSyncHundredPercentInsurableValue"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </div>
                 <div class=" ccc-justify-center"> 
                     <!-- if the backend has calculated the yieldValue then show the backend calculation otherwise calculate it in the front end-->
@@ -200,8 +253,7 @@
             <span class="ccc-expression">F</span> Less: Quantity Coverage Yield Loss Indemnities For All Commodities
           </div>
           <div class="ccc-right"> 
-            <span #el matTooltip="The sum of all approved Quantity Claims does not match 
-            the sum( ( ProductionGuarantee - AssessedYield - YieldToCount ) * SelectedInsurableValue )" 
+            <span #el [matTooltip]="tooltipIndemnitiesWarning" 
                 *ngIf="showIndemnitiesWarning()"
                 style="margin-right: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
