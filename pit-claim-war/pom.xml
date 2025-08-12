@@ -194,7 +194,7 @@
 			<dependency>
 				<groupId>com.nimbusds</groupId>
 				<artifactId>nimbus-jose-jwt</artifactId>
-				<version>4.33</version>
+				<version>9.37.4</version>
 			</dependency>
 
 			<!-- encryption, required for JWE -->
