@@ -79,10 +79,10 @@
                   {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketDeductible : "") | number:'1.0-0' }}%
                 
                   <span #el matTooltip="Deductible doesn't match with CIRRAS" 
-                    *ngIf="calculationDetai && 
-                          calculationDetail.ClaimCalculationGrainBasket && 
-                          calculationDetail.ClaimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible &&
-                          calculationDetail.ClaimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible == true" 
+                    *ngIf="calculationDetail && 
+                          calculationDetail.claimCalculationGrainBasket && 
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible == true" 
                     style="margin-left: 10px;">
                       <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>
@@ -92,9 +92,9 @@
                 {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue : "") | currency }}
                 <span #el matTooltip="Grain Basket Coverage doesn't match with CIRRAS" 
                   *ngIf="calculationDetail &&
-                          calculationDetail.ClaimCalculationGrainBasket &&
-                          calculationDetail.ClaimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue &&
-                          calculationDetail.ClaimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue == true" 
+                          calculationDetail.claimCalculationGrainBasket &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue == true" 
                   style="margin-left: 10px;">
                     <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                 </span>
@@ -102,21 +102,12 @@
 
               <div>
                 <span class="ccc-expression">B</span> Quantity Coverage For All Commodities
-                <span #el matTooltip="The 100%_InsurableValue for at least one commodity is out of sync with CIRRAS" 
-                    *ngIf="displayWarningOnCmdtyCvrgAll()" 
-                    style="margin-left: 10px;">
-                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
-                  </span>
-
               </div>
               <div class="ccc-border-right"></div>
               <div class="ccc-right">    
                 {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalCoverageValue : quantityTotalCoverageValue) | currency }}
-                <span #el matTooltip="Deductible doesn't match with CIRRAS" 
-                    *ngIf="calculationDetail &&
-                          calculationDetail.ClaimCalculationGrainBasket &&
-                          calculationDetail.ClaimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible &&
-                          calculationDetail.ClaimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible == true" 
+                  <span #el matTooltip="The Coverage Value for at least one commodity is out of sync with CIRRAS" 
+                    *ngIf="displayWarningOnCmdtyCvrgAll()" 
                     style="margin-left: 10px;">
                       <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                   </span>
@@ -206,6 +197,10 @@
                 </div>
                 <div class="ccc-border-right ccc-justify-center">
                     {{ product.hundredPercentInsurableValue | currency }}
+                    <span #el matTooltip="100% Insurable Value does not with CIRRAS"
+                        *ngIf="product.isOutOfSyncHundredPercentInsurableValue"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
                 </div>
                 <div class=" ccc-justify-center"> 
                     <!-- if the backend has calculated the yieldValue then show the backend calculation otherwise calculate it in the front end-->

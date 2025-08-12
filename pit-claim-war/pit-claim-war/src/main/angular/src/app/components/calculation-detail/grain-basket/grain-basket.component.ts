@@ -170,6 +170,11 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
   showQtyTotYieldValueWarning() {
     // if Total Yield Value is different than the Harvested Value pulled from the Inventory & Yield app then show warning
     
+    // Total Yield Value
+    if ( this.calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketHarvestedValue == true) {
+      return true
+    }
+
     if ( (Math.round ( this.quantityTotalYieldValue * 100) / 100) !== (Math.round(this.calculationDetail.claimCalculationGrainBasket.grainBasketHarvestedValue  * 100 ) / 100) ) {
         return true
     } else {
@@ -356,8 +361,9 @@ enableDisableFormControls() {
   // refresh warnings 
   displayWarningOnCmdtyCvrgAll() {
 
-    // find at least on element where 100%_InsurableValue is out of sync with CIRRAS
-    let el = this.calculationDetail.claimCalculationGrainBasketProducts.find(x => x.isOutOfSyncHundredPercentInsurableValue == true)
+    // find at least on element where the Coverage Value is out of sync with CIRRAS
+    // This field is not visible on the UI, so the warning should be shown on Quantity Coverage For All Commodities where it is used.
+    let el = this.calculationDetail.claimCalculationGrainBasketProducts.find(x => x.isOutOfSyncCoverageValue == true)
 
     if (el) {
       return true
@@ -365,4 +371,5 @@ enableDisableFormControls() {
 
     return false // default
   }
+
 }
