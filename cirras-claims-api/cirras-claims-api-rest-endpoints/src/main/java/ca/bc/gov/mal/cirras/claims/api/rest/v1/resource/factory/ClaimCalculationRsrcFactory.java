@@ -976,6 +976,27 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 					createClaimCalculationGrainQuantityDetailFromCalculation(claimCalculation.getClaimCalculationGrainQuantityDetail()));
 		}
 		
+		// Copy grain spot basket data
+		if (claimCalculation.getClaimCalculationGrainBasket() != null) {
+			resource.setClaimCalculationGrainBasket(
+					createClaimCalculationGrainBasketFromCalculation(claimCalculation.getClaimCalculationGrainBasket()));
+		}
+		
+		//Add grain basket products
+		if (!claimCalculation.getClaimCalculationGrainBasketProducts().isEmpty()) {
+			List<ClaimCalculationGrainBasketProduct> modelProducts = new ArrayList<ClaimCalculationGrainBasketProduct>();
+
+			for (ClaimCalculationGrainBasketProduct gbProduct : claimCalculation.getClaimCalculationGrainBasketProducts()) {
+
+				//ClaimDto quantityClaimDto = quantityClaimMap.get(gbProduct.getCropCommodityId());
+				
+				ClaimCalculationGrainBasketProduct modelProduct = createClaimCalculationGrainBasketProductFromCalculation(gbProduct);
+				modelProducts.add(modelProduct);
+			}
+
+			resource.setClaimCalculationGrainBasketProducts(modelProducts);
+		}
+		
 		String eTag = getEtag(resource);
 		resource.setETag(eTag);
 
@@ -1222,6 +1243,55 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory implements 
 		//model.setYieldValue(claimCalcGrainQuantityDetail.getYieldValue());
 		//model.setYieldValueWithEarlyEstDeemedYield(claimCalcGrainQuantityDetail.getYieldValueWithEarlyEstDeemedYield());
 
+		return model;
+	}
+	
+	private ClaimCalculationGrainBasket createClaimCalculationGrainBasketFromCalculation(ClaimCalculationGrainBasket claimCalcGrainBasket) {
+		ClaimCalculationGrainBasket model = new ClaimCalculationGrainBasket();
+
+		model.setClaimCalculationGrainBasketGuid(claimCalcGrainBasket.getClaimCalculationGrainBasketGuid());
+		model.setClaimCalculationGuid(claimCalcGrainBasket.getClaimCalculationGuid());
+		model.setGrainBasketCoverageValue(claimCalcGrainBasket.getGrainBasketCoverageValue());
+		model.setGrainBasketDeductible(claimCalcGrainBasket.getGrainBasketDeductible());
+		model.setGrainBasketHarvestedValue(claimCalcGrainBasket.getGrainBasketHarvestedValue());
+		
+		// These are calculated in CirrasClaimServiceImpl.calculateTotalsGrainBasket
+		//model.setQuantityTotalClaimAmount(claimCalcGrainBasket.getQuantityTotalClaimAmount());
+		//model.setQuantityTotalCoverageValue(claimCalcGrainBasket.getQuantityTotalCoverageValue());
+		//model.setQuantityTotalYieldLossIndemnity(claimCalcGrainBasket.getQuantityTotalYieldLossIndemnity());
+		//model.setQuantityTotalYieldValue(claimCalcGrainBasket.getQuantityTotalYieldValue());
+		//model.setTotalYieldCoverageValue(claimCalcGrainBasket.getTotalYieldCoverageValue());
+		//model.setTotalYieldLoss(claimCalcGrainBasket.getTotalYieldLoss());
+		
+		return model;
+	}
+
+	private ClaimCalculationGrainBasketProduct createClaimCalculationGrainBasketProductFromCalculation(ClaimCalculationGrainBasketProduct claimCalcGrainBasketProduct) {
+		ClaimCalculationGrainBasketProduct model = new ClaimCalculationGrainBasketProduct();
+
+		model.setClaimCalcGrainBasketProductGuid(claimCalcGrainBasketProduct.getClaimCalcGrainBasketProductGuid());
+		model.setClaimCalculationGuid(claimCalcGrainBasketProduct.getClaimCalculationGuid());
+		model.setAssessedYield(claimCalcGrainBasketProduct.getAssessedYield());
+		model.setCoverageValue(claimCalcGrainBasketProduct.getCoverageValue());
+		model.setCropCommodityId(claimCalcGrainBasketProduct.getCropCommodityId());
+		model.setCropCommodityName(claimCalcGrainBasketProduct.getCropCommodityName());
+		model.setHundredPercentInsurableValue(claimCalcGrainBasketProduct.getHundredPercentInsurableValue());
+		model.setInsurableValue(claimCalcGrainBasketProduct.getInsurableValue());
+		model.setIsPedigreeInd(claimCalcGrainBasketProduct.getIsPedigreeInd());
+		model.setProductionGuarantee(claimCalcGrainBasketProduct.getProductionGuarantee());
+		model.setQuantityClaimAmount(claimCalcGrainBasketProduct.getQuantityClaimAmount());
+		model.setTotalYieldToCount(claimCalcGrainBasketProduct.getTotalYieldToCount());
+
+		model.setQuantityClaimNumber(claimCalcGrainBasketProduct.getQuantityClaimNumber());
+		model.setQuantityClaimStatusCode(claimCalcGrainBasketProduct.getQuantityClaimStatusCode());
+		model.setQuantityColId(claimCalcGrainBasketProduct.getQuantityColId());
+		model.setQuantityCommodityCoverageCode(claimCalcGrainBasketProduct.getQuantityCommodityCoverageCode());
+		model.setQuantityLatestCalculationStatusCode(claimCalcGrainBasketProduct.getQuantityLatestCalculationStatusCode());
+		model.setQuantityLatestClaimCalculationGuid(claimCalcGrainBasketProduct.getQuantityLatestClaimCalculationGuid());
+
+		// This is calculated in CirrasClaimServiceImpl.calculateTotalsGrainBasketProducts
+		//model.setYieldValue(claimCalcGrainBasketProduct.getYieldValue());
+		
 		return model;
 	}
 	

@@ -3223,6 +3223,190 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		logger.debug(">testGrainBasketClaimCalculationRefresh");	
 	}
 	
+
+	@Test
+	public void testGrainBasketClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testGrainBasketClaimCalculationReplace");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		// Needs to be manually set to a real, valid GRAIN Basket claim in CIRRAS db with no existing calculations, and two final quantity products, currently assumed to be BARLEY and CANOLA - PEDIGREED.
+		String testClaimNumber = "37233";  
+		
+		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		replaceClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
+		Assert.assertNotNull("getClaimList() returned null", claimList);
+		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
+
+		ClaimRsrc claim = claimList.getCollection().get(0);
+
+		ClaimCalculationRsrc calculationToUpdate = service.getClaim(claim);
+		calculationToUpdate = service.createClaimCalculation(calculationToUpdate);
+		
+		Assert.assertNotNull(calculationToUpdate.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(calculationToUpdate.getClaimCalculationGrainBasketProducts());
+		
+		replaceClaimCalculationGuid1 = calculationToUpdate.getClaimCalculationGuid();
+		
+		//Original values
+		Double originalGrainBasketHarvestedValue = calculationToUpdate.getClaimCalculationGrainBasket().getGrainBasketHarvestedValue();
+		Integer originalGrainBasketDeductible = calculationToUpdate.getClaimCalculationGrainBasket().getGrainBasketDeductible();
+		Double originalGrainBasketCoverageValue = calculationToUpdate.getClaimCalculationGrainBasket().getGrainBasketCoverageValue();
+		
+		
+		//Update values for pulled in data to test if replacing NEW and COPY works correctly
+		Double updatedGrainBasketHarvestedValue = originalGrainBasketHarvestedValue - 10;
+		Integer updatedGrainBasketDeductible = originalGrainBasketDeductible + 10;
+		Double updatedGrainBasketCoverageValue = originalGrainBasketCoverageValue + 1000;
+		
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate.getClaimCalculationGrainBasket().setGrainBasketHarvestedValue(updatedGrainBasketHarvestedValue);
+		calculationToUpdate.getClaimCalculationGrainBasket().setGrainBasketDeductible(updatedGrainBasketDeductible);
+		calculationToUpdate.getClaimCalculationGrainBasket().setGrainBasketCoverageValue(updatedGrainBasketCoverageValue);
+		
+		//Update Grain Basket Products
+		Integer productCropCommodityId = null;
+		
+		//Original
+		Double originalProductCoverageValue = null;
+		Double originalProductHundredPercentInsurableValue = null;
+		Double originalProductInsurableValue = null;
+		Double originalProductProductionGuarantee = null;
+		Double originalProductQuantityClaimAmount = null;
+		Double originalProductAssessedYield = null;
+		
+		//Updated
+		Double updatedProductCoverageValue = null;
+		Double updatedProductHundredPercentInsurableValue = null;
+		Double updatedProductInsurableValue = null;
+		Double updatedProductProductionGuarantee = null;
+		Double updatedProductQuantityClaimAmount = null;
+		Double updatedProductAssessedYield = null;
+		
+		//Get an approved grain basket product
+		for(ClaimCalculationGrainBasketProduct gbProduct : calculationToUpdate.getClaimCalculationGrainBasketProducts()) {
+			if(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(gbProduct.getQuantityLatestCalculationStatusCode())) {
+				productCropCommodityId = gbProduct.getCropCommodityId();
+				//Store original values
+				originalProductCoverageValue = gbProduct.getCoverageValue();
+				originalProductHundredPercentInsurableValue = gbProduct.getHundredPercentInsurableValue();
+				originalProductInsurableValue = gbProduct.getInsurableValue();
+				originalProductProductionGuarantee = gbProduct.getProductionGuarantee();
+				originalProductQuantityClaimAmount = gbProduct.getQuantityClaimAmount();
+				originalProductAssessedYield = gbProduct.getAssessedYield();
+				//Set updated values
+				updatedProductCoverageValue = originalProductCoverageValue + 10;
+				updatedProductHundredPercentInsurableValue = originalProductHundredPercentInsurableValue + 11;
+				updatedProductInsurableValue = originalProductInsurableValue + 12;
+				updatedProductProductionGuarantee = originalProductProductionGuarantee + 13;
+				updatedProductQuantityClaimAmount = originalProductQuantityClaimAmount + 14;
+				updatedProductAssessedYield = originalProductAssessedYield + 15;
+				//Set product data with updated data
+				gbProduct.setCoverageValue(updatedProductCoverageValue);
+				gbProduct.setHundredPercentInsurableValue(updatedProductHundredPercentInsurableValue);
+				gbProduct.setInsurableValue(updatedProductInsurableValue);
+				gbProduct.setProductionGuarantee(updatedProductProductionGuarantee);
+				gbProduct.setQuantityClaimAmount(updatedProductQuantityClaimAmount);
+				gbProduct.setAssessedYield(updatedProductAssessedYield);
+			}
+		}
+		
+		Assert.assertNotNull(productCropCommodityId);
+		
+		//Saving updated values
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		
+		//NEW - Replace New
+		//Update calculation
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		ClaimCalculationRsrc newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		replaceClaimCalculationGuid2 = newCalculation.getClaimCalculationGuid();
+		
+		Assert.assertNotNull(newCalculation.getClaimCalculationGrainBasket());
+		Assert.assertNotNull(newCalculation.getClaimCalculationGrainBasketProducts());
+		
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("New Harvested Value not consistent", originalGrainBasketHarvestedValue, newCalculation.getClaimCalculationGrainBasket().getGrainBasketHarvestedValue());
+		Assert.assertEquals("New Deductible not correct", originalGrainBasketDeductible, newCalculation.getClaimCalculationGrainBasket().getGrainBasketDeductible());
+		Assert.assertEquals("New Coverage Value not correct", originalGrainBasketCoverageValue, newCalculation.getClaimCalculationGrainBasket().getGrainBasketCoverageValue());
+		
+		//Check product
+		Boolean productFound = false;
+		//Get the same grain basket product
+		for (ClaimCalculationGrainBasketProduct gbProduct : newCalculation.getClaimCalculationGrainBasketProducts()) {
+			
+			Integer id = gbProduct.getCropCommodityId();
+			if(gbProduct.getCropCommodityId() == productCropCommodityId) {
+				productFound = true;
+				Assert.assertEquals("New Product Coverage Value not correct", originalProductCoverageValue, gbProduct.getCoverageValue());
+				Assert.assertEquals("New Product Hundred Percent IV not correct", originalProductHundredPercentInsurableValue, gbProduct.getHundredPercentInsurableValue());
+				Assert.assertEquals("New Product Insurable Value not correct", originalProductInsurableValue, gbProduct.getInsurableValue());
+				Assert.assertEquals("New Product Production Guarantee not correct", originalProductProductionGuarantee, gbProduct.getProductionGuarantee());
+				Assert.assertEquals("New Product Quantity Claim Amount not correct", originalProductQuantityClaimAmount, gbProduct.getQuantityClaimAmount());
+				Assert.assertEquals("New Product Assessed Yield not correct", originalProductAssessedYield, gbProduct.getAssessedYield());
+			}
+		}
+		
+		Assert.assertTrue(productFound);
+		
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation, true);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+		
+		//COPY
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString());
+
+		replaceClaimCalculationGuid3 = newCalculation.getClaimCalculationGuid();
+		
+		
+		//Check if newCalculation contains the updated values from the replaced one
+		Assert.assertEquals("Copy Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("Copy Harvested Value not consistent", updatedGrainBasketHarvestedValue, newCalculation.getClaimCalculationGrainBasket().getGrainBasketHarvestedValue());
+		Assert.assertEquals("Copy Deductible not correct", updatedGrainBasketDeductible, newCalculation.getClaimCalculationGrainBasket().getGrainBasketDeductible());
+		Assert.assertEquals("Copy Coverage Value not correct", updatedGrainBasketCoverageValue, newCalculation.getClaimCalculationGrainBasket().getGrainBasketCoverageValue());
+		
+		//Check products
+		productFound = false;
+		//Get the same grain basket product
+		for(ClaimCalculationGrainBasketProduct gbProduct : newCalculation.getClaimCalculationGrainBasketProducts()) {
+			if(gbProduct.getCropCommodityId() == productCropCommodityId) {
+				productFound = true;
+				Assert.assertEquals("Copy Product Coverage Value not correct", updatedProductCoverageValue, gbProduct.getCoverageValue());
+				Assert.assertEquals("Copy Product Hundred Percent IV not correct", updatedProductHundredPercentInsurableValue, gbProduct.getHundredPercentInsurableValue());
+				Assert.assertEquals("Copy Product Insurable Value not correct", updatedProductInsurableValue, gbProduct.getInsurableValue());
+				Assert.assertEquals("Copy Product Production Guarantee not correct", updatedProductProductionGuarantee, gbProduct.getProductionGuarantee());
+				Assert.assertEquals("Copy Product Quantity Claim Amount not correct", updatedProductQuantityClaimAmount, gbProduct.getQuantityClaimAmount());
+				Assert.assertEquals("Copy Product Assessed Yield not correct", updatedProductAssessedYield, gbProduct.getAssessedYield());
+			}
+		}
+		
+		Assert.assertTrue(productFound);
+		
+		//Delete - Clean up
+		service.deleteClaimCalculation(newCalculation, true);
+		
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		service.deleteClaimCalculation(calculationToUpdate, true);
+
+		logger.debug(">testGrainBasketClaimCalculationReplace");
+	}	
+	
 	
 	private ClaimCalculationRsrc createClaimCalculation(String claimNumber) throws CirrasClaimServiceException, ValidationException {
 		
