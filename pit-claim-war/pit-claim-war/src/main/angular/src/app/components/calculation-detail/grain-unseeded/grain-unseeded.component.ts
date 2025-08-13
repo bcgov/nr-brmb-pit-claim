@@ -12,11 +12,11 @@ import { setFormStateUnsaved } from 'src/app/store/application/application.actio
 import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'calculation-detail-grain-unseeded',
-  templateUrl: './grain-unseeded.component.html',
-  styleUrl: './grain-unseeded.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-
+    selector: 'calculation-detail-grain-unseeded',
+    templateUrl: './grain-unseeded.component.html',
+    styleUrl: './grain-unseeded.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationDetailGrainUnseededComponent extends BaseComponent implements OnChanges, AfterViewInit {
 

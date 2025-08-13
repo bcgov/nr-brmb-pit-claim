@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, Injector, NgModule} from "@angular/core";
+import { Injector, NgModule, inject, provideAppInitializer } from "@angular/core";
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {
@@ -226,12 +226,10 @@ if (!environment.production || !environment.restrict_imports) {
         AppConfigService,
         TokenService,
         Title,
-        {
-            provide: APP_INITIALIZER,
-            useFactory: appInitFn,
-            multi: true,
-            deps: [HttpHandler, Injector]
-        },
+        provideAppInitializer(() => {
+        const initializerFn = (appInitFn)(inject(HttpHandler), inject(Injector));
+        return initializerFn();
+      }),
         {
             provide: CirrasClaimsAPIServiceConfiguration,
             useFactory: cirrasClaimsRestInitializerFn,

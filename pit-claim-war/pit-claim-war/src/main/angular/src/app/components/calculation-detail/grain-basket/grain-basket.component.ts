@@ -12,10 +12,11 @@ import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_ST
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 
 @Component({
-  selector: 'calculation-detail-grain-basket',
-  templateUrl: './grain-basket.component.html',
-  styleUrl: './grain-basket.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'calculation-detail-grain-basket',
+    templateUrl: './grain-basket.component.html',
+    styleUrl: './grain-basket.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 
 export class CalculationDetailGrainBasketComponent extends BaseComponent implements OnChanges, AfterViewInit{
