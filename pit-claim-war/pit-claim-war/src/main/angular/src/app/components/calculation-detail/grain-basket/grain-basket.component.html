@@ -306,11 +306,11 @@
                 (click)="onSubmit()"
               ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
               &nbsp;
-              <!--<button mat-raised-button color="primary"
+              <button mat-raised-button color="primary"
                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
                 (click)="onReopen()"
               ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
-              &nbsp; -->
+              &nbsp;
               <button mat-raised-button color="primary"
                   *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT'"
                   (click)="onSave(false)"

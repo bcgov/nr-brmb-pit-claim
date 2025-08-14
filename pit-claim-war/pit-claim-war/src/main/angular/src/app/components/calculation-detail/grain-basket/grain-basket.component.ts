@@ -372,4 +372,27 @@ enableDisableFormControls() {
     return false // default
   }
 
+  onReopen() {
+        const  updatedClaim = this.getUpdatedClaim(true);
+        if (this.isFormValid(updatedClaim) )  {
+    
+            updatedClaim.calculationStatusCode = CALCULATION_STATUS_CODE.DRAFT;
+            this.store.dispatch(updateCalculationDetailMetadata(updatedClaim, ""));
+            this.doSyncClaimsCodeTables();
+        }
+      }
+    
+      showReopenButton() {
+    
+          //Allow to reopen a calculation if the claim has been amended and is in status In Progress
+          // and the calculation is in status submitted
+          if ( this.calculationDetail.calculationStatusCode === CALCULATION_STATUS_CODE.SUBMITTED && 
+              this.calculationDetail.claimStatusCode === CLAIM_STATUS_CODE.IN_PROGRESS && 
+              this.calculationDetail.currentHasChequeReqInd == true){
+              return true
+          } else {
+            return false
+          }
+      }
+
 }
