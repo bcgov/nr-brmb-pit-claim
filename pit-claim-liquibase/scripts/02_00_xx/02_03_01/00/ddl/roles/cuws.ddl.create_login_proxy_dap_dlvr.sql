@@ -10,7 +10,7 @@ CREATE ROLE "PROXY_DAP_PICC_DEV" WITH
   NOREPLICATION
   PASSWORD '${POSTGRES_PROXY_DAP_PASSWORD}';
   
-ALTER ROLE "PROXY_DAP_PICC_DEV" SET search_path TO cuws;
+ALTER ROLE "PROXY_DAP_PICC_DEV" SET search_path TO ccs;
 
 COMMENT ON ROLE "PROXY_DAP_PICC_DEV" IS 'Proxy account for DAP read only access to Claim Calculator System in DVLR';
 
