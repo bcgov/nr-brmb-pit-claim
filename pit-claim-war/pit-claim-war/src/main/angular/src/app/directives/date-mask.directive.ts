@@ -3,7 +3,7 @@ import * as textMask from "vanilla-text-mask/dist/vanillaTextMask.js";
 import {CONSTANTS} from "../utils";
 import {UntypedFormControl} from "@angular/forms";
 import {Subscription} from "rxjs";
-import * as moment from "moment";
+import moment from "moment";
 
 @Directive({
     selector: '[appWFDateMask]',
