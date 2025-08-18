@@ -1,7 +1,7 @@
 
 {
   "databaseChangeLog": [
-{ "changeSet": {"author":"mhostettler","id":"7", "context":"dlvr", "changes": [
+{ "changeSet": {"author":"mhostettler","id":"7", "changes": [
   {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/roles/ccs.ddl.create_role_app_ccs_readonly.sql"}},
-  {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/roles/ccs.ddl.create_login_proxy_dap_dlvr.sql"}}
+  {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/roles/ccs.ddl.create_login_proxy_dap.sql"}}
   ] } }]}
