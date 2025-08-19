@@ -15,7 +15,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
               "lodash",
@@ -27,6 +27,7 @@
            ],
             "outputPath": "dist/pit-claim",
             "index": "src/index.html",
+            "main": "src/main.ts",
             "polyfills": [
               "src/polyfills.ts"
             ],
@@ -46,19 +47,19 @@
             "styles": [
               "src/styles/main.scss",
               "node_modules/@busacca/ng-pick-datetime/assets/style/picker.scss",
-              "node_modules/multiple-select/dist/multiple-select.css",
-              "https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap-grid.min.css"
+              "node_modules/multiple-select/dist/multiple-select.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.slim.js",
               "node_modules/multiple-select/dist/multiple-select.js"
             ],
             "aot": false,
+            "vendorChunk": true,
             "extractLicenses": false,
+            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
-            "browser": "src/main.ts",
             "stylePreprocessorOptions": {
               "includePaths": [
                 "."
@@ -93,7 +94,7 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "serviceWorker": "ngsw-config.json"
+              "serviceWorker": true
             }
           },
           "defaultConfiguration": ""
