@@ -25,9 +25,7 @@
               "angular2-uuid",
               "vanilla-text-mask"
            ],
-            "outputPath": {
-              "base": "dist/pit-claim"
-            },
+            "outputPath": "dist/pit-claim",
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts"
