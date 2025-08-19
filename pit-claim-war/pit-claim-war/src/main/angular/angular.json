@@ -95,7 +95,7 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "serviceWorker": true
+              "serviceWorker": "ngsw-config.json"
             }
           },
           "defaultConfiguration": ""

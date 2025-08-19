@@ -55,7 +55,7 @@
   }
 }
 
-@media screen and (max-width: map-get(var.$grid-breakpoints, xs)) {
+@media screen and (max-width: map.get(var.$grid-breakpoints, xs)) {
   span.back-route-label {
     font-size: small !important;
   }
