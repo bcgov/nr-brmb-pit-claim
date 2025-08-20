@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

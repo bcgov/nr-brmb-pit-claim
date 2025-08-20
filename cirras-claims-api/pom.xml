@@ -9,10 +9,10 @@
 	<packaging>pom</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java-source-version>17</java-source-version>
-		<java-target-version>17</java-target-version>
+		<java-source-version>21</java-source-version>
+		<java-target-version>21</java-target-version>
 		<dollar>$</dollar>
-		<spring.version>5.3.26</spring.version>
+		<spring.version>6.2.1</spring.version>
 	</properties>
 	<modules>
 		<module>cirras-claims-model</module>
@@ -68,6 +68,12 @@
 			   <groupId>com.fasterxml.jackson.dataformat</groupId>
 			   <artifactId>jackson-dataformat-yaml</artifactId>
 			   <version>2.19.0</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.15.3</version>
 			</dependency>
 
 			<dependency>
@@ -134,7 +140,7 @@
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>
-				<version>5.3.2.RELEASE</version>
+				<version>6.2.1.RELEASE</version>
 			</dependency>
 
 			<dependency>
@@ -147,72 +153,72 @@
 				<artifactId>postgresql</artifactId>
 				<version>42.3.9</version>
 			</dependency>
-
+			
 			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>3.1.0</version>
+			  <groupId>jakarta.servlet</groupId>
+			  <artifactId>jakarta.servlet-api</artifactId>
+			  <version>6.1.0</version>
 			</dependency>
 
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-model</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-rest-common</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-rest-client</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-persistence</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-utils</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-service-api</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-code-persistence</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-webade</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-webade-oauth2-test</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-rest-endpoints</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-code-endpoints</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-checkhealth</artifactId>
-				<version>1.4.1-SNAPSHOT</version>
+				<version>1.5.0-SNAPSHOT</version>
 			</dependency>
 
 			<!-- Logging -->
@@ -247,33 +253,44 @@
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
-				<version>9.4.28.v20200408</version>
+				<version>11.0.15</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-annotations</artifactId>
-				<version>9.4.28.v20200408</version>
+				<version>11.0.15</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-webapp</artifactId>
-				<version>9.4.28.v20200408</version>
+				<version>11.0.15</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-jndi</artifactId>
-				<version>9.4.28.v20200408</version>
+				<version>11.0.15</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-plus</artifactId>
-				<version>9.4.28.v20200408</version>
+				<version>11.0.15</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-jsp</artifactId>
-				<version>9.3.0.M1</version>
+				<version>11.0.15</version>
 			</dependency>
+			
+		  <dependency>
+		      <groupId>org.glassfish.jersey.ext</groupId>
+		      <artifactId>jersey-spring6</artifactId>
+		      <version>4.0.0-M2</version>
+		  </dependency>
+		  <dependency>
+		      <groupId>org.glassfish.jersey.core</groupId>
+		      <artifactId>jersey-server</artifactId>
+		      <version>4.0.0-M2</version>
+		  </dependency>
 
 			<dependency>
 				<groupId>junit</groupId>
