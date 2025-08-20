@@ -8,9 +8,10 @@ import { setFormStateUnsaved } from 'src/app/store/application/application.actio
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 
 @Component({
-  selector: 'cirras-calculation-detail-header',
-  templateUrl: './calculation-detail-header.component.html',
-  styleUrls: ['./calculation-detail-header.component.scss']
+    selector: 'cirras-calculation-detail-header',
+    templateUrl: './calculation-detail-header.component.html',
+    styleUrls: ['./calculation-detail-header.component.scss'],
+    standalone: false
 })
 export class CalculationDetailHeaderComponent extends BaseComponent implements OnChanges, AfterViewInit {
 

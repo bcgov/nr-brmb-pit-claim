@@ -1,7 +1,7 @@
-@import 'src/styles/variables';
+@use 'src/styles/variables' as var;
 
 mat-card.error-panel {
-    font-size: $font-size;
+    font-size: var.$font-size;
     padding: 0;
     display: block;
     overflow: hidden;
@@ -26,12 +26,12 @@ mat-card.error-panel {
     }
 
     mat-card-header.warnings {
-        background-color: $colour-warnings;
+        background-color: var.$colour-warnings;
     }
 
     mat-card-header {
-        background-color: $colour-errors;
-        color: $colour-white;
+        background-color: var.$colour-errors;
+        color: var.$colour-white;
         padding: 0.16px var(--wf1-gutter-space);
         text-transform: uppercase;
         cursor: pointer;
@@ -46,8 +46,8 @@ mat-card.error-panel {
             margin: 0 8px;
 
             .mat-mdc-card-title {
-                font-family: $font-family-main;
-                font-weight: $font-weight-emphasis-more;
+                font-family: var.$font-family-main;
+                font-weight: var.$font-weight-emphasis-more;
             }
         }
     }
@@ -64,21 +64,21 @@ mat-card.error-panel {
     .validation-messages {
         display: block;
         margin: 0;
-        font-family: $font-family-main;
+        font-family: var.$font-family-main;
 
         .info-message {
-            background-color: $colour-white;
-            color: $colour-green;
+            background-color: var.$colour-white;
+            color: var.$colour-green;
         }
 
         .warning-message {
-            background-color: $colour-white;
-            color: $colour-yellow;
+            background-color: var.$colour-white;
+            color: var.$colour-yellow;
         }
 
         .error-message {
-            background-color: $colour-white;
-            color: $colour-errors;
+            background-color: var.$colour-white;
+            color: var.$colour-errors;
 
             span {
                 word-break: break-word;

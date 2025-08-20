@@ -7,9 +7,10 @@ import { vmCalculation } from '../../../conversion/models';
 
 
 @Component({
-  selector: 'cirras-replace-options-dialog',
-  templateUrl: './replace-options-dialog.component.html',
-  styleUrls: ["../../common/base/base.component.scss", './replace-options-dialog.component.scss']
+    selector: 'cirras-replace-options-dialog',
+    templateUrl: './replace-options-dialog.component.html',
+    styleUrls: ["../../common/base/base.component.scss", './replace-options-dialog.component.scss'],
+    standalone: false
 })
 
 export class ReplaceOptionsDialogComponent implements OnInit {
