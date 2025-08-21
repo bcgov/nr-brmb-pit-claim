@@ -2,7 +2,7 @@ package ca.bc.gov.test.jetty;
 
 import java.security.Principal;
 
-import jakarta.security.auth.Subject;
+import javax.security.auth.Subject;
 import jakarta.servlet.ServletRequest;
 
 import org.eclipse.jetty.security.DefaultIdentityService;
