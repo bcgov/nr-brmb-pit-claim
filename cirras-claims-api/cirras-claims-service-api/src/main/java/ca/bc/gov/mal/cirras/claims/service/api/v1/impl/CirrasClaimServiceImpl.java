@@ -2152,8 +2152,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		grainQuantity.setMaxClaimPayable(maxClaimPayable);
 		
 		// Y - Quantity Loss Claim
-		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
-		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
+		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) 
+		// CIRRAS automatically extracts Less Advanced Claim(s) ( X ), so we don't need to extract it here
+		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue));
 		if(quantityLossClaim > 0) {
 			//Round to two decimals
 			quantityLossClaim = (double) Math.round(quantityLossClaim * 100d) / 100d;
