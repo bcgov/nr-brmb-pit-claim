@@ -499,23 +499,24 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   } 
 
   calculateQuantityLossClaim() {
-    // calculated as the lesser of (Maximum Claim Payable or Total Quantity Loss) - Less Advanced Claim(s)
+    // calculated as the lesser of (Maximum Claim Payable or Total Quantity Loss) 
+    // In CIRRAS, the Less Advanced Claim(s) amount is automatically subtracted from the Total Quantity Loss. No need to do it here
 
     let result = 0
-    let advancedClaim = 0
 
-    if ( this.viewModel.formGroup.controls.advancedClaim && !isNaN(parseFloat(this.viewModel.formGroup.controls.advancedClaim.value ))) {
-      advancedClaim = parseFloat(this.viewModel.formGroup.controls.advancedClaim.value )
-    }
-
-    result = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)  - advancedClaim ) )
+    result = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue) ) )
     return result
   } 
 
   calculateDiffBeteenSumZandY(){
 
     let result = 0 
+    let advancedClaim = 0
 
+    if ( this.viewModel.formGroup.controls.advancedClaim && !isNaN(parseFloat(this.viewModel.formGroup.controls.advancedClaim.value ))) {
+      advancedClaim = parseFloat(this.viewModel.formGroup.controls.advancedClaim.value )
+    }
+    
     if ( this.viewModel.formGroup.controls.totalClaimAmountNonPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ))) {
       result = parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value )
     }
@@ -524,7 +525,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = result + parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value )
     }
 
-    this.difBetweenZandY = result - this.quantityLossClaim
+    this.difBetweenZandY = result - this.quantityLossClaim + advancedClaim
   }
 
   onCancel() {
