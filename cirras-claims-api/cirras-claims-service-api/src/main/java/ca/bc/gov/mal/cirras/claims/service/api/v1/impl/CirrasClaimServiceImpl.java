@@ -1381,11 +1381,12 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 			if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
 				//On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
-				//has to be equal to the calculated value on line Y
+				//has to be equal to the lesser of V or W
 				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
 				if(dtoLinkedCalculation != null) {
 					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
-					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
+					Double totalQuantityLoss = Math.max(0, Math.min(claimCalculation.getClaimCalculationGrainQuantity().getMaxClaimPayable(), claimCalculation.getClaimCalculationGrainQuantity().getTotalYieldLossValue()));
+					if(Double.compare(totalClaimAmount, totalQuantityLoss) != 0) {
 						throw new ServiceException("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim.");
 					}
 				}
@@ -2152,9 +2153,8 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		grainQuantity.setMaxClaimPayable(maxClaimPayable);
 		
 		// Y - Quantity Loss Claim
-		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) 
-		// CIRRAS automatically extracts Less Advanced Claim(s) ( X ), so we don't need to extract it here
-		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue));
+		// Lesser of Maximum Claim Payable (V) or Total Quantity Loss (W) - Less Advanced Claim(s) ( X )
+		Double quantityLossClaim = Math.max(0, Math.min(maxClaimPayable, totalYieldLossValue) - notNull(grainQuantity.getAdvancedClaim(), 0.0));
 		if(quantityLossClaim > 0) {
 			//Round to two decimals
 			quantityLossClaim = (double) Math.round(quantityLossClaim * 100d) / 100d;
