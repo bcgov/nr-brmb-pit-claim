@@ -495,6 +495,7 @@
   
           <div>
             <span class="ccc-expression">X</span> Less Advanced Claim(s)
+            &nbsp;&nbsp;<mat-icon style="vertical-align: middle;" matTooltip="Less Advanced Claim(s) amount is not considered in the amount submitted to CIRRAS. Only the lesser amount of V or W is submitted">info</mat-icon>
           </div>
           <div class="ccc-border-right ccc-right">
             <span class="ccc-expression"></span>
@@ -511,10 +512,9 @@
           <div>
             <span class="ccc-expression">Y</span> 
             Quantity Loss Claim
-            &nbsp;&nbsp;<mat-icon style="vertical-align: middle;" matTooltip="CIRRAS will automatically subtract the amount for Less Advanced Claim from the Quantity Loss">info</mat-icon>
           </div>
           <div class="ccc-border-right ccc-right" >
-            <span class="ccc-expression">Lesser of (V or W)</span>
+            <span class="ccc-expression">Lesser of (V or W) - X</span>
           </div>
           <div class="ccc-right">
             {{ quantityLossClaim | currency  }}
@@ -541,10 +541,10 @@
             <span class="ccc-expression"></span> 
           </div>
           <div  *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-border-right ccc-right" >
-            <span class="ccc-expression">Difference of Sum(Z) - Y + X</span>
+            <span class="ccc-expression">Difference of Sum(Z) - Lesser of (V or W)</span>
           </div>
           <div  *ngIf="showNonPedigreeColumn && showPedigreeColumn" class="ccc-right">
-            {{ difBetweenZandY | number:'1.2-2'  }}
+            {{ difBetweenZandVorW | number:'1.2-2'  }}
           </div>
 
         </div>
