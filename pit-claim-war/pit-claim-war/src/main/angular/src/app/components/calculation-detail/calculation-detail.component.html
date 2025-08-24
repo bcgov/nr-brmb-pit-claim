@@ -119,4 +119,22 @@
 
   <!-- GRAIN QUANTITY Printout is in the upper component -->
 
+  <!-- GRAIN BASKET LOSS -->
+  <calculation-detail-grain-basket
+      *ngIf=" calculationDetail  && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN'  && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'GB' &&
+            calculationDetail.claimCalculationGrainBasket "
+      [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
+  ></calculation-detail-grain-basket>
+  
+  <calculation-printout-grain-basket
+    *ngIf=" calculationDetail && 
+        (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+        (calculationDetail.commodityCoverageCode).toUpperCase() === 'GB' &&
+        calculationDetail.claimCalculationGrainBasket "
+    [calculationDetail]="calculationDetail">
+  </calculation-printout-grain-basket> 
+
 </base-wrapper>

@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ca.bc.gov.mal.cirras.claims.api.rest.v1.resource.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasket;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
@@ -113,6 +115,7 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private Boolean isOutOfSyncGrowerProvince;
 	private Boolean isOutOfSyncCoverageAmount;
 	private Boolean isOutOfSyncVarietyAdded;
+	private Boolean isOutOfSyncGrainBasketProductAdded;
 	
 	//Sub table models specific values
 	private ClaimCalculationBerries claimCalculationBerries;
@@ -123,8 +126,10 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	private ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss;
 	private ClaimCalculationGrainQuantity claimCalculationGrainQuantity;
 	private ClaimCalculationGrainQuantityDetail claimCalculationGrainQuantityDetail;
+	private ClaimCalculationGrainBasket claimCalculationGrainBasket;
 	
 	private List<ClaimCalculationVariety> varieties = new ArrayList<ClaimCalculationVariety>();	
+	private List<ClaimCalculationGrainBasketProduct> claimCalculationGrainBasketProducts = new ArrayList<ClaimCalculationGrainBasketProduct>();	
 	
 
 	public String getClaimCalculationGuid() {
@@ -430,6 +435,22 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	public void setClaimCalculationGrainQuantityDetail(ClaimCalculationGrainQuantityDetail claimCalculationGrainQuantityDetail) {
 		this.claimCalculationGrainQuantityDetail = claimCalculationGrainQuantityDetail;
 	}
+
+	public ClaimCalculationGrainBasket getClaimCalculationGrainBasket() {
+		return claimCalculationGrainBasket;
+	}
+
+	public void setClaimCalculationGrainBasket(ClaimCalculationGrainBasket claimCalculationGrainBasket) {
+		this.claimCalculationGrainBasket = claimCalculationGrainBasket;
+	}
+
+	public List<ClaimCalculationGrainBasketProduct> getClaimCalculationGrainBasketProducts() {
+		return claimCalculationGrainBasketProducts;
+	}
+
+	public void setClaimCalculationGrainBasketProducts(List<ClaimCalculationGrainBasketProduct> claimCalculationGrainBasketProducts) {
+		this.claimCalculationGrainBasketProducts = claimCalculationGrainBasketProducts;
+	}
 	
 	public String getSubmittedByUserid() {
 		return submittedByUserid;
@@ -718,6 +739,14 @@ public class ClaimCalculationRsrc extends BaseResource implements ClaimCalculati
 	
 	public void setIsOutOfSyncVarietyAdded(Boolean isOutOfSyncVarietyAdded) {
 		this.isOutOfSyncVarietyAdded = isOutOfSyncVarietyAdded;
+	}
+
+	public Boolean getIsOutOfSyncGrainBasketProductAdded() {
+		return isOutOfSyncGrainBasketProductAdded;
+	}
+
+	public void setIsOutOfSyncGrainBasketProductAdded(Boolean isOutOfSyncGrainBasketProductAdded) {
+		this.isOutOfSyncGrainBasketProductAdded = isOutOfSyncGrainBasketProductAdded;
 	}
 
 }

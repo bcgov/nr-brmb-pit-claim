@@ -5,8 +5,14 @@ import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
 import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+
+import java.util.List;
+import java.util.Map;
+
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasket;
+import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainBasketProduct;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantity;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationGrainSpotLoss;
@@ -18,6 +24,8 @@ import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationPlantUnits;
 import ca.bc.gov.mal.cirras.claims.model.v1.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketDto;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainBasketProductDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDetailDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dto.ClaimCalculationGrainSpotLossDto;
@@ -37,6 +45,7 @@ public interface ClaimCalculationFactory {
 
 	ClaimCalculation getClaimCalculation(
 		ClaimCalculationDto dto, 
+		Map<Integer, ClaimDto> quantityClaimMap,
 		FactoryContext context, 
 		WebAdeAuthentication authentication
 	) throws FactoryException;
@@ -69,6 +78,7 @@ public interface ClaimCalculationFactory {
 	void updateDto(ClaimCalculationGrainSpotLossDto dto, ClaimCalculationGrainSpotLoss model);
 	void updateDto(ClaimCalculationGrainQuantityDto dto, ClaimCalculationGrainQuantity model);
 	void updateDto(ClaimCalculationGrainQuantityDetailDto dto, ClaimCalculationGrainQuantityDetail model);
+	void updateDto(ClaimCalculationGrainBasketDto dto, ClaimCalculationGrainBasket model);
 	
 	ClaimCalculationDto createDto(ClaimCalculation model);
 	ClaimCalculationVarietyDto createDto(ClaimCalculationVariety model);
@@ -80,6 +90,8 @@ public interface ClaimCalculationFactory {
 	ClaimCalculationGrainSpotLossDto createDto(ClaimCalculationGrainSpotLoss model);
 	ClaimCalculationGrainQuantityDto createDto(ClaimCalculationGrainQuantity model);
 	ClaimCalculationGrainQuantityDetailDto createDto(ClaimCalculationGrainQuantityDetail model);
+	ClaimCalculationGrainBasketDto createDto(ClaimCalculationGrainBasket model);
+	ClaimCalculationGrainBasketProductDto createDto(ClaimCalculationGrainBasketProduct model);
 	
 	public ClaimCalculation getCalculationFromClaim(
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
@@ -87,6 +99,10 @@ public interface ClaimCalculationFactory {
 			CropCommodityDto crpDto,
 			CropCommodityDto linkedCrpDto,
 			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
 			FactoryContext context, 
 			WebAdeAuthentication authentication
 		) throws FactoryException;
@@ -97,7 +113,13 @@ public interface ClaimCalculationFactory {
 			ClaimCalculation claimCalculation, 
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim, 
 			Product product,
-			VerifiedYieldSummary verifiedSummary);
+			VerifiedYieldSummary verifiedSummary,
+			VerifiedYieldContractSimple verifiedYield,
+			List<ProductRsrc> quantityProducts,
+			Map<Integer, ClaimDto> quantityClaimMap,
+			Map<Integer, CropCommodityDto> quantityCropMap,
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+	);
 
 	public ClaimCalculation getCalculationFromCalculation(
 			ClaimCalculation claimCalculation,

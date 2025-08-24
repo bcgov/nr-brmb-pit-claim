@@ -56,7 +56,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory implements ClaimFactor
 			// Check if the claim is supported by the calculator
 			//Grape: Quantity
 			//Berries: All
-			//Grain: Unseeded, Spot Loss, Quantity
+			//Grain: Unseeded, Spot Loss, Quantity, Grain Basket
 			boolean isClaimSupported = false;
 			if ((dto.getPlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAPES.toString())
 					&& dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode()))
@@ -65,6 +65,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory implements ClaimFactor
 						&& (dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
 							|| dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
 							|| dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())
+							|| dto.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainBasket.getCode())
 							)
 						)
 				) {

@@ -233,7 +233,7 @@ public class CirrasDataSyncServiceImpl implements CirrasDataSyncService {
 			// This is quite possible and ok because not all claims have a calculation yet.
 			// It's still a successful transaction
 			if (claimCalculationDto != null) {
-				ClaimCalculation calculation = claimCalculationFactory.getClaimCalculation(claimCalculationDto,
+				ClaimCalculation calculation = claimCalculationFactory.getClaimCalculation(claimCalculationDto, null,
 						factoryContext, authentication);
 
 				updateClaimAndCalculationStatus(calculation, syncClaim, claimCalculationDto, authentication,
