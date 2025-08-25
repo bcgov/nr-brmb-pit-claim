@@ -4,7 +4,6 @@ import ca.bc.gov.nrs.wfone.common.webade.oauth2.authentication.WebadeOauth2Authe
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +15,17 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -49,7 +53,6 @@ public class SecuritySpringConfig {
 
 
 	public SecuritySpringConfig() {
-		super(true);
 		logger.info("<SecuritySpringConfig");
 
 		logger.info(">SecuritySpringConfig");
@@ -95,31 +98,85 @@ public class SecuritySpringConfig {
 		return result;
 	}
 
-	private static final Set<String> STATIC_METHODS = Arrays.asList(HttpMethod.OPTIONS, HttpMethod.GET).stream()
-			.map(HttpMethod::name)
-			.collect(Collectors.toSet());  
+	// private static final Set<String> STATIC_METHODS = Arrays.asList(HttpMethod.OPTIONS, HttpMethod.GET).stream()
+	// 		.map(HttpMethod::name)
+	// 		.collect(Collectors.toSet());  
 	
-	@Override
-	public void configure(WebSecurity web) throws Exception {
+	// @Override
+	// public void configure(WebSecurity web) throws Exception {
 		
-		web.ignoring().requestMatchers(request->{
-			String method = request.getMethod();
-			return STATIC_METHODS.contains(method);
-		});
+	// 	web.ignoring().requestMatchers(request->{
+	// 		String method = request.getMethod();
+	// 		return STATIC_METHODS.contains(method);
+	// 	});
+	// }
+
+	// @Override
+	// protected void configure(HttpSecurity http) throws Exception {
+
+	// 	http.csrf().disable();
+
+	// 	http.oauth2ResourceServer(oauth2 -> oauth2
+	// 					.authenticationManagerResolver(authenticationManagerResolver())
+	// 			)
+	// 			.authorizeRequests(authorize -> authorize
+	// 					.anyRequest().permitAll()
+	// 			)
+	// 			.exceptionHandling()
+	// 			.authenticationEntryPoint(authenticationEntryPoint());
+	// }
+
+	// from wrfm to replace the commented code above
+	@Bean
+	@Order(0)
+	SecurityFilterChain resources(HttpSecurity http) throws Exception {
+		// Use explicit RequestMatcher implementations instead of string-based matchers
+		RequestMatcher optionsMatcher = new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name());
+		RequestMatcher getMatcher = new AntPathRequestMatcher("/**", HttpMethod.GET.name());
+		
+		http
+			.securityMatchers(matchers -> matchers.requestMatchers(optionsMatcher, getMatcher))
+			.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+			.requestCache(cache -> cache.disable())
+			.securityContext(context -> context.disable())
+			.sessionManagement(session -> session.disable());
+
+		return http.build();
 	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-
-		http.csrf().disable();
-
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable());
+            
 		http.oauth2ResourceServer(oauth2 -> oauth2
 						.authenticationManagerResolver(authenticationManagerResolver())
 				)
-				.authorizeRequests(authorize -> authorize
+				.authorizeHttpRequests(authorize -> authorize
 						.anyRequest().permitAll()
 				)
-				.exceptionHandling()
-				.authenticationEntryPoint(authenticationEntryPoint());
+				.exceptionHandling(exception -> exception
+				    .authenticationEntryPoint(authenticationEntryPoint()));
+		
+		return http.build();
 	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		final CorsConfiguration configuration = new CorsConfiguration();
+
+		List<String> origins = new ArrayList<>();
+		origins.add("*");
+
+		configuration.setAllowedOrigins(origins);
+		configuration.setAllowedMethods(Collections.unmodifiableList(Arrays.asList("HEAD", "GET", "POST", "OPTIONS")));
+		configuration.setAllowCredentials(true);
+		configuration.setAllowedHeaders(origins);
+
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
+	}
+
 }
