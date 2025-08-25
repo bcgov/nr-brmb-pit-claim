@@ -99,39 +99,9 @@ public class SecuritySpringConfig {
 		return result;
 	}
 
-	// private static final Set<String> STATIC_METHODS = Arrays.asList(HttpMethod.OPTIONS, HttpMethod.GET).stream()
-	// 		.map(HttpMethod::name)
-	// 		.collect(Collectors.toSet());  
-	
-	// @Override
-	// public void configure(WebSecurity web) throws Exception {
-		
-	// 	web.ignoring().requestMatchers(request->{
-	// 		String method = request.getMethod();
-	// 		return STATIC_METHODS.contains(method);
-	// 	});
-	// }
-
-	// @Override
-	// protected void configure(HttpSecurity http) throws Exception {
-
-	// 	http.csrf().disable();
-
-	// 	http.oauth2ResourceServer(oauth2 -> oauth2
-	// 					.authenticationManagerResolver(authenticationManagerResolver())
-	// 			)
-	// 			.authorizeRequests(authorize -> authorize
-	// 					.anyRequest().permitAll()
-	// 			)
-	// 			.exceptionHandling()
-	// 			.authenticationEntryPoint(authenticationEntryPoint());
-	// }
-
-	// from wrfm to replace the commented code above
 	@Bean
 	@Order(0)
 	SecurityFilterChain resources(HttpSecurity http) throws Exception {
-		// Use explicit RequestMatcher implementations instead of string-based matchers
 		RequestMatcher optionsMatcher = new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name());
 		RequestMatcher getMatcher = new AntPathRequestMatcher("/**", HttpMethod.GET.name());
 		
