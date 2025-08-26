@@ -16,7 +16,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java-source-version>21</java-source-version>
 		<java-target-version>21</java-target-version>
-		<spring.version>6.2.1</spring.version>
 	</properties>
 
 	<distributionManagement>
