@@ -144,6 +144,12 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 		</dependency>
+		
+		<dependency>
+		    <groupId>simple-jndi</groupId>
+		    <artifactId>simple-jndi</artifactId>
+			<scope>test</scope>
+		</dependency>
   
 		<dependency>
 			<groupId>ca.bc.gov.mal.cirras.claims</groupId>

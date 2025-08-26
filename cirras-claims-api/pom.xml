@@ -140,9 +140,13 @@
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>
-				<version>6.2.1</version>
+				<version>${spring.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.oracle.weblogic</groupId>
 				<artifactId>ojdbc7</artifactId>
@@ -166,12 +170,22 @@
 			    <version>4.0.2</version> 
 			</dependency>
 			
-		  <dependency>
+			<dependency>
 		      <groupId>org.glassfish.jaxb</groupId>
 		      <artifactId>jaxb-runtime</artifactId>
 		      <version>4.0.2</version>
-		  </dependency>
-
+			</dependency>
+			
+			<dependency>
+			    <groupId>jakarta.el</groupId>
+			    <artifactId>jakarta.el-api</artifactId>
+			    <version>5.0.1</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.glassfish</groupId>
+			    <artifactId>jakarta.el</artifactId>
+			    <version>5.0.0-M1</version>
+			</dependency>	
 			<dependency>
 			    <groupId>io.swagger.core.v3</groupId>
 			    <artifactId>swagger-jaxrs2-jakarta</artifactId>
@@ -186,62 +200,62 @@
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-model</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-rest-common</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-rest-client</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-persistence</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-utils</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-service-api</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-code-persistence</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-webade</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-webade-oauth2-test</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-rest-endpoints</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-code-endpoints</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 				<artifactId>wfone-common-checkhealth</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
+				<version>1.5.0</version>
 			</dependency>
 
 			<!-- Logging -->
@@ -303,7 +317,12 @@
 				<artifactId>jetty-jsp</artifactId>
 				<version>9.3.0.M1</version>
     		</dependency>
-			
+			<dependency>
+			    <groupId>simple-jndi</groupId>
+			    <artifactId>simple-jndi</artifactId>
+			    <version>0.11.4.1</version>
+			</dependency>
+		    
 		  <dependency>
 		      <groupId>org.glassfish.jersey.ext</groupId>
 		      <artifactId>jersey-spring6</artifactId>
