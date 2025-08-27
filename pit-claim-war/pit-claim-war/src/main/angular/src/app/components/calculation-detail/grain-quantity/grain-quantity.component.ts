@@ -166,6 +166,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         this.productionGuaranteeAmount = this.calculationDetail.claimCalculationGrainQuantity.productionGuaranteeAmount
         this.totalYieldLossValue = this.calculationDetail.claimCalculationGrainQuantity.totalYieldLossValue
         this.quantityLossClaim = this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim
+        this.maxClaimPayable = this.calculationDetail.claimCalculationGrainQuantity.maxClaimPayable
 
         this.setValues(this.calculationDetail)
       }
@@ -286,6 +287,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValuePedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
       this.yieldValueWithEarlyEstDeemedYieldPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
       this.totalClaimAmountPedigree = calcDetail.totalClaimAmount
+      // prodGuaranteeMinusAssessments is not saved in the database it's only calcylated in the front end
+      this.prodGuaranteeMinusAssessmentsPedigree = this.calculateProductionGuaranteeWeight(this.calculationDetailPedigree, <FormControl>this.viewModel.formGroup.controls.assessedYieldPedigree)
+
     } else {
       this.fiftyPercentProductionGuaranteeNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.fiftyPercentProductionGuarantee
       this.calcEarlyEstYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.calcEarlyEstYield
@@ -293,8 +297,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValueNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
       this.yieldValueWithEarlyEstDeemedYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
       this.totalClaimAmountNonPedigree = calcDetail.totalClaimAmount
+      // prodGuaranteeMinusAssessments is not saved in the database it's only calcylated in the front end
+      this.prodGuaranteeMinusAssessmentsNonPedigree = this.calculateProductionGuaranteeWeight(this.calculationDetailNonPedigree, <FormControl>this.viewModel.formGroup.controls.assessedYieldNonPedigree)
     }
-
   }
 
   resetValues(isPedigreeInd: boolean) {
@@ -307,6 +312,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValuePedigree = null
       this.yieldValueWithEarlyEstDeemedYieldPedigree = null
       this.totalClaimAmountPedigree = null
+      this.prodGuaranteeMinusAssessmentsPedigree = null
     } else {
       this.fiftyPercentProductionGuaranteeNonPedigree = null
       this.calcEarlyEstYieldNonPedigree = null
@@ -314,6 +320,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValueNonPedigree = null
       this.yieldValueWithEarlyEstDeemedYieldNonPedigree = null
       this.totalClaimAmountNonPedigree = null
+      this.prodGuaranteeMinusAssessmentsNonPedigree = null
     }
 
   }
