@@ -28,11 +28,11 @@
             </props>
         </property>
 	</bean>
-	
+<!-- 	
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:comp/env/jdbc/cirrasClaimsDataSource"/>
     </bean>
-
+-->
 	<!-- <bean id="bootstrapDataSource" class="oracle.jdbc.pool.OracleDataSource" destroy-method="close">
 		<property name="URL" value="${webade.datasource.url}" />
 		<property name="user" value="${webade.datasource.username}" />

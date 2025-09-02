@@ -102,6 +102,7 @@ public class SecuritySpringConfig  {
 	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name())
 	    );		
 	  }
+	
 	  @Bean
 	  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
@@ -110,7 +111,7 @@ public class SecuritySpringConfig  {
 	      .authorizeHttpRequests(authorize -> authorize
 	              .requestMatchers(HttpMethod.OPTIONS, "/openapi.*", "/checkHealth").permitAll()
 	              .requestMatchers(HttpMethod.GET, "/openapi.*", "/checkHealth").permitAll()
-	              .requestMatchers("/**").hasAuthority("WFRM.GET_TOPLEVEL")
+	              .requestMatchers("/**").hasAuthority("CIRRAS_CLAIMS.GET_TOPLEVEL")
 	              .anyRequest().denyAll()
 	      ).exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()) );		
 		return http.build();
