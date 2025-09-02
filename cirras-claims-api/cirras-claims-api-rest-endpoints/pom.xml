@@ -299,7 +299,7 @@
 											io.swagger.core.v3
 										</groupId>
 										<artifactId>
-											swagger-maven-plugin
+											swagger-maven-plugin-jakarta
 										</artifactId>
 										<versionRange>
 											[2.2.20,)
