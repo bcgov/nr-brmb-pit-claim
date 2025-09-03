@@ -144,7 +144,13 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 		</dependency>
-  
+<!-- 		
+		<dependency>
+		    <groupId>simple-jndi</groupId>
+		    <artifactId>simple-jndi</artifactId>
+			<scope>test</scope>
+		</dependency>
+  -->
 		<dependency>
 			<groupId>ca.bc.gov.mal.cirras.claims</groupId>
 			<artifactId>cirras-claims-api-rest-client</artifactId>
@@ -169,13 +175,6 @@
             <version>6.2.1</version>
             <scope>compile</scope>
         </dependency>
-        
-		<dependency>
-		    <groupId>javax.ws.rs</groupId>
-		    <artifactId>javax.ws.rs-api</artifactId>
-		    <version>2.1.1</version> 
-		    <scope>provided</scope>
-		</dependency>	
     </dependencies>
 	<build>
 		<!-- Configure the resources to be filtered for property replacement -->
@@ -218,7 +217,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.11.0</version>
 				<configuration>
 					<source>${java-source-version}</source>
 					<target>${java-target-version}</target>
@@ -229,7 +228,7 @@
 			</plugin>
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
+                <artifactId>swagger-maven-plugin-jakarta</artifactId>
                 <version>2.2.20</version>
                 <configuration>
                     <outputFileName>swagger</outputFileName>
@@ -300,7 +299,7 @@
 											io.swagger.core.v3
 										</groupId>
 										<artifactId>
-											swagger-maven-plugin
+											swagger-maven-plugin-jakarta
 										</artifactId>
 										<versionRange>
 											[2.2.20,)
