@@ -23,17 +23,17 @@ public class Application implements WebApplicationInitializer {
         dispatcher.addMapping(mapping);
     }
 
-    private void newAppServlet(ServletContext servletContext) {
-	AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
+    // private void newAppServlet(ServletContext servletContext) {
+	// AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
 
-        dispatcherContext.register(DispatcherConfig.class);
+    //     dispatcherContext.register(DispatcherConfig.class);
 
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(dispatcherContext);
+    //     DispatcherServlet dispatcherServlet = new DispatcherServlet(dispatcherContext);
 
-        ServletRegistration.Dynamic dispatcher = servletContext.addServlet("checkToken", dispatcherServlet);
-        dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/checkToken.jsp");
-    }
+    //     ServletRegistration.Dynamic dispatcher = servletContext.addServlet("checkToken", dispatcherServlet);
+    //     dispatcher.setLoadOnStartup(1);
+    //     dispatcher.addMapping("/checkToken.jsp");
+    // }
 
     @Override
     public void onStartup(ServletContext container) {
@@ -50,7 +50,7 @@ public class Application implements WebApplicationInitializer {
 
         // Register check token servlet, spring security context will be available from above configuration
         registerEndpoint(container, rootContext, "Check Token Servlet", "/checkToken.jsp");
-	newAppServlet(container);
+	// newAppServlet(container);
 
         // Set up url rewrite filter - will automatically use WEB-INF/urlrewrite.xml
         // Used to allow direct url links to angular routes - otherwise you will get 404 as they don't exist as actual server resources
