@@ -105,6 +105,9 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>3.4.1</version>
+						<configuration>
+							<source>${java-target-version}</source>
+						</configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -302,6 +305,11 @@
 					<artifactId>spring-web</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
 		</dependency>
 
 		<dependency>
