@@ -6,13 +6,15 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.annotations.ClassInheritanceHandler;
+//import org.eclipse.jetty.ee10.annotations.AnnotationParser;
+//import org.eclipse.jetty.ee10.annotations.ClassInheritanceHandler;
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.ee10.webapp.Configuration;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.glassfish.jersey.server.spring.SpringWebApplicationInitializer;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -41,8 +43,8 @@ public class EmbeddedServer {
 	        WebAppContext context = new WebAppContext();
 	        AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration() {
 				@Override
-				public void preConfigure(WebAppContext ctx) throws Exception {
-
+				public void preConfigure(WebAppContext ctx) {
+					super.preConfigure(ctx);
 					ClassInheritanceMap map = new ClassInheritanceMap();
 					Set<String> set = new HashSet<>();
 					set.add(ApplicationInitializer.class.getName());
@@ -50,14 +52,17 @@ public class EmbeddedServer {
 					map.put(WebApplicationInitializer.class.getName(), set);
 					ctx.setAttribute(CLASS_INHERITANCE_MAP, map);
 
-					_classInheritanceHandler = new ClassInheritanceHandler(map);
+//					new ClassInheritanceHandler(map);
 				}
 			};
 			
 			context.setConfigurations(new Configuration[] {annotationConfiguration});
 	        
 	        context.setContextPath(contextPath);
-			context.setResourceBase("src/main/webapp");
+			//context.setResourceBase("src/main/webapp");
+	        //context.setResourceAlias("src/main/webapp", "src/main/webapp"); --> Same error as before
+
+			//context.setBaseResource(context.newResource("src/main/webapp"));
 	        context.setParentLoaderPriority(true);
 	        
 			SecurityHandler securityHandler = context.getSecurityHandler();

@@ -161,7 +161,7 @@
 			<dependency>
 			  <groupId>jakarta.servlet</groupId>
 			  <artifactId>jakarta.servlet-api</artifactId>
-			  <version>6.1.0</version>
+			  <version>6.0.0</version>
 			</dependency>
 			
 			<dependency>
@@ -290,39 +290,47 @@
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
-				<version>11.0.15</version>
+				<version>12.1.0</version>
+			</dependency>
+
+			<dependency>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-annotations</artifactId>
+			    <version>12.1.0</version>
+			</dependency>
+
+			<dependency>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-servlet</artifactId>
+			    <version>12.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-annotations</artifactId>
-				<version>11.0.15</version>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-webapp</artifactId>
+			    <version>12.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-webapp</artifactId>
-				<version>11.0.15</version>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-jndi</artifactId>
+			    <version>12.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-jndi</artifactId>
-				<version>11.0.15</version>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-plus</artifactId>
+			    <version>12.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-plus</artifactId>
-				<version>11.0.15</version>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-apache-jsp</artifactId>
+			    <version>12.1.0</version>
 			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-jsp</artifactId>
-				<version>9.3.0.M1</version>
-    		</dependency>
+<!-- 
 			<dependency>
 			    <groupId>simple-jndi</groupId>
 			    <artifactId>simple-jndi</artifactId>
 			    <version>0.11.4.1</version>
 			</dependency>
-		    
+-->
 		  <dependency>
 		      <groupId>org.glassfish.jersey.ext</groupId>
 		      <artifactId>jersey-spring6</artifactId>
