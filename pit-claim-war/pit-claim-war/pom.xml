@@ -218,10 +218,10 @@
 
 	<dependencies>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>jakarta.ws.rs</groupId>
 			<artifactId>jakarta.ws.rs-api</artifactId>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
@@ -323,22 +323,22 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-		</dependency>
+		</dependency>-->
 
 		<!-- JWT-->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<!-- encryption, required for JWE -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<!-- Logging -->
 		<dependency>

@@ -31,7 +31,6 @@ public class AppConfig implements WebMvcConfigurer {
         UrlBasedViewResolver resolver
                 = new UrlBasedViewResolver();
         resolver.setPrefix("/WEB-INF/jsp/");
-        // resolver.setPrefix("/");
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
 
