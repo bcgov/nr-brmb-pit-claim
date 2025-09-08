@@ -39,8 +39,7 @@ import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 @Configuration
 @EnableWebSecurity(debug = false)
 @Import({
-	TokenServiceSpringConfig.class,
-	WebadeUserServiceSpringConfig.class
+	TokenServiceSpringConfig.class
 })
 public class SecuritySpringConfig {
 

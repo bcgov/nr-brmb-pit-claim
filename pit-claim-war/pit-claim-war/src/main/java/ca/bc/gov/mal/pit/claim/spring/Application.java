@@ -23,6 +23,18 @@ public class Application implements WebApplicationInitializer {
         dispatcher.addMapping(mapping);
     }
 
+	private void newAppServlet(ServletContext servletContext) {
+		AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
+
+		dispatcherContext.register(DispatcherConfig.class);
+
+		DispatcherServlet dispatcherServlet = new DispatcherServlet(dispatcherContext);
+
+		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("checkToken", dispatcherServlet);
+		dispatcher.setLoadOnStartup(1);
+		dispatcher.addMapping("/checkToken.jsp");
+	}
+
     @Override
     public void onStartup(ServletContext container) {
 
@@ -36,8 +48,9 @@ public class Application implements WebApplicationInitializer {
         container.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"))
                 .addMappingForUrlPatterns(null, true, "/*");
 
-        // Register check token servlet, spring security context will be available from above configuration
-        registerEndpoint(container, rootContext, "Check Token Servlet", "/checkToken.jsp");
+		// Register webade preference endpoint
+        registerEndpoint(container, rootContext, "Webade Servlet", "/webade/userPrefs.jsp");
+		newAppServlet(container);
 
         // Set up url rewrite filter - will automatically use WEB-INF/urlrewrite.xml
         // Used to allow direct url links to angular routes - otherwise you will get 404 as they don't exist as actual server resources
