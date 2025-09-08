@@ -48,8 +48,6 @@ public class Application implements WebApplicationInitializer {
         container.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"))
                 .addMappingForUrlPatterns(null, true, "/*");
 
-		// Register webade preference endpoint
-        registerEndpoint(container, rootContext, "Webade Servlet", "/webade/userPrefs.jsp");
 		newAppServlet(container);
 
         // Set up url rewrite filter - will automatically use WEB-INF/urlrewrite.xml

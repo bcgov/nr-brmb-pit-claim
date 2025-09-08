@@ -1,4 +1,4 @@
-package ca.bc.gov.nrs.wfrm.spring;
+package ca.bc.gov.mal.pit.claim.spring;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
