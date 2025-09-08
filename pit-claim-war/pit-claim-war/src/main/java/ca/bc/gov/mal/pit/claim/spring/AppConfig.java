@@ -35,7 +35,7 @@ public class AppConfig implements WebMvcConfigurer {
 
         UrlBasedViewResolver resolver
                 = new UrlBasedViewResolver();
-        resolver.setPrefix("/");
+        resolver.setPrefix("/WEB-INF/jsp/");
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
 
@@ -52,25 +52,25 @@ public class AppConfig implements WebMvcConfigurer {
     //     .allowedMethods("HEAD", "GET", "POST", "OPTIONS");
     // }
 
-    @Override
-    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-      configurer.enable();
-    }
+    // @Override
+    // public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+    //   configurer.enable();
+    // }
 
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-      configurer.setUseSuffixPatternMatch(true);
-    }
+    // @Override
+    // public void configurePathMatch(PathMatchConfigurer configurer) {
+    //   configurer.setUseSuffixPatternMatch(true);
+    // }
 
-    @Bean
-    public ViewResolver internalResourceViewResolver() {
-      InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+    // @Bean
+    // public ViewResolver internalResourceViewResolver() {
+    //   InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
       
-      viewResolver.setViewClass(JstlView.class);
-      viewResolver.setPrefix("/WEB-INF/jsp/");
-      viewResolver.setSuffix(".jsp");
+    //   viewResolver.setViewClass(JstlView.class);
+    //   viewResolver.setPrefix("/WEB-INF/jsp/");
+    //   viewResolver.setSuffix(".jsp");
       
-      return viewResolver;
-    }
+    //   return viewResolver;
+    // }
     
 }
