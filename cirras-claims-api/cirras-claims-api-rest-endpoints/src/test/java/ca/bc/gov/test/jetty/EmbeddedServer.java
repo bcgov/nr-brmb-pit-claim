@@ -14,6 +14,7 @@ import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.ee10.webapp.Configuration;
+import org.eclipse.jetty.ee10.webapp.JndiConfiguration;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.glassfish.jersey.server.spring.SpringWebApplicationInitializer;
 import org.junit.Assert;
@@ -51,12 +52,13 @@ public class EmbeddedServer {
 					set.add(SpringWebApplicationInitializer.class.getName());
 					map.put(WebApplicationInitializer.class.getName(), set);
 					ctx.setAttribute(CLASS_INHERITANCE_MAP, map);
-
 //					new ClassInheritanceHandler(map);
 				}
 			};
+
+			JndiConfiguration jndiConfiguration = new JndiConfiguration();
 			
-			context.setConfigurations(new Configuration[] {annotationConfiguration});
+			context.setConfigurations(new Configuration[] {annotationConfiguration, jndiConfiguration});
 	        
 	        context.setContextPath(contextPath);
 			//context.setResourceBase("src/main/webapp");
