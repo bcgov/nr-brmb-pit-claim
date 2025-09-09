@@ -85,7 +85,16 @@
 		    <groupId>io.swagger.core.v3</groupId>
 		    <artifactId>swagger-jaxrs2-jakarta</artifactId>
 		</dependency>
-
+<!--
+		<dependency>
+		    <groupId>org.glassfish.jersey.core</groupId>
+		    <artifactId>jersey-server</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.jersey.ext</groupId>
+		    <artifactId>jersey-spring6</artifactId>
+		</dependency>
+-->
 		<dependency>
 		    <groupId>jakarta.ws.rs</groupId>
 		    <artifactId>jakarta.ws.rs-api</artifactId>
@@ -97,6 +106,22 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+		    <groupId>jakarta.el</groupId>
+		    <artifactId>jakarta.el-api</artifactId>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.glassfish</groupId>
+		    <artifactId>jakarta.el</artifactId>
+		</dependency>
+
+<!--
+		<dependency>
+			    <groupId>jakarta.activation</groupId>
+			    <artifactId>jakarta.activation-api</artifactId>
+		</dependency>
+-->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -125,11 +150,13 @@
 		    <artifactId>jetty-ee10-annotations</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+<!--
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-servlet</artifactId>
+			<scope>test</scope>
 		</dependency>
+-->
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-webapp</artifactId>
@@ -145,10 +172,13 @@
 		    <artifactId>jetty-ee10-plus</artifactId>
 			<scope>test</scope>
 		</dependency>
+<!--
 			<dependency>
 			    <groupId>org.eclipse.jetty.ee10</groupId>
 			    <artifactId>jetty-ee10-apache-jsp</artifactId>
+			<scope>test</scope>
 			</dependency>
+-->
 <!-- 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
