@@ -30,8 +30,8 @@ public class Application implements WebApplicationInitializer {
 
 		DispatcherServlet dispatcherServlet = new DispatcherServlet(dispatcherContext);
 
-		// ServletRegistration.Dynamic dispatcher = servletContext.addServlet("checkToken", dispatcherServlet);
-        ServletRegistration.Dynamic dispatcher = servletContext.addServlet("Check Token Servlet", dispatcherServlet);
+		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("checkToken", dispatcherServlet);
+        // ServletRegistration.Dynamic dispatcher = servletContext.addServlet("Check Token Servlet", dispatcherServlet);
 		dispatcher.setLoadOnStartup(1);
 		dispatcher.addMapping("/checkToken.jsp");
 	}

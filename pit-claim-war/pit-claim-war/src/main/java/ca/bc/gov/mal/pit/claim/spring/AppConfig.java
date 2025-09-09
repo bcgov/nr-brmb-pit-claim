@@ -52,15 +52,15 @@ public class AppConfig implements WebMvcConfigurer {
     //     .allowedMethods("HEAD", "GET", "POST", "OPTIONS");
     // }
 
-    // @Override
-    // public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-    //   configurer.enable();
-    // }
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+      configurer.enable();
+    }
 
-    // @Override
-    // public void configurePathMatch(PathMatchConfigurer configurer) {
-    //   configurer.setUseSuffixPatternMatch(true);
-    // }
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+      configurer.setUseSuffixPatternMatch(true);
+    }
 
     @Bean
     public ViewResolver internalResourceViewResolver() {
