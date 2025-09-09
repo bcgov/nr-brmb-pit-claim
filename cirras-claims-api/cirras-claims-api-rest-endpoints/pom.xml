@@ -119,31 +119,42 @@
 			<artifactId>jetty-server</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-annotations</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jndi</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-plus</artifactId>
+		    <groupId>org.eclipse.jetty.ee10</groupId>
+		    <artifactId>jetty-ee10-annotations</artifactId>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
+		    <groupId>org.eclipse.jetty.ee10</groupId>
+		    <artifactId>jetty-ee10-servlet</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse.jetty.ee10</groupId>
+		    <artifactId>jetty-ee10-webapp</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse.jetty.ee10</groupId>
+		    <artifactId>jetty-ee10-jndi</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse.jetty.ee10</groupId>
+		    <artifactId>jetty-ee10-plus</artifactId>
+			<scope>test</scope>
+		</dependency>
+			<dependency>
+			    <groupId>org.eclipse.jetty.ee10</groupId>
+			    <artifactId>jetty-ee10-apache-jsp</artifactId>
+			</dependency>
+<!-- 
+		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 		</dependency>
+-->
 <!-- 		
 		<dependency>
 		    <groupId>simple-jndi</groupId>
