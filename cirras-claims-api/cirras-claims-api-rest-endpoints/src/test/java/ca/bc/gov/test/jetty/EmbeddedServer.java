@@ -8,8 +8,6 @@ import javax.sql.DataSource;
 
 import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.annotations.ClassInheritanceHandler;
-//import org.eclipse.jetty.ee10.annotations.AnnotationParser;
-//import org.eclipse.jetty.ee10.annotations.ClassInheritanceHandler;
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Server;
@@ -52,18 +50,29 @@ public class EmbeddedServer {
 					set.add(SpringWebApplicationInitializer.class.getName());
 					map.put(WebApplicationInitializer.class.getName(), set);
 					ctx.setAttribute(CLASS_INHERITANCE_MAP, map);
-//					new ClassInheritanceHandler(map);
+
+					//_classInheritanceHandler = new ClassInheritanceHandler(map);
+			        // After upgrading Jetty from version 9.4.28.v20200408 to 12.1, _classInheritanceHandler appears to have been moved.
+					// context.getAttribute(STATE) is populated by super.preConfigure().
+					// Not clear what this does or if it is needed; unit tests seem to run fine without it.
+					State state = (State)ctx.getAttribute(STATE);
+					state._classInheritanceHandler = new ClassInheritanceHandler(map);
 				}
 			};
 
+			// Jetty disables JNDI by default in newer versions, and throws java.lang.ClassNotFoundException: org.eclipse.jetty.jndi.InitialContextFactory 
+			// when attempting a lookup. The class is there, but WebAppClassLoader deliberately hides it if JNDI is disabled.
 			JndiConfiguration jndiConfiguration = new JndiConfiguration();
 			
 			context.setConfigurations(new Configuration[] {annotationConfiguration, jndiConfiguration});
 	        
 	        context.setContextPath(contextPath);
-			//context.setResourceBase("src/main/webapp");
-	        //context.setResourceAlias("src/main/webapp", "src/main/webapp"); --> Same error as before
 
+	        // After upgrading Jetty from version 9.4.28.v20200408, this function was removed without any direct replacement.
+	        //context.setResourceBase("src/main/webapp");
+
+	        // This doesn't appear to be needed, but if it is needed in the future, this code is almost equivalent, except that 
+	        // it requires the directory to exist, whereas the previous function seemed to auto-create it.
 			//context.setBaseResource(context.newResource("src/main/webapp"));
 	        context.setParentLoaderPriority(true);
 	        

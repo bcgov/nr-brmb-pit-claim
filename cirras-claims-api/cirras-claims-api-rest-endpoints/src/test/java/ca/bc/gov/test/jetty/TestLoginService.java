@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.function.Function;
 
 import javax.security.auth.Subject;
-//import jakarta.servlet.ServletRequest;
 
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
