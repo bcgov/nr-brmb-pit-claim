@@ -31,7 +31,7 @@ public class Application implements WebApplicationInitializer {
 		DispatcherServlet dispatcherServlet = new DispatcherServlet(dispatcherContext);
 
 		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("checkToken", dispatcherServlet);
-        // ServletRegistration.Dynamic dispatcher = servletContext.addServlet("Check Token Servlet", dispatcherServlet);
+        
 		dispatcher.setLoadOnStartup(1);
 		dispatcher.addMapping("/checkToken.jsp");
 	}
@@ -49,7 +49,6 @@ public class Application implements WebApplicationInitializer {
         container.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"))
                 .addMappingForUrlPatterns(null, true, "/*");
 
-        // registerEndpoint(container, rootContext, "Check Token Servlet", "/checkToken.jsp");
 		newAppServlet(container);
 
         // Set up url rewrite filter - will automatically use WEB-INF/urlrewrite.xml
