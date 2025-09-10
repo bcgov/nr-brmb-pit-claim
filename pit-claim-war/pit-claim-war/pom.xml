@@ -170,18 +170,6 @@
 							</systemPropertyVariables>
 						</configuration>
 						<executions>
-                            <!--  Disabling this because we set it in systemPropertyVariables instead
-							<execution>
-								<id>disable puppeteer download</id>
-								<phase>initialize</phase>
-								<goals>
-									<goal>npm</goal>
-								</goals>
-								<configuration>
-									<arguments>config set puppeteer_skip_chromium_download=true -g</arguments>
-								</configuration>
-							</execution>
-							-->
 							<execution>
 								<id>install node and npm</id>
 								<phase>initialize</phase>
@@ -219,14 +207,9 @@
 	<dependencies>
 
 		<!-- <dependency>
-			<groupId>jakarta.ws.rs</groupId>
-			<artifactId>jakarta.ws.rs-api</artifactId>
-		</dependency>-->
-
-		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-common</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<!-- WebADE  -->
 		<dependency>
@@ -269,10 +252,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
@@ -323,23 +306,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!--<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>-->
-
-		<!-- JWT-->
-		<!-- <dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>nimbus-jose-jwt</artifactId>
-		</dependency> -->
-
-		<!-- encryption, required for JWE -->
-		<!-- <dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-		</dependency> -->
-
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -363,14 +329,14 @@
 	    </dependency>
 
 		<!-- ORACLE database driver -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.oracle.weblogic</groupId>
 			<artifactId>ojdbc7</artifactId>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 
 		<!-- Jetty -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<scope>test</scope>
@@ -389,13 +355,13 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-plus</artifactId>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 
 	</dependencies>
 	<build>
