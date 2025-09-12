@@ -85,16 +85,7 @@
 		    <groupId>io.swagger.core.v3</groupId>
 		    <artifactId>swagger-jaxrs2-jakarta</artifactId>
 		</dependency>
-<!--
-		<dependency>
-		    <groupId>org.glassfish.jersey.core</groupId>
-		    <artifactId>jersey-server</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.glassfish.jersey.ext</groupId>
-		    <artifactId>jersey-spring6</artifactId>
-		</dependency>
--->
+
 		<dependency>
 		    <groupId>jakarta.ws.rs</groupId>
 		    <artifactId>jakarta.ws.rs-api</artifactId>
@@ -116,12 +107,6 @@
 		    <artifactId>jakarta.el</artifactId>
 		</dependency>
 
-<!--
-		<dependency>
-			    <groupId>jakarta.activation</groupId>
-			    <artifactId>jakarta.activation-api</artifactId>
-		</dependency>
--->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -150,13 +135,6 @@
 		    <artifactId>jetty-ee10-annotations</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--
-		<dependency>
-		    <groupId>org.eclipse.jetty.ee10</groupId>
-		    <artifactId>jetty-ee10-servlet</artifactId>
-			<scope>test</scope>
-		</dependency>
--->
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-webapp</artifactId>
@@ -172,26 +150,7 @@
 		    <artifactId>jetty-ee10-plus</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--
-			<dependency>
-			    <groupId>org.eclipse.jetty.ee10</groupId>
-			    <artifactId>jetty-ee10-apache-jsp</artifactId>
-			<scope>test</scope>
-			</dependency>
--->
-<!-- 
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jsp</artifactId>
-		</dependency>
--->
-<!-- 		
-		<dependency>
-		    <groupId>simple-jndi</groupId>
-		    <artifactId>simple-jndi</artifactId>
-			<scope>test</scope>
-		</dependency>
-  -->
+
 		<dependency>
 			<groupId>ca.bc.gov.mal.cirras.claims</groupId>
 			<artifactId>cirras-claims-api-rest-client</artifactId>
@@ -326,7 +285,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!-- This disables generation of swagger.json when building in Eclipse. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
