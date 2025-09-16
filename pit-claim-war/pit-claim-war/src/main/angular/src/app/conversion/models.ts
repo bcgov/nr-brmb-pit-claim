@@ -1,5 +1,7 @@
 import {ClaimCalculationGrainSpotLoss, ClaimCalculationGrainUnseeded, ClaimCalculationGrapes, ClaimCalculationPlantAcres, ClaimCalculationPlantUnits, ClaimCalculationVariety} from "@cirras/cirras-claims-api";
 import { ClaimCalculationBerries } from '@cirras/cirras-claims-api';
+import { ClaimCalculationGrainBasket } from "@cirras/cirras-claims-api/model/claimCalculationGrainBasket";
+import { ClaimCalculationGrainBasketProduct } from "@cirras/cirras-claims-api/model/claimCalculationGrainBasketProduct";
 import { ClaimCalculationGrainQuantity } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantity";
 import { ClaimCalculationGrainQuantityDetail } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantityDetail";
 
@@ -139,6 +141,7 @@ export interface vmCalculation {
   isOutOfSyncGrowerCity?: boolean;
   isOutOfSyncGrowerProvince?: boolean;
   isOutOfSyncVarietyAdded?: boolean;
+  isOutOfSyncGrainBasketProductAdded?: boolean;
   
   claimCalculationBerries?: ClaimCalculationBerries;
   claimCalculationPlantUnits?: ClaimCalculationPlantUnits;
@@ -148,7 +151,9 @@ export interface vmCalculation {
   claimCalculationGrainSpotLoss?: ClaimCalculationGrainSpotLoss;
   claimCalculationGrainQuantity?: ClaimCalculationGrainQuantity;
   claimCalculationGrainQuantityDetail?: ClaimCalculationGrainQuantityDetail;
-  varieties?:Array<ClaimCalculationVariety>;
+  claimCalculationGrainBasket?: ClaimCalculationGrainBasket;
+  varieties?: Array<ClaimCalculationVariety>;
+  claimCalculationGrainBasketProducts?: Array<ClaimCalculationGrainBasketProduct>;
 
   currentClaimStatusCode?: string; 
 }
