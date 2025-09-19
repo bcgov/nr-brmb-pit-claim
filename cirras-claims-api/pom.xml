@@ -42,13 +42,13 @@
 		    <dependency>
 				<groupId>ca.bc.gov.mal.cirras.policies</groupId>
 				<artifactId>cirras-policies-api-rest-client</artifactId>
-				<version>1.12.0</version>
+				<version>1.13.0-SNAPSHOT</version>
 			</dependency>
 			
 		    <dependency>
 				<groupId>ca.bc.gov.mal.cirras.underwriting</groupId>
 				<artifactId>cirras-underwriting-api-rest-client</artifactId>
-				<version>3.8.0</version>
+				<version>3.9.0-SNAPSHOT</version>
 			</dependency>
 
 			<!-- Wildfire OrgUnit -->
