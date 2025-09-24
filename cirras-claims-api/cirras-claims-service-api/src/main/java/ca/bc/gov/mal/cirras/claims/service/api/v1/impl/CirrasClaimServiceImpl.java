@@ -2115,7 +2115,9 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 		if(grainQuantityDetail.getSeededAcres() != null && grainQuantityDetail.getSeededAcres() > 0) {
 			calcEarlyEstYield = fiftyPercentProductionGuarantee * (notNull(grainQuantityDetail.getDamagedAcres(), 0.0) / grainQuantityDetail.getSeededAcres());
 		}
-		// removed the rounding, because, in some cases, it's introducing an error of couple of cents in the calculation of quantityLossClaim
+		if(calcEarlyEstYield > 0) {
+			calcEarlyEstYield = (double) Math.round(calcEarlyEstYield * 1000d) / 1000d;
+		}
 		grainQuantityDetail.setCalcEarlyEstYield(calcEarlyEstYield);
 		
 		//L - Less Early Establishment Deemed Yield Value
