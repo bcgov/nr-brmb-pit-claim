@@ -11,7 +11,8 @@ import {CodeData, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {UntypedFormArray, UntypedFormGroup} from "@angular/forms";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
-import {dollars, dollarsToNumber, makeTitleCase, makeNumberOnly, CALCULATION_UPDATE_TYPE, CALCULATION_STATUS_CODE, getPrintTitle, CLAIM_STATUS_CODE} from "../../../utils"
+import {dollars, dollarsToNumber, makeTitleCase, makeNumberOnly, CALCULATION_UPDATE_TYPE, CALCULATION_STATUS_CODE, getPrintTitle, CLAIM_STATUS_CODE, areNotEqual} from "../../../utils"
+import { setFormStateUnsaved } from "src/app/store/application/application.actions";
 
 @Component({
   selector: "cirras-claims-calculation-detail-grapes",
@@ -26,6 +27,7 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
     @Input() claimNumber?: string;
     @Input() calculationDetail: vmCalculation;
     @Input() updatedCalculation: any;
+    @Input() isUnsaved: boolean;
 
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];
@@ -251,7 +253,7 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
     }
 
     onCancel() {
-        this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+        this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, this.calculationDetail.policyNumber, "false"));
     }
 
     onSave(saveCommentsOnly:boolean) {
@@ -456,6 +458,68 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
 
     setComment() {
         this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
+    }
+
+    
+    isMyFormDirty(){
+        const hasChanged = this.isMyFormReallyDirty()
+
+        if (hasChanged) {
+            this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+        }
+        }
+
+        isMyFormReallyDirty(): boolean {
+
+        if (!this.calculationDetail) return false
+
+        const frmMain = this.viewModel.formGroup as UntypedFormGroup
+
+        if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+                areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+                areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+            
+            return true
+        }
+
+        if (this.calculationDetail.claimCalculationGrapes && 
+            ( areNotEqual (this.calculationDetail.claimCalculationGrapes.coverageAssessedReason, frmMain.controls.coverageAssessedReason.value) ||
+                areNotEqual (this.calculationDetail.claimCalculationGrapes.coverageAmountAssessed, frmMain.controls.coverageAmountAssessed.value) || 
+                areNotEqual (this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted, frmMain.controls.coverageAmountAdjusted.value) 
+            )
+            ) {
+
+            return true
+        }
+
+        // check for changes in the varieties
+
+        // start checking if the information for each field and planting was changed from the original one
+        const formVarieties: UntypedFormArray = frmMain.controls.varieties as UntypedFormArray
+
+        for (let i = 0; i < formVarieties.controls.length; i++){
+            let frmVrty = formVarieties.controls[i] as UntypedFormArray
+
+            let originalVrty = this.calculationDetail.varieties.find( v => v.cropVarietyId == frmVrty.value.cropVarietyId)
+
+            if (originalVrty) {
+
+                // check if the field name, legal location or number of plantings for each field have changed 
+                if (frmVrty.value.yieldActual != originalVrty.yieldActual ||
+                    frmVrty.value.yieldAssessed != originalVrty.yieldAssessed ||
+                    frmVrty.value.yieldAssessedReason != originalVrty.yieldAssessedReason ||  
+                    frmVrty.value.varietyProductionValue != originalVrty.varietyProductionValue ||
+                    frmVrty.value.averagePriceOverride != originalVrty.averagePriceOverride 
+                ) {
+
+                    return true
+                }
+            }
+
+        }
+
+
+        return false
     }
 
 }

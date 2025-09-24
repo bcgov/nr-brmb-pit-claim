@@ -9,6 +9,9 @@ public interface ClaimCalculation extends Serializable {
 	public String getClaimCalculationGuid();
 	public void setClaimCalculationGuid(String claimCalculationGuid);
 
+	public String getClaimCalculationGrainQuantityGuid();
+	public void setClaimCalculationGrainQuantityGuid(String claimCalculationGrainQuantityGuid);
+	
 	public Integer getGrowerNumber();
 	public void setGrowerNumber(Integer growerNumber);
 
@@ -147,11 +150,29 @@ public interface ClaimCalculation extends Serializable {
 	public String getCommodityName();
 	public void setCommodityName(String commodityName);
 
+	public Boolean getIsPedigreeInd();
+	public void setIsPedigreeInd(Boolean isPedigreeInd);
+	
 	public String getCoverageName();
 	public void setCoverageName(String coverageName);
 
 	public String getInsurancePlanName();
 	public void setInsurancePlanName(String insurancePlanName);
+
+	public Integer getLinkedProductId();
+	public void setLinkedProductId(Integer linkedProductId);
+
+	public Integer getLinkedClaimNumber();
+	public void setLinkedClaimNumber(Integer linkedClaimNumber);
+
+	public String getLinkedClaimCalculationGuid();
+	public void setLinkedClaimCalculationGuid(String linkedClaimCalculationGuid);
+	
+	public String getLatestLinkedClaimCalculationGuid();
+	public void setLatestLinkedClaimCalculationGuid(String linkedLatestClaimCalculationGuid);
+	
+	public Integer getLatestLinkedCalculationVersion();
+	public void setLatestLinkedCalculationVersion(Integer latestLinkedCalculationVersion);
 
 	public Boolean getIsOutOfSync();	
 	public void setIsOutOfSync(Boolean isOutOfSync);
@@ -179,6 +200,9 @@ public interface ClaimCalculation extends Serializable {
 
 	public Boolean getIsOutOfSyncVarietyAdded();	
 	public void setIsOutOfSyncVarietyAdded(Boolean isOutOfSyncVarietyAdded);
+
+	public Boolean getIsOutOfSyncGrainBasketProductAdded();
+	public void setIsOutOfSyncGrainBasketProductAdded(Boolean isOutOfSyncGrainBasketProductAdded);
 	
 	List<ClaimCalculationVariety> getVarieties();
 	void setVarieties(List<ClaimCalculationVariety> value);
@@ -200,4 +224,17 @@ public interface ClaimCalculation extends Serializable {
 
 	public ClaimCalculationGrainSpotLoss getClaimCalculationGrainSpotLoss();
 	public void setClaimCalculationGrainSpotLoss(ClaimCalculationGrainSpotLoss claimCalculationGrainSpotLoss);
+
+	public ClaimCalculationGrainQuantity getClaimCalculationGrainQuantity();
+	public void setClaimCalculationGrainQuantity(ClaimCalculationGrainQuantity claimCalculationGrainQuantity);
+
+	public ClaimCalculationGrainQuantityDetail getClaimCalculationGrainQuantityDetail();
+	public void setClaimCalculationGrainQuantityDetail(ClaimCalculationGrainQuantityDetail claimCalculationGrainQuantityDetail);
+
+	public ClaimCalculationGrainBasket getClaimCalculationGrainBasket();
+	public void setClaimCalculationGrainBasket(ClaimCalculationGrainBasket claimCalculationGrainBasket);
+
+	public List<ClaimCalculationGrainBasketProduct> getClaimCalculationGrainBasketProducts();
+	public void setClaimCalculationGrainBasketProducts(List<ClaimCalculationGrainBasketProduct> claimCalculationGrainBasketProducts);
+	
 }

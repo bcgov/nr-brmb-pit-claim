@@ -150,7 +150,8 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       etag: etag,
 
       claimCalculationGuid: calculation.claimCalculationGuid,
-
+      claimCalculationGrainQuantityGuid: calculation.claimCalculationGrainQuantityGuid,
+      
       // calculation
       calculationVersion: calculation.calculationVersion,
       calculationVersionDisplay: calculation.calculationVersion ? 'V' + calculation.calculationVersion : null,
@@ -171,6 +172,7 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       coverageName: calculation.coverageName,
       cropCommodityId: calculation.cropCommodityId,
       commodityName: calculation.commodityName,
+      isPedigreeInd: calculation.isPedigreeInd,
       primaryPerilCode: calculation.primaryPerilCode,
       secondaryPerilCode: calculation.secondaryPerilCode,
       claimStatusCode: calculation.claimStatusCode,
@@ -207,6 +209,13 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
  
       insuredByMeasurementType: calculation.insuredByMeasurementType ? calculation.insuredByMeasurementType : null,
 
+      // linked product / claim / calculation
+      linkedProductId: calculation.linkedProductId,
+      linkedClaimNumber: calculation.linkedClaimNumber,
+      linkedClaimCalculationGuid: calculation.linkedClaimCalculationGuid,
+      latestLinkedCalculationVersion: calculation.latestLinkedCalculationVersion,
+      latestLinkedClaimCalculationGuid: calculation.latestLinkedClaimCalculationGuid,
+
       isOutOfSync: calculation.isOutOfSync,
       isOutOfSyncGrowerNumber: calculation.isOutOfSyncGrowerNumber,
       isOutOfSyncGrowerName: calculation.isOutOfSyncGrowerName,
@@ -223,7 +232,11 @@ export function convertToCalculation(calculationRes: CalculationRsrc, etag?: str
       claimCalculationGrapes: calculation.claimCalculationGrapes,
       claimCalculationGrainUnseeded: calculation.claimCalculationGrainUnseeded,
       claimCalculationGrainSpotLoss: calculation.claimCalculationGrainSpotLoss,
+      claimCalculationGrainQuantity: calculation.claimCalculationGrainQuantity,
+      claimCalculationGrainQuantityDetail: calculation.claimCalculationGrainQuantityDetail,
+      claimCalculationGrainBasket: calculation.claimCalculationGrainBasket,
       varieties: calculation.varieties,
+      claimCalculationGrainBasketProducts: calculation.claimCalculationGrainBasketProducts,
       currentClaimStatusCode: calculation.currentClaimStatusCode
 
   };  

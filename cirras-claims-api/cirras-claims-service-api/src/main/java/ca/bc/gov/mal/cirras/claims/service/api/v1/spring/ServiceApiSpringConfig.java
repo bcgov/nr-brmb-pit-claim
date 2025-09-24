@@ -16,6 +16,7 @@ import ca.bc.gov.mal.cirras.claims.service.api.v1.CirrasDataSyncService;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.impl.CirrasClaimServiceImpl;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.impl.CirrasDataSyncServiceImpl;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
+import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingService;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.model.factory.ClaimFactory;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.model.factory.CirrasDataSyncFactory;
 import ca.bc.gov.mal.cirras.claims.service.api.v1.util.CirrasServiceHelper;
@@ -44,6 +45,7 @@ public class ServiceApiSpringConfig {
 	@Autowired ResourceBundleMessageSource messageSource;
 	@Autowired Properties applicationProperties;
 	@Autowired CirrasPolicyService cirrasPolicyService;
+	@Autowired CirrasUnderwritingService cirrasUnderwritingService;
 	@Autowired CirrasDataSyncFactory cirrasDataSyncFactory; 
 	
 	
@@ -79,6 +81,10 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationGrapesDao(persistenceSpringConfig.claimCalculationGrapesDao());
 		result.setClaimCalculationGrainUnseededDao(persistenceSpringConfig.claimCalculationGrainUnseededDao());
 		result.setClaimCalculationGrainSpotLossDao(persistenceSpringConfig.claimCalculationGrainSpotLossDao());
+		result.setClaimCalculationGrainQuantityDao(persistenceSpringConfig.claimCalculationGrainQuantityDao());
+		result.setClaimCalculationGrainQuantityDetailDao(persistenceSpringConfig.claimCalculationGrainQuantityDetailDao());
+		result.setClaimCalculationGrainBasketDao(persistenceSpringConfig.claimCalculationGrainBasketDao());
+		result.setClaimCalculationGrainBasketProductDao(persistenceSpringConfig.claimCalculationGrainBasketProductDao());
 		result.setClaimCalculationUserDao(persistenceSpringConfig.claimCalculationUserDao());
 		
 		return result;
@@ -110,10 +116,16 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationGrapesDao(persistenceSpringConfig.claimCalculationGrapesDao());
 		result.setClaimCalculationGrainUnseededDao(persistenceSpringConfig.claimCalculationGrainUnseededDao());
 		result.setClaimCalculationGrainSpotLossDao(persistenceSpringConfig.claimCalculationGrainSpotLossDao());
+		result.setClaimCalculationGrainQuantityDao(persistenceSpringConfig.claimCalculationGrainQuantityDao());
+		result.setClaimCalculationGrainQuantityDetailDao(persistenceSpringConfig.claimCalculationGrainQuantityDetailDao());
+		result.setClaimCalculationGrainBasketDao(persistenceSpringConfig.claimCalculationGrainBasketDao());
+		result.setClaimCalculationGrainBasketProductDao(persistenceSpringConfig.claimCalculationGrainBasketProductDao());
 		result.setClaimCalculationUserDao(persistenceSpringConfig.claimCalculationUserDao());
 		result.setClaimDao(persistenceSpringConfig.claimDao());
+		result.setCropCommodityDao(persistenceSpringConfig.cropCommodityDao());
 		
 		result.setCirrasPolicyService(cirrasPolicyService);
+		result.setCirrasUnderwritingService(cirrasUnderwritingService);
 
 		result.setCirrasDataSyncService(cirrasDataSyncService());
 		result.setCirrasServiceHelper(cirrasServiceHelper());

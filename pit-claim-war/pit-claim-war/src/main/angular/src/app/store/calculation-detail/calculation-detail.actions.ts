@@ -39,6 +39,7 @@ export interface LoadCalculationDetailAction extends LabeledAction {
   payload: {
     claimCalculationGuid: string;
     claimNumber: string;
+    policyNumber: string;
     doRefreshManualClaimData: string;
   }
 }
@@ -55,13 +56,14 @@ export interface LoadCalculationDetailErrorAction extends Action {
   }
 }
 
-export function loadCalculationDetail(claimCalculationGuid: string, displayLabel: string, claimNumber: string, doRefreshManualClaimData: string): LoadCalculationDetailAction {
+export function loadCalculationDetail(claimCalculationGuid: string, displayLabel: string, claimNumber: string, policyNumber: string, doRefreshManualClaimData: string): LoadCalculationDetailAction {
   return {
     type: LOAD_CALCULATION_DETAIL,
     displayLabel: displayLabel,
     payload: {
       claimCalculationGuid,
       claimNumber,
+      policyNumber,
       doRefreshManualClaimData
     }
   };

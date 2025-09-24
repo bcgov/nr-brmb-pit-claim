@@ -21,6 +21,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainBasketDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainBasketProductDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDao;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainQuantityDetailDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainSpotLossDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationGrainUnseededDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationPlantAcresDao;
@@ -39,6 +43,10 @@ import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.PerilCodeDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.CalculationStatusCodeDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationDaoImpl;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainBasketDaoImpl;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainBasketProductDaoImpl;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainQuantityDaoImpl;
+import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainQuantityDetailDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainSpotLossDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationGrainUnseededDaoImpl;
 import ca.bc.gov.mal.cirras.claims.persistence.v1.dao.mybatis.ClaimCalculationPlantAcresDaoImpl;
@@ -165,6 +173,26 @@ public class PersistenceSpringConfig {
 		return new ClaimCalculationGrainSpotLossDaoImpl(); 
 	}
 
+	@Bean
+	public ClaimCalculationGrainQuantityDao claimCalculationGrainQuantityDao() { 
+		return new ClaimCalculationGrainQuantityDaoImpl();
+	}
+
+	@Bean
+	public ClaimCalculationGrainQuantityDetailDao claimCalculationGrainQuantityDetailDao() { 
+		return new ClaimCalculationGrainQuantityDetailDaoImpl();
+	}
+
+	@Bean
+	public ClaimCalculationGrainBasketDao claimCalculationGrainBasketDao() { 
+		return new ClaimCalculationGrainBasketDaoImpl(); 
+	}
+
+	@Bean
+	public ClaimCalculationGrainBasketProductDao claimCalculationGrainBasketProductDao() { 
+		return new ClaimCalculationGrainBasketProductDaoImpl(); 
+	}
+	
 	@Bean
 	public ClaimCalculationUserDao claimCalculationUserDao() { 
 		return new ClaimCalculationUserDaoImpl(); 

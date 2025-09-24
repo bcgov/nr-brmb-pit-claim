@@ -9,6 +9,7 @@ import {SignOutPageComponent} from "./components/sign-out-page/sign-out-page.com
 import {SCOPES_UI} from "./utils/scopes";
 import { CalculationsContainer } from "./containers/calculations/calculations-container.component";
 import { ClaimsContainer } from "./containers/claims/claims-container.component";
+import { DeactivateGuard } from "./services/util/DeactivateGuard";
 
 const LANDING_SCOPES = [[SCOPES_UI.GET_TOP_LEVEL, SCOPES_UI.GET_CODE_TABLES, SCOPES_UI.SEARCH_CALCULATIONS]];
 const CLAIMS_SCOPES = [[SCOPES_UI.SEARCH_CLAIMS]];
@@ -25,12 +26,14 @@ const routesDesktop: Routes = [
     },  
     { path: R.CALCULATION_DETAIL, children: [
       { 
-        path: ':claimNumber', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
-        canActivate: [ResourcesAuthGuard]
+        path: ':policyNumber/:claimNumber', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
+        canActivate: [ResourcesAuthGuard],
+        canDeactivate: [DeactivateGuard]
       },
       { 
-        path: ':claimNumber/:claimCalculationGuid', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
-        canActivate: [ResourcesAuthGuard]
+        path: ':policyNumber/:claimNumber/:claimCalculationGuid', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},
+        canActivate: [ResourcesAuthGuard],
+        canDeactivate: [DeactivateGuard]
       }
     ] },
 

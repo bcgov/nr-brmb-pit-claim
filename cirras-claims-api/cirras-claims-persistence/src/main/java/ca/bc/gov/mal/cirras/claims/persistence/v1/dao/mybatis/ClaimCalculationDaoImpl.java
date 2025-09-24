@@ -182,6 +182,53 @@ public class ClaimCalculationDaoImpl extends BaseDao implements ClaimCalculation
 		return result;
 	}
 	
+	@Override
+	public List<ClaimCalculationDto> getCalculationsByGrainQuantityGuid(String claimCalculationGrainQuantityGuid) throws DaoException {
+		
+		logger.debug("<getCalculationsByGrainQuantityGuid");
+		
+		List<ClaimCalculationDto> dtos = null;
+
+		try {
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			parameters.put("claimCalculationGrainQuantityGuid", claimCalculationGrainQuantityGuid);
+			
+			dtos = this.mapper.getCalculationsByGrainQuantityGuid(parameters);
+
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">getCalculationsByGrainQuantityGuid " + dtos);
+		return dtos;		
+	}	
+
+	@Override
+	public ClaimCalculationDto getByClaimNumberAndVersion(Integer claimNumber, Integer calculationVersion) throws DaoException {
+		logger.debug("<getByClaimNumberAndVersion");
+
+		ClaimCalculationDto result = null;
+
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("claimNumber", claimNumber);
+			parameters.put("calculationVersion", calculationVersion);
+
+			result = this.mapper.getByClaimNumberAndVersion(parameters);
+			
+			if(result!=null) {
+				result.resetDirty();
+			}
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">getByClaimNumberAndVersion " + result);
+		return result;
+	}
+	
 	
 	@Override
 	public PagedDtos<ClaimCalculationDto> select(

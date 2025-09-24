@@ -18,6 +18,7 @@ public class CropCommodityDto extends BaseDto<CropCommodityDto> {
 
 	private Integer cropCommodityId;
 	private String commodityName;
+	private Boolean isPedigreeInd;
 	private Date effectiveDate;
 	private Date expiryDate;
 	private Date dataSyncTransDate;
@@ -33,6 +34,7 @@ public class CropCommodityDto extends BaseDto<CropCommodityDto> {
 	public CropCommodityDto(CropCommodityDto dto) {
 		this.cropCommodityId = dto.cropCommodityId;
 		this.commodityName = dto.commodityName;
+		this.isPedigreeInd = dto.isPedigreeInd;
 		this.effectiveDate = dto.effectiveDate;
 		this.expiryDate = dto.expiryDate;
 		this.dataSyncTransDate = dto.dataSyncTransDate;
@@ -95,6 +97,14 @@ public class CropCommodityDto extends BaseDto<CropCommodityDto> {
 
 	public void setCommodityName(String commodityName) {
 		this.commodityName = commodityName;
+	}
+
+	public Boolean getIsPedigreeInd() {
+		return isPedigreeInd;
+	}
+
+	public void setIsPedigreeInd(Boolean isPedigreeInd) {
+		this.isPedigreeInd = isPedigreeInd;
 	}
 
 	public Date getEffectiveDate() {

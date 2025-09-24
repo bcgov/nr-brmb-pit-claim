@@ -1,0 +1,335 @@
+<div class="cirras-claims-base-container page-width-container desktop">
+    <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
+  
+      <cirras-calculation-detail-header *ngIf=" calculationDetail"
+        [calculationDetail]="calculationDetail"
+        [calculationComment]="calculationComment"
+      ></cirras-calculation-detail-header>
+  
+      <form [formGroup]="getViewModel().formGroup"> 
+        <div class="ccc-row-group ccc-row-group-bordered">
+          <label>Claims Details</label>
+          <div class="ccc-row">
+            <span class="ccc-col-left">
+              State: {{ calculationDetail.claimStatusCode }}  
+              <br /> <br />
+              Submitted By: 
+                <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">
+                  {{ calculationDetail.submittedByName }}
+                </span>
+              <br/><br />
+              Submitted Date: 
+                <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">                       
+                {{ calculationDetail.submittedByDate | date:'yyyy-MM-dd' }}  
+                </span>  
+              <br/><br />
+            </span>
+            <span class="ccc-col-right">
+              Primary Peril:
+              <mat-form-field appearance="fill">
+                <mat-select formControlName="primaryPerilCode" required (selectionChange)="isMyFormDirty()">
+                  <mat-option>(None)</mat-option>
+                  <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code">{{ option.description }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-error *ngIf="getViewModel().formGroup.get('primaryPerilCode').hasError('required')">{{ERROR_MESSAGES.required()}}</mat-error>
+            </span>
+          </div>
+          <div class="ccc-row">
+            <span class="ccc-col-left">                    
+                Recommended By: {{ calculationDetail.recommendedByName }}
+                <br/><br />
+                Recommended Date: {{ calculationDetail.recommendedByDate | date:'yyyy-MM-dd' }}      
+                <br/><br />
+                Approved By: {{ calculationDetail.approvedByName }}
+                <br/><br />
+            </span>
+            <span class="ccc-col-right">
+                Secondary Peril:
+                <mat-form-field appearance="fill">
+                  <mat-select formControlName="secondaryPerilCode" (selectionChange)="isMyFormDirty()">
+                      <mat-option>(None)</mat-option>
+                      <mat-option *ngFor="let option of perilCodeOptions" [value]="option.code"
+                      >{{ option.description }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+            </span>
+          </div>
+          <div class="ccc-row">
+            <span class="ccc-col-left">                    
+                Approved Date: {{ calculationDetail.approvedByDate | date:'yyyy-MM-dd' }}                   
+            </span>
+            <span class="ccc-col-right">                      
+            </span>
+          </div>
+        </div>
+  
+        <div class="ccc-row-group ccc-row-group-bordered">
+            <label>Grain Basket Coverage - From Statement of Premiums and Coverages</label>
+            <div class="ccc-container" style="grid-template-columns: 3fr 1fr 1fr">
+              <div></div>
+              <div class="ccc-right"><span class="right-space">Deductible</span></div>
+              <div class="ccc-right">Coverage</div>
+
+              <div>
+                <span class="ccc-expression">A</span> Grain Basket
+              </div>
+              <div class="ccc-border-right ccc-right"> 
+                <span class="right-space">
+                  {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketDeductible : "") | number:'1.0-0' }}%
+                
+                  <span #el matTooltip="Deductible doesn't match with CIRRAS" 
+                    *ngIf="calculationDetail && 
+                          calculationDetail.claimCalculationGrainBasket && 
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketDeductible == true" 
+                    style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
+                </span>
+              </div>
+              <div class="ccc-right">                 
+                {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.grainBasketCoverageValue : "") | currency }}
+                <span #el matTooltip="Grain Basket Coverage doesn't match with CIRRAS" 
+                  *ngIf="calculationDetail &&
+                          calculationDetail.claimCalculationGrainBasket &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue &&
+                          calculationDetail.claimCalculationGrainBasket.isOutOfSyncGrainBasketCoverageValue == true" 
+                  style="margin-left: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                </span>
+              </div>
+
+              <div>
+                <span class="ccc-expression">B</span> Quantity Coverage For All Commodities
+              </div>
+              <div class="ccc-border-right"></div>
+              <div class="ccc-right">    
+                {{ ( calculationDetail && calculationDetail.claimCalculationGrainBasket ? calculationDetail.claimCalculationGrainBasket.quantityTotalCoverageValue : quantityTotalCoverageValue) | currency }}
+                  <span #el matTooltip="The Coverage Value for at least one commodity is out of sync with CIRRAS" 
+                    *ngIf="displayWarningOnCmdtyCvrgAll()" 
+                    style="margin-left: 10px;">
+                      <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
+              </div>
+
+              <div>
+                <span class="ccc-expression">C</span> Total Yield Coverage
+              </div>
+              <div class="ccc-border-right ccc-right">
+                <span class="ccc-expression">A + B</span>
+              </div>
+              <div class="ccc-right">                 
+                {{ totalYieldCoverageValue | currency }}
+              </div>
+
+            </div>
+        </div>
+
+
+        <div class="ccc-row-group ccc-row-group-bordered">
+            <label>Yield Value</label>
+            <div class="ccc-container" 
+            style="grid-template-columns: 26px 1fr 1fr 1fr 1fr 1fr 1fr"
+                *ngIf="calculationDetail && calculationDetail.claimCalculationGrainBasketProducts"> 
+
+            <div></div>
+
+          <!-- commodity warning -->
+          <div class="ccc-row-group ccc-row-group-bordered" *ngIf="calculationDetail.isOutOfSyncGrainBasketProductAdded">
+            <div class="ccc-row">
+                <span class="ccc-col-left">
+                  Grain Basket product added in CIRRAS       
+                  <span #el matTooltip="Grain Basket product added in CIRRAS">                    
+                    <mat-icon [ngStyle]="{'color':'orange', 'vertical-align': 'bottom'}">warning</mat-icon>
+                  </span>
+              </span>
+            </div>
+          </div>
+
+            <div class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-left">
+               Commodity
+            </div>
+            <div class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-center">
+                Seeds
+            </div>
+            <div class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-center">
+                QTY Claim Amount
+            </div>
+            <div class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-center">
+                Yield To Count <br /> (Tonnes)
+            </div>
+            <div class="ccc-border-bottom ccc-border-right ccc-header ccc-justify-center">
+                100% Insurable <br /> Value / Tonne                                           
+            </div>
+            <div class="ccc-border-bottom ccc-header ccc-justify-center">
+                Value
+            </div>
+            
+            <div *ngFor="let product of calculationDetail.claimCalculationGrainBasketProducts"
+                style="display:contents">
+                <div></div>
+                <div class="ccc-border-right left-justified">
+                    &nbsp;{{ getCmdtyName(product.cropCommodityName) }}
+
+                  <span #el matTooltip="Product removed in CIRRAS"
+                        *ngIf="product.isOutOfSyncProductRemoved"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>   
+
+                </div>
+                <div class="ccc-border-right ccc-justify-center">
+                    {{ product.isPedigreeInd ? "Pedigreed" : "Non-Pedigreed"}}
+                </div>
+                <div class="ccc-border-right ccc-justify-center">
+                    {{ product.quantityClaimAmount | currency}}
+                    <span #el matTooltip="Quantity Claim Amount does not match the amount in the approved quantity claim."
+                        *ngIf="product.isOutOfSyncQuantityClaimAmount"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                    </span>
+                </div>
+                <div class="ccc-border-right ccc-justify-center">
+                    {{ product.totalYieldToCount}}
+                    <span #el matTooltip="Total Yield To Count does not match Verified yield in the Inventory and Yield App"
+                        *ngIf="product.isOutOfSyncTotalYieldToCount"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>  
+                </div>
+                <div class="ccc-border-right ccc-justify-center">
+                    {{ product.hundredPercentInsurableValue | currency }}
+                    <span #el matTooltip="100% Insurable Value does not with CIRRAS"
+                        *ngIf="product.isOutOfSyncHundredPercentInsurableValue"> 
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
+                </div>
+                <div class=" ccc-justify-center"> 
+                    <!-- if the backend has calculated the yieldValue then show the backend calculation otherwise calculate it in the front end-->
+                    {{ (product.yieldValue ? product.yieldValue : product.totalYieldToCount * product.hundredPercentInsurableValue ) | currency }}             
+                </div>                        
+                                
+            </div>
+
+            <div class="ccc-border-right ccc-border-top ccc-justify-right" style="grid-column-start: 1; grid-column-end: 4;">
+              Sum of All approved QTY Claims
+            </div>
+            <div class="ccc-border-right ccc-border-top ccc-justify-center">
+              <span>{{ totalApprovedQuantityClaims | currency}}</span>
+            </div>
+            <div class="ccc-border-right border-left ccc-border-top  ccc-justify-right" style="grid-column-start: 6; grid-column-end: 7;">
+              <span class="ccc-expression">D</span>
+                Total Yield Value
+            </div>
+
+            <div class="ccc-justify-center ccc-border-top"> 
+              <span #el matTooltip="Total Yield Value doesn't match the Harvested Value pulled from the Inventory & Yield app → Verified Yield → Basket Coverage table" 
+                *ngIf="showQtyTotYieldValueWarning()"
+                style="margin-right: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+                  </span>
+              {{ quantityTotalYieldValue | currency }}       
+            </div> 
+
+            </div>
+        </div>
+        
+
+
+
+        <div class="ccc-row-group ccc-row-group-bordered">
+          <label>Claim Determination</label>
+          <div class="ccc-container ccc-coverage">
+
+          <div>
+            <span class="ccc-expression">E</span> Yield Loss
+          </div>
+          <div class="ccc-border-right ccc-right">       
+            <span class="ccc-expression">C - D</span>    
+          </div>
+          <div class="ccc-right" > 
+            {{ totalYieldLoss | currency }}
+          </div>
+  
+          <div class="ccc-border-right" style="grid-column-start: 1; grid-column-end: 3;">
+            <span class="ccc-expression">F</span> Less: Quantity Coverage Yield Loss Indemnities For All Commodities
+          </div>
+          <div class="ccc-right"> 
+            <span #el [matTooltip]="tooltipIndemnitiesWarning" 
+                *ngIf="showIndemnitiesWarning()"
+                style="margin-right: 10px;">
+                    <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
+            </span>
+            {{ quantityTotalYieldLossIndemnity | currency }}
+          </div> 
+  
+          <div>
+            <span class="ccc-expression">G</span> Grain Basket Claim
+          </div>
+          <div class="ccc-border-right ccc-right">
+            <span class="ccc-expression">E - F</span>
+          </div>
+          <div class="ccc-right">
+            {{ totalClaimAmount | currency }}
+          </div>
+
+        </div>
+        </div>
+
+
+        <div class="ccc-row-group ccc-row-group-bordered">
+            <label>Comments</label>
+            <div class="ccc-entire">
+                <mat-form-field appearance="fill">
+                    <textarea matInput formControlName="calculationComment" rows="4" maxlength="1000" (keyup)="setComment()">
+                      {{ calculationDetail.calculationComment }} 
+                    </textarea>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="ccc-row-group">
+          <div class="ccc-row">
+            <span class="ccc-col-left">
+              <button mat-raised-button color="primary" 
+                (click)="onCancel()"
+              ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload</button>
+            </span>
+  
+            <span class="ccc-col-right">
+              <span *ngIf="isUnsaved" style="color:orange;">
+                <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
+                Unsaved Changes
+              </span>
+              &nbsp;
+ 
+              <button mat-raised-button color="primary"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton()"
+                (click)="onSubmit()"
+              ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
+              &nbsp;
+              <button mat-raised-button color="primary"
+               *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() "
+                (click)="onReopen()"
+              ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
+              &nbsp;
+              <button mat-raised-button color="primary"
+                  *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT'"
+                  (click)="onSave(false)"
+              ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
+              &nbsp;
+              <button mat-raised-button color="primary"
+                  *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT'"
+                  (click)="onSave(true)"
+              ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
+              &nbsp;
+              <button mat-raised-button color="primary"
+                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid"
+                  (click)="onPrint()"
+              ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button> 
+            </span>
+            
+          </div> 
+        </div>
+      </form>
+    </div>
+  </div>
+  

@@ -76,6 +76,46 @@ public class ClaimDaoImpl extends BaseDao implements ClaimDao {
 	}
 
 	@Override
+	public ClaimDto selectByProductId(Integer ippId) throws DaoException {
+		logger.debug("<selectByProductId");
+
+		ClaimDto result = null;
+
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("ippId", ippId);
+			result = this.mapper.selectByProductId(parameters);
+			
+			if(result!=null) {
+				result.resetDirty();
+			}
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">selectByProductId " + result);
+		return result;
+	}
+
+	@Override
+	public List<ClaimDto> selectQuantityClaimsByPolicyId(Integer iplId) throws DaoException {
+		logger.debug("<selectQuantityClaimsByPolicyId");
+
+		List<ClaimDto> result = null;
+
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("iplId", iplId);
+			result = this.mapper.selectQuantityClaimsByPolicyId(parameters);
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">selectQuantityClaimsByPolicyId " + result);
+		return result;
+	}
+	
+	@Override
 	public void insert(ClaimDto dto, String userId) throws DaoException {
 		logger.debug("<insert");
 

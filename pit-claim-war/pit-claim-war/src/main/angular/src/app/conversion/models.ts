@@ -1,5 +1,9 @@
 import {ClaimCalculationGrainSpotLoss, ClaimCalculationGrainUnseeded, ClaimCalculationGrapes, ClaimCalculationPlantAcres, ClaimCalculationPlantUnits, ClaimCalculationVariety} from "@cirras/cirras-claims-api";
 import { ClaimCalculationBerries } from '@cirras/cirras-claims-api';
+import { ClaimCalculationGrainBasket } from "@cirras/cirras-claims-api/model/claimCalculationGrainBasket";
+import { ClaimCalculationGrainBasketProduct } from "@cirras/cirras-claims-api/model/claimCalculationGrainBasketProduct";
+import { ClaimCalculationGrainQuantity } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantity";
+import { ClaimCalculationGrainQuantityDetail } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantityDetail";
 
 export interface PagedCollection {
     pageNumber?: number;
@@ -61,7 +65,8 @@ export interface vmClaim {
 export interface vmCalculation {
   etag?:string;
   claimCalculationGuid: string;
-
+  claimCalculationGrainQuantityGuid?: string;
+  
   // calculation
   calculationVersion: number;
   calculationVersionDisplay: string;
@@ -82,6 +87,7 @@ export interface vmCalculation {
   coverageName: string;
   cropCommodityId: number;
   commodityName: string;
+  isPedigreeInd?: boolean;
   primaryPerilCode: string;
   secondaryPerilCode: string;
   claimStatusCode: string;
@@ -118,6 +124,13 @@ export interface vmCalculation {
 
   insuredByMeasurementType?: string;
 
+  // linked product / claim / calculation
+  linkedProductId?: number;
+  linkedClaimNumber?: number;
+  linkedClaimCalculationGuid?: string;
+  latestLinkedCalculationVersion?: number;
+  latestLinkedClaimCalculationGuid?: string;
+
   // out of sync flags
   isOutOfSync?: boolean;
   isOutOfSyncGrowerNumber?: boolean;
@@ -128,6 +141,7 @@ export interface vmCalculation {
   isOutOfSyncGrowerCity?: boolean;
   isOutOfSyncGrowerProvince?: boolean;
   isOutOfSyncVarietyAdded?: boolean;
+  isOutOfSyncGrainBasketProductAdded?: boolean;
   
   claimCalculationBerries?: ClaimCalculationBerries;
   claimCalculationPlantUnits?: ClaimCalculationPlantUnits;
@@ -135,8 +149,11 @@ export interface vmCalculation {
   claimCalculationGrapes?: ClaimCalculationGrapes;
   claimCalculationGrainUnseeded?: ClaimCalculationGrainUnseeded;
   claimCalculationGrainSpotLoss?: ClaimCalculationGrainSpotLoss;
-  varieties?:Array<ClaimCalculationVariety>;
+  claimCalculationGrainQuantity?: ClaimCalculationGrainQuantity;
+  claimCalculationGrainQuantityDetail?: ClaimCalculationGrainQuantityDetail;
+  claimCalculationGrainBasket?: ClaimCalculationGrainBasket;
+  varieties?: Array<ClaimCalculationVariety>;
+  claimCalculationGrainBasketProducts?: Array<ClaimCalculationGrainBasketProduct>;
 
   currentClaimStatusCode?: string; 
-
 }
