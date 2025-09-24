@@ -107,8 +107,8 @@
                             {{ isLinked() ? "(D-I)xE" : "(D-H)xE" }}
                           </span>
                         </td>
-                        <td *ngIf="showNonPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( prodGuaranteeMinusAssessmentsNonPedigree ? prodGuaranteeMinusAssessmentsNonPedigree : "" ) | number:'1.2-2' }}</td>
-                        <td *ngIf="showPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( prodGuaranteeMinusAssessmentsPedigree ? prodGuaranteeMinusAssessmentsPedigree : "" )  | number:'1.2-2' }}</td>
+                        <td *ngIf="showNonPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( prodGuaranteeMinusAssessmentsNonPedigree ? prodGuaranteeMinusAssessmentsNonPedigree : "0" ) | number:'1.2-2' }}</td>
+                        <td *ngIf="showPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( prodGuaranteeMinusAssessmentsPedigree ? prodGuaranteeMinusAssessmentsPedigree : "0" )  | number:'1.2-2' }}</td>
                       </tr>
                       <tr *ngIf="showNonPedigreeColumn && showPedigreeColumn">
                         <td class="td-abc-label">K</td>
@@ -129,8 +129,8 @@
                             {{ isLinked() ? "(Q or P)xE" : "(O or N)xE" }}
                           </span>
                         </td>
-                        <td *ngIf="showNonPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue : "" ) | currency }}</td>
-                        <td *ngIf="showPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue : "" )  | currency }}</td>
+                        <td *ngIf="showNonPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( calculationDetailNonPedigree && calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue ? calculationDetailNonPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue : "0" ) | currency }}</td>
+                        <td *ngIf="showPedigreeColumn" style="text-align: right; padding-right: 10px; width: 100px;">{{ ( calculationDetailPedigree && calculationDetailPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue ? calculationDetailPedigree.claimCalculationGrainQuantityDetail.earlyEstDeemedYieldValue : "0" )  | currency }}</td>
                       </tr>
                       <!-- possibly hidden lines -->
                       <tr *ngIf="showYieldRows">
