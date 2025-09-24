@@ -12,7 +12,7 @@
 		<java-source-version>17</java-source-version>
 		<java-target-version>17</java-target-version>
 		<dollar>$</dollar>
-		<spring.version>5.3.26</spring.version>
+		<spring.version>6.0.0</spring.version>
 	</properties>
 	<modules>
 		<module>cirras-claims-model</module>
