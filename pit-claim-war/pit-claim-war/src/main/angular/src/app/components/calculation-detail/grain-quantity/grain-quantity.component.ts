@@ -451,6 +451,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = 0.5 * calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight * damagedAcres / seededAcres
     }
 
+    result =  Math.round(result * 1000) / 1000; // it needs to be rounded before further calculations  // PIM-2144
     return result
   }
 
