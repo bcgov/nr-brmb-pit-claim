@@ -13,10 +13,11 @@ import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 
 @Component({
-  selector: 'calculation-detail-grain-quantity',
-  templateUrl: './grain-quantity.component.html',
-  styleUrl: './grain-quantity.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'calculation-detail-grain-quantity',
+    templateUrl: './grain-quantity.component.html',
+    styleUrl: './grain-quantity.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationDetailGrainQuantityComponent extends BaseComponent implements OnChanges, AfterViewInit{
 
@@ -450,6 +451,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = 0.5 * calcDetail.claimCalculationGrainQuantityDetail.productionGuaranteeWeight * damagedAcres / seededAcres
     }
 
+    result =  Math.round(result * 1000) / 1000; // it needs to be rounded before further calculations  // PIM-2144
     return result
   }
 

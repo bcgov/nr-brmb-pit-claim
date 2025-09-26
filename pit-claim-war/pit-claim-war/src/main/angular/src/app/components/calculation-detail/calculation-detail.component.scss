@@ -1,15 +1,15 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as var;
 
 .calculation-detail{
   .header-status-indicator{
     &.ACTIVE {
-      color: $colour-green;
-      border-color: $colour-green;;
+      color: var.$colour-green;
+      border-color: var.$colour-green;;
     }
 
     &.INACTIVE {
-      color: $colour-red;
-      border-color: $colour-red;;
+      color: var.$colour-red;
+      border-color: var.$colour-red;;
     }
   }
 }

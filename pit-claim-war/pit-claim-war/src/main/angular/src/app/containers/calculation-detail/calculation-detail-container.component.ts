@@ -24,8 +24,9 @@ import {ErrorState, LoadState} from "../../store/application/application.state";
             [loadState]="loadState$ | async"
             [errorState]="errorState$ | async"
             [isUnsaved]="isUnsaved$ | async"
-        ></cirras-claims-calculation-detail>`, 
-    providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
+        ></cirras-claims-calculation-detail>`,
+    providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
+    standalone: false
 })
 export class CalculationDetailContainer extends BaseContainer  {
     displayLabel = "Calculation Detail";
