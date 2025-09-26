@@ -1,12 +1,12 @@
-// @import '../../node_modules/@angular/material/theming';
-@import 'variables';
+// @use '../../node_modules/@angular/material/theming';
+@use 'variables' as var;
 
 body {
   margin: 0;
 }
 
 .cirras-claims-loading-screen {
-  height: $wf1-loading-screen-height;
+  height: var.$wf1-loading-screen-height;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -14,19 +14,19 @@ body {
 }
 
 mat-dialog-container.mat-mdc-dialog-container {
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
   --mdc-dialog-supporting-text-color: rgba(0, 0, 0, 0.87);
   min-width: 450px;
 }
 
 button.mat-mdc-fab.mat-primary,
 button.mat-mdc-raised-button.mat-primary {
-  background-color: $colour-button-primary;
-  color: $colour-white;
+  background-color: var.$colour-button-primary;
+  color: var.$colour-white;
 
   &:not([disabled]).intermediate-action{
-    background-color: $colour-intermediate-action;
+    background-color: var.$colour-intermediate-action;
 
     &[disabled]{
 
@@ -36,22 +36,22 @@ button.mat-mdc-raised-button.mat-primary {
 
 button.mat-mdc-fab.mat-secondary,
 button.mat-mdc-raised-button.mat-secondary {
-  background-color: $colour-white;
-  color: $colour-blue;
+  background-color: var.$colour-white;
+  color: var.$colour-blue;
 }
 
 button.mat-mdc-fab:not([disabled]).mat-primary:hover,
 button.mat-mdc-raised-button:not([disabled]).mat-primary:hover {
-  background-color: $colour-button-primary-hover;
+  background-color: var.$colour-button-primary-hover;
 }
 button.mat-mdc-fab,
 button.mat-mdc-raised-button {
-  background-color: $colour-button;
-  color: $colour-white;
-  font-family: $font-family-main;
-  font-size: $font-size;
+  background-color: var.$colour-button;
+  color: var.$colour-white;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
   box-shadow: none !important;
-  border: 1px solid $colour-blue;
+  border: 1px solid var.$colour-blue;
 
   &:not([class*=mat-elevation-z]) {
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
@@ -61,24 +61,24 @@ button.mat-mdc-raised-button {
 }
 
 button.mat-mdc-raised-button[disabled]{
-  border: 1px solid $colour-medium-grey;
+  border: 1px solid var.$colour-medium-grey;
 }
 
 button.mat-mdc-raised-button:not([disabled]):hover {
-  background-color: $colour-button-hover;
+  background-color: var.$colour-button-hover;
 }
 
 mat-toolbar.mat-primary.wf1-public-application-header {
-  background-color: $colour-header-background;
+  background-color: var.$colour-header-background;
   padding-left: var(--cirras-claims-gutter-space);
   padding-right: var(--cirras-claims-gutter-space);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: $colour-orange;
+  border-bottom: var.$colour-orange;
   border-bottom-style: solid;
   border-bottom-width: 2px;
-  height: $wf1-public-app-header-height;
+  height: var.$wf1-public-app-header-height;
   position: fixed;
   width: calc(var(--vw, 1vw) * 100);
   z-index: 2;
@@ -88,13 +88,13 @@ mat-toolbar.mat-primary.wf1-public-application-header {
   .app-logo-and-title-div,
   .action-items {
     flex: 0 0 auto;
-    height: $wf1-public-app-header-img-height;
+    height: var.$wf1-public-app-header-img-height;
     padding: 0;
     left: -20px;
     position: relative;
 
     img {
-      height: $wf1-public-app-header-img-height;
+      height: var.$wf1-public-app-header-img-height;
     }
   }
 
@@ -133,7 +133,7 @@ mat-toolbar.mat-primary.wf1-public-application-header {
       cursor: pointer;
 
       mat-icon {
-        color: $colour-white;
+        color: var.$colour-white;
       }
     }
 
@@ -150,7 +150,7 @@ mat-toolbar.mat-primary.wf1-public-application-header {
 
   #header-title {
     font-size: 22px;
-    color: $colour-white;
+    color: var.$colour-white;
     white-space: nowrap;
     margin-left: 6px;
     margin-bottom: 8px;
@@ -171,11 +171,11 @@ mat-toolbar.mat-primary.wf1-public-application-header {
 
 .wf1-public-application-header-menu {
   .mat-mdc-menu-item {
-    color: $colour-light-grey;
+    color: var.$colour-light-grey;
   }
 
   .mat-mdc-menu-item:not(:last-child) {
-    border-bottom: $colour-light-grey solid 1px;
+    border-bottom: var.$colour-light-grey solid 1px;
   }
 
   .mat-mdc-menu-content:not(:empty) {
@@ -194,13 +194,13 @@ mat-toolbar.mat-primary.wf1-public-application-header {
 .mat-mdc-menu-item,
 .mat-mdc-table,
 .mat-mdc-list-item {
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
 }
 
 .mat-mdc-table {
   thead {
-    font-family: $font-family-emphasis;
+    font-family: var.$font-family-emphasis;
   }
 }
 
@@ -218,8 +218,8 @@ mat-toolbar.mat-primary.wf1-public-application-header {
   .mat-mdc-menu-item,
   .mat-mdc-table,
   .mat-mdc-list-item {
-    font-family: $font-family-main;
-    font-size: $font-size;
+    font-family: var.$font-family-main;
+    font-size: var.$font-size;
   }
 
   .justify-space-between{
@@ -251,7 +251,7 @@ mat-toolbar.mat-primary.wf1-public-application-header {
 }
 
 .mat-mdc-tooltip {
-  font-size: $font-size;
+  font-size: var.$font-size;
 }
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
@@ -286,13 +286,13 @@ pdf-viewer-overlay {
 }
 
 h1 {
-  font-size: $font-size-h1;
+  font-size: var.$font-size-h1;
   padding-left: var(--cirras-claims-gutter-space);
   display: inline-block;
 }
 
 h2 {
-  font-size: $font-size-h2;
+  font-size: var.$font-size-h2;
   font-weight: 200;
   margin-block-end: 0;
   margin-block-start: 0;
@@ -300,48 +300,48 @@ h2 {
 }
 
 h3 {
-  font-size: $font-size-h3;
-  font-weight: $font-weight-emphasis;
+  font-size: var.$font-size-h3;
+  font-weight: var.$font-weight-emphasis;
 }
 
 h1,
 h2{
-  font-weight: $font-weight;
+  font-weight: var.$font-weight;
 }
 
 a {
   color: #027DB4;
 
   &.icon-button{
-    color: $colour-black;
+    color: var.$colour-black;
     text-decoration:none;
     &:hover{
-      color: $colour-black;
+      color: var.$colour-black;
     }
   }
 }
 
 a:hover {
-  color: $colour-orange
+  color: var.$colour-orange
 }
 
 #core-interface-container mat-sidenav .mat-nav-list.mat-mdc-list-base {
 
   a.mat-mdc-list-item:hover {
-    color: $colour-orange
+    color: var.$colour-orange
   }
 
   a.mat-mdc-list-item.nav-item-active {
-    font-family: $font-family-emphasis;
+    font-family: var.$font-family-emphasis;
     font-weight: 600;
-    color: $colour-blue;
+    color: var.$colour-blue;
   }
 }
 
 #core-interface-container .ngx-pagination {
   text-align: center;
   padding-inline-start: 0;
-  border-radius: $wf1-border-radius;
+  border-radius: var.$wf1-border-radius;
   margin: 0;
 
   li:first-child {
@@ -356,9 +356,9 @@ a:hover {
   }
 
   li {
-    border-left: $colour-light-grey solid 1px;
-    border-top: $colour-light-grey solid 1px;
-    border-bottom: $colour-light-grey solid 1px;
+    border-left: var.$colour-light-grey solid 1px;
+    border-top: var.$colour-light-grey solid 1px;
+    border-bottom: var.$colour-light-grey solid 1px;
     border-right: none;
     vertical-align: middle;
     margin: 0;
@@ -378,12 +378,12 @@ a:hover {
   }
 
   li.current {
-    //background-color: $colour-blue;
+    //background-color: var.$colour-blue;
 
     color: #003366;
     font-weight: bold;
     background: white;
-    border: 2px solid $colour-blue;
+    border: 2px solid var.$colour-blue;
     border-radius: 2px;
   }
 
@@ -394,7 +394,7 @@ a:hover {
   a:hover,
   button:hover {
     color: #131313;
-    background-color: $colour-light-orange;
+    background-color: var.$colour-light-orange;
   }
 
   .pagination-next a::after,
@@ -444,13 +444,13 @@ a:hover {
 }
 
 .emphasis {
-  font-family: $font-family-emphasis !important;
-  font-weight: $font-weight-emphasis !important;
+  font-family: var.$font-family-emphasis !important;
+  font-weight: var.$font-weight-emphasis !important;
 }
 
 .emphasis-more{
-  font-family: $font-family-emphasis !important;
-  font-weight: $font-weight-emphasis-more !important;
+  font-family: var.$font-family-emphasis !important;
+  font-weight: var.$font-weight-emphasis-more !important;
 }
 
 .loading-spinner {
@@ -491,18 +491,18 @@ a:hover {
 
 .field-label {
   text-align: right;
-  font-weight: $font-weight;
+  font-weight: var.$font-weight;
 
 }
 
 .field-note {
   font-weight: normal;
-  font-size: $font-size-small !important;
+  font-size: var.$font-size-small !important;
 }
 
 .field-value {
   text-align: left;
-  font-weight: $font-weight-emphasis-more;
+  font-weight: var.$font-weight-emphasis-more;
 
   display: inline;
   text-overflow: ellipsis;
@@ -522,7 +522,7 @@ a:hover {
 
 
 .mat-mdc-footer-row th {
-  font-weight: $font-weight;
+  font-weight: var.$font-weight;
 }
 
 .mat-mdc-snack-bar-container {
@@ -530,12 +530,12 @@ a:hover {
 }
 
 .mat-icon[disabled]{
-  color: $colour-disabled-text;
+  color: var.$colour-disabled-text;
 }
 
 .mat-mdc-cell[disabled]{
   mat-icon{
-    color: $opacity-grey;
+    color: var.$opacity-grey;
   }
 }
 
@@ -561,11 +561,11 @@ a:hover {
 
 
 #core-interface-container {
-  font-family: $font-family-main;
+  font-family: var.$font-family-main;
 
   .mat-mdc-paginator-container {
     justify-content: center;
-    font-size: $font-size;
+    font-size: var.$font-size;
   }
 
   .table-wrapper{
@@ -591,30 +591,30 @@ a:hover {
         }
 
         &.border-right{
-          border-right: 1px solid $colour-light-grey;
+          border-right: 1px solid var.$colour-light-grey;
           &.border-right-strong{
-            border-right: 2px solid $colour-light-grey;
+            border-right: 2px solid var.$colour-light-grey;
           }
         }
 
         &.border-top{
-          border-top: 1px solid $colour-light-grey;
+          border-top: 1px solid var.$colour-light-grey;
           &.border-top-strong{
-            border-top: 2px solid $colour-light-grey;
+            border-top: 2px solid var.$colour-light-grey;
           }
         }
 
         &.border-bottom{
-          border-bottom: 1px solid $colour-light-grey;
+          border-bottom: 1px solid var.$colour-light-grey;
           &.border-bottom-strong{
-            border-bottom: 2px solid $colour-light-grey;
+            border-bottom: 2px solid var.$colour-light-grey;
           }
         }
 
         &.border-left{
-          border-left: 1px solid $colour-light-grey;
+          border-left: 1px solid var.$colour-light-grey;
           &.border-left-strong{
-            border-left: 2px solid $colour-light-grey;
+            border-left: 2px solid var.$colour-light-grey;
           }
         }
 
@@ -625,17 +625,17 @@ a:hover {
 }
 
 .owl-dt-popup-container {
-  font-family: $font-family-main;
+  font-family: var.$font-family-main;
 }
 
 
 .mat-mdc-snack-bar-container {
-  color: $colour-white;
+  color: var.$colour-white;
   position: inherit;
   padding: 0 !important;
   overflow: hidden;
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
   border-radius: 5px;
 
   .snack-bar-content{
@@ -646,7 +646,7 @@ a:hover {
     .icon-panel{
       padding:var(--cirras-claims-gutter-space);
       display: flex;
-      background-color: $colour-lighter-grey;
+      background-color: var.$colour-lighter-grey;
       height: 100%;
       align-items: center;
     }
@@ -658,64 +658,64 @@ a:hover {
 
     button{
       padding: calc(#{var(--cirras-claims-gutter-space)}/2);
-      border: 1px $colour-white solid;
-      border-radius: $wf1-border-radius;
-      color: $colour-white;
+      border: 1px var.$colour-white solid;
+      border-radius: var.$wf1-border-radius;
+      color: var.$colour-white;
       margin-right: var(--cirras-claims-gutter-space);
       cursor: pointer;
-      font-family: $font-family-main;
+      font-family: var.$font-family-main;
     }
   }
 
   &.snackbar-success{
-    background-color: $colour-success;
+    background-color: var.$colour-success;
 
     &.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-      background-color: $colour-success;
+      background-color: var.$colour-success;
     }
 
     mat-icon{
-      color: $colour-success;
+      color: var.$colour-success;
     }
     button{
-      background-color: $colour-success;
+      background-color: var.$colour-success;
     }
   }
 
   &.snackbar-error{
 
-    background-color: $colour-errors;
+    background-color: var.$colour-errors;
 
     &.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-      background-color: $colour-errors;
+      background-color: var.$colour-errors;
     }
 
     mat-icon{
-      color: $colour-errors;
+      color: var.$colour-errors;
     }
     button{
-      background-color: $colour-errors;
+      background-color: var.$colour-errors;
     }
   }
 
   &.snackbar-warning{
-    background-color: $colour-warnings;
+    background-color: var.$colour-warnings;
     mat-icon{
-      color: $colour-warnings;
+      color: var.$colour-warnings;
     }
     button{
-      background-color: $colour-warnings;
+      background-color: var.$colour-warnings;
     }
   }
 
   &.snackbar-update{
-    background-color: $colour-blue-grey;
+    background-color: var.$colour-blue-grey;
     mat-icon{
-      color: $colour-blue-grey;
+      color: var.$colour-blue-grey;
     }
     button{
-      background-color: $colour-blue-grey;
-      color: $colour-light-yellow;
+      background-color: var.$colour-blue-grey;
+      color: var.$colour-light-yellow;
     }
   }
 }
@@ -745,8 +745,8 @@ cirras-claims-root {
   .mat-mdc-menu-item,
   .mat-mdc-table,
   .mat-mdc-list-item {
-    font-family: $font-family-main;
-    font-size: $font-size;
+    font-family: var.$font-family-main;
+    font-size: var.$font-size;
   }
 
   button.mat-mdc-menu-item {
@@ -800,10 +800,10 @@ cirras-claims-root {
         padding-right: var(--cirras-claims-gutter-space);
         height: unset !important;
         min-height: 50px !important;
-        border-bottom: 1px solid $colour-light-grey;
+        border-bottom: 1px solid var.$colour-light-grey;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        font-family: $font-family-main;
+        font-family: var.$font-family-main;
 
         .expansion-header{
           align-items: center;
@@ -831,7 +831,7 @@ cirras-claims-root {
       }
 
       .mat-expansion-panel-content{
-        font-family: $font-family-main;
+        font-family: var.$font-family-main;
         .mat-expansion-panel-body{
           padding: 0;
         }
@@ -839,8 +839,8 @@ cirras-claims-root {
 
       .cirras-claims-expansion-panel-body {
         padding: 0 var(--cirras-claims-gutter-space) var(--cirras-claims-gutter-space);
-        font-size: $font-size;
-        font-family: $font-family-main;
+        font-size: var.$font-size;
+        font-family: var.$font-family-main;
 
         .expansion-header-sub{
           display: flex;
@@ -877,9 +877,9 @@ cirras-claims-root {
       }
 
       .mat-action-row {
-        border-bottom: 1px solid $colour-lighter-grey;
+        border-bottom: 1px solid var.$colour-lighter-grey;
         padding: var(--cirras-claims-gutter-space);
-        background-color: $colour-lighter-grey;
+        background-color: var.$colour-lighter-grey;
       }
 
 
@@ -897,7 +897,7 @@ cirras-claims-root {
   }
 
   .form-flex-wrapper{
-    font-family: $font-family-main;
+    font-family: var.$font-family-main;
     padding-top: 10px;
     display: flex;
     flex-flow: row wrap;
@@ -971,7 +971,7 @@ cirras-claims-root {
             margin-top: 5px;
             text-overflow: ellipsis;
             overflow-x: hidden;
-            font-weight: $font-weight-emphasis-more;
+            font-weight: var.$font-weight-emphasis-more;
             white-space: nowrap;
             display: block;
           }
@@ -999,10 +999,10 @@ cirras-claims-root {
         }
 
         mat-error {
-          font-size: $font-size-small;
+          font-size: var.$font-size-small;
           text-align: left;
           position: relative;
-          color: $colour-errors;
+          color: var.$colour-errors;
         }
 
       }
@@ -1018,8 +1018,8 @@ cirras-claims-root {
 
   .expansion-panel-actions{
     &.table-search-header{
-      border-top: 1px solid $colour-light-grey;
-      border-bottom: 1px solid $colour-light-grey;
+      border-top: 1px solid var.$colour-light-grey;
+      border-bottom: 1px solid var.$colour-light-grey;
       margin: var(--cirras-claims-gutter-space) 0 0 0;
       display: flex;
       justify-content: space-between;
@@ -1038,7 +1038,7 @@ cirras-claims-root {
         }
 
         .label{
-          font-weight: $font-weight-emphasis;
+          font-weight: var.$font-weight-emphasis;
         }
 
         .date-picker-input {
@@ -1046,7 +1046,7 @@ cirras-claims-root {
           min-width: 0;
 
           input{
-            background-color: $colour-white;
+            background-color: var.$colour-white;
           }
 
           button {
@@ -1078,41 +1078,41 @@ cirras-claims-root {
     border-bottom: none;
 
     .highlight{
-      background-color: $colour-highlight;
+      background-color: var.$colour-highlight;
     }
 
     .highlight2{
-      background-color: $colour-highlight2;
+      background-color: var.$colour-highlight2;
     }
 
     .highlight3{
-      background-color: $colour-highlight3;
+      background-color: var.$colour-highlight3;
     }
 
     .highlight4{
-      background-color: $colour-highlight4;
+      background-color: var.$colour-highlight4;
     }
 
     .mat-mdc-cell.selected-grid-item{
-      background-color: $colour-blue;
-      color: $colour-white;
+      background-color: var.$colour-blue;
+      color: var.$colour-white;
     }
 
     .mat-mdc-table{
       tr{
-        border-right: 1px solid $colour-light-grey;
+        border-right: 1px solid var.$colour-light-grey;
       }
       .mat-mdc-row:hover {
-        background-color: $colour-white;
+        background-color: var.$colour-white;
       }
       .mat-mdc-row:nth-child(odd){
-        background-color: $colour-white;
+        background-color: var.$colour-white;
       }
 
       th{
         &.day,
         &.availability-status-cell{
-          border-top: 1px solid $colour-light-grey;
+          border-top: 1px solid var.$colour-light-grey;
 
         }
 
@@ -1157,7 +1157,7 @@ cirras-claims-root {
           justify-content: flex-end;
         }
         .nav-action{
-          color: $colour-blue;
+          color: var.$colour-blue;
           cursor: pointer;
         }
       }
@@ -1166,7 +1166,7 @@ cirras-claims-root {
         &.day{
           white-space: normal !important;
           &:hover{
-            background-color: $colour-highlight4;
+            background-color: var.$colour-highlight4;
           }
 
           .mat-mdc-menu-trigger{
@@ -1177,7 +1177,7 @@ cirras-claims-root {
       }
 
       .availability-status-cell{
-        border-left: 1px solid $colour-light-grey;
+        border-left: 1px solid var.$colour-light-grey;
         div.availability-status{
           display: flex;
           padding-right: 30px;
@@ -1224,14 +1224,14 @@ cirras-claims-root {
 
 
 .owl-dt-popup-container{
-  font-family: $font-family-main
+  font-family: var.$font-family-main
 }
 
 .mat-expansion-panel-content,
 button,
 .mat-mdc-card{
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
 }
 
 
@@ -1252,7 +1252,7 @@ button,
   align-items: center;
   margin-right: 10px;
   .mat-icon{
-    color: $colour-warnings;
+    color: var.$colour-warnings;
     margin-right: 10px;
   }
 }
@@ -1280,7 +1280,7 @@ input{
 }
 
 .background-lighter-grey{
-  background-color: $colour-lighter-grey;
+  background-color: var.$colour-lighter-grey;
 }
 
 textarea.mat-mdc-input-element.cdk-textarea-autosize{
@@ -1294,7 +1294,7 @@ textarea.mat-mdc-input-element.cdk-textarea-autosize{
 }
 
 mat-error.mat-mdc-form-field-error {
-  color: $colour-errors;
+  color: var.$colour-errors;
 }
 
 .align-flex-start{
@@ -1318,11 +1318,11 @@ mat-error.mat-mdc-form-field-error {
 }
 
 .intermediate-action{
-  color: $colour-intermediate-action;
+  color: var.$colour-intermediate-action;
 
   &.mat-mdc-fab.mat-primary span,
   &.mat-mdc-raised-button.mat-primary span{
-    color: $colour-white;
+    color: var.$colour-white;
   }
 }
 
@@ -1358,23 +1358,23 @@ mat-error.mat-mdc-form-field-error {
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
   color: #6a6a6a;
   opacity: 1; /* Firefox */
   padding-left: 2px;
 }
 
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
   color: #6a6a6a;
   padding-left: 2px;
 }
 
 ::-ms-input-placeholder { /* Microsoft Edge */
-  font-family: $font-family-main;
-  font-size: $font-size;
+  font-family: var.$font-family-main;
+  font-size: var.$font-size;
   color: #6a6a6a;
   padding-left: 2px;
 }

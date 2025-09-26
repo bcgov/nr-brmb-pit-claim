@@ -30,7 +30,8 @@ export enum DIALOG_TYPE {
     selector: "cirras-claims-base-dialog",
     templateUrl: "./base-dialog.component.html",
     styleUrls: ["../../common/base/base.component.scss", "./base-dialog.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class BaseDialogComponent implements AfterViewInit, OnChanges, OnDestroy {
     DIALOG_TYPE_OBJ = DIALOG_TYPE;

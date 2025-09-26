@@ -13,7 +13,8 @@ import { ErrorState, LoadState } from "src/app/store/application/application.sta
     styleUrls: ["../common/base/base.component.scss",
         "../common/base-collection/collection.component.scss",
         "./calculation-detail.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationDetailComponent implements OnInit {
     @Input() calculationDetail: vmCalculation;
