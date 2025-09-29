@@ -1385,6 +1385,10 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
 				if(dtoLinkedCalculation != null) {
 					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
+					
+					logger.debug("> totalClaimAmount = " + totalClaimAmount.toString());
+					logger.debug("> quantityLossClaim = " + (claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()).toString());
+					
 					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
 						throw new ServiceException("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim.");
 					}
