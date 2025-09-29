@@ -1,6 +1,6 @@
 package ca.bc.gov.mal.cirras.claims.service.api.v1.validation.constraints;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 import ca.bc.gov.mal.cirras.claims.service.api.v1.validation.Errors;
 

@@ -14,6 +14,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -84,12 +85,12 @@ public class PersistenceSpringConfig {
 	}
 
 	@Bean
-	public PlatformTransactionManager transactionManager(DataSource cirrasClaimsDataSource) {
+	public PlatformTransactionManager transactionManager(@Qualifier("cirrasClaimsDataSource") DataSource cirrasClaimsDataSource) {
 		return new DataSourceTransactionManager(cirrasClaimsDataSource);
 	}
 
 	@Bean
-	public SqlSessionFactoryBean sqlSessionFactory(DataSource cirrasClaimsDataSource) {
+	public SqlSessionFactoryBean sqlSessionFactory(@Qualifier("cirrasClaimsDataSource") DataSource cirrasClaimsDataSource) {
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
 		sessionFactory.setDataSource(cirrasClaimsDataSource);
 		

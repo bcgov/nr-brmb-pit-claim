@@ -8,12 +8,13 @@ import {getCodeOptions} from "../../utils/code-table-utils";
 import {navigateToCalculation} from "../../utils";
 
 @Component({
-  selector: "cirras-claims-calculations",
-  templateUrl: "calculations.component.html",
-  styleUrls: ["../common/base/base.component.scss",
-      "../common/base-collection/collection.component.scss",
-      "calculations.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "cirras-claims-calculations",
+    templateUrl: "calculations.component.html",
+    styleUrls: ["../common/base/base.component.scss",
+        "../common/base-collection/collection.component.scss",
+        "calculations.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 
 export class CalculationsComponent extends CollectionComponent implements OnChanges, AfterViewInit {

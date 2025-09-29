@@ -5,9 +5,10 @@ import { getCodeOptions } from "../../../utils/code-table-utils";
 import { removeDuplicateWords } from "../../../utils"
 
 @Component({
-  selector: 'cirras-calculation-printout-header',
-  templateUrl: './calculation-printout-header.component.html',
-  styleUrls: ['./calculation-printout-header.component.scss']
+    selector: 'cirras-calculation-printout-header',
+    templateUrl: './calculation-printout-header.component.html',
+    styleUrls: ['./calculation-printout-header.component.scss'],
+    standalone: false
 })
 export class CalculationPrintoutHeaderComponent {
 

@@ -22,7 +22,8 @@ import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common"
                 [loadState]="loadState$ | async"
                 [errorState]="errorState$ | async"
         ></cirras-claims-calculations>`,
-    providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
+    providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
+    standalone: false
 })
 export class CalculationsContainer extends BaseContainer {
     collection$: Observable<any> = this.store.pipe(select(selectCalculations()));

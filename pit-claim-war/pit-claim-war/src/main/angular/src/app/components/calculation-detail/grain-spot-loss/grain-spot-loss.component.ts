@@ -12,10 +12,11 @@ import { setFormStateUnsaved } from 'src/app/store/application/application.actio
 import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'calculation-detail-grain-spot-loss',
-  templateUrl: './grain-spot-loss.component.html',
-  styleUrl: './grain-spot-loss.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'calculation-detail-grain-spot-loss',
+    templateUrl: './grain-spot-loss.component.html',
+    styleUrl: './grain-spot-loss.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 
 export class CalculationDetailGrainSpotLossComponent extends BaseComponent implements OnChanges, AfterViewInit {

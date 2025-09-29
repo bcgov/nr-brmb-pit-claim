@@ -3,10 +3,11 @@ import { roundedDollars } from 'src/app/utils';
 import {vmCalculation} from "../../../conversion/models";
 
 @Component({
-  selector: 'cirras-calculation-printout-berries',
-  templateUrl: './berries.component.html',
-  styleUrls: ['./berries.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'cirras-calculation-printout-berries',
+    templateUrl: './berries.component.html',
+    styleUrls: ['./berries.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 
 export class CalculationPrintoutBerriesComponent {

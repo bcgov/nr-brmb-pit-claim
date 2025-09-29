@@ -482,6 +482,108 @@ public class ClaimEndpointTest extends EndpointsTest {
 		logger.debug(">testGetInsertUpdateDeleteGrainSpotLossClaim()");
 	}
 	
+	// handles a very specific case, where Andrew Pillar found a bug in submitting linked calculations
+	@Test
+	public void testSubmitSpecificGrainQuantityClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
+		logger.debug("<testSubmitSpecificGrainQuantityClaim()");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+
+		// Quantity Claim with linked product
+        String claimNumber1 = "37256";       // Set to Open Grain Quantity Claim without a calculation.
+        currentClaimNumber = claimNumber1;
+		String policyNumber = null;
+        ClaimListRsrc searchResults = service.getClaimList(topLevelEndpoints, claimNumber1, policyNumber, null, null, null, pageNumber, pageRowCount);
+
+        searchResults = service.getClaimList(topLevelEndpoints, claimNumber1, policyNumber, null, null, null, pageNumber, pageRowCount);
+		Assert.assertEquals(1, searchResults.getCollection().size());
+		
+		ClaimRsrc claimRsrc = searchResults.getCollection().get(0);
+		//Only works if there is no calculation yet
+		ClaimCalculationRsrc claimCalculationRsrc = service.getClaim(claimRsrc);
+
+		Assert.assertNotNull(claimCalculationRsrc);
+		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainQuantity());
+		Assert.assertNotNull(claimCalculationRsrc.getClaimCalculationGrainQuantityDetail());
+		Assert.assertEquals("OPEN", claimCalculationRsrc.getClaimStatusCode());
+		Assert.assertEquals(null, claimCalculationRsrc.getClaimCalculationGrainQuantityGuid());
+
+		//Create new calculation
+		ClaimCalculationRsrc createdCalculation = service.createClaimCalculation(claimCalculationRsrc);
+
+		ClaimCalculationGrainQuantity grainQty = createdCalculation.getClaimCalculationGrainQuantity();
+		ClaimCalculationGrainQuantityDetail grainQtyDetail = createdCalculation.getClaimCalculationGrainQuantityDetail();
+		
+		//User Entered values for non-pedigreed calculation 
+		grainQtyDetail.setAssessedYield(null);
+		grainQtyDetail.setDamagedAcres(1.0);
+		grainQtyDetail.setSeededAcres(245.0);
+		grainQtyDetail.setInspEarlyEstYield(null);
+		grainQty.setReseedClaim(null);
+		grainQty.setAdvancedClaim(null);
+		createdCalculation.setTotalClaimAmount(120558.22); //30769.32
+
+		ClaimCalculationRsrc updatedCalculation = service.updateClaimCalculation(createdCalculation, null);
+
+		//Add second (pedigreed) calculation
+		String claimNumber2 = "37257";       // Set to Open Grain Quantity Claim without a calculation.
+		policyNumber = null;
+        searchResults = service.getClaimList(topLevelEndpoints, claimNumber2, policyNumber, null, null, null, pageNumber, pageRowCount);
+		
+		Assert.assertEquals(1, searchResults.getCollection().size());
+		
+		ClaimRsrc claimRsrc2 = searchResults.getCollection().get(0);
+		//Only works if there is no calculation yet
+		ClaimCalculationRsrc claimCalculationRsrc2 = service.getClaim(claimRsrc2);
+
+		Assert.assertNotNull(claimCalculationRsrc2);
+		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantity());
+		Assert.assertEquals(updatedCalculation.getClaimCalculationGrainQuantityGuid(), claimCalculationRsrc2.getClaimCalculationGrainQuantityGuid());
+		Assert.assertNotNull(claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail());
+		Assert.assertEquals("OPEN", claimCalculationRsrc2.getClaimStatusCode());
+
+		ClaimCalculationGrainQuantityDetail grainQtyDetail2 = claimCalculationRsrc2.getClaimCalculationGrainQuantityDetail();
+		
+		//User Entered values for the pedigreed calculation 
+		grainQtyDetail2.setAssessedYield(null);
+		grainQtyDetail2.setDamagedAcres(null);
+		grainQtyDetail2.setSeededAcres(null);
+		grainQtyDetail2.setInspEarlyEstYield(null);
+		claimCalculationRsrc2.setTotalClaimAmount(30769.32); //120558.22
+
+		//Create new calculation
+		ClaimCalculationRsrc createdCalculation2 = service.createClaimCalculation(claimCalculationRsrc2);
+
+		//Test to submit: testing only this specific message
+		try {
+			service.updateClaimCalculation(createdCalculation2, ClaimsServiceEnums.UpdateTypes.SUBMIT.toString());
+			Assert.fail("updateClaimCalculation should have thrown an exception because Amount on line Z (claim amount pushed to CIRRAS) can't exceed the total coverage (line F) of the claim.");
+		} catch ( CirrasClaimServiceException e) {
+			// Expected.
+			Assert.assertNotNull(e.getMessage());
+			Assert.assertTrue(e.getMessage().contains("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim."));
+		}
+
+// 		commenting delete so I can look in these calculations in ui
+//		ClaimCalculationListRsrc claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber1, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+//
+//		//Delete calculations
+//		service.deleteClaimCalculation(createdCalculation2, true);
+//
+//		//Check if both calculations are deleted
+//		claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber1, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+//		Assert.assertEquals(0, claimCalculations.getCollection().size());
+//
+//		claimCalculations = service.getClaimCalculations(topLevelEndpoints, claimNumber2, null, null, null, null, null, null, "claimNumber", "ASC", pageNumber, pageRowCount);
+//		Assert.assertEquals(0, claimCalculations.getCollection().size());
+
+		logger.debug(">testSubmitSpecificGrainQuantityClaim()");
+	}
+
+	
 	@Test
 	public void testGetInsertUpdateDeleteGrainQuantityClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
 		logger.debug("<testGetInsertUpdateDeleteGrainQuantityClaim()");
