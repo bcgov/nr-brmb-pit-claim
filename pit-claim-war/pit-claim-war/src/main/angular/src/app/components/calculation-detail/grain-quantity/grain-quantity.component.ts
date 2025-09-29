@@ -58,7 +58,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
   totalClaimAmountNonPedigree: number
   totalClaimAmountPedigree: number
 
-  difBetweenZandY: number
+  difBetweenZandVorW: number
 
   showEarlyEstDeemedYieldValueRows = false
   showNonPedigreeColumn = false  
@@ -139,8 +139,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.viewModel.formGroup.controls.reseedClaim.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.advancedClaim.valueChanges.subscribe(value => this.updateCalculated() )
 
-    this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
-    this.viewModel.formGroup.controls.totalClaimAmountPedigree.valueChanges.subscribe(value => this.calculateDiffBeteenSumZandY() )
+    this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.valueChanges.subscribe(value => this.calculateDiffBetweenSumZandVorW() )
+    this.viewModel.formGroup.controls.totalClaimAmountPedigree.valueChanges.subscribe(value => this.calculateDiffBetweenSumZandVorW() )
 
   }
 
@@ -167,13 +167,14 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
         this.productionGuaranteeAmount = this.calculationDetail.claimCalculationGrainQuantity.productionGuaranteeAmount
         this.totalYieldLossValue = this.calculationDetail.claimCalculationGrainQuantity.totalYieldLossValue
         this.quantityLossClaim = this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim
+        this.maxClaimPayable = this.calculationDetail.claimCalculationGrainQuantity.maxClaimPayable
 
         this.setValues(this.calculationDetail)
       }
 
-      this.difBetweenZandY = (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 )  
+      this.difBetweenZandVorW = (this.calculationDetailNonPedigree && this.calculationDetailNonPedigree.totalClaimAmount ? this.calculationDetailNonPedigree.totalClaimAmount : 0 )  
                             + (this.calculationDetailPedigree && this.calculationDetailPedigree.totalClaimAmount ? this.calculationDetailPedigree.totalClaimAmount : 0 ) 
-                            - this.quantityLossClaim
+                            - (Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue))))
 
       this.enableDisableFormControls();
 
@@ -287,6 +288,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValuePedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
       this.yieldValueWithEarlyEstDeemedYieldPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
       this.totalClaimAmountPedigree = calcDetail.totalClaimAmount
+      // prodGuaranteeMinusAssessments is not saved in the database it's only calcylated in the front end
+      this.prodGuaranteeMinusAssessmentsPedigree = this.calculateProductionGuaranteeWeight(this.calculationDetailPedigree, <FormControl>this.viewModel.formGroup.controls.assessedYieldPedigree)
+
     } else {
       this.fiftyPercentProductionGuaranteeNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.fiftyPercentProductionGuarantee
       this.calcEarlyEstYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.calcEarlyEstYield
@@ -294,8 +298,9 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValueNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValue
       this.yieldValueWithEarlyEstDeemedYieldNonPedigree = calcDetail.claimCalculationGrainQuantityDetail.yieldValueWithEarlyEstDeemedYield
       this.totalClaimAmountNonPedigree = calcDetail.totalClaimAmount
+      // prodGuaranteeMinusAssessments is not saved in the database it's only calcylated in the front end
+      this.prodGuaranteeMinusAssessmentsNonPedigree = this.calculateProductionGuaranteeWeight(this.calculationDetailNonPedigree, <FormControl>this.viewModel.formGroup.controls.assessedYieldNonPedigree)
     }
-
   }
 
   resetValues(isPedigreeInd: boolean) {
@@ -308,6 +313,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValuePedigree = null
       this.yieldValueWithEarlyEstDeemedYieldPedigree = null
       this.totalClaimAmountPedigree = null
+      this.prodGuaranteeMinusAssessmentsPedigree = null
     } else {
       this.fiftyPercentProductionGuaranteeNonPedigree = null
       this.calcEarlyEstYieldNonPedigree = null
@@ -315,6 +321,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       this.yieldValueNonPedigree = null
       this.yieldValueWithEarlyEstDeemedYieldNonPedigree = null
       this.totalClaimAmountNonPedigree = null
+      this.prodGuaranteeMinusAssessmentsNonPedigree = null
     }
 
   }
@@ -377,17 +384,20 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     // Line Y: Lesser of ( V or W ) - X
     this.quantityLossClaim = this.calculateQuantityLossClaim() 
 
+    //Lesser of ( V or W )
+    let lesserOfVorW = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)) )
+
     // Populate Line X 
     if (!this.calculationDetail.claimCalculationGuid) {
       if (this.calculationDetail.isPedigreeInd) {      
-        this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue(this.quantityLossClaim)
+        this.viewModel.formGroup.controls.totalClaimAmountPedigree.setValue(lesserOfVorW)
       } else {
-        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(this.quantityLossClaim)
+        this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.setValue(lesserOfVorW)
       }
     }
 
-    // Difference of sum of Z - Y
-    this.calculateDiffBeteenSumZandY()
+    // Difference of sum of Z - Lesser of ( V or W )
+    this.calculateDiffBetweenSumZandVorW()
   }
   
   calculateProductionGuaranteeWeight(calcDetail: vmCalculation, ctlAssessedYield: FormControl){
@@ -502,7 +512,6 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   calculateQuantityLossClaim() {
     // calculated as the lesser of (Maximum Claim Payable or Total Quantity Loss) - Less Advanced Claim(s)
-
     let result = 0
     let advancedClaim = 0
 
@@ -514,10 +523,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     return result
   } 
 
-  calculateDiffBeteenSumZandY(){
+  calculateDiffBetweenSumZandVorW(){
 
     let result = 0 
-
+    let lesserOfVorW = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)))
+    
     if ( this.viewModel.formGroup.controls.totalClaimAmountNonPedigree && !isNaN(parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ))) {
       result = parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value )
     }
@@ -526,7 +536,7 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
       result = result + parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value )
     }
 
-    this.difBetweenZandY = result - this.quantityLossClaim
+    this.difBetweenZandVorW = result - lesserOfVorW
   }
 
   onCancel() {
@@ -659,8 +669,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           // take the user entered value
           updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountPedigree.value) : 0
         } else {
-          // take the calculated value
-          updatedCalculation.totalClaimAmount = this.quantityLossClaim
+          // take the lesser of V or W
+          updatedCalculation.totalClaimAmount = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)) )
         }
         
       } else {
@@ -674,8 +684,8 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
           // take the user entered value
           updatedCalculation.totalClaimAmount = this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value ? parseFloat(this.viewModel.formGroup.controls.totalClaimAmountNonPedigree.value) : 0
         } else {
-          // take the calculated value
-          updatedCalculation.totalClaimAmount = this.quantityLossClaim
+          // take the lesser of V or W
+          updatedCalculation.totalClaimAmount = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)) )
         }
         
       }
@@ -734,9 +744,11 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
     // If there is a second calculation, the sum of both payed out amounts have to be equal to Quantity Loss Claim on line Y.
     if (this.calculationDetail.linkedClaimCalculationGuid && this.isLinkedCalculationSubmitted() ) {
-      
-      if (  (Math.round( (totalClaimAmountNonPedigree + totalClaimAmountPedigree) * 100) / 100) !== (Math.round(this.quantityLossClaim  * 100 ) / 100) ) {
-        displayErrorMessage(this.snackbarService, "The sum of Pedigree and Non-Pedigree Total Claim Amount should not exceed the Quantity Loss Claim.")
+      //Lesser of ( V or W )
+      let lesserOfVorW = Math.max(0, ( Math.min(this.maxClaimPayable, this.totalYieldLossValue)) )
+
+      if (  (Math.round( (totalClaimAmountNonPedigree + totalClaimAmountPedigree) * 100) / 100) !== (Math.round(lesserOfVorW  * 100 ) / 100) ) {
+        displayErrorMessage(this.snackbarService, "The sum of Pedigree and Non-Pedigree Total Claim Amount should not exceed the lesser of V or W.")
         return false
       }
     }
@@ -871,12 +883,14 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
 
   // If there are two products, the button is only enabled/visible if there is a second calculation 
-  // and the sum of the paid out amount of both calculations equals Quantity Loss Claim.
+  // and the sum of the paid out amount of both calculations equals Lesser of ( V or W ).
   showPrintButton() {
     if (this.calculationDetail.linkedProductId) {
-      
+       //Lesser of ( V or W )
+      let lesserOfVorW = Math.max(0, ( Math.min(this.calculationDetail.claimCalculationGrainQuantity.maxClaimPayable, this.calculationDetail.claimCalculationGrainQuantity.totalYieldLossValue)) )
+
       if (this.calculationDetail.linkedClaimCalculationGuid && this.calculationDetailNonPedigree && this.calculationDetailPedigree && 
-        (Math.round( (this.calculationDetailNonPedigree.totalClaimAmount + this.calculationDetailPedigree.totalClaimAmount) * 100) / 100) == (Math.round(this.calculationDetail.claimCalculationGrainQuantity.quantityLossClaim  * 100 ) / 100) 
+        (Math.round( (this.calculationDetailNonPedigree.totalClaimAmount + this.calculationDetailPedigree.totalClaimAmount) * 100) / 100) == (Math.round(lesserOfVorW  * 100 ) / 100) 
       ) {
 
         return true

@@ -1381,15 +1381,17 @@ public class CirrasClaimServiceImpl implements CirrasClaimService {
 
 			if(updateType.equals(ClaimsServiceEnums.UpdateTypes.SUBMIT.toString())) {
 				//On Submit: If the linked calculation is already submitted, the sum of both submitted amounts on line Z 
-				//has to be equal to the calculated value on line Y
+				//has to be equal to the lesser of V or W
 				ClaimCalculationDto dtoLinkedCalculation = claimCalculationDao.fetch(claimCalculation.getLinkedClaimCalculationGuid());
 				if(dtoLinkedCalculation != null) {
 					Double totalClaimAmount = notNull(dtoLinkedCalculation.getTotalClaimAmount(), 0.0) + notNull(claimCalculation.getTotalClaimAmount(), 0.0);
+					Double totalQuantityLoss = Math.max(0, Math.min(claimCalculation.getClaimCalculationGrainQuantity().getMaxClaimPayable(), claimCalculation.getClaimCalculationGrainQuantity().getTotalYieldLossValue()));
+					totalQuantityLoss = (double) Math.round(totalQuantityLoss * 100d) / 100d;
 					
 					logger.debug("> totalClaimAmount = " + totalClaimAmount.toString());
-					logger.debug("> quantityLossClaim = " + (claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()).toString());
-					
-					if(Double.compare(totalClaimAmount, claimCalculation.getClaimCalculationGrainQuantity().getQuantityLossClaim()) != 0) {
+					logger.debug("> quantityLossClaim = " + totalQuantityLoss.toString());
+
+					if(Double.compare(totalClaimAmount, totalQuantityLoss) != 0) {
 						throw new ServiceException("The calculation can't be submitted because the sum of the Total Claim Amount has to be equal to the calculated Quantity Loss Claim.");
 					}
 				}
