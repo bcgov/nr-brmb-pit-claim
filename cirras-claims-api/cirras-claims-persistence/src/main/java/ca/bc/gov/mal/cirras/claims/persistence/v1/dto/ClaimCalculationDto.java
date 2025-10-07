@@ -21,6 +21,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	private String claimCalculationGuid;
 
 	// calculation
+	private String claimCalculationGrainQuantityGuid;
 	private Integer calculationVersion;
 	private Double totalClaimAmount;
 	private String calculationStatusCode;
@@ -43,6 +44,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	private String coverageName;
 	private Integer cropCommodityId;
 	private String commodityName;
+	private Boolean isPedigreeInd;
 	private String primaryPerilCode;
 	private String secondaryPerilCode;
 	private String claimStatusCode;
@@ -85,6 +87,10 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	private List<ClaimCalculationVarietyDto> varieties = new ArrayList<ClaimCalculationVarietyDto>();
 	private ClaimCalculationGrainUnseededDto claimCalculationGrainUnseededDto;
 	private ClaimCalculationGrainSpotLossDto claimCalculationGrainSpotLossDto;
+	private ClaimCalculationGrainQuantityDto claimCalculationGrainQuantityDto;
+	private ClaimCalculationGrainQuantityDetailDto claimCalculationGrainQuantityDetailDto;
+	private ClaimCalculationGrainBasketDto claimCalculationGrainBasketDto;
+	private List<ClaimCalculationGrainBasketProductDto> claimCalculationGrainBasketProductDtos = new ArrayList<ClaimCalculationGrainBasketProductDto>();
 	
 	public ClaimCalculationDto() {
 	}
@@ -107,6 +113,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.coverageName = dto.coverageName;
 		this.cropCommodityId = dto.cropCommodityId;
 		this.commodityName = dto.commodityName;
+		this.isPedigreeInd = dto.isPedigreeInd;
 		this.insuredByMeasurementType = dto.insuredByMeasurementType;
 		this.claimNumber = dto.claimNumber;
 		this.calculationVersion = dto.calculationVersion;
@@ -129,6 +136,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.approvedByDate = dto.approvedByDate;
 		this.calculateIivInd = dto.calculateIivInd;
 		this.hasChequeReqInd = dto.hasChequeReqInd;
+		this.claimCalculationGrainQuantityGuid = dto.claimCalculationGrainQuantityGuid;
 		this.createClaimCalcUserGuid = dto.createClaimCalcUserGuid;
 		this.createClaimCalcUserName = dto.createClaimCalcUserName;
 		this.createUser = dto.createUser;
@@ -152,6 +160,26 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		
 		if ( dto.claimCalculationGrainUnseededDto != null) {
 			this.claimCalculationGrainUnseededDto = dto.claimCalculationGrainUnseededDto.copy();
+		}
+
+		if ( dto.claimCalculationGrainQuantityDto != null) {
+			this.claimCalculationGrainQuantityDto = dto.claimCalculationGrainQuantityDto.copy();
+		}
+
+		if ( dto.claimCalculationGrainQuantityDetailDto != null) {
+			this.claimCalculationGrainQuantityDetailDto = dto.claimCalculationGrainQuantityDetailDto.copy();
+		}
+
+		if ( dto.claimCalculationGrainBasketDto != null) {
+			this.claimCalculationGrainBasketDto = dto.claimCalculationGrainBasketDto.copy();
+		}
+
+		this.claimCalculationGrainBasketProductDtos = new ArrayList<ClaimCalculationGrainBasketProductDto>();
+		
+		if (dto.claimCalculationGrainBasketProductDtos != null) {
+			for(ClaimCalculationGrainBasketProductDto pDto : dto.claimCalculationGrainBasketProductDtos) {
+				this.claimCalculationGrainBasketProductDtos.add(pDto.copy());
+			}
 		}
 		
 		if ( dto.claimCalculationGrapesDto != null) {
@@ -181,6 +209,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 			result = true;
 			DtoUtils dtoUtils = new DtoUtils(getLogger());
 			result = result&&dtoUtils.equals("claimCalculationGuid", claimCalculationGuid, other.claimCalculationGuid);
+			result = result&&dtoUtils.equals("claimCalculationGrainQuantityGuid", claimCalculationGrainQuantityGuid, other.claimCalculationGrainQuantityGuid);
 			result = result&&dtoUtils.equals("growerNumber", growerNumber, other.growerNumber);
 			result = result&&dtoUtils.equals("growerName", growerName, other.growerName);
 			result = result&&dtoUtils.equals("growerAddressLine1", growerAddressLine1, other.growerAddressLine1);
@@ -197,6 +226,7 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 			result = result&&dtoUtils.equals("coverageName", coverageName, other.coverageName);
 			result = result&&dtoUtils.equals("cropCommodityId", cropCommodityId, other.cropCommodityId);
 			result = result&&dtoUtils.equals("commodityName", commodityName, other.commodityName);
+			result = result&&dtoUtils.equals("isPedigreeInd", isPedigreeInd, other.isPedigreeInd);
 			result = result&&dtoUtils.equals("insuredByMeasurementType", insuredByMeasurementType, other.insuredByMeasurementType);
 			result = result&&dtoUtils.equals("claimNumber", claimNumber, other.claimNumber);
 			result = result&&dtoUtils.equals("calculationVersion", calculationVersion, other.calculationVersion);
@@ -236,6 +266,16 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 	public void setClaimCalculationGuid(String claimCalculationGuid) {
 		this.claimCalculationGuid = claimCalculationGuid;
 	}
+
+	public String getClaimCalculationGrainQuantityGuid() {
+		return claimCalculationGrainQuantityGuid;
+	}
+
+
+	public void setClaimCalculationGrainQuantityGuid(String claimCalculationGrainQuantityGuid) {
+		this.claimCalculationGrainQuantityGuid = claimCalculationGrainQuantityGuid;
+	}
+
 
 	public Integer getGrowerNumber() {
 		return growerNumber;
@@ -485,6 +525,39 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 		this.claimCalculationGrainSpotLossDto = claimCalculationGrainSpotLossDto;
 	}
 	
+	public ClaimCalculationGrainQuantityDto getClaimCalculationGrainQuantity() {
+		return claimCalculationGrainQuantityDto;
+	}
+
+	public void setClaimCalculationGrainQuantity(ClaimCalculationGrainQuantityDto claimCalculationGrainQuantityDto) {
+		this.claimCalculationGrainQuantityDto = claimCalculationGrainQuantityDto;
+	}
+
+	public ClaimCalculationGrainQuantityDetailDto getClaimCalculationGrainQuantityDetail() {
+		return claimCalculationGrainQuantityDetailDto;
+	}
+
+	public void setClaimCalculationGrainQuantityDetail(ClaimCalculationGrainQuantityDetailDto claimCalculationGrainQuantityDetailDto) {
+		this.claimCalculationGrainQuantityDetailDto = claimCalculationGrainQuantityDetailDto;
+	}
+
+	public ClaimCalculationGrainBasketDto getClaimCalculationGrainBasket() {
+		return claimCalculationGrainBasketDto;
+	}
+
+	public void setClaimCalculationGrainBasket(ClaimCalculationGrainBasketDto claimCalculationGrainBasketDto) {
+		this.claimCalculationGrainBasketDto = claimCalculationGrainBasketDto;
+	}
+	
+	public List<ClaimCalculationGrainBasketProductDto> getClaimCalculationGrainBasketProducts() {
+		return claimCalculationGrainBasketProductDtos;
+	}
+
+	public void setClaimCalculationGrainBasketProducts(List<ClaimCalculationGrainBasketProductDto> claimCalculationGrainBasketProductDtos) {
+		this.claimCalculationGrainBasketProductDtos = claimCalculationGrainBasketProductDtos;
+	}
+
+	
 	public String getSubmittedByUserid() {
 		return submittedByUserid;
 	}
@@ -644,6 +717,14 @@ public class ClaimCalculationDto extends BaseDto<ClaimCalculationDto> {
 
 	public void setCommodityName(String commodityName) {
 		this.commodityName = commodityName;
+	}
+
+	public Boolean getIsPedigreeInd() {
+		return isPedigreeInd;
+	}
+
+	public void setIsPedigreeInd(Boolean isPedigreeInd) {
+		this.isPedigreeInd = isPedigreeInd;
 	}
 
 	public String getCoverageName() {

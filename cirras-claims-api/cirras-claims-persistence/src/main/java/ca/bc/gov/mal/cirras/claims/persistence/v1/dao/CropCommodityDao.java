@@ -11,6 +11,8 @@ import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
 public interface CropCommodityDao extends Serializable {
 	
 	CropCommodityDto fetch(Integer cropCommodityId) throws DaoException;
+
+	CropCommodityDto getLinkedCommodityByPedigree(Integer cropCommodityId) throws DaoException;
 	
     void insert(CropCommodityDto dto, String userId) throws DaoException;
     

@@ -11,7 +11,9 @@ import {CodeData, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
-import {CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, dollars, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
+import {areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, dollars, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
+import { setFormStateUnsaved } from "src/app/store/application/application.actions";
+import { UntypedFormGroup } from "@angular/forms";
 
 @Component({
   selector: "cirras-claims-calculation-detail-berries",
@@ -25,6 +27,7 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
     @Input() claimCalculationGuid?: string;
     @Input() claimNumber?: string;
     @Input() calculationDetail: vmCalculation;
+    @Input() isUnsaved: boolean;
 
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];
@@ -271,7 +274,7 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
 
 
     onCancel() {
-        this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, "false"));
+        this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, this.calculationDetail.policyNumber, "false"));
     }
 
     onSave(saveCommentsOnly:boolean) {
@@ -424,4 +427,42 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
     setComment() {
       this.calculationComment = this.viewModel.formGroup.controls.calculationComment.value
     }
+
+ isMyFormDirty(){
+    const hasChanged = this.isMyFormReallyDirty()
+
+    if (hasChanged) {
+      this.store.dispatch(setFormStateUnsaved(CALCULATION_DETAIL_COMPONENT_ID, true ));
+    }
+  }
+
+  isMyFormReallyDirty(): boolean {
+
+    if (!this.calculationDetail) return false
+
+    const frmMain = this.viewModel.formGroup as UntypedFormGroup
+
+    if ( areNotEqual (this.calculationDetail.primaryPerilCode, frmMain.controls.primaryPerilCode.value) || 
+         areNotEqual (this.calculationDetail.secondaryPerilCode, frmMain.controls.secondaryPerilCode.value) || 
+         areNotEqual (this.calculationDetail.calculationComment, frmMain.controls.calculationComment.value)  ) {
+        
+        return true
+    }
+
+    if (this.calculationDetail.claimCalculationBerries && 
+        ( areNotEqual (this.calculationDetail.claimCalculationBerries.confirmedAcres, frmMain.controls.confirmedAcres.value) ||
+          areNotEqual (this.calculationDetail.claimCalculationBerries.harvestedYield, frmMain.controls.harvestedYield.value) || 
+          areNotEqual (this.calculationDetail.claimCalculationBerries.appraisedYield, frmMain.controls.appraisedYield.value) || 
+          areNotEqual (this.calculationDetail.claimCalculationBerries.abandonedYield, frmMain.controls.abandonedYield.value) || 
+          areNotEqual (this.calculationDetail.claimCalculationBerries.totalYieldFromAdjuster, frmMain.controls.totalYieldFromAdjuster.value) || 
+          areNotEqual (this.calculationDetail.claimCalculationBerries.yieldAssessment, frmMain.controls.yieldAssessment.value) 
+        )
+      ) {
+
+      return true
+    }
+
+    return false
+  }
+
 }

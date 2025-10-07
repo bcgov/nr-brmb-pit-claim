@@ -7,6 +7,7 @@
 	
 		<id property="claimCalculationGuid" column="CLAIM_CALCULATION_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
 
+		<result property="claimCalculationGrainQuantityGuid" column="CLAIM_CALC_GRAIN_QUANTITY_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="primaryPerilCode" column="PRIMARY_PERIL_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="secondaryPerilCode" column="SECONDARY_PERIL_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="claimStatusCode" column="CLAIM_STATUS_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -53,11 +54,14 @@
 		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
 		<result property="calculateIivInd" column="CALCULATE_IIV_IND" javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="hasChequeReqInd" column="HAS_CHEQUE_REQ_IND" javaType="java.lang.Boolean" jdbcType="VARCHAR" />
+		<result property="isPedigreeInd" column="IS_PEDIGREE_IND" javaType="java.lang.Boolean" jdbcType="VARCHAR" />
+
 		
 	</resultMap>
 	
     <sql id="selectColumns">
 		SELECT 	T.CLAIM_CALCULATION_GUID,
+				T.CLAIM_CALC_GRAIN_QUANTITY_GUID,
 				T.PRIMARY_PERIL_CODE,
 				T.SECONDARY_PERIL_CODE,
 				T.CLAIM_STATUS_CODE,
@@ -97,7 +101,7 @@
 				T.CREATE_DATE,
 				T.UPDATE_CLAIM_CALC_USER_GUID,
 				T.UPDATE_USER,
-				T.UPDATE_DATE 
+				T.UPDATE_DATE
     </sql>
     
     <sql id="selectColumnsExtended">
@@ -108,7 +112,8 @@
                      ELSE COALESCE(COALESCE(UPD_CCU.GIVEN_NAME, UPD_CCU.FAMILY_NAME), 'Unknown')
                 END AS UPDATE_CLAIM_CALC_USER_NAME,
 				CT.COMMODITY_NAME, 
-				CCC.DESCRIPTION AS COVERAGE_NAME
+				CCC.DESCRIPTION AS COVERAGE_NAME,
+				(CASE WHEN CCPX.CROP_COMMODITY_ID_PEDIGREE IS NOT NULL THEN 'Y' else 'N' end) as IS_PEDIGREE_IND
     </sql>
     
     
@@ -122,6 +127,7 @@
 		JOIN INSURANCE_PLAN IP ON IP.INSURANCE_PLAN_ID = T.INSURANCE_PLAN_ID
 		LEFT JOIN CLAIM_CALCULATION_USER CR_CCU ON CR_CCU.CLAIM_CALCULATION_USER_GUID = T.CREATE_CLAIM_CALC_USER_GUID
 		LEFT JOIN CLAIM_CALCULATION_USER UPD_CCU ON UPD_CCU.CLAIM_CALCULATION_USER_GUID = T.UPDATE_CLAIM_CALC_USER_GUID
+		LEFT JOIN CROP_COMMODITY_PEDIGREE_XREF CCPX ON CCPX.CROP_COMMODITY_ID_PEDIGREE = T.CROP_COMMODITY_ID
 		WHERE T.CLAIM_CALCULATION_GUID = #{claimCalculationGuid}
 	</select>
 	
@@ -133,6 +139,7 @@
 
 		INSERT INTO CLAIM_CALCULATION (
 			CLAIM_CALCULATION_GUID,
+			CLAIM_CALC_GRAIN_QUANTITY_GUID,
 			PRIMARY_PERIL_CODE,
 			SECONDARY_PERIL_CODE,
 			CLAIM_STATUS_CODE,
@@ -176,6 +183,7 @@
  
 		) VALUES (
 		   	#{claimCalculationGuid},
+			#{dto.claimCalculationGrainQuantityGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
 			#{dto.primaryPerilCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
 			#{dto.secondaryPerilCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
 			#{dto.claimStatusCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
@@ -222,6 +230,7 @@
 	<update id="update">
 		UPDATE CLAIM_CALCULATION
 		SET 
+			CLAIM_CALC_GRAIN_QUANTITY_GUID = #{dto.claimCalculationGrainQuantityGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
 			PRIMARY_PERIL_CODE = #{dto.primaryPerilCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
 			SECONDARY_PERIL_CODE = #{dto.secondaryPerilCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
 			CLAIM_STATUS_CODE = #{dto.claimStatusCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
@@ -306,6 +315,7 @@
 		JOIN INSURANCE_PLAN IP ON IP.INSURANCE_PLAN_ID = T.INSURANCE_PLAN_ID
 		LEFT JOIN CLAIM_CALCULATION_USER CR_CCU ON CR_CCU.CLAIM_CALCULATION_USER_GUID = T.CREATE_CLAIM_CALC_USER_GUID
 		LEFT JOIN CLAIM_CALCULATION_USER UPD_CCU ON UPD_CCU.CLAIM_CALCULATION_USER_GUID = T.UPDATE_CLAIM_CALC_USER_GUID
+		LEFT JOIN CROP_COMMODITY_PEDIGREE_XREF CCPX ON CCPX.CROP_COMMODITY_ID_PEDIGREE = T.CROP_COMMODITY_ID
 		) T WHERE 1=1
 		<include refid="selectWhereClause"/>	
 		<include refid="selectOrderBy"/>
@@ -333,9 +343,33 @@
 
 	<select id="getCalculationsForDataSync" resultMap="ClaimCalculationDtoMap">
 		<include refid="selectColumns"/>
+			, IP.INSURANCE_PLAN_NAME
 		FROM CLAIM_CALCULATION T
+		JOIN INSURANCE_PLAN IP ON IP.INSURANCE_PLAN_ID = T.INSURANCE_PLAN_ID
 		WHERE T.CLAIM_NUMBER = #{claimNumber}
 		ORDER BY T.CALCULATION_VERSION DESC
 	</select>
+
+	<select id="getCalculationsByGrainQuantityGuid" resultMap="ClaimCalculationDtoMap">  
+		SELECT T.CLAIM_CALCULATION_GUID
+		FROM CLAIM_CALCULATION T
+		WHERE T.CLAIM_CALC_GRAIN_QUANTITY_GUID = #{claimCalculationGrainQuantityGuid}
+	</select>
+
+	<select id="getByClaimNumberAndVersion" resultMap="ClaimCalculationDtoMap">
+		<include refid="selectColumns"/>
+		<include refid="selectColumnsExtended"/>
+			, IP.INSURANCE_PLAN_NAME
+		FROM CLAIM_CALCULATION T
+		JOIN CROP_COMMODITY CT ON CT.CROP_COMMODITY_ID = T.CROP_COMMODITY_ID
+		JOIN COMMODITY_COVERAGE_CODE CCC ON CCC.COMMODITY_COVERAGE_CODE = T.COMMODITY_COVERAGE_CODE
+		JOIN INSURANCE_PLAN IP ON IP.INSURANCE_PLAN_ID = T.INSURANCE_PLAN_ID
+		LEFT JOIN CLAIM_CALCULATION_USER CR_CCU ON CR_CCU.CLAIM_CALCULATION_USER_GUID = T.CREATE_CLAIM_CALC_USER_GUID
+		LEFT JOIN CLAIM_CALCULATION_USER UPD_CCU ON UPD_CCU.CLAIM_CALCULATION_USER_GUID = T.UPDATE_CLAIM_CALC_USER_GUID
+		LEFT JOIN CROP_COMMODITY_PEDIGREE_XREF CCPX ON CCPX.CROP_COMMODITY_ID_PEDIGREE = T.CROP_COMMODITY_ID
+		WHERE T.CLAIM_NUMBER = #{claimNumber}
+		  AND T.CALCULATION_VERSION = #{calculationVersion}
+	</select>
+
 
 </mapper>

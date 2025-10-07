@@ -17,8 +17,12 @@ public interface ClaimDao extends Serializable {
 	ClaimDto fetch(Integer colId) throws DaoException;
 	
 	ClaimDto selectByClaimNumber(Integer claimNumber) throws DaoException;
-        
-    void insert(ClaimDto dto, String userId) throws DaoException;
+
+	ClaimDto selectByProductId(Integer ippId) throws DaoException;
+	
+	List<ClaimDto> selectQuantityClaimsByPolicyId(Integer iplId) throws DaoException;
+
+	void insert(ClaimDto dto, String userId) throws DaoException;
     
     void update(ClaimDto dto, String userId) throws DaoException, NotFoundDaoException;
 
@@ -35,4 +39,5 @@ public interface ClaimDao extends Serializable {
 	PagedDtos<ClaimDto> select(Integer claimNumber, String policyNumber, String calculationStatusCode,
 			String sortColumn, String sortDirection, int maximumRows, Integer pageNumber, Integer pageRowCount)
 			throws DaoException, TooManyRecordsException;
+
 }

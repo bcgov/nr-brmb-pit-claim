@@ -109,4 +109,74 @@ public class CropCommodityDaoTest {
 
 	}
 
+	@Test 
+	public void testGetLinkedCropCommodityByPedigree() throws Exception {
+
+		CropCommodityDao dao = persistenceSpringConfig.cropCommodityDao();
+
+		CropCommodityDto srcCrpDto = null;
+		CropCommodityDto linkedCrpDto = null;
+
+
+		// TEST 1: Search for linked commodity to FIELD PEA
+		Integer srcCrptId = 21;
+		Boolean srcIsPedigreeInd = false;
+		String srcCommodityName = "Field Pea";
+
+		Integer linkedCrptId = 22;
+		Boolean linkedIsPedigreeInd = true;
+		String linkedCommodityName = "Field Pea - Pedigreed";
+
+		srcCrpDto = dao.fetch(srcCrptId);
+		Assert.assertEquals(srcCrptId, srcCrpDto.getCropCommodityId());
+		Assert.assertEquals(srcIsPedigreeInd, srcCrpDto.getIsPedigreeInd());
+		Assert.assertEquals(srcCommodityName, srcCrpDto.getCommodityName());
+		
+		
+		linkedCrpDto = dao.getLinkedCommodityByPedigree(srcCrptId);
+		
+		Assert.assertEquals(linkedCrptId, linkedCrpDto.getCropCommodityId());
+		Assert.assertEquals(linkedIsPedigreeInd, linkedCrpDto.getIsPedigreeInd());
+		Assert.assertEquals(linkedCommodityName, linkedCrpDto.getCommodityName());
+
+
+		// TEST 2: Search for linked commodity to FIELD PEA - PEDIGREED
+		srcCrptId = 22;
+		srcIsPedigreeInd = true;
+		srcCommodityName = "Field Pea - Pedigreed";
+		
+		linkedCrptId = 21;
+		linkedIsPedigreeInd = false;
+		linkedCommodityName = "Field Pea";
+
+		srcCrpDto = dao.fetch(srcCrptId);
+		Assert.assertEquals(srcCrptId, srcCrpDto.getCropCommodityId());
+		Assert.assertEquals(srcIsPedigreeInd, srcCrpDto.getIsPedigreeInd());
+		Assert.assertEquals(srcCommodityName, srcCrpDto.getCommodityName());
+				
+		linkedCrpDto = dao.getLinkedCommodityByPedigree(srcCrptId);
+		
+		Assert.assertEquals(linkedCrptId, linkedCrpDto.getCropCommodityId());
+		Assert.assertEquals(linkedIsPedigreeInd, linkedCrpDto.getIsPedigreeInd());
+		Assert.assertEquals(linkedCommodityName, linkedCrpDto.getCommodityName());
+		
+
+		// TEST 3: Search for linked commodity to APPLE
+		srcCrptId = 3;
+		srcIsPedigreeInd = false;
+		srcCommodityName = "Apple";
+
+		linkedCrptId = null;  // None
+		linkedIsPedigreeInd = null;
+		linkedCommodityName = null;
+
+		srcCrpDto = dao.fetch(srcCrptId);
+		Assert.assertEquals(srcCrptId, srcCrpDto.getCropCommodityId());
+		Assert.assertEquals(srcIsPedigreeInd, srcCrpDto.getIsPedigreeInd());
+		Assert.assertEquals(srcCommodityName, srcCrpDto.getCommodityName());
+		
+		linkedCrpDto = dao.getLinkedCommodityByPedigree(srcCrptId);
+		
+		Assert.assertEquals(null, linkedCrpDto);		
+	}
 }

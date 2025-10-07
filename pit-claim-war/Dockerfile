@@ -1,6 +1,6 @@
 FROM tomcat:9.0.86-jre8
 
-COPY ./pit-claim-war/target/pit-claim-war-2.2.0.war .
+COPY ./pit-claim-war/target/pit-claim-war-2.4.0.war .
 COPY ./deploy-tools/log4j2.xml .
 COPY ./deploy-tools/server.xml .
 

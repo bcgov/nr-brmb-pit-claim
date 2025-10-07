@@ -12,13 +12,21 @@ import { removeDuplicateWords } from "../../../utils"
 export class CalculationPrintoutHeaderComponent {
 
   @Input() calculationDetail: vmCalculation;
+  @Input() linkedClaimNumber? : number;
   @Input() currentDate = new Date();
 
   perilCodeOptions: (CodeData|Option)[];
+  claimNumber: string;
 
   ngOnInit() {
     //super.ngOnInit()
     this.perilCodeOptions = getCodeOptions("PERIL_CODE");
+
+    if(this.linkedClaimNumber){
+      this.claimNumber = "Claims: " + this.calculationDetail.claimNumber + ", " + this.linkedClaimNumber;
+    } else {
+      this.claimNumber = "Claim: " + this.calculationDetail.claimNumber;
+    }
   }
 
   getPerilCode( code ) {    
