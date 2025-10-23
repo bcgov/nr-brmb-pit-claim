@@ -1,4 +1,4 @@
-FROM tomcat:10.1.44-jre21
+FROM tomcat:10.1.48-jre21
 
 COPY ./cirras-claims-api-rest-endpoints/target/cirras-claims-api-rest-endpoints-2.5.0-SNAPSHOT.war .
 COPY ./deploy-tools ./deploy-tools
