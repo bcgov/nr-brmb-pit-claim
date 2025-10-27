@@ -3,9 +3,10 @@ import { vmCalculation } from 'src/app/conversion/models';
 import { makeTitleCase } from 'src/app/utils';
 
 @Component({
-  selector: 'calculation-printout-grain-basket',
-  templateUrl: './grain-basket.component.html',
-  styleUrl: './grain-basket.component.scss'
+    selector: 'calculation-printout-grain-basket',
+    templateUrl: './grain-basket.component.html',
+    styleUrl: './grain-basket.component.scss',
+    standalone: false
 })
 export class CalculationPrintoutGrainBasketComponent  implements OnChanges {
   @Input() calculationDetail: vmCalculation;

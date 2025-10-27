@@ -14,15 +14,16 @@ import {Component} from "@angular/core";
 import { LocationStrategy, PathLocationStrategy } from "@angular/common";
 
 @Component({
-  selector: "cirras-claims-container",
-  template: `
+    selector: "cirras-claims-container",
+    template: `
       <cirras-claims-desktop
               [collection]="collection$ | async"
               [searchState]="searchState$ | async"
               [loadState]="loadState$ | async"
               [errorState]="errorState$ | async"
       ></cirras-claims-desktop>`,
-  providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
+    providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
+    standalone: false
 })
 export class ClaimsContainer extends BaseContainer {
     collection$: Observable<any> = this.store.pipe(select(selectClaims()));

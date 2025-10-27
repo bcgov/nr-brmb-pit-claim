@@ -1,5 +1,5 @@
 import {ValidationError} from "../store/application/application.state";
-import * as moment from "moment";
+import moment from "moment";
 import {DATE_FORMATS} from "./index";
 import {getCodeOptions, getDescriptionForCode} from "./code-table-utils";
 
@@ -11,7 +11,7 @@ const notFound = () => `not found`;
 const min = ([message, minVal]: any[]) => `cannot be less than ${minVal}`;
 const max = ([message, maxVal]: any[]) => `cannot be more than ${maxVal}`;
 const minMax = ([message, minVal, maxVal]: any[]) => `must be between ${minVal} and ${maxVal} characters`;
-const formatDate = (value) => `${moment(value).format(DATE_FORMATS.API_DATE)}`;
+const forMatDate = (value) => `${moment(value).format(DATE_FORMATS.API_DATE)}`
 const formatTime = (value) => `${moment(value).format(DATE_FORMATS.timePickerInput)}`;
 
 export const ErrorMessages = {

@@ -15,11 +15,12 @@ import {dollars, dollarsToNumber, makeTitleCase, makeNumberOnly, CALCULATION_UPD
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
 
 @Component({
-  selector: "cirras-claims-calculation-detail-grapes",
-  templateUrl: "./grapes.component.html",
-  styleUrls: ["../../common/base/base.component.scss",
-      "./grapes.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "cirras-claims-calculation-detail-grapes",
+    templateUrl: "./grapes.component.html",
+    styleUrls: ["../../common/base/base.component.scss",
+        "./grapes.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";

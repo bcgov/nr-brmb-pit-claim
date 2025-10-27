@@ -16,11 +16,12 @@ import { setFormStateUnsaved } from "src/app/store/application/application.actio
 import { UntypedFormGroup } from "@angular/forms";
 
 @Component({
-  selector: "cirras-claims-calculation-detail-berries",
-  templateUrl: "./berries.component.html",
-  styleUrls: ["../../common/base/base.component.scss",
-      "./berries.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "cirras-claims-calculation-detail-berries",
+    templateUrl: "./berries.component.html",
+    styleUrls: ["../../common/base/base.component.scss",
+        "./berries.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationDetailBerriesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";

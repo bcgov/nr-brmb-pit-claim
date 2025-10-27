@@ -16,10 +16,11 @@ import { setFormStateUnsaved } from "src/app/store/application/application.actio
 import { UntypedFormGroup } from "@angular/forms";
 
 @Component({
-  selector: 'cirras-calculation-detail-strawberries-plant',
-  templateUrl: './strawberries-plant.component.html',
-  styleUrls: ['./strawberries-plant.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'cirras-calculation-detail-strawberries-plant',
+    templateUrl: './strawberries-plant.component.html',
+    styleUrls: ['./strawberries-plant.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationDetailStrawberriesPlantComponent extends BaseComponent implements OnChanges, AfterViewInit {
 

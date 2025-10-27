@@ -3,10 +3,11 @@ import {vmCalculation} from "../../../conversion/models";
 import { makeTitleCase } from 'src/app/utils';
 
 @Component({
-  selector: 'cirras-calculation-printout',
-  templateUrl: './grapes.component.html',
-  styleUrls: ['./grapes.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'cirras-calculation-printout',
+    templateUrl: './grapes.component.html',
+    styleUrls: ['./grapes.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculationPrintoutComponent {
   @Input() calculationDetail: vmCalculation;

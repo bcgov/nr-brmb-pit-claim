@@ -25,6 +25,7 @@ export interface ActionItem {
     selector: "base-wrapper",
     templateUrl: "./base-wrapper.component.html",
     styleUrls: ["./base-wrapper.component.scss"],
+    standalone: false
 })
 export class BaseWrapperComponent  {
     @Input() errorState?: ErrorState[];
