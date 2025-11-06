@@ -1,6 +1,6 @@
 FROM tomcat:10.1.44-jre21
 
-COPY ./cirras-claims-api-rest-endpoints/target/cirras-claims-api-rest-endpoints-2.5.0-SNAPSHOT.war .
+COPY ./cirras-claims-api-rest-endpoints/target/cirras-claims-api-rest-endpoints-2.5.0.war .
 COPY ./deploy-tools ./deploy-tools
 
 RUN ls
