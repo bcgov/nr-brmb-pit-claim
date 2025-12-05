@@ -1,7 +1,7 @@
-@import 'material';
-@import 'variables';
-@import 'base';
-@import 'responsive';
-@import 'component/unauthorized-page';
-@import 'ccc';
-@import './component/printout-page';
+@forward 'material';
+@forward 'variables';
+@forward 'base';
+@forward 'responsive';
+@forward 'component/unauthorized-page';
+@forward 'ccc';
+@forward './component/printout-page';

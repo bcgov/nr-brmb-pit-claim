@@ -6,8 +6,8 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.UriBuilder;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.resource.factory.BaseResourceFactory;

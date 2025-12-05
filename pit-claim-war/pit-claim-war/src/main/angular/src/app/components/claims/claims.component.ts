@@ -6,12 +6,13 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, OnChanges, SimpleChan
 import {getCodeOptions} from "../../utils/code-table-utils";
 
 @Component({
-  selector: "cirras-claims-desktop",
-  templateUrl: "claims.component.html",
-  styleUrls: ["../common/base/base.component.scss",
-      "../common/base-collection/collection.component.scss",
-      "claims.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "cirras-claims-desktop",
+    templateUrl: "claims.component.html",
+    styleUrls: ["../common/base/base.component.scss",
+        "../common/base-collection/collection.component.scss",
+        "claims.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClaimsComponent extends CollectionComponent implements OnChanges, AfterViewInit {
   columnsToDisplay = ["version", "calculationStatus", "claimNumber", "policyNumber", "planName", "commodityName", "coverageName", "growerName", "claimStatusCode"];

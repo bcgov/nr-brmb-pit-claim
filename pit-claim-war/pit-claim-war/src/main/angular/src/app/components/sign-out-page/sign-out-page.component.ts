@@ -4,7 +4,8 @@ import {BaseComponent} from "../common/base/base.component";
 @Component({
     selector: "cirras-claims-sign-out-page",
     templateUrl: "./sign-out-page.component.html",
-    styleUrls: ["./sign-out-page.component.scss"]
+    styleUrls: ["./sign-out-page.component.scss"],
+    standalone: false
 })
 export class SignOutPageComponent extends BaseComponent implements OnInit, OnDestroy {
     ngOnInit() {

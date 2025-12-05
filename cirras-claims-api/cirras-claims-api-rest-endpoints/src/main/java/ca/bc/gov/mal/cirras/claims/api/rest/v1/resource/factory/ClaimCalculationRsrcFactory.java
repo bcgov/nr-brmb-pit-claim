@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
