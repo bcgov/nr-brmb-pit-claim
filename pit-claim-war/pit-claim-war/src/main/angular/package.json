@@ -34,7 +34,7 @@
     "@angular/router": "19.2.15",
     "@angular/service-worker": "19.2.15",
     "@busacca/ng-pick-datetime": "12.0.0",
-    "@cirras/cirras-claims-api": "^2.5.0-SNAPSHOT",
+    "@cirras/cirras-claims-api": "^2.5.1-SNAPSHOT",
     "@ngrx/effects": "19.2.1",
     "@ngrx/entity": "19.2.1",
     "@ngrx/operators": "19.2.1",
