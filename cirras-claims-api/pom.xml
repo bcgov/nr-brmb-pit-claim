@@ -20,8 +20,6 @@
 		<module>cirras-claims-api-rest-client</module>
 		<module>cirras-claims-api-rest-common</module>
 		<module>cirras-claims-api-rest-endpoints</module>
-		<module>cirras-claims-api-rest-integration-test</module>
-		<module>cirras-claims-api-rest-ear</module>
 		<module>cirras-claims-persistence</module>
 	</modules>
 
