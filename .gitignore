@@ -20,8 +20,7 @@ buildNumber.properties
 **/.git.bak
 compose.yaml
 local-config
-cirras-claims-api/cirras-claims-api-rest-endpoints/src/test/resources/static.properties
-cirras-claims-api/cirras-claims-persistence/src/test/resources/static.properties
+cirras-claims-api/src/test/resources/static.properties
 cirras-claims-war/cirras-claims-war/src/main/angular/package-lock.json
 pit-claim-war/pit-claim-war/pom.xml.bak
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/spring/AppConfig.java.bak
