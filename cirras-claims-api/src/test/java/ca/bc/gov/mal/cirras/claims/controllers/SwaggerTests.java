@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.wfone.common.rest.client.RestClientServiceException;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
-import ca.bc.gov.mal.cirras.claims.clients.impl.CirrasClaimServiceImpl;
+import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
 
@@ -35,8 +35,8 @@ public class SwaggerTests extends EndpointsTest {
 			return;
 		}
 
-		CirrasClaimService service = new CirrasClaimServiceImpl();
-		((CirrasClaimServiceImpl) service).setTopLevelRestURL(topLevelRestURL);
+		CirrasClaimService service = new CirrasClaimService();
+		((CirrasClaimService) service).setTopLevelRestURL(topLevelRestURL);
 		
 		String resource = service.getSwaggerString();
 		logger.debug(resource);

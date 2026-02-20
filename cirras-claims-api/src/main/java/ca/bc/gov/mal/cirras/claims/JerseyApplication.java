@@ -9,16 +9,17 @@ import jakarta.ws.rs.core.Context;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.ClaimEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.ClaimListEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.SyncClaimEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.SyncClaimRelatedDataEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.SyncCodeEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.SyncCommodityVarietyEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.SyncCoveragePerilEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.ClaimCalculationEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.ClaimCalculationListEndpointImpl;
-import ca.bc.gov.mal.cirras.claims.controllers.impl.TopLevelEndpointsImpl;
+
+import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationListEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.ClaimEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.ClaimListEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimRelatedDataEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncCodeEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncCommodityVarietyEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncCoveragePerilEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.TopLevelEndpoints;
 import ca.bc.gov.nrs.wfone.common.api.rest.code.endpoints.impl.CodeTableEndpointsImpl;
 import ca.bc.gov.nrs.wfone.common.api.rest.code.endpoints.impl.CodeTableListEndpointsImpl;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.jersey.JerseyResourceConfig;
@@ -42,25 +43,25 @@ public class JerseyApplication extends JerseyResourceConfig {
 		
 		register(MultiPartFeature.class);
 		
-		register(TopLevelEndpointsImpl.class);
+		register(TopLevelEndpoints.class);
 		register(CodeTableEndpointsImpl.class);
 		register(CodeTableListEndpointsImpl.class);
 
-		register(ClaimListEndpointImpl.class);
-		register(ClaimEndpointImpl.class);
+		register(ClaimListEndpoint.class);
+		register(ClaimEndpoint.class);
 		
-		register(ClaimCalculationListEndpointImpl.class);
-		register(ClaimCalculationEndpointImpl.class);
+		register(ClaimCalculationListEndpoint.class);
+		register(ClaimCalculationEndpoint.class);
 		
-		register(SyncClaimEndpointImpl.class);
+		register(SyncClaimEndpoint.class);
 
-		register(SyncClaimRelatedDataEndpointImpl.class);
+		register(SyncClaimRelatedDataEndpoint.class);
 		
-		register(SyncCommodityVarietyEndpointImpl.class);
-		register(SyncClaimEndpointImpl.class);
+		register(SyncCommodityVarietyEndpoint.class);
+		register(SyncClaimEndpoint.class);
 		
-		register(SyncCodeEndpointImpl.class);
-		register(SyncCoveragePerilEndpointImpl.class);
+		register(SyncCodeEndpoint.class);
+		register(SyncCoveragePerilEndpoint.class);
 
 		register(OpenApiResource.class);
 		register(AcceptHeaderOpenApiResource.class);

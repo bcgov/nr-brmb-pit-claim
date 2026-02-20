@@ -51,7 +51,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 	
 	private Integer pageNumber = new Integer(0);
 	private Integer pageRowCount = new Integer(100);
-	private Integer claimNumber = new Integer(28082);
+	private Integer claimNumber = new Integer(34994);
 
 	// Used by out of sync and refresh tests.
 	private Integer outOfSyncClaimNumber = null;
@@ -1559,7 +1559,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		}
 
 		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
-		String testClaimNumber = "28082";  // Needs to be manually set to a real, valid Grapes claim in CIRRAS db.
+		String testClaimNumber = "34994";  // Needs to be manually set to a real, valid Grapes claim in CIRRAS db.
 
 		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
 		

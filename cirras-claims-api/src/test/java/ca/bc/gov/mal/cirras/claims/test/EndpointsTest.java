@@ -26,8 +26,8 @@ import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientExcepti
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.AccessToken;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.stub.TokenServiceStub;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
+import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.ValidationException;
-import ca.bc.gov.mal.cirras.claims.clients.impl.CirrasClaimServiceImpl;
 import ca.bc.gov.mal.cirras.claims.jetty.EmbeddedServer;
 
 public abstract class EndpointsTest {
@@ -112,8 +112,8 @@ public abstract class EndpointsTest {
 		tokenService.selectServiceClient(WebadeOauth2ClientId, WebadeOauth2ClientGuid, scopes);
 		AccessToken token = tokenService.getToken(WebadeOauth2ClientId, WebadeOauth2ClientSecret, scopes);
 
-		CirrasClaimService service = new CirrasClaimServiceImpl("Bearer "+token.getAccessToken());
-		((CirrasClaimServiceImpl) service).setTopLevelRestURL(topLevelRestURL);
+		CirrasClaimService service = new CirrasClaimService("Bearer "+token.getAccessToken());
+		((CirrasClaimService) service).setTopLevelRestURL(topLevelRestURL);
 		return service;
 	}
 	

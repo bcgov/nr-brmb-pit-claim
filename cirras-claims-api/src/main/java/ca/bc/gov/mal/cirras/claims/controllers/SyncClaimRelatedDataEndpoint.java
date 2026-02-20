@@ -5,12 +5,15 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpoints;
-import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
-import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
+import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -23,10 +26,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
+import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
+import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/syncclaimrelateddata")
-public interface SyncClaimRelatedDataEndpoint extends BaseEndpoints {
+public class SyncClaimRelatedDataEndpoint extends BaseEndpointsImpl {
 	
+	private static final Logger logger = LoggerFactory.getLogger(SyncClaimRelatedDataEndpoint.class);
+	
+	@Autowired
+	private CirrasDataSyncService cirrasDataSyncService; 
+
 	@Operation(operationId = "Update claim sync record with related data", summary = "Update claim sync record with related data", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
@@ -48,6 +59,32 @@ public interface SyncClaimRelatedDataEndpoint extends BaseEndpoints {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateSyncClaimRelatedData(
 		@Parameter(name = "claim", description = "The claim resource containing the new values from CIRRAS.", required = true) SyncClaimRsrc claim
-	);
-	
+	) {
+		logger.debug("<updateSyncClaimRelatedData");
+		Response response = null;
+		
+		logRequest();
+		
+		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
+
+		try {
+			
+			cirrasDataSyncService.updateSyncClaimRelatedData(
+					claim, 
+					getFactoryContext(), 
+					getWebAdeAuthentication());
+
+			response = Response.status(200).build();
+		} catch (Throwable t) {
+			response = getInternalServerErrorResponse(t);
+		}
+		
+		logResponse(response);
+
+		logger.debug(">updateSyncClaimRelatedData " + response);
+		return response;
+	}	
+
 }

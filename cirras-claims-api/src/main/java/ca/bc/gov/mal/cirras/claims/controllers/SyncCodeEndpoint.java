@@ -7,12 +7,16 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpoints;
-import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
-import ca.bc.gov.mal.cirras.claims.data.resources.SyncCodeRsrc;
+import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
+import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -25,10 +29,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
+import ca.bc.gov.mal.cirras.claims.data.resources.SyncCodeRsrc;
+import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/synccode")
-public interface SyncCodeEndpoint extends BaseEndpoints {
+public class SyncCodeEndpoint extends BaseEndpointsImpl {
 	
+	private static final Logger logger = LoggerFactory.getLogger(SyncCodeEndpoint.class);
+	
+	@Autowired
+	private CirrasDataSyncService cirrasDataSyncService; 
+
 	@Operation(operationId = "Insert or Update a code table record", summary = "Insert or Update a code table record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
@@ -48,10 +60,35 @@ public interface SyncCodeEndpoint extends BaseEndpoints {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response synchronizeCode(
-		@Parameter(name = "code", description = "The code resource containing the values from CIRRAS.", required = true) SyncCodeRsrc crop
-	);
+		@Parameter(name = "code", description = "The code resource containing the values from CIRRAS.", required = true) SyncCodeRsrc resource
+	) {
+		logger.debug("<synchronizeCode");
+		Response response = null;
+		
+		logRequest();
+		
+		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 
-	
+		try {
+			
+			cirrasDataSyncService.synchronizeCode(
+					resource, 
+					getFactoryContext(), 
+					getWebAdeAuthentication());
+
+			response = Response.status(200).build();
+		} catch (Throwable t) {
+			response = getInternalServerErrorResponse(t);
+		}
+		
+		logResponse(response);
+
+		logger.debug(">synchronizeCode " + response);
+		return response;
+	}
+
 	@Operation(operationId = "Delete code table record", summary = "Delete code table record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
@@ -71,6 +108,38 @@ public interface SyncCodeEndpoint extends BaseEndpoints {
 	public Response deleteSyncCode(
 		@Parameter(description = "Code Table Type of the record to be deleted") @QueryParam("codeTableType") String codeTableType,
 		@Parameter(description = "unique key of the record to be deleted") @QueryParam("uniqueKey") String uniqueKey
-	);
-	
+	) {
+		logger.debug("<deleteSyncCode");
+
+		Response response = null;
+		
+		logRequest();
+		
+		if(!hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
+			
+		try {
+			SyncCodeRsrc resource = (SyncCodeRsrc) cirrasDataSyncService.getSyncCode(
+					codeTableType,
+					uniqueKey,
+					getFactoryContext(), 
+					getWebAdeAuthentication());
+			
+			if(resource != null) {
+				cirrasDataSyncService.deleteSyncCode(codeTableType, uniqueKey, getFactoryContext(), getWebAdeAuthentication());
+			}
+			response = Response.status(204).build();
+		} catch (NotFoundException e) {
+			response = Response.status(Status.NOT_FOUND).build();
+		} catch (Throwable t) {
+			response = getInternalServerErrorResponse(t);
+		}
+		
+		logResponse(response);
+
+		logger.debug(">deleteSyncClaim " + response);
+		return response;
+	}	
+
 }
