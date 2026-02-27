@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.data.repositories.mapper.CropVarietyMapper">
+
+	<resultMap id="CropCommodityDtoMap" type="ca.bc.gov.mal.cirras.claims.data.entities.CropVarietyDto">
+		<id property="cropVarietyId" column="CROP_VARIETY_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		
+		<result property="cropCommodityId" column="CROP_COMMODITY_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="varietyName" column="VARIETY_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="effectiveDate" column="EFFECTIVE_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="expiryDate" column="EXPIRY_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="dataSyncTransDate" column="DATA_SYNC_TRANS_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT	T.CROP_VARIETY_ID, 
+				T.CROP_COMMODITY_ID, 
+				T.VARIETY_NAME, 
+				T.EFFECTIVE_DATE, 
+				T.EXPIRY_DATE, 
+				T.DATA_SYNC_TRANS_DATE, 
+				T.CREATE_USER, 
+				T.CREATE_DATE, 
+				T.UPDATE_USER, 
+				T.UPDATE_DATE
+    </sql>
+    
+    
+	<select id="fetch" resultMap="CropCommodityDtoMap">
+		<include refid="selectColumns"/>
+		FROM CROP_VARIETY T
+		WHERE T.CROP_VARIETY_ID = #{cropVarietyId}
+	</select>
+	
+	<insert id="insert">
+
+		INSERT INTO CROP_VARIETY (
+			CROP_VARIETY_ID,
+			CROP_COMMODITY_ID,
+			VARIETY_NAME,
+			EFFECTIVE_DATE,
+			EXPIRY_DATE,
+			DATA_SYNC_TRANS_DATE,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		) 
+		VALUES (
+			#{dto.cropVarietyId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+			#{dto.varietyName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.effectiveDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.expiryDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.dataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN},
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE CROP_VARIETY SET 
+			CROP_COMMODITY_ID = #{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}, 
+			VARIETY_NAME = #{dto.varietyName, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			EFFECTIVE_DATE = #{dto.effectiveDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			EXPIRY_DATE = #{dto.expiryDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			DATA_SYNC_TRANS_DATE = #{dto.dataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE CROP_VARIETY_ID = #{dto.cropVarietyId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN}
+		 AND DATA_SYNC_TRANS_DATE <![CDATA[ < ]]> #{dto.dataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM CROP_VARIETY WHERE CROP_VARIETY_ID = #{cropVarietyId}
+	</delete>
+
+</mapper>

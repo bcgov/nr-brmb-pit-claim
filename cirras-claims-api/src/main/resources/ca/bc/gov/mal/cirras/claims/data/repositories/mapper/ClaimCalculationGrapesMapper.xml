@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.data.repositories.mapper.ClaimCalculationGrapesMapper">
+
+	<resultMap id="ClaimCalculationGrapesDtoMap" type="ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrapesDto">
+		<id property="claimCalculationGrapesGuid" column="CLAIM_CALCULATION_GRAPES_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="claimCalculationGuid" column="CLAIM_CALCULATION_GUID" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="insurableValueSelected" column="INSURABLE_VALUE_SELECTED" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="insurableValueHundredPercent" column="INSURABLE_VALUE_HUNDRED_PERCENT" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="coverageAmount" column="COVERAGE_AMOUNT" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="coverageAmountAssessed" column="COVERAGE_AMOUNT_ASSESSED" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="coverageAssessedReason" column="COVERAGE_ASSESSED_REASON" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="coverageAmountAdjusted" column="COVERAGE_AMOUNT_ADJUSTED" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="totalProductionValue" column="TOTAL_PRODUCTION_VALUE" javaType="java.lang.Double" jdbcType="NUMERIC" />
+		<result property="revisionCount" column="REVISION_COUNT" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		
+		
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+        SELECT	T.CLAIM_CALCULATION_GRAPES_GUID, 
+				T.CLAIM_CALCULATION_GUID, 
+				T.INSURABLE_VALUE_SELECTED, 
+				T.INSURABLE_VALUE_HUNDRED_PERCENT, 
+				T.COVERAGE_AMOUNT, 
+				T.COVERAGE_AMOUNT_ASSESSED, 
+				T.COVERAGE_ASSESSED_REASON, 
+				T.COVERAGE_AMOUNT_ADJUSTED, 
+				T.TOTAL_PRODUCTION_VALUE, 
+				T.REVISION_COUNT, 
+				T.CREATE_USER, 
+				T.CREATE_DATE, 
+				T.UPDATE_USER, 
+				T.UPDATE_DATE
+				
+    </sql>
+    
+    
+	<select id="fetch" resultMap="ClaimCalculationGrapesDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_GRAPES T
+		WHERE T.CLAIM_CALCULATION_GRAPES_GUID = #{claimCalculationGrapesGuid}
+	</select>
+	
+	<select id="select" resultMap="ClaimCalculationGrapesDtoMap">  
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_GRAPES T
+		WHERE T.CLAIM_CALCULATION_GUID =#{claimCalculationGuid}
+	</select> 
+	
+	<insert id="insert">
+		<selectKey keyProperty="claimCalculationGrapesGuid" resultType="java.lang.String" order="BEFORE"> 
+			select replace(cast(gen_random_uuid() as text), '-', '')
+		</selectKey>
+
+		INSERT INTO CLAIM_CALCULATION_GRAPES (
+			CLAIM_CALCULATION_GRAPES_GUID,
+			CLAIM_CALCULATION_GUID,
+			INSURABLE_VALUE_SELECTED,
+			INSURABLE_VALUE_HUNDRED_PERCENT,
+			COVERAGE_AMOUNT,
+			COVERAGE_AMOUNT_ASSESSED,
+			COVERAGE_ASSESSED_REASON,
+			COVERAGE_AMOUNT_ADJUSTED,
+			TOTAL_PRODUCTION_VALUE,
+			REVISION_COUNT,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		) VALUES (
+		   	#{claimCalculationGrapesGuid},
+			#{dto.claimCalculationGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.insurableValueSelected, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.insurableValueHundredPercent, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.coverageAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.coverageAmountAssessed, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.coverageAssessedReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.coverageAmountAdjusted, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			#{dto.totalProductionValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN},
+			1,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE CLAIM_CALCULATION_GRAPES
+		SET 
+			INSURABLE_VALUE_SELECTED = #{dto.insurableValueSelected, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			INSURABLE_VALUE_HUNDRED_PERCENT = #{dto.insurableValueHundredPercent, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			COVERAGE_AMOUNT = #{dto.coverageAmount, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			COVERAGE_AMOUNT_ASSESSED = #{dto.coverageAmountAssessed, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			COVERAGE_ASSESSED_REASON = #{dto.coverageAssessedReason, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			COVERAGE_AMOUNT_ADJUSTED = #{dto.coverageAmountAdjusted, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			TOTAL_PRODUCTION_VALUE = #{dto.totalProductionValue, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 
+			REVISION_COUNT = REVISION_COUNT + 1,
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE CLAIM_CALCULATION_GRAPES_GUID = #{claimCalculationGrapesGuid}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM CLAIM_CALCULATION_GRAPES WHERE CLAIM_CALCULATION_GRAPES_GUID = #{claimCalculationGrapesGuid}
+	</delete>
+	
+	<delete id="deleteForClaim">
+		DELETE FROM CLAIM_CALCULATION_GRAPES WHERE CLAIM_CALCULATION_GUID = #{claimCalculationGuid}
+	</delete>
+
+	<select id="selectAll" resultMap="ClaimCalculationGrapesDtoMap">
+		<include refid="selectColumns"/>
+		FROM CLAIM_CALCULATION_GRAPES T
+	</select>	
+	
+</mapper>
