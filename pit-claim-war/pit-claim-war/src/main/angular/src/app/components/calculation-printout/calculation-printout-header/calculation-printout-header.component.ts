@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CodeData, Option } from 'src/app/store/application/application.state';
 import { vmCalculation } from "../../../conversion/models";
 import { getCodeOptions } from "../../../utils/code-table-utils";
@@ -10,7 +10,7 @@ import { removeDuplicateWords } from "../../../utils"
     styleUrls: ['./calculation-printout-header.component.scss'],
     standalone: false
 })
-export class CalculationPrintoutHeaderComponent {
+export class CalculationPrintoutHeaderComponent implements OnInit, OnChanges {
 
   @Input() calculationDetail: vmCalculation;
   @Input() linkedClaimNumber? : number;
@@ -20,13 +20,18 @@ export class CalculationPrintoutHeaderComponent {
   claimNumber: string;
 
   ngOnInit() {
-    //super.ngOnInit()
     this.perilCodeOptions = getCodeOptions("PERIL_CODE");
+  }
 
-    if(this.linkedClaimNumber){
-      this.claimNumber = "Claims: " + this.calculationDetail.claimNumber + ", " + this.linkedClaimNumber;
-    } else {
-      this.claimNumber = "Claim: " + this.calculationDetail.claimNumber;
+  ngOnChanges(changes: SimpleChanges) {
+    if ( (changes.calculationDetail && this.calculationDetail ) || changes.linkedClaimNumber ) {
+
+      if(this.linkedClaimNumber){
+        this.claimNumber = "Claims: " + this.calculationDetail.claimNumber + ", " + this.linkedClaimNumber;
+      } else {
+        this.claimNumber = "Claim: " + this.calculationDetail.claimNumber;
+      }
+
     }
   }
 
