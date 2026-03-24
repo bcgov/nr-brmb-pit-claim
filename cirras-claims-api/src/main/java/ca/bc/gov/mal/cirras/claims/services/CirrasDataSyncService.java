@@ -614,7 +614,8 @@ public class CirrasDataSyncService {
 		try {
 
 			String userId = getUserId(authentication);
-
+			logger.debug("UserId for grower update: " + userId);
+			
 			ClaimDto dto = cirrasDataSyncRsrcFactory.updateGrowerDataDto(syncClaim);
 			claimDao.updateGrowerData(dto, userId);
 
