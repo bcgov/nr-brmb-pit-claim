@@ -166,6 +166,11 @@ public class SyncClaimEndpointTest extends EndpointsTest {
 		Assert.assertNotNull(updatedClaimRsrc);
 		Assert.assertEquals("Status not updated", "IN PROGRESS", updatedClaimRsrc.getClaimStatusCode());
 		Assert.assertEquals(syncClaimRsrc.getHasChequeReqInd(), updatedClaimRsrc.getHasChequeReqInd());
+
+		// Delete
+		service.deleteSyncClaim(updatedClaimRsrc);
+		SyncClaimRsrc deletedClaimRsrc = service.getSyncClaim(topLevelEndpoints, testColId.toString());
+		Assert.assertNull(deletedClaimRsrc);
 		
 		logger.debug(">testCreateUpdateDeleteNoCalculationSyncClaim");
 	}
