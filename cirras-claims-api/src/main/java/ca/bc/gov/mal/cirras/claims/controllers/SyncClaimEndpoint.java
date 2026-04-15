@@ -1,5 +1,6 @@
 package ca.bc.gov.mal.cirras.claims.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -25,6 +26,7 @@ import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
 import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
 import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
 import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
+import ca.bc.gov.nrs.wfone.common.utils.HttpServletRequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -293,38 +295,39 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-//	@Override
-//	protected ResponseBuilder evaluatePreconditions(EntityTag eTag) {
-//		logger.info("> evaluatePreconditions: Resource ETag " + eTag.getValue());
-//		
-//		HttpServletRequest httpServletRequest = HttpServletRequestHolder.getHttpServletRequest();
-//		if ( httpServletRequest != null ) {
-//		
-//			String requestIfMatch = httpServletRequest.getHeader(HeaderConstants.IF_MATCH_HEADER);
-//			logger.info("> evaluatePreconditions: Raw If-Match Header: " + requestIfMatch);
-//	
-//			if ( requestIfMatch != null && requestIfMatch.length() > 2 && requestIfMatch.startsWith("\"") && requestIfMatch.endsWith("\"") ) {
-//				// EntityTag cannot correctly parse a weak etag that is also surrounded by double-quotes, so remove them.
-//				String unquotedEtagValue = requestIfMatch.substring(1, requestIfMatch.length() - 1);
-//				EntityTag requestETag = EntityTag.valueOf(unquotedEtagValue);
-//				
-//				logger.info("> evaluatePreconditions: Request ETag " + requestETag.getValue());
-//				
-//				if (requestETag.getValue().equals(eTag.getValue())) {
-//					// If the request eTag and the resource eTag match, regardless of whether they are weak or strong, we can
-//					// assume preconditions on the check are met.
-//					logger.info("> evaluatePreconditions: etags matched.");
-//					return null;
-//				}
-//			}
-//
-//		} else {
-//			// Probably can't happen.
-//			logger.warn("> evaluatePreconditions: could not retrieve httpServletRequest");
-//		}
-//
-//		// otherwise, fall back to regular check.
-//		return super.evaluatePreconditions(eTag);
-//	}
+	@Override
+	protected ResponseBuilder evaluatePreconditions(EntityTag eTag) {
+		
+		logger.info("> evaluatePreconditions: Resource ETag " + eTag.getValue());
+		
+		HttpServletRequest httpServletRequest = HttpServletRequestHolder.getHttpServletRequest();
+		if ( httpServletRequest != null ) {
+		
+			String requestIfMatch = httpServletRequest.getHeader(HeaderConstants.IF_MATCH_HEADER);
+			logger.info("> evaluatePreconditions: Raw If-Match Header: " + requestIfMatch);
+	
+			if ( requestIfMatch != null && requestIfMatch.length() > 5 && requestIfMatch.startsWith("\"W/\"") && requestIfMatch.endsWith("\"\"") ) {
+				// EntityTag cannot correctly parse a weak etag that is also surrounded by double-quotes, so remove them.
+				String unquotedEtagValue = requestIfMatch.substring(1, requestIfMatch.length() - 1);
+				EntityTag requestETag = EntityTag.valueOf(unquotedEtagValue);
+				
+				logger.info("> evaluatePreconditions: Request ETag " + requestETag.getValue());
+				
+				if (requestETag.getValue().equals(eTag.getValue())) {
+					// If the request eTag and the resource eTag match, regardless of whether they are weak or strong, we can
+					// assume preconditions on the check are met.
+					logger.info("> evaluatePreconditions: etags matched.");
+					return null;
+				}
+			}
+
+		} else {
+			// Probably can't happen.
+			logger.warn("> evaluatePreconditions: could not retrieve httpServletRequest");
+		}
+
+		// otherwise, fall back to regular check.
+		return super.evaluatePreconditions(eTag);
+	}
 	
 }
