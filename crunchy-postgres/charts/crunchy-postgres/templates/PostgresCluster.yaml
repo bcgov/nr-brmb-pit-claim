@@ -103,7 +103,7 @@ spec:
         - secret:
             name: {{ .Values.pgBackRest.repos.configuration.secretName }}
       global:
-        log-level-console: info
+        log-level-console: {{ .Values.pgBackRest.logLevelConsole }}
 
         # hardcoding repo1 until we solution allowing multiple repos
         repo1-retention-full: {{ .Values.pgBackRest.retentionFull | quote }}
