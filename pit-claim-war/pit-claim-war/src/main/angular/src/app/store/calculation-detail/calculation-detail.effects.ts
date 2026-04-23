@@ -30,7 +30,6 @@ import {
 } from "./calculation-detail.actions";
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
 import {UUID} from "angular2-uuid";
-import {AppConfigService, TokenService} from "@wf1/wfcc-core-lib";
 import {
   convertToCalculation,
   convertToErrorState
@@ -54,6 +53,8 @@ import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "src/app/utils";
 import { setFormStateUnsaved } from "../application/application.actions";
 import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
 import { HttpErrorResponse } from "@angular/common/http";
+import { TokenService } from "src/app/services/token.service";
+import { AppConfigService } from "src/app/services/app-config.service";
 
 @Injectable()
 export class CalculationDetailEffects {
