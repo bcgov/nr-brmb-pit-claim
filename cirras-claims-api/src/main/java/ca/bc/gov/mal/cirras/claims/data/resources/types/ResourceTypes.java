@@ -50,5 +50,11 @@ public class ResourceTypes extends BaseResourceTypes {
 	public static final String SYNCHRONIZE_COVERAGE_PERIL = NAMESPACE + "synchronizeCoveragePeril";
 	public static final String DELETE_SYNC_COVERAGE_PERIL = NAMESPACE + "deleteCoveragePeril";
 
+	//Declared Yield
+	public static final String SYNC_DOP_YIELD_CONTRACT_SIMPLE_NAME = "syncDopYieldContractSimple";
+	public static final String SYNC_DOP_YIELD_CONTRACT_SIMPLE = NAMESPACE + SYNC_DOP_YIELD_CONTRACT_SIMPLE_NAME;
+	public static final String SYNCHRONIZE_DOP_YIELD_CONTRACT_SIMPLE = NAMESPACE + "SynchronizeDopYieldContractSimple";
+	public static final String DELETE_SYNC_DOP_YIELD_CONTRACT_SIMPLE = NAMESPACE + "deleteSyncDopYieldContractSimple";
+	
 }
 
