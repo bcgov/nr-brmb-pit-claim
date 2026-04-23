@@ -254,6 +254,7 @@ export class BaseComponent implements OnInit, OnChanges, AfterViewInit {
       let authorizeUrl = this.appConfigService.getConfig().webade.oauth2Url;
       let authScopes = this.appConfigService.getConfig().webade.authScopes;
       let url = baseUrl;
+      console.log ("redirectWithOAuth -> baseUrl: " + baseUrl)
       window.location.href = url;
     }
 

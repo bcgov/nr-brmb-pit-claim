@@ -157,7 +157,7 @@ export class TokenService {
             scope: configuration?.webade.authScopes
         };
 
-        // console.log('authConfig', authConfig);
+        console.log('TokenService -> initImplicitFlow -> authConfig', authConfig);
         const oauthService = this.injector.get(OAuthService);
         oauthService.configure(authConfig);
         oauthService.initImplicitFlow();
@@ -243,7 +243,10 @@ export class TokenService {
             if (baseUrl && !baseUrl.endsWith('/')) {
                 baseUrl = baseUrl.concat('/');
             }
-            let checkTokenUrl = `${baseUrl}${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
+            
+            // let checkTokenUrl = `${baseUrl}${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
+            let checkTokenUrl = `${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
+            console.log("TokenService -> initAndEmit -> checkTokenUrl: " + checkTokenUrl)
 
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${this.oauth.access_token}`,

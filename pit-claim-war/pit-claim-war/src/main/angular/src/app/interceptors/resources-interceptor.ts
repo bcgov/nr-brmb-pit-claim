@@ -203,6 +203,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         let authScopes = this.appConfig.getConfig().webade.authScopes;
 
         let redirectUrl = `${baseUrl}${refreshPage}`;
+        console.log("ResourcesInterceptor -> refreshWindow -> redirectUrl: " + redirectUrl)
         this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(`${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
             , "cirras-claims-token",
             (errorMessage) => {
