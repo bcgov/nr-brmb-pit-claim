@@ -39,6 +39,7 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.CommodityCoverageCodeDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CoveragePerilDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CropCommodityDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CropVarietyDao;
+import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.InsurancePlanDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.PerilCodeDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CalculationStatusCodeDao;
@@ -234,4 +235,9 @@ public class PersistenceSpringConfig {
 		return new CommodityCoverageCodeDao(); 
 	}
 
+	@Bean
+	public DeclaredYieldContractCommodityBerriesSyncDao declaredYieldContractCommodityBerriesSyncDao() { 
+		return new DeclaredYieldContractCommodityBerriesSyncDao(); 
+	}
+	
 }

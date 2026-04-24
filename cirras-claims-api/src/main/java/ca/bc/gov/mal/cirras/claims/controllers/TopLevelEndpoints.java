@@ -87,6 +87,9 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 			if (hasAuthority(Scopes.GET_SYNC_CLAIM)) {
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.SYNC_CLAIM, selfURI, HttpMethod.GET));
+
+				selfURI = CirrasDataSyncRsrcFactory.getSyncDopYieldContractSimpleSelfUri(baseUri);
+				result.getLinks().add(new RelLink(ResourceTypes.SYNC_DOP_YIELD_CONTRACT_SIMPLE, selfURI, HttpMethod.GET));
 			}
 			if (hasAuthority(Scopes.CREATE_SYNC_CLAIM)) {
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimSelfUri(null, baseUri);
@@ -118,7 +121,13 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 				result.getLinks().add(new RelLink(ResourceTypes.SYNCHRONIZE_COVERAGE_PERIL, selfURI, HttpMethod.POST));
 				//delete
 				result.getLinks().add(new RelLink(ResourceTypes.DELETE_SYNC_COVERAGE_PERIL, selfURI, HttpMethod.DELETE));
-				
+
+				//DOP SYNC
+				selfURI = CirrasDataSyncRsrcFactory.getSyncDopYieldContractSimpleSelfUri(baseUri);
+				//create/update
+				result.getLinks().add(new RelLink(ResourceTypes.SYNCHRONIZE_DOP_YIELD_CONTRACT_SIMPLE, selfURI, HttpMethod.POST));
+				//delete
+				result.getLinks().add(new RelLink(ResourceTypes.DELETE_SYNC_DOP_YIELD_CONTRACT_SIMPLE, selfURI, HttpMethod.DELETE));
 			}
 				
 			result.setETag(getEtag(result));

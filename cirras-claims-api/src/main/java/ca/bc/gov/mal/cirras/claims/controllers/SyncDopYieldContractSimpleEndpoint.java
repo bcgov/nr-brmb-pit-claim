@@ -77,11 +77,10 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 
 		try {
 
-			// TODO
-//			cirrasDataSyncService.synchronizeDopYieldContractSimple(
-//					resource, 
-//					getFactoryContext(), 
-//					getWebAdeAuthentication());
+			cirrasDataSyncService.synchronizeDopYieldContractSimple(
+					resource, 
+					getFactoryContext(), 
+					getWebAdeAuthentication());
 
 			response = Response.status(204).build();
 		} catch (Throwable t) {
@@ -110,7 +109,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getSyncDopYieldContractSimpleRsrc(
-		@Parameter(description = "The guid of the dop yield contract commodity berries in CUWS.") @QueryParam("declaredYieldContractCommodityBerries") String declaredYieldContractCommodityBerries
+		@Parameter(description = "The guid of the dop yield contract commodity berries in CUWS.") @QueryParam("declaredYieldContractCommodityBerriesGuid") String declaredYieldContractCommodityBerriesGuid
 	){
 		logger.debug("<getSyncDopYieldContractSimpleRsrc");
 
@@ -124,17 +123,12 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		
 		try {
 
-			// TODO
-			SyncDopYieldContractSimpleRsrc result = new SyncDopYieldContractSimpleRsrc();
-//			SyncDopYieldContractSimpleRsrc result = (SyncDopYieldContractSimpleRsrc) cirrasDataSyncService.getSyncDopYieldContractSimple(
-//					declaredYieldContractCommodityBerries,
-//					getFactoryContext(), 
-//					getWebAdeAuthentication());
+			SyncDopYieldContractSimpleRsrc result = (SyncDopYieldContractSimpleRsrc) cirrasDataSyncService.getSyncDopYieldContractSimple(
+					declaredYieldContractCommodityBerriesGuid,
+					getFactoryContext(), 
+					getWebAdeAuthentication());
 
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
-
-			// TODO
-			throw new NotFoundException("");
 
 		} catch (NotFoundException e) {
 			response = Response.status(Status.NOT_FOUND).build();
@@ -166,7 +160,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = MessageListRsrc.class))) })
 	@DELETE
 	public Response deleteSyncDopYieldContractSimple(
-		@Parameter(description = "The guid of the dop yield contract commodity berries in CUWS.") @QueryParam("declaredYieldContractCommodityBerries") String declaredYieldContractCommodityBerries
+		@Parameter(description = "The guid of the dop yield contract commodity berries in CUWS.") @QueryParam("declaredYieldContractCommodityBerriesGuid") String declaredYieldContractCommodityBerriesGuid
 	) {
 		logger.debug("<deleteSyncDopYieldContractSimple");
 
@@ -179,17 +173,13 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		}
 			
 		try {
-			// TODO
-			SyncDopYieldContractSimpleRsrc resource = new SyncDopYieldContractSimpleRsrc();
-//			SyncDopYieldContractSimpleRsrc resource = (SyncDopYieldContractSimpleRsrc) cirrasDataSyncService.getSyncDopYieldContractSimple(
-//					declaredYieldContractCommodityBerries,
-//					getFactoryContext(), 
-//					getWebAdeAuthentication());
+			SyncDopYieldContractSimpleRsrc resource = (SyncDopYieldContractSimpleRsrc) cirrasDataSyncService.getSyncDopYieldContractSimple(
+					declaredYieldContractCommodityBerriesGuid,
+					getFactoryContext(), 
+					getWebAdeAuthentication());
 			
 			if(resource != null) {
-			// TODO
-				throw new NotFoundException("");
-//				cirrasDataSyncService.deleteSyncDopYieldContractSimple(declaredYieldContractCommodityBerries, getFactoryContext(), getWebAdeAuthentication());
+				cirrasDataSyncService.deleteSyncDopYieldContractSimple(declaredYieldContractCommodityBerriesGuid, getFactoryContext(), getWebAdeAuthentication());
 			}
 			response = Response.status(204).build();
 		} catch (NotFoundException e) {

@@ -12,6 +12,8 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCodeRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCommodityVarietyRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.UnderwritingSyncEventTypes;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncClaim;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCode;
@@ -24,6 +26,7 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.CommodityCoverageCodeDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CoveragePerilDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CropCommodityDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CropVarietyDao;
+import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.InsurancePlanDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.PerilCodeDao;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
@@ -34,6 +37,7 @@ import ca.bc.gov.mal.cirras.claims.data.entities.CommodityCoverageCodeDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CoveragePerilDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropCommodityDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropVarietyDto;
+import ca.bc.gov.mal.cirras.claims.data.entities.DeclaredYieldContractCommodityBerriesSyncDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.InsurancePlanDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.PerilCodeDto;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;
@@ -76,6 +80,7 @@ public class CirrasDataSyncService {
 	private InsurancePlanDao insurancePlanDao;
 	private ClaimStatusCodeDao claimStatusCodeDao;
 	private CommodityCoverageCodeDao commodityCoverageCodeDao;
+	private DeclaredYieldContractCommodityBerriesSyncDao declaredYieldContractCommodityBerriesSyncDao;
 
 	// utils
 	private CirrasServiceHelper cirrasServiceHelper;
@@ -136,7 +141,9 @@ public class CirrasDataSyncService {
 		this.commodityCoverageCodeDao = commodityCoverageCodeDao;
 	}
 
-	
+	public void setDeclaredYieldContractCommodityBerriesSyncDao(DeclaredYieldContractCommodityBerriesSyncDao declaredYieldContractCommodityBerriesSyncDao) {
+		this.declaredYieldContractCommodityBerriesSyncDao = declaredYieldContractCommodityBerriesSyncDao;
+	}
 
 	//
 	// The "proof of concept" REST service doesn't have any security
@@ -1428,4 +1435,142 @@ public class CirrasDataSyncService {
 
 	}
 
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void synchronizeDopYieldContractSimple(SyncDopYieldContractSimpleRsrc resource, FactoryContext factoryContext,
+			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+
+		logger.debug("<synchronizeDopYieldContractSimple");
+
+		if (resource.getTransactionType().equalsIgnoreCase(UnderwritingSyncEventTypes.DopYieldContractCommodityBerriesDeleted)) {
+			// DELETE
+			if ( resource.getSyncDopYieldContractCommodityBerries() != null ) {
+				deleteDeclaredYieldContractCommodityBerriesSync(resource.getSyncDopYieldContractCommodityBerries().getDeclaredYieldContractCommodityBerriesGuid(), factoryContext, authentication);
+			} else {
+				throw new ServiceException("Missing subtype: SyncDopYieldContractCommodityBerries");
+			}
+
+		} else if (resource.getTransactionType().equalsIgnoreCase(UnderwritingSyncEventTypes.DopYieldContractCommodityBerriesCreated)
+				|| resource.getTransactionType().equalsIgnoreCase(UnderwritingSyncEventTypes.DopYieldContractCommodityBerriesUpdated)) {
+			// INSERT OR UPDATE
+			if ( resource.getSyncDopYieldContractCommodityBerries() != null ) {
+			
+				//Check if record already exist and call the correct method
+				DeclaredYieldContractCommodityBerriesSyncDto dto = declaredYieldContractCommodityBerriesSyncDao.fetch(resource.getSyncDopYieldContractCommodityBerries().getDeclaredYieldContractCommodityBerriesGuid());
+	
+				if (dto == null) {
+					createDeclaredYieldContractCommodityBerriesSync(resource, factoryContext, authentication);
+				} else {
+					updateDeclaredYieldContractCommodityBerriesSync(resource, dto, factoryContext, authentication);
+				}
+			} else {
+				throw new ServiceException("Missing subtype: SyncDopYieldContractCommodityBerries");
+			}
+		}
+
+		logger.debug(">synchronizeDopYieldContractSimple");
+	}
+
+	private void createDeclaredYieldContractCommodityBerriesSync(SyncDopYieldContractSimpleRsrc resource, FactoryContext factoryContext,
+			WebAdeAuthentication webAdeAuthentication) {
+
+		logger.debug("<createDeclaredYieldContractCommodityBerriesSync");
+
+		try {
+
+			String userId = getUserId(webAdeAuthentication);
+
+			DeclaredYieldContractCommodityBerriesSyncDto dto = cirrasDataSyncRsrcFactory.createDeclaredYieldContractCommodityBerriesSync(resource);
+			declaredYieldContractCommodityBerriesSyncDao.insert(dto, userId);
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new ServiceException("DAO threw an exception: " + e.getMessage(), e);
+		}
+
+		logger.debug(">createDeclaredYieldContractCommodityBerriesSync");
+
+	}
+
+	private void updateDeclaredYieldContractCommodityBerriesSync(SyncDopYieldContractSimpleRsrc resource, DeclaredYieldContractCommodityBerriesSyncDto dto, 
+			FactoryContext factoryContext, WebAdeAuthentication webAdeAuthentication) {
+
+		logger.debug("<updateDeclaredYieldContractCommodityBerriesSync");
+
+		try {
+
+			String userId = getUserId(webAdeAuthentication);
+
+			cirrasDataSyncRsrcFactory.updateDeclaredYieldContractCommodityBerriesSync(dto, resource);
+			declaredYieldContractCommodityBerriesSyncDao.update(dto, userId);
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new ServiceException("DAO threw an exception: " + e.getMessage(), e);
+		}
+
+		logger.debug(">updateDeclaredYieldContractCommodityBerriesSync");
+
+	}
+
+	private void deleteDeclaredYieldContractCommodityBerriesSync(String declaredYieldContractCommodityBerriesGuid, 
+			FactoryContext factoryContext, WebAdeAuthentication webAdeAuthentication) {
+
+		logger.debug("<deleteDeclaredYieldContractCommodityBerriesSync");
+
+		try {
+
+			declaredYieldContractCommodityBerriesSyncDao.delete(declaredYieldContractCommodityBerriesGuid);
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new ServiceException("DAO threw an exception: " + e.getMessage(), e);
+		}
+
+		logger.debug(">deleteDeclaredYieldContractCommodityBerriesSync");
+
+	}
+	
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void deleteSyncDopYieldContractSimple(String declaredYieldContractCommodityBerriesGuid, FactoryContext factoryContext,
+			WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+
+		logger.debug("<deleteSyncDopYieldContractSimple");
+
+		deleteDeclaredYieldContractCommodityBerriesSync(declaredYieldContractCommodityBerriesGuid, factoryContext, authentication);
+
+		logger.debug(">deleteSyncDopYieldContractSimple");
+
+	}
+
+	
+	@Transactional(readOnly = true, rollbackFor = Exception.class)
+	public SyncDopYieldContractSimpleRsrc getSyncDopYieldContractSimple(String declaredYieldContractCommodityBerriesGuid, FactoryContext factoryContext,
+			WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+
+		logger.debug("<getSyncDopYieldContractSimple");
+
+		SyncDopYieldContractSimpleRsrc resource = null;
+
+		try {
+
+			DeclaredYieldContractCommodityBerriesSyncDto dto = declaredYieldContractCommodityBerriesSyncDao.fetch(declaredYieldContractCommodityBerriesGuid);
+
+			if (dto != null) {
+				resource = cirrasDataSyncRsrcFactory.getSyncDopYieldContractSimpleFromDeclaredYieldContractCommodityBerriesSync(dto);
+
+			} else {
+				// No record found
+				throw new NotFoundException("Did not find dop yield contract commodity berries with guid: " + declaredYieldContractCommodityBerriesGuid);
+			}
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new ServiceException("DAO threw an exception: " + e.getMessage(), e);
+		}
+
+		logger.debug(">getSyncDopYieldContractSimple");
+
+		return resource;
+	}
 }
