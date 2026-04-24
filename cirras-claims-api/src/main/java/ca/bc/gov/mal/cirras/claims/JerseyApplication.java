@@ -28,6 +28,7 @@ import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import ca.bc.gov.mal.cirras.claims.controllers.CheckTokenController;
 
 public class JerseyApplication extends JerseyResourceConfig {
 
@@ -65,6 +66,8 @@ public class JerseyApplication extends JerseyResourceConfig {
 
 		register(OpenApiResource.class);
 		register(AcceptHeaderOpenApiResource.class);
+		
+		register(CheckTokenController.class);
 
 		SwaggerConfiguration oasConfig = new SwaggerConfiguration()
 			.prettyPrint(Boolean.TRUE)
