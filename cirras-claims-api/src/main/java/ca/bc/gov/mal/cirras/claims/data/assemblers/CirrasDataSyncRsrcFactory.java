@@ -482,7 +482,6 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 		dto.setCropYear(model.getCropYear());
 		dto.setDataSyncTransDate(model.getDataSyncTransDate());
 
-		// TODO: Check for null model?
 		dto.setCropCommodityId(sdyccbModel.getCropCommodityId());
 		dto.setCropCommodityName(helper.capitalizeEachWord(sdyccbModel.getCropCommodityName()));
 		dto.setDeclaredYieldContractCommodityBerriesGuid(sdyccbModel.getDeclaredYieldContractCommodityBerriesGuid());
@@ -507,7 +506,6 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 		dto.setCropYear(model.getCropYear());
 		dto.setDataSyncTransDate(model.getDataSyncTransDate());
 
-		// TODO: Check for null model?
 		dto.setCropCommodityId(sdyccbModel.getCropCommodityId());
 		dto.setCropCommodityName(helper.capitalizeEachWord(sdyccbModel.getCropCommodityName()));
 		dto.setTotalAbandonmentYield(sdyccbModel.getTotalAbandonmentYield());

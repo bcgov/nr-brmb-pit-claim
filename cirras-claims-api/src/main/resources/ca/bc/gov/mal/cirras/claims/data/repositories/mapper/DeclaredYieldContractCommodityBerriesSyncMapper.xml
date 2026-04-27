@@ -101,7 +101,6 @@
 	</insert> 
 
 
-<!--  TODO: Should crop_commodity_id, contract_id and crop_year be updateable? -->
 	<update id="update">
 		update declared_yield_contract_commodity_berries_sync
 		set declared_yield_contract_guid = #{dto.declaredYieldContractGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},

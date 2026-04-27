@@ -93,7 +93,6 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	// TODO: Create a new scope?
 	@Operation(operationId = "Get dop", summary = "Get dop", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.GET_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
