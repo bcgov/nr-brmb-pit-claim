@@ -72,5 +72,5 @@ ALTER TABLE ccs.declared_yield_contract_commodity_berries_sync ADD
 
 ALTER TABLE ccs.declared_yield_contract_commodity_berries_sync ADD CONSTRAINT FK_DYCCBS_CCO 
     FOREIGN KEY (crop_commodity_id)
-    REFERENCES "CCS"."CROP_COMMODITY"("CROP_COMMODITY_ID")
+    REFERENCES ccs.CROP_COMMODITY(CROP_COMMODITY_ID)
 ;
