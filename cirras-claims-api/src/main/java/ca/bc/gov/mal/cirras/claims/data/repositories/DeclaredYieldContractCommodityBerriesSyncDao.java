@@ -49,7 +49,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDao extends BaseDao {
 	public void insert(DeclaredYieldContractCommodityBerriesSyncDto dto, String userId) throws DaoException {
 		logger.debug("<insert");
 
-		String declaredYieldContractCommodityBerriesGuid = null;
+		String declaredYieldContractCommodityBerriesSyncGuid = null;
 
 		try {
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -62,13 +62,13 @@ public class DeclaredYieldContractCommodityBerriesSyncDao extends BaseDao {
 				throw new DaoException("Record not inserted: "+count);
 			}
 			
-			declaredYieldContractCommodityBerriesGuid = dto.getDeclaredYieldContractCommodityBerriesGuid();
+			declaredYieldContractCommodityBerriesSyncGuid = dto.getDeclaredYieldContractCommodityBerriesSyncGuid();
 			
 		} catch (RuntimeException e) {
 			handleException(e);
 		}
 
-		logger.debug(">insert " + declaredYieldContractCommodityBerriesGuid);
+		logger.debug(">insert " + declaredYieldContractCommodityBerriesSyncGuid);
 	}
 	
 	public void update(DeclaredYieldContractCommodityBerriesSyncDto dto, String userId) 

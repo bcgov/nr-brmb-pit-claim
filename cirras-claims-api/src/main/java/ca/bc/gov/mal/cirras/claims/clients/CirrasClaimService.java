@@ -602,7 +602,7 @@ public class CirrasClaimService extends BaseRestServiceClient {
 		
 	}	
 
-	public SyncDopYieldContractSimpleRsrc getSyncDopYieldContractSimple(EndpointsRsrc parent, String declaredYieldContractCommodityBerries) 
+	public SyncDopYieldContractSimpleRsrc getSyncDopYieldContractSimple(EndpointsRsrc parent, String declaredYieldContractCommodityBerriesGuid) 
 			throws CirrasClaimServiceException {
 		
 		GenericRestDAO<SyncDopYieldContractSimpleRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(SyncDopYieldContractSimpleRsrc.class);
@@ -611,7 +611,7 @@ public class CirrasClaimService extends BaseRestServiceClient {
 		
 			Map<String, String> queryParams = new HashMap<String, String>();
 			
-			putQueryParam(queryParams, "declaredYieldContractCommodityBerries",  declaredYieldContractCommodityBerries);
+			putQueryParam(queryParams, "declaredYieldContractCommodityBerriesGuid",  declaredYieldContractCommodityBerriesGuid);
 			
 			Response<SyncDopYieldContractSimpleRsrc> response = dao.Process(ResourceTypes.SYNC_DOP_YIELD_CONTRACT_SIMPLE, this.getTransformer(), parent, queryParams, getWebClient());
 			
@@ -640,7 +640,7 @@ public class CirrasClaimService extends BaseRestServiceClient {
 	}
 		
 	
-	public void deleteSyncDopYieldContractSimple(EndpointsRsrc parent, String declaredYieldContractCommodityBerries) throws CirrasClaimServiceException {
+	public void deleteSyncDopYieldContractSimple(EndpointsRsrc parent, String declaredYieldContractCommodityBerriesGuid) throws CirrasClaimServiceException {
 		
 		GenericRestDAO<SyncDopYieldContractSimpleRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(SyncDopYieldContractSimpleRsrc.class);
 		
@@ -648,7 +648,7 @@ public class CirrasClaimService extends BaseRestServiceClient {
 		
 			Map<String, String> queryParams = new HashMap<String, String>();
 			
-			putQueryParam(queryParams, "declaredYieldContractCommodityBerries",  declaredYieldContractCommodityBerries);
+			putQueryParam(queryParams, "declaredYieldContractCommodityBerriesGuid",  declaredYieldContractCommodityBerriesGuid);
 			
 			dao.Process(ResourceTypes.DELETE_SYNC_DOP_YIELD_CONTRACT_SIMPLE, this.getTransformer(), parent, queryParams, getWebClient());
 	
