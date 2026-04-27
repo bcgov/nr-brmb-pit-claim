@@ -477,6 +477,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 
 		CirrasServiceHelper helper = new CirrasServiceHelper();
 
+		dto.setDeclaredYieldContractGuid(model.getDeclaredYieldContractGuid());
 		dto.setContractId(model.getContractId());
 		dto.setCropYear(model.getCropYear());
 		dto.setDataSyncTransDate(model.getDataSyncTransDate());
@@ -501,6 +502,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 
 		CirrasServiceHelper helper = new CirrasServiceHelper();
 
+		dto.setDeclaredYieldContractGuid(model.getDeclaredYieldContractGuid());
 		dto.setContractId(model.getContractId());
 		dto.setCropYear(model.getCropYear());
 		dto.setDataSyncTransDate(model.getDataSyncTransDate());
@@ -520,6 +522,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 
 		SyncDopYieldContractSimpleRsrc resource = new SyncDopYieldContractSimpleRsrc();
 		
+		resource.setDeclaredYieldContractGuid(dto.getDeclaredYieldContractGuid());
 		resource.setContractId(dto.getContractId());
 		resource.setCropYear(dto.getCropYear());
 		resource.setDataSyncTransDate(dto.getDataSyncTransDate());

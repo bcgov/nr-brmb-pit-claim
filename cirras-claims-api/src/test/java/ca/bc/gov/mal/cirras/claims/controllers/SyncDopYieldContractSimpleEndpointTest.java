@@ -78,6 +78,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//CREATE
 		SyncDopYieldContractSimpleRsrc resource = new SyncDopYieldContractSimpleRsrc();
 
+		resource.setDeclaredYieldContractGuid("3991fb6d0abe4696a3574b4d2837bbb4");
 		resource.setContractId(888888888);
 		resource.setCropYear(2020);
 		
@@ -102,6 +103,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//FETCH
 		SyncDopYieldContractSimpleRsrc fetchedResource = service.getSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
 
+		Assert.assertEquals(resource.getDeclaredYieldContractGuid(), fetchedResource.getDeclaredYieldContractGuid());
 		Assert.assertEquals(resource.getContractId(), fetchedResource.getContractId());
 		Assert.assertEquals(resource.getCropYear(), fetchedResource.getCropYear());
 		Assert.assertTrue(resource.getDataSyncTransDate().compareTo(fetchedResource.getDataSyncTransDate()) == 0);
@@ -132,6 +134,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//FETCH
 		SyncDopYieldContractSimpleRsrc updatedResource = service.getSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
 
+		Assert.assertEquals(fetchedResource.getDeclaredYieldContractGuid(), updatedResource.getDeclaredYieldContractGuid());
 		Assert.assertEquals(fetchedResource.getContractId(), updatedResource.getContractId());
 		Assert.assertEquals(fetchedResource.getCropYear(), updatedResource.getCropYear());
 		Assert.assertTrue(fetchedResource.getDataSyncTransDate().compareTo(updatedResource.getDataSyncTransDate()) == 0);
@@ -160,6 +163,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//CREATE second resource
 		SyncDopYieldContractSimpleRsrc resource2 = new SyncDopYieldContractSimpleRsrc();
 
+		resource2.setDeclaredYieldContractGuid("3991fb6d0abe4696a3574b4d2837bbb4");
 		resource2.setContractId(888888888);
 		resource2.setCropYear(2020);
 		
@@ -216,6 +220,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//CREATE
 		SyncDopYieldContractSimpleRsrc resource = new SyncDopYieldContractSimpleRsrc();
 
+		resource.setDeclaredYieldContractGuid("3991fb6d0abe4696a3574b4d2837bbb4");
 		resource.setContractId(888888888);
 		resource.setCropYear(2020);
 		
@@ -251,6 +256,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//FETCH
 		fetchedResource = service.getSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
 
+		Assert.assertEquals(resource.getDeclaredYieldContractGuid(), fetchedResource.getDeclaredYieldContractGuid());
 		Assert.assertEquals(resource.getContractId(), fetchedResource.getContractId());
 		Assert.assertEquals(resource.getCropYear(), fetchedResource.getCropYear());
 		Assert.assertTrue(resource.getDataSyncTransDate().compareTo(fetchedResource.getDataSyncTransDate()) == 0);
@@ -294,6 +300,7 @@ public class SyncDopYieldContractSimpleEndpointTest extends EndpointsTest {
 		//FETCH
 		SyncDopYieldContractSimpleRsrc updatedResource = service.getSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
 
+		Assert.assertEquals(fetchedResource.getDeclaredYieldContractGuid(), updatedResource.getDeclaredYieldContractGuid());
 		Assert.assertEquals(fetchedResource.getContractId(), updatedResource.getContractId());
 		Assert.assertEquals(fetchedResource.getCropYear(), updatedResource.getCropYear());
 		Assert.assertTrue(fetchedResource.getDataSyncTransDate().compareTo(updatedResource.getDataSyncTransDate()) == 0);

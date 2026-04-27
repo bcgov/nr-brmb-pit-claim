@@ -18,6 +18,7 @@ public class SyncDopYieldContractSimpleRsrc extends BaseResource {
 
 	private static final long serialVersionUID = 1L;
 
+	private String declaredYieldContractGuid;
 	private Integer contractId;
 	private Integer cropYear;
 
@@ -26,6 +27,13 @@ public class SyncDopYieldContractSimpleRsrc extends BaseResource {
 
 	private SyncDopYieldContractCommodityBerries syncDopYieldContractCommodityBerries;
 	
+	public String getDeclaredYieldContractGuid() {
+		return declaredYieldContractGuid;
+	}
+	public void setDeclaredYieldContractGuid(String declaredYieldContractGuid) {
+		this.declaredYieldContractGuid = declaredYieldContractGuid;
+	}
+
 	public Integer getContractId() {
 		return contractId;
 	}

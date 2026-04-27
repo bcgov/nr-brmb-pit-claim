@@ -15,6 +15,7 @@
 		<result property="totalSalesYield" column="total_sales_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
 		<result property="totalAbandonmentYield" column="total_abandonment_yield" javaType="java.lang.Double" jdbcType="NUMERIC" />
 
+		<result property="declaredYieldContractGuid" column="declared_yield_contract_guid" javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="contractId" column="contract_id" javaType="java.lang.Integer" jdbcType="NUMERIC" />
 		<result property="cropYear" column="crop_year" javaType="java.lang.Integer" jdbcType="NUMERIC" />
 		
@@ -32,6 +33,7 @@
     <sql id="selectColumns">
       select t.declared_yield_contract_commodity_berries_sync_guid,
              t.declared_yield_contract_commodity_berries_guid,
+             t.declared_yield_contract_guid,
              t.crop_commodity_id,
              t.contract_id,
              t.crop_year,
@@ -64,6 +66,7 @@
 		insert into declared_yield_contract_commodity_berries_sync(
 			declared_yield_contract_commodity_berries_sync_guid,
 			declared_yield_contract_commodity_berries_guid,
+			declared_yield_contract_guid,
 			crop_commodity_id,
 			contract_id,
 			crop_year,
@@ -80,6 +83,7 @@
 		) values (
 			#{declaredYieldContractCommodityBerriesSyncGuid},
 			#{dto.declaredYieldContractCommodityBerriesGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.declaredYieldContractGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
 			#{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
 			#{dto.contractId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
 			#{dto.cropYear, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
@@ -100,7 +104,8 @@
 <!--  TODO: Should crop_commodity_id, contract_id and crop_year be updateable? -->
 	<update id="update">
 		update declared_yield_contract_commodity_berries_sync
-		set crop_commodity_id = #{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
+		set declared_yield_contract_guid = #{dto.declaredYieldContractGuid, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			crop_commodity_id = #{dto.cropCommodityId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
 			contract_id = #{dto.contractId, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
 			crop_year = #{dto.cropYear, javaType=java.lang.Integer , jdbcType=NUMERIC, mode=IN},
 			total_production = #{dto.totalProduction, javaType=java.lang.Double , jdbcType=NUMERIC, mode=IN}, 

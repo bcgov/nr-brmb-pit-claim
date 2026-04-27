@@ -28,6 +28,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDto extends BaseDto<Declar
 	private Double totalSalesYield;
 	private Double totalAbandonmentYield;
 
+	private String declaredYieldContractGuid;
 	private Integer contractId;
 	private Integer cropYear;
 	
@@ -52,6 +53,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDto extends BaseDto<Declar
 		this.totalSoldShippedYield = dto.totalSoldShippedYield;
 		this.totalSalesYield = dto.totalSalesYield;
 		this.totalAbandonmentYield = dto.totalAbandonmentYield;
+		this.declaredYieldContractGuid = dto.declaredYieldContractGuid;
 		this.contractId = dto.contractId;
 		this.cropYear = dto.cropYear;
 		this.dataSyncTransDate = dto.dataSyncTransDate;
@@ -82,6 +84,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDto extends BaseDto<Declar
 			result = result&&dtoUtils.equals("totalSoldShippedYield", totalSoldShippedYield, other.totalSoldShippedYield, 4);
 			result = result&&dtoUtils.equals("totalSalesYield", totalSalesYield, other.totalSalesYield, 4);
 			result = result&&dtoUtils.equals("totalAbandonmentYield", totalAbandonmentYield, other.totalAbandonmentYield, 4);
+			result = result&&dtoUtils.equals("declaredYieldContractGuid", declaredYieldContractGuid, other.declaredYieldContractGuid);
 			result = result&&dtoUtils.equals("contractId", contractId, other.contractId);
 			result = result&&dtoUtils.equals("cropYear", cropYear, other.cropYear);
 			result = result&&dtoUtils.equals("dataSyncTransDate",
@@ -173,6 +176,12 @@ public class DeclaredYieldContractCommodityBerriesSyncDto extends BaseDto<Declar
 		this.totalAbandonmentYield = totalAbandonmentYield;
 	}
 
+	public String getDeclaredYieldContractGuid() {
+		return declaredYieldContractGuid;
+	}
+	public void setDeclaredYieldContractGuid(String declaredYieldContractGuid) {
+		this.declaredYieldContractGuid = declaredYieldContractGuid;
+	}
 
 	public Integer getContractId() {
 		return contractId;

@@ -68,6 +68,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDaoTest {
 		newDto.setCropCommodityName("Blueberry");
 		newDto.setCropYear(2020);
 		newDto.setDeclaredYieldContractCommodityBerriesGuid(declaredYieldContractCommodityBerriesGuid);
+		newDto.setDeclaredYieldContractGuid("3991fb6d0abe4696a3574b4d2837bbb4");
 		newDto.setTotalAbandonmentYield(111.2222);
 		newDto.setTotalProduction(333.4444);
 		newDto.setTotalProductionOverride(555.6666);
@@ -85,6 +86,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDaoTest {
 		Assert.assertEquals("CropCommodityName", newDto.getCropCommodityName(), fetchedDto.getCropCommodityName());
 		Assert.assertEquals("CropYear", newDto.getCropYear(), fetchedDto.getCropYear());
 		Assert.assertEquals("DeclaredYieldContractCommodityBerriesGuid", newDto.getDeclaredYieldContractCommodityBerriesGuid(), fetchedDto.getDeclaredYieldContractCommodityBerriesGuid());
+		Assert.assertEquals("DeclaredYieldContractGuid", newDto.getDeclaredYieldContractGuid(), fetchedDto.getDeclaredYieldContractGuid());
 		Assert.assertEquals("TotalAbandonmentYield", newDto.getTotalAbandonmentYield(), fetchedDto.getTotalAbandonmentYield());
 		Assert.assertEquals("TotalProduction", newDto.getTotalProduction(), fetchedDto.getTotalProduction());
 		Assert.assertEquals("TotalProductionOverride", newDto.getTotalProductionOverride(), fetchedDto.getTotalProductionOverride());
@@ -96,6 +98,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDaoTest {
 		//UPDATE
 		dataSyncTransDate = TestUtils.addSeconds(date, -60);
 
+		fetchedDto.setDeclaredYieldContractGuid("ab58408c1e624feb8bee84b4d8a6edc5");
 		fetchedDto.setContractId(888888889);
 		fetchedDto.setCropCommodityId(11);
 		fetchedDto.setCropCommodityName("Cranberry");
@@ -117,6 +120,7 @@ public class DeclaredYieldContractCommodityBerriesSyncDaoTest {
 		Assert.assertEquals("CropCommodityName", fetchedDto.getCropCommodityName(), updatedDto.getCropCommodityName());
 		Assert.assertEquals("CropYear", fetchedDto.getCropYear(), updatedDto.getCropYear());
 		Assert.assertEquals("DeclaredYieldContractCommodityBerriesGuid", fetchedDto.getDeclaredYieldContractCommodityBerriesGuid(), updatedDto.getDeclaredYieldContractCommodityBerriesGuid());
+		Assert.assertEquals("DeclaredYieldContractGuid", fetchedDto.getDeclaredYieldContractGuid(), updatedDto.getDeclaredYieldContractGuid());
 		Assert.assertEquals("TotalAbandonmentYield", fetchedDto.getTotalAbandonmentYield(), updatedDto.getTotalAbandonmentYield());
 		Assert.assertEquals("TotalProduction", fetchedDto.getTotalProduction(), updatedDto.getTotalProduction());
 		Assert.assertEquals("TotalProductionOverride", fetchedDto.getTotalProductionOverride(), updatedDto.getTotalProductionOverride());
