@@ -28,7 +28,7 @@ COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.contract_id
 ;
 COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.crop_year IS 'Crop Year is the year of the policy from cirr_insurance_policies.crop_year'
 ;
-COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.declared_yield_contract_guid IS 'Declared Yield Contract GUID  is the primary key used to identify the record'
+COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.declared_yield_contract_guid IS 'Declared Yield Contract Guid links to a record in DECLARED_YIELD_CONTRACT table in CUWS.'
 ;
 COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.declared_yield_contract_commodity_berries_guid IS 'Declared Yield Field Commodity Berries Guid  is the primary key of the source table used to identify the record'
 ;
