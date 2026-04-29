@@ -3,6 +3,7 @@ CREATE TABLE ccs.declared_yield_contract_commodity_berries_sync(
     crop_commodity_id                                      numeric(9, 0)     NOT NULL,
     contract_id                                            numeric(9, 0)     NOT NULL,
     crop_year                                              numeric(4, 0)     NOT NULL,
+    declared_yield_contract_guid                           varchar(32)       NOT NULL,
     declared_yield_contract_commodity_berries_guid         varchar(32)       NOT NULL,
     total_production                                       numeric(14, 4),
     total_production_override                              numeric(14, 4),
@@ -26,6 +27,8 @@ COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.crop_commod
 COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.contract_id IS 'Contract Id is a unique identifier of a claim from CIRR_CONTRACT_NUMBERS.CN_ID'
 ;
 COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.crop_year IS 'Crop Year is the year of the policy from cirr_insurance_policies.crop_year'
+;
+COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.declared_yield_contract_guid IS 'Declared Yield Contract Guid links to a record in DECLARED_YIELD_CONTRACT table in CUWS.'
 ;
 COMMENT ON COLUMN ccs.declared_yield_contract_commodity_berries_sync.declared_yield_contract_commodity_berries_guid IS 'Declared Yield Field Commodity Berries Guid  is the primary key of the source table used to identify the record'
 ;
@@ -63,9 +66,11 @@ ALTER TABLE ccs.declared_yield_contract_commodity_berries_sync ADD
     CONSTRAINT UK_DYCCBS UNIQUE (crop_commodity_id, contract_id, crop_year) USING INDEX TABLESPACE pg_default 
 ;
 
+ALTER TABLE ccs.declared_yield_contract_commodity_berries_sync ADD 
+    CONSTRAINT UK2_DYCCBS UNIQUE (declared_yield_contract_commodity_berries_guid) USING INDEX TABLESPACE pg_default 
+;
+
 ALTER TABLE ccs.declared_yield_contract_commodity_berries_sync ADD CONSTRAINT FK_DYCCBS_CCO 
     FOREIGN KEY (crop_commodity_id)
     REFERENCES ccs.CROP_COMMODITY(CROP_COMMODITY_ID)
 ;
-
-

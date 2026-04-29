@@ -15,6 +15,7 @@ import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
 import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingService;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
+import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
 import ca.bc.gov.mal.cirras.claims.services.utils.OutOfSync;
@@ -137,6 +138,7 @@ public class ServiceApiSpringConfig {
 		result.setInsurancePlanDao(persistenceSpringConfig.insurancePlanDao());
 		result.setClaimStatusCodeDao(persistenceSpringConfig.claimStatusCodeDao());
 		result.setCommodityCoverageCodeDao(persistenceSpringConfig.commodityCoverageCodeDao());
+		result.setDeclaredYieldContractCommodityBerriesSyncDao(persistenceSpringConfig.declaredYieldContractCommodityBerriesSyncDao());
 		
 		result.setCirrasServiceHelper(cirrasServiceHelper());
 		

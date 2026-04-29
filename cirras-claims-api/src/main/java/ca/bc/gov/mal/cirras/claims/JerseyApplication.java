@@ -19,6 +19,7 @@ import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimRelatedDataEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCodeEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCommodityVarietyEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCoveragePerilEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncDopYieldContractSimpleEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.TopLevelEndpoints;
 import ca.bc.gov.nrs.wfone.common.api.rest.code.endpoints.impl.CodeTableEndpointsImpl;
 import ca.bc.gov.nrs.wfone.common.api.rest.code.endpoints.impl.CodeTableListEndpointsImpl;
@@ -64,6 +65,8 @@ public class JerseyApplication extends JerseyResourceConfig {
 		register(SyncCodeEndpoint.class);
 		register(SyncCoveragePerilEndpoint.class);
 
+		register(SyncDopYieldContractSimpleEndpoint.class);
+		
 		register(OpenApiResource.class);
 		register(AcceptHeaderOpenApiResource.class);
 		

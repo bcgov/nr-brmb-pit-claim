@@ -15,6 +15,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCodeRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCommodityVarietyRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimListRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
@@ -600,4 +601,60 @@ public class CirrasClaimService extends BaseRestServiceClient {
 		}
 		
 	}	
+
+	public SyncDopYieldContractSimpleRsrc getSyncDopYieldContractSimple(EndpointsRsrc parent, String declaredYieldContractCommodityBerriesGuid) 
+			throws CirrasClaimServiceException {
+		
+		GenericRestDAO<SyncDopYieldContractSimpleRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(SyncDopYieldContractSimpleRsrc.class);
+		
+		try {
+		
+			Map<String, String> queryParams = new HashMap<String, String>();
+			
+			putQueryParam(queryParams, "declaredYieldContractCommodityBerriesGuid",  declaredYieldContractCommodityBerriesGuid);
+			
+			Response<SyncDopYieldContractSimpleRsrc> response = dao.Process(ResourceTypes.SYNC_DOP_YIELD_CONTRACT_SIMPLE, this.getTransformer(), parent, queryParams, getWebClient());
+			
+			return response.getResource();
+	
+		} catch (RestDAOException e) {
+			throw new CirrasClaimServiceException(e);
+		}		
+	}
+	
+	public void synchronizeDopYieldContractSimple(SyncDopYieldContractSimpleRsrc resource) throws CirrasClaimServiceException, ValidationException {
+		
+		EndpointsRsrc parentEndpoint = getTopLevelEndpoints();
+		
+		GenericRestDAO<SyncDopYieldContractSimpleRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(SyncDopYieldContractSimpleRsrc.class);
+		
+		try {
+			dao.Process(ResourceTypes.SYNCHRONIZE_DOP_YIELD_CONTRACT_SIMPLE, this.getTransformer(), parentEndpoint, resource, getWebClient());			
+						
+		} catch(BadRequestException e) {
+			throw new ValidationException(e.getMessages());			
+		} catch (RestDAOException rde) {
+			throw new CirrasClaimServiceException(rde);
+		}
+		
+	}
+		
+	
+	public void deleteSyncDopYieldContractSimple(EndpointsRsrc parent, String declaredYieldContractCommodityBerriesGuid) throws CirrasClaimServiceException {
+		
+		GenericRestDAO<SyncDopYieldContractSimpleRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(SyncDopYieldContractSimpleRsrc.class);
+		
+		try {
+		
+			Map<String, String> queryParams = new HashMap<String, String>();
+			
+			putQueryParam(queryParams, "declaredYieldContractCommodityBerriesGuid",  declaredYieldContractCommodityBerriesGuid);
+			
+			dao.Process(ResourceTypes.DELETE_SYNC_DOP_YIELD_CONTRACT_SIMPLE, this.getTransformer(), parent, queryParams, getWebClient());
+	
+		} catch (RestDAOException e) {
+			throw new CirrasClaimServiceException(e);
+		}		
+	}
+
 }
