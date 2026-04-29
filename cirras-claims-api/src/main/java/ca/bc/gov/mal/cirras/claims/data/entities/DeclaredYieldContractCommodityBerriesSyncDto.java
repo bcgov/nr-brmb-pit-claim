@@ -1,0 +1,241 @@
+package ca.bc.gov.mal.cirras.claims.data.entities;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.bc.gov.nrs.wfone.common.persistence.dto.BaseDto;
+import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
+
+
+
+public class DeclaredYieldContractCommodityBerriesSyncDto extends BaseDto<DeclaredYieldContractCommodityBerriesSyncDto> {
+
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LoggerFactory.getLogger(DeclaredYieldContractCommodityBerriesSyncDto.class);
+	
+	private String declaredYieldContractCommodityBerriesSyncGuid;
+	private String declaredYieldContractCommodityBerriesGuid;
+	private Integer cropCommodityId;
+	private String cropCommodityName;
+	private Double totalProduction;
+	private Double totalProductionOverride;
+	private Double totalSoldShippedYield;
+	private Double totalSalesYield;
+	private Double totalAbandonmentYield;
+
+	private String declaredYieldContractGuid;
+	private Integer contractId;
+	private Integer cropYear;
+	
+	private Date dataSyncTransDate;
+	private String createUser;
+	private Date createDate;
+	private String updateUser;
+	private Date updateDate;
+
+	public DeclaredYieldContractCommodityBerriesSyncDto() {
+	}
+	
+	
+	public DeclaredYieldContractCommodityBerriesSyncDto(DeclaredYieldContractCommodityBerriesSyncDto dto) {
+		
+		this.declaredYieldContractCommodityBerriesSyncGuid = dto.declaredYieldContractCommodityBerriesSyncGuid;
+		this.declaredYieldContractCommodityBerriesGuid = dto.declaredYieldContractCommodityBerriesGuid;
+		this.cropCommodityId = dto.cropCommodityId;
+		this.cropCommodityName = dto.cropCommodityName;
+		this.totalProduction = dto.totalProduction;
+		this.totalProductionOverride = dto.totalProductionOverride;
+		this.totalSoldShippedYield = dto.totalSoldShippedYield;
+		this.totalSalesYield = dto.totalSalesYield;
+		this.totalAbandonmentYield = dto.totalAbandonmentYield;
+		this.declaredYieldContractGuid = dto.declaredYieldContractGuid;
+		this.contractId = dto.contractId;
+		this.cropYear = dto.cropYear;
+		this.dataSyncTransDate = dto.dataSyncTransDate;
+		this.createUser = dto.createUser;
+		this.createDate = dto.createDate;
+		this.updateUser = dto.updateUser;
+		this.updateDate = dto.updateDate;
+	}
+	
+
+	@Override
+	public boolean equalsBK(DeclaredYieldContractCommodityBerriesSyncDto other) {
+		throw new UnsupportedOperationException("Not Implemented");
+	}
+
+	@Override
+	public boolean equalsAll(DeclaredYieldContractCommodityBerriesSyncDto other) {
+		boolean result = false;
+
+		if(other!=null) {
+			result = true;
+			DtoUtils dtoUtils = new DtoUtils(getLogger());
+			result = result&&dtoUtils.equals("declaredYieldContractCommodityBerriesSyncGuid", declaredYieldContractCommodityBerriesSyncGuid, other.declaredYieldContractCommodityBerriesSyncGuid);
+			result = result&&dtoUtils.equals("declaredYieldContractCommodityBerriesGuid", declaredYieldContractCommodityBerriesGuid, other.declaredYieldContractCommodityBerriesGuid);
+			result = result&&dtoUtils.equals("cropCommodityId", cropCommodityId, other.cropCommodityId);
+			result = result&&dtoUtils.equals("totalProduction", totalProduction, other.totalProduction, 4);
+			result = result&&dtoUtils.equals("totalProductionOverride", totalProductionOverride, other.totalProductionOverride, 4);
+			result = result&&dtoUtils.equals("totalSoldShippedYield", totalSoldShippedYield, other.totalSoldShippedYield, 4);
+			result = result&&dtoUtils.equals("totalSalesYield", totalSalesYield, other.totalSalesYield, 4);
+			result = result&&dtoUtils.equals("totalAbandonmentYield", totalAbandonmentYield, other.totalAbandonmentYield, 4);
+			result = result&&dtoUtils.equals("declaredYieldContractGuid", declaredYieldContractGuid, other.declaredYieldContractGuid);
+			result = result&&dtoUtils.equals("contractId", contractId, other.contractId);
+			result = result&&dtoUtils.equals("cropYear", cropYear, other.cropYear);
+			result = result&&dtoUtils.equals("dataSyncTransDate",
+					LocalDateTime.ofInstant(dataSyncTransDate.toInstant(), ZoneId.systemDefault()), 
+					LocalDateTime.ofInstant(other.dataSyncTransDate.toInstant(), ZoneId.systemDefault()));
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	public DeclaredYieldContractCommodityBerriesSyncDto copy() {
+		return new DeclaredYieldContractCommodityBerriesSyncDto(this);
+	}
+
+	public String getDeclaredYieldContractCommodityBerriesSyncGuid() {
+		return declaredYieldContractCommodityBerriesSyncGuid;
+	}
+	public void setDeclaredYieldContractCommodityBerriesSyncGuid(String declaredYieldContractCommodityBerriesSyncGuid) {
+		this.declaredYieldContractCommodityBerriesSyncGuid = declaredYieldContractCommodityBerriesSyncGuid;
+	}
+
+
+	public String getDeclaredYieldContractCommodityBerriesGuid() {
+		return declaredYieldContractCommodityBerriesGuid;
+	}
+	public void setDeclaredYieldContractCommodityBerriesGuid(String declaredYieldContractCommodityBerriesGuid) {
+		this.declaredYieldContractCommodityBerriesGuid = declaredYieldContractCommodityBerriesGuid;
+	}
+
+
+	public Integer getCropCommodityId() {
+		return cropCommodityId;
+	}
+	public void setCropCommodityId(Integer cropCommodityId) {
+		this.cropCommodityId = cropCommodityId;
+	}
+
+
+	public String getCropCommodityName() {
+		return cropCommodityName;
+	}
+	public void setCropCommodityName(String cropCommodityName) {
+		this.cropCommodityName = cropCommodityName;
+	}
+
+
+	public Double getTotalProduction() {
+		return totalProduction;
+	}
+	public void setTotalProduction(Double totalProduction) {
+		this.totalProduction = totalProduction;
+	}
+
+
+	public Double getTotalProductionOverride() {
+		return totalProductionOverride;
+	}
+	public void setTotalProductionOverride(Double totalProductionOverride) {
+		this.totalProductionOverride = totalProductionOverride;
+	}
+
+
+	public Double getTotalSoldShippedYield() {
+		return totalSoldShippedYield;
+	}
+	public void setTotalSoldShippedYield(Double totalSoldShippedYield) {
+		this.totalSoldShippedYield = totalSoldShippedYield;
+	}
+
+
+	public Double getTotalSalesYield() {
+		return totalSalesYield;
+	}
+	public void setTotalSalesYield(Double totalSalesYield) {
+		this.totalSalesYield = totalSalesYield;
+	}
+
+
+	public Double getTotalAbandonmentYield() {
+		return totalAbandonmentYield;
+	}
+	public void setTotalAbandonmentYield(Double totalAbandonmentYield) {
+		this.totalAbandonmentYield = totalAbandonmentYield;
+	}
+
+	public String getDeclaredYieldContractGuid() {
+		return declaredYieldContractGuid;
+	}
+	public void setDeclaredYieldContractGuid(String declaredYieldContractGuid) {
+		this.declaredYieldContractGuid = declaredYieldContractGuid;
+	}
+
+	public Integer getContractId() {
+		return contractId;
+	}
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
+	}
+
+
+	public Integer getCropYear() {
+		return cropYear;
+	}
+	public void setCropYear(Integer cropYear) {
+		this.cropYear = cropYear;
+	}
+
+
+	public Date getDataSyncTransDate() {
+		return dataSyncTransDate;
+	}
+	public void setDataSyncTransDate(Date dataSyncTransDate) {
+		this.dataSyncTransDate = dataSyncTransDate;
+	}
+
+	
+	public String getCreateUser() {
+		return createUser;
+	}
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
+	}
+
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
+}

@@ -19,21 +19,25 @@ import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimRelatedDataEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCodeEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCommodityVarietyEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCoveragePerilEndpoint;
+import ca.bc.gov.mal.cirras.claims.controllers.SyncDopYieldContractSimpleEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCommodityVarietyRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncClaim;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCode;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCommodityVariety;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCoveragePeril;
+import ca.bc.gov.mal.cirras.claims.data.models.SyncDopYieldContractCommodityBerries;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimStatusCodeDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CommodityCoverageCodeDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CoveragePerilDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropCommodityDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropVarietyDto;
+import ca.bc.gov.mal.cirras.claims.data.entities.DeclaredYieldContractCommodityBerriesSyncDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.InsurancePlanDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.PerilCodeDto;
 import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
@@ -464,6 +468,78 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 		dto.setExpiryDate(new Date());
 		dto.setDataSyncTransDate(dataSyncTransDate);
 	}	
+
+	
+	public DeclaredYieldContractCommodityBerriesSyncDto createDeclaredYieldContractCommodityBerriesSync(SyncDopYieldContractSimpleRsrc model) {
+
+		DeclaredYieldContractCommodityBerriesSyncDto dto = new DeclaredYieldContractCommodityBerriesSyncDto();
+		SyncDopYieldContractCommodityBerries sdyccbModel = model.getSyncDopYieldContractCommodityBerries();
+
+		CirrasServiceHelper helper = new CirrasServiceHelper();
+
+		dto.setDeclaredYieldContractGuid(model.getDeclaredYieldContractGuid());
+		dto.setContractId(model.getContractId());
+		dto.setCropYear(model.getCropYear());
+		dto.setDataSyncTransDate(model.getDataSyncTransDate());
+
+		dto.setCropCommodityId(sdyccbModel.getCropCommodityId());
+		dto.setCropCommodityName(helper.capitalizeEachWord(sdyccbModel.getCropCommodityName()));
+		dto.setDeclaredYieldContractCommodityBerriesGuid(sdyccbModel.getDeclaredYieldContractCommodityBerriesGuid());
+		dto.setDeclaredYieldContractCommodityBerriesSyncGuid(null);
+		dto.setTotalAbandonmentYield(sdyccbModel.getTotalAbandonmentYield());
+		dto.setTotalProduction(sdyccbModel.getTotalProduction());
+		dto.setTotalProductionOverride(sdyccbModel.getTotalProductionOverride());
+		dto.setTotalSalesYield(sdyccbModel.getTotalSalesYield());
+		dto.setTotalSoldShippedYield(sdyccbModel.getTotalSoldShippedYield());
+		
+		return dto;
+	}
+
+	public void updateDeclaredYieldContractCommodityBerriesSync(DeclaredYieldContractCommodityBerriesSyncDto dto, SyncDopYieldContractSimpleRsrc model) {
+
+		SyncDopYieldContractCommodityBerries sdyccbModel = model.getSyncDopYieldContractCommodityBerries();
+
+		CirrasServiceHelper helper = new CirrasServiceHelper();
+
+		dto.setDeclaredYieldContractGuid(model.getDeclaredYieldContractGuid());
+		dto.setContractId(model.getContractId());
+		dto.setCropYear(model.getCropYear());
+		dto.setDataSyncTransDate(model.getDataSyncTransDate());
+
+		dto.setCropCommodityId(sdyccbModel.getCropCommodityId());
+		dto.setCropCommodityName(helper.capitalizeEachWord(sdyccbModel.getCropCommodityName()));
+		dto.setTotalAbandonmentYield(sdyccbModel.getTotalAbandonmentYield());
+		dto.setTotalProduction(sdyccbModel.getTotalProduction());
+		dto.setTotalProductionOverride(sdyccbModel.getTotalProductionOverride());
+		dto.setTotalSalesYield(sdyccbModel.getTotalSalesYield());
+		dto.setTotalSoldShippedYield(sdyccbModel.getTotalSoldShippedYield());
+		
+	}
+
+	public SyncDopYieldContractSimpleRsrc getSyncDopYieldContractSimpleFromDeclaredYieldContractCommodityBerriesSync(DeclaredYieldContractCommodityBerriesSyncDto dto) {
+
+		SyncDopYieldContractSimpleRsrc resource = new SyncDopYieldContractSimpleRsrc();
+		
+		resource.setDeclaredYieldContractGuid(dto.getDeclaredYieldContractGuid());
+		resource.setContractId(dto.getContractId());
+		resource.setCropYear(dto.getCropYear());
+		resource.setDataSyncTransDate(dto.getDataSyncTransDate());
+
+		SyncDopYieldContractCommodityBerries sdyccbModel = new SyncDopYieldContractCommodityBerries();
+		sdyccbModel.setCropCommodityId(dto.getCropCommodityId());
+		sdyccbModel.setCropCommodityName(dto.getCropCommodityName());
+		sdyccbModel.setDeclaredYieldContractCommodityBerriesGuid(dto.getDeclaredYieldContractCommodityBerriesGuid());
+		sdyccbModel.setTotalAbandonmentYield(dto.getTotalAbandonmentYield());
+		sdyccbModel.setTotalProduction(dto.getTotalProduction());
+		sdyccbModel.setTotalProductionOverride(dto.getTotalProductionOverride());
+		sdyccbModel.setTotalSalesYield(dto.getTotalSalesYield());
+		sdyccbModel.setTotalSoldShippedYield(dto.getTotalSoldShippedYield());
+		
+		resource.setSyncDopYieldContractCommodityBerries(sdyccbModel);
+		
+		return resource;
+	}
+
 	
 	//Sets effective and expiry date according to the isActive flag in CIRRAS
 	private void calculateDates(Boolean isActive, Date effectiveDate, Date expiryDate) {
@@ -572,6 +648,19 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 
 		return result;
 	}
+
+	public static String getSyncDopYieldContractSimpleSelfUri(URI baseUri) {
+
+		String result = UriBuilder.fromUri(baseUri)
+			.path(SyncDopYieldContractSimpleEndpoint.class)
+			.build()
+			.toString();
+
+		return result;
+	}	
+	
+	
+	
 	protected static String nvl(Integer value, String defaultValue) {
 		return (value==null)?defaultValue:value.toString();
 	}
