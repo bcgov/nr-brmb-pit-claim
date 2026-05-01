@@ -245,12 +245,10 @@ export class TokenService {
             
             // let checkTokenUrl = `${baseUrl}${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
             let checkTokenUrl = `${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
-            console.log("TokenService -> initAndEmit -> checkTokenUrl: " + checkTokenUrl)
 
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${this.oauth.access_token}`,
             });
-            // console.log('checkTokenUrl', checkTokenUrl);
 
             setTimeout(() => {
                 let http = new HttpClient(this.injector.get(HttpHandler));
