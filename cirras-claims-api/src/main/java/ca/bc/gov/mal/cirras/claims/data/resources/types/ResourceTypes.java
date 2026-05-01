@@ -58,6 +58,6 @@ public class ResourceTypes extends BaseResourceTypes {
 	
 	
 	//Test the checktoken endpoint for tests only
-	public static final String UI_CHECK_TOKEN = NAMESPACE + "checkTokenUI";
+	public static final String CHECK_TOKEN = NAMESPACE + "checkToken";
 }
 

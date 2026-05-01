@@ -75,7 +75,7 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 					.build()
 					.toString();
 			
-			result.getLinks().add(new RelLink(ResourceTypes.UI_CHECK_TOKEN, selfURI, HttpMethod.GET));
+			result.getLinks().add(new RelLink(ResourceTypes.CHECK_TOKEN, selfURI, HttpMethod.GET));
 	
 			
 			if (hasAuthority(Scopes.SEARCH_CLAIMS)) {

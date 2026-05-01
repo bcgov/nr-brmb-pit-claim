@@ -668,12 +668,10 @@ public class CirrasClaimService extends BaseRestServiceClient {
 	public CheckedToken checkToken(EndpointsRsrc parent)
 	throws CirrasClaimServiceException {
 	
-		// GenericRestDAO<ClaimListRsrc> dao = this.getRestDAOFactory().getGenericRestDAO(ClaimListRsrc.class);
 		GenericRestDAO<CheckedToken> dao = this.getRestDAOFactory().getGenericRestDAO(CheckedToken.class);
 		
 		try {
-			// Response<ClaimListRsrc> response = dao.Process(ResourceTypes.CLAIM_LIST, this.getTransformer(), parent, queryParams, getWebClient());
-			Response<CheckedToken> response = dao.Process(ResourceTypes.UI_CHECK_TOKEN, this.getTransformer(), parent, getWebClient());
+			Response<CheckedToken> response = dao.Process(ResourceTypes.CHECK_TOKEN, this.getTransformer(), parent, getWebClient());
 			return response.getResource();
 		} catch (RestDAOException rde) {
 			throw new CirrasClaimServiceException(rde);
@@ -694,18 +692,18 @@ public class CirrasClaimService extends BaseRestServiceClient {
 					.getGenericRestDAO(CheckedToken.class);
 			
 			Response<CheckedToken> response = dao.Process(
-					ResourceTypes.UI_CHECK_TOKEN, getTransformer(), new BaseResource() {
+					ResourceTypes.CHECK_TOKEN, getTransformer(), new BaseResource() {
 
 						private static final long serialVersionUID = 1L;
 
 						@Override
 						public List<RelLink> getLinks() {
 							List<RelLink> links = new ArrayList<RelLink>();
-							links.add(new RelLink(ResourceTypes.UI_CHECK_TOKEN,
-									getTopLevelRestURL() + "checkTokenUI", "GET"));
+							links.add(new RelLink(ResourceTypes.CHECK_TOKEN,
+									getTopLevelRestURL() + "checkToken", "GET"));
 							return links;
 						}
-					}, queryParams, getWebClient());
+					}, queryParams, getWebClient()); // this throws an error: Unauthorized
 
 			result = response.getResource();
 

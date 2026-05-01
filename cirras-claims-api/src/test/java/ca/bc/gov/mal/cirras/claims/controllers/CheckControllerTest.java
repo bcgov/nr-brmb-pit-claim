@@ -9,7 +9,6 @@ import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
-import ca.bc.gov.nrs.common.wfone.rest.resource.HealthCheckResponseRsrc;
 import ca.bc.gov.nrs.wfone.common.rest.client.RestClientServiceException;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.CheckedToken;
 
@@ -34,17 +33,16 @@ public class CheckControllerTest extends EndpointsTest {
 		
 		EndpointsRsrc topLevelEndpoints = service.getTopLevelEndpoints();
 
-		// should return some token as we logged in in getService(SCOPES);
-		
+		// this should return some token as we logged in in getService(SCOPES);
 		CheckedToken results = service.checkToken( topLevelEndpoints);
 		Assert.assertNotNull("Result should not be null", results);
 		
 		logger.debug(">testCheckToken");
 	}
 	
-	// TODO: test with no token
+	// test with no token
 	@Test
-	public void testNoAuthorizationUI() throws RestClientServiceException {
+	public void testNoAuthorization() throws RestClientServiceException {
 		logger.debug("<testNoAuthorization");
 		
 		if(skipTests) {
@@ -55,9 +53,14 @@ public class CheckControllerTest extends EndpointsTest {
 		CirrasClaimService service = new CirrasClaimService();
 		((CirrasClaimService) service).setTopLevelRestURL(topLevelRestURL);
 		
-		CheckedToken healthCheckResponse = service.getCheckTokenNoAuth();
-		
-		Assert.assertNotNull(healthCheckResponse);
+		try {
+			CheckedToken checkToken = service.getCheckTokenNoAuth(); // should throw an error
+			
+		} catch (Throwable t) {
+			logger.error(t.getMessage(), t);
+			// test has passed
+			Assert.assertTrue(t.getMessage().toLowerCase().contains("unauthorized"));
+		}
 		
 		logger.debug(">testNoAuthorization");
 	}
