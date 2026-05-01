@@ -56,7 +56,6 @@ export class ResourcesAuthGuard extends AuthGuard {
                 queryParamStr = queryParamStr.substr(0, queryParamStr.length - 1);
                 redirectUri = redirectUri.concat(queryParamStr);
             }
-            console.log("ResourcesAuthGuard.getTokenInfo -> redirectUri: " + redirectUri)
             return this.checkForToken(redirectUri, route).pipe(mergeMap((result) => {
                 this.asyncCheckingToken = undefined;
                 if (!result) {

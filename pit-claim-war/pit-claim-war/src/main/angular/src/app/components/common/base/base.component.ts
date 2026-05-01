@@ -39,7 +39,6 @@ import {ErrorDialogComponent} from "../../dialogs/error-dialog/error-dialog.comp
 import {setFormStateUnsaved} from "../../../store/application/application.actions";
 import {SecurityUtilService} from "../../../services/security-util.service";
 
-
 const originFormControlNgOnChanges = FormControlDirective.prototype.ngOnChanges;
 FormControlDirective.prototype.ngOnChanges = function () {
     if (this.valueAccessor && this.valueAccessor._elementRef && this.valueAccessor._elementRef.nativeElement ) {
@@ -254,7 +253,6 @@ export class BaseComponent implements OnInit, OnChanges, AfterViewInit {
       let authorizeUrl = this.appConfigService.getConfig().webade.oauth2Url;
       let authScopes = this.appConfigService.getConfig().webade.authScopes;
       let url = baseUrl;
-      console.log ("redirectWithOAuth -> baseUrl: " + baseUrl)
       window.location.href = url;
     }
 

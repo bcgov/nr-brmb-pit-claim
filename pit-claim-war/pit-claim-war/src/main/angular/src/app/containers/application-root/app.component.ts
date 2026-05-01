@@ -16,7 +16,6 @@ import { SecurityUtilService } from "src/app/services/security-util.service";
 import { TokenService } from "src/app/services/token.service";
 import { AppConfigService } from "src/app/services/app-config.service";
 
-
 const DEVICE: WfDevice = 'desktop';
 
 @Component({

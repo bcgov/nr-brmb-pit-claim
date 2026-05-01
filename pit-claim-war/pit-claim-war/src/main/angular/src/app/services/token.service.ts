@@ -157,7 +157,6 @@ export class TokenService {
             scope: configuration?.webade.authScopes
         };
 
-        console.log('TokenService -> initImplicitFlow -> authConfig', authConfig);
         const oauthService = this.injector.get(OAuthService);
         oauthService.configure(authConfig);
         oauthService.initImplicitFlow();

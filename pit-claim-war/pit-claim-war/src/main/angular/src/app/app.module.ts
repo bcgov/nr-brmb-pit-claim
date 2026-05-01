@@ -103,7 +103,6 @@ import { UnsavedDialogComponent } from "./components/dialogs/unsaved-dialog/unsa
 import { CalculationPrintoutGrainQuantityComponent } from "./components/calculation-printout/grain-quantity/grain-quantity.component";
 import { CalculationDetailGrainBasketComponent } from "./components/calculation-detail/grain-basket/grain-basket.component";
 import { CalculationPrintoutGrainBasketComponent } from "./components/calculation-printout/grain-basket/grain-basket.component";
-
 import { Type } from '@angular/core';
 import { ModuleWithProviders } from '@angular/core';
 
