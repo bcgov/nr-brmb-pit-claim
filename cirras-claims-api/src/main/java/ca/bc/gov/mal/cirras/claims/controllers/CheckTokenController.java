@@ -9,6 +9,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
+import ca.bc.gov.nrs.wfone.common.utils.HttpServletRequestHolder;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.impl.TokenServiceImpl;
@@ -36,25 +37,13 @@ import jakarta.ws.rs.core.Response.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Path("/check")
+@Path("/checkTokenUI")
 public class CheckTokenController extends BaseEndpointsImpl  {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CheckTokenController.class);
 	
 	@Autowired 
 	private TokenService tokenService; 
-	
-//	@Value("${CIRRAS_CLAIMS_REST_CLIENT_ID}")
-//	private String webadeOauth2ClientId;
-//
-//	@Value("${CIRRAS_CLAIMS_REST_SECRET}")
-//	private String webadeOauth2ClientSecret;
-//
-//	@Value("${WEBADE_CHECK_TOKEN_URL}")
-//	private String webadeOauth2CheckTokenUrl;
-//
-//	@Value("${WEBADE_GET_TOKEN_URL}")
-//	private String webadeOauth2TokenUrl;
 	
 	@Operation(operationId = "Check the token.", summary = "Check the token.", extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	
@@ -71,9 +60,13 @@ public class CheckTokenController extends BaseEndpointsImpl  {
 		@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = MessageListRsrc.class))) })
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response token(HttpServletRequest request, Response response) throws Oauth2ClientException, IOException {
-        logger.debug("<checkToken in the api");
+	public Response checkTokenUI(){
+        logger.debug("<checkTokenUI in the api");
 
+        Response response = null;
+        HttpServletRequest request = HttpServletRequestHolder.getHttpServletRequest();
+        
+        logger.debug("<checkTokenUI -> request = HttpServletRequestHolder.getHttpServletRequest()");
         //TokenServiceImpl tokenService;
 
 //        tokenService = new TokenServiceImpl(
@@ -84,24 +77,29 @@ public class CheckTokenController extends BaseEndpointsImpl  {
 //        
         CheckedToken result = null;
         String authorizationHeader = request.getHeader("Authorization");
+        logger.debug(" checkTokenUI -> authorizationHeader : " + authorizationHeader);
+        
         request.getSession().setAttribute("authToken", authorizationHeader);
         try {
             if (authorizationHeader == null) {
+            	logger.debug("checkTokenUI ->  authorizationHeader is null");
                 // response.sendError(401);
             	return Response.status(Status.UNAUTHORIZED).build();
             	
             } else {
                 result = tokenService.checkToken(authorizationHeader.replace("Bearer ", ""));
+                logger.debug("checkTokenUI -> result : " + result);
                 response = Response.ok(result).build();
             }
         } catch (Throwable t) {
             // response.sendError(500, "Authentication request was unable to be processed, please try again later.");
+        	logger.debug("checkTokenUI ->  error: ");
         	response = getInternalServerErrorResponse(t);
             logger.error(" ### Error while checking for valid authorization token", t);
             
         }
 
-        logger.debug(">checkToken in the api");
+        logger.debug(">checkTokenForUI in the api");
         //return result;
         return response;
     }
