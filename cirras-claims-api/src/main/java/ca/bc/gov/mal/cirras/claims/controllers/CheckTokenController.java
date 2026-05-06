@@ -49,26 +49,26 @@ public class CheckTokenController extends BaseEndpointsImpl  {
 		@Parameter(name = HeaderConstants.AUTHORIZATION_HEADER, description = HeaderConstants.AUTHORIZATION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER) 
 	})
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CheckedToken.class)), headers = @Header(name = HeaderConstants.ETAG_HEADER, schema = @Schema(implementation = String.class), description = HeaderConstants.ETAG_DESCRIPTION)),
+		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CheckedToken.class)), headers = @Header(name = "", schema = @Schema(implementation = String.class), description = "")),
+		@ApiResponse(responseCode = "401", description = "Unauthorized"),
 		@ApiResponse(responseCode = "404", description = "Not Found"),
 		@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = MessageListRsrc.class))) })
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public Response checkToken(){
-        logger.debug("<checkToken endpoint in the api");
+        logger.debug("<checkToken endpoint in the api");	
 
         Response response = null;
-        HttpServletRequest request = HttpServletRequestHolder.getHttpServletRequest();
-       
-        CheckedToken result = null;
-        String authorizationHeader = request.getHeader("Authorization");
         
-        request.getSession().setAttribute("authToken", authorizationHeader);
         try {
+	        HttpServletRequest request = HttpServletRequestHolder.getHttpServletRequest();
+	       
+	        CheckedToken result = null;
+	        String authorizationHeader = request.getHeader("Authorization");
+
             if (authorizationHeader == null) {
             	logger.debug("checkTokenUI ->  authorizationHeader is null");
-                // response.sendError(401);
-            	return Response.status(Status.UNAUTHORIZED).build();
+            	response = Response.status(Status.UNAUTHORIZED).build();
             	
             } else {
                 result = tokenService.checkToken(authorizationHeader.replace("Bearer ", ""));
@@ -76,7 +76,7 @@ public class CheckTokenController extends BaseEndpointsImpl  {
                 response = Response.ok(result).build();
             }
         } catch (Throwable t) {
-            // response.sendError(500, "Authentication request was unable to be processed, please try again later.");
+
         	response = getInternalServerErrorResponse(t);
             logger.error(" ### checkToken -> Error while checking for valid authorization token", t);
         }

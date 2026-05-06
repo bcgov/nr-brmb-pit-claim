@@ -25,14 +25,11 @@ import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
 import ca.bc.gov.nrs.common.wfone.rest.resource.BaseResource;
 import ca.bc.gov.nrs.common.wfone.rest.resource.CodeTableListRsrc;
 import ca.bc.gov.nrs.common.wfone.rest.resource.CodeTableRsrc;
-import ca.bc.gov.nrs.common.wfone.rest.resource.HealthCheckResponseRsrc;
 import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
-import ca.bc.gov.nrs.common.wfone.rest.resource.types.BaseResourceTypes;
 import ca.bc.gov.nrs.wfone.common.rest.client.BadRequestException;
 import ca.bc.gov.nrs.wfone.common.rest.client.BaseRestServiceClient;
 import ca.bc.gov.nrs.wfone.common.rest.client.GenericRestDAO;
 import ca.bc.gov.nrs.wfone.common.rest.client.Response;
-import ca.bc.gov.nrs.wfone.common.rest.client.RestClientServiceException;
 import ca.bc.gov.nrs.wfone.common.rest.client.RestDAOException;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.CheckedToken;
 
@@ -677,45 +674,5 @@ public class CirrasClaimService extends BaseRestServiceClient {
 			throw new CirrasClaimServiceException(rde);
 		}
 	}	
-	
-	public CheckedToken getCheckTokenNoAuth() throws RestClientServiceException {
-		logger.debug("<getCheckTokenNoAuth");
 
-		CheckedToken result = null;
-
-		try {
-			
-			Map<String,String> queryParams = new HashMap<String,String>();
-			queryParams.put("callstack", "test");
-
-			GenericRestDAO<CheckedToken> dao = this.getRestDAOFactory()
-					.getGenericRestDAO(CheckedToken.class);
-			
-			Response<CheckedToken> response = dao.Process(
-					ResourceTypes.CHECK_TOKEN, getTransformer(), new BaseResource() {
-
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public List<RelLink> getLinks() {
-							List<RelLink> links = new ArrayList<RelLink>();
-							links.add(new RelLink(ResourceTypes.CHECK_TOKEN,
-									getTopLevelRestURL() + "checkToken", "GET"));
-							return links;
-						}
-					}, queryParams, getWebClient()); // this throws an error: Unauthorized
-
-			result = response.getResource();
-
-		} catch (RestDAOException e) {
-			logger.error(e.getMessage(), e);
-			throw new RestClientServiceException(e);
-		}
-
-		logger.debug(">getCheckTokenNoAuth");
-		return result;
-	}
-	
-	
-	
 }

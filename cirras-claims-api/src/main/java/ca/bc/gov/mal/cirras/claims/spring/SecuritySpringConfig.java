@@ -99,7 +99,9 @@ public class SecuritySpringConfig  {
 	        new AntPathRequestMatcher("/openapi.*", HttpMethod.OPTIONS.name()),
 	        new AntPathRequestMatcher("/openapi.*", HttpMethod.GET.name()),
 	        new AntPathRequestMatcher("/checkHealth", HttpMethod.OPTIONS.name()),
-	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name())
+	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name()),
+	        new AntPathRequestMatcher("/checkToken", HttpMethod.OPTIONS.name()),
+	        new AntPathRequestMatcher("/checkToken", HttpMethod.GET.name())
 	    );		
 	  }
 	
