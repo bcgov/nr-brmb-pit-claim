@@ -49,7 +49,7 @@ public class CheckTokenController extends BaseEndpointsImpl  {
 		@Parameter(name = HeaderConstants.AUTHORIZATION_HEADER, description = HeaderConstants.AUTHORIZATION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER) 
 	})
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CheckedToken.class)), headers = @Header(name = "", schema = @Schema(implementation = String.class), description = "")),
+		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CheckedToken.class))),
 		@ApiResponse(responseCode = "401", description = "Unauthorized"),
 		@ApiResponse(responseCode = "404", description = "Not Found"),
 		@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = MessageListRsrc.class))) })
