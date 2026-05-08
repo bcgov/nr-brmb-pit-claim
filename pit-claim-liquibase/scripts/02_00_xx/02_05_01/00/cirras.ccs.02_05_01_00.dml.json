@@ -1,0 +1,5 @@
+{
+  "databaseChangeLog": [
+    { "changeSet": {"author":"mhostettler","id":"10","changes": [
+	  {"sqlFile": {"relativeToChangelogFile": "true", "path": "dml/ccs.insert.audit_transaction_type_code.sql"}}
+  ] } }]}

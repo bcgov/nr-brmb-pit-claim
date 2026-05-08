@@ -3,6 +3,11 @@
     "databaseChangeLog": [
         { "changeSet": {"author":"mhostettler","id":"9","changes": [
             {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.ccs.ddl.create.declared_yield_contract_commodity_berries_sync.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.audit_transaction_type_code.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_berries_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_basket_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_basket_product_audit.sql"}},
             {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/grants/ccs.ddl.apply_grants.sql"}}
         ] } }
     ]
