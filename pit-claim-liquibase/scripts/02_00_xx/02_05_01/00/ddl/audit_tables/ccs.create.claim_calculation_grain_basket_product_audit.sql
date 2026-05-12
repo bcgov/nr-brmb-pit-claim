@@ -68,7 +68,7 @@ ALTER TABLE ccs.claim_calculation_grain_basket_product_audit ADD
 
 ALTER TABLE ccs.claim_calculation_grain_basket_product_audit ADD CONSTRAINT fk_ccgbpa_attc 
     FOREIGN KEY (audit_transaction_type_code)
-    REFERENCES cuws.audit_transaction_type_code(audit_transaction_type_code)
+    REFERENCES ccs.audit_transaction_type_code(audit_transaction_type_code)
 ;
 
 

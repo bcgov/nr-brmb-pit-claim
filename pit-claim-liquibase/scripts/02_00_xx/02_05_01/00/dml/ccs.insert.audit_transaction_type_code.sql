@@ -1,4 +1,4 @@
-INSERT INTO cuws.audit_transaction_type_code(
+INSERT INTO ccs.audit_transaction_type_code(
 	audit_transaction_type_code, 
 	description,
 	create_user, 
@@ -8,13 +8,13 @@ INSERT INTO cuws.audit_transaction_type_code(
 ) VALUES (
 	'INSERT', 
 	'Insert', 
-	'CUWS_04_01_00', 
+	'CCS_02_05_01', 
 	now(), 
-	'CUWS_04_01_00', 
+	'CCS_02_05_01', 
 	now()
 );
 
-INSERT INTO cuws.audit_transaction_type_code(
+INSERT INTO ccs.audit_transaction_type_code(
 	audit_transaction_type_code, 
 	description,
 	create_user, 
@@ -24,13 +24,13 @@ INSERT INTO cuws.audit_transaction_type_code(
 ) VALUES (
 	'UPDATE', 
 	'Update',
-	'CUWS_04_01_00', 
+	'CCS_02_05_01', 
 	now(), 
-	'CUWS_04_01_00', 
+	'CCS_02_05_01', 
 	now()
 );
 
-INSERT INTO cuws.audit_transaction_type_code(
+INSERT INTO ccs.audit_transaction_type_code(
 	audit_transaction_type_code,
 	description,
 	create_user, 
@@ -40,8 +40,8 @@ INSERT INTO cuws.audit_transaction_type_code(
 ) VALUES (
 	'DELETE', 
 	'Delete',
-	'CUWS_04_01_00', 
+	'CCS_02_05_01', 
 	now(), 
-	'CUWS_04_01_00', 
+	'CCS_02_05_01', 
 	now()
 );
