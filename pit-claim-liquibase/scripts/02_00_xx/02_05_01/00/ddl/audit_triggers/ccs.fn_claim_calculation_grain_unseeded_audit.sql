@@ -21,8 +21,7 @@ BEGIN
             OLD.create_date, OLD.update_user, OLD.update_date
         );
         RETURN OLD;
-    ELSE
-        -- Handles INSERT and UPDATE
+    ELSIF (TG_OP = 'UPDATE' OR TG_OP = 'INSERT') THEN
         INSERT INTO ccs.claim_calculation_grain_unseeded_audit (
             claim_calculation_grain_unseeded_audit_id, audit_transaction_type_code, audit_time_stamp,
             claim_calc_grain_unseeded_guid, claim_calculation_guid, insured_acres,

@@ -44,5 +44,49 @@ FROM t2
 WHERE claim_calculation_grain_basket_product.claim_calc_grain_basket_product_guid = t2.claim_calc_grain_basket_product_guid;
 
 
+\qecho Insert claim_calculation_grain_quantity_audit
+WITH t2 AS (
+    SELECT claim_calc_grain_quantity_guid, update_user
+    FROM claim_calculation_grain_quantity 
+)
+UPDATE claim_calculation_grain_quantity
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_grain_quantity.claim_calc_grain_quantity_guid = t2.claim_calc_grain_quantity_guid;
+
+
+\qecho Insert claim_calculation_grain_quantity_detail_audit
+WITH t2 AS (
+    SELECT claim_calc_grain_quantity_detail_guid, update_user
+    FROM claim_calculation_grain_quantity_detail 
+)
+UPDATE claim_calculation_grain_quantity_detail
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_grain_quantity_detail.claim_calc_grain_quantity_detail_guid = t2.claim_calc_grain_quantity_detail_guid;
+
+
+\qecho Insert claim_calculation_grain_spot_loss_audit
+WITH t2 AS (
+    SELECT claim_calc_grain_spot_loss_guid, update_user
+    FROM claim_calculation_grain_spot_loss 
+)
+UPDATE claim_calculation_grain_spot_loss
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_grain_spot_loss.claim_calc_grain_spot_loss_guid = t2.claim_calc_grain_spot_loss_guid;
+
+
+\qecho Insert claim_calculation_grain_unseeded_audit
+WITH t2 AS (
+    SELECT claim_calc_grain_unseeded_guid, update_user
+    FROM claim_calculation_grain_unseeded 
+)
+UPDATE claim_calculation_grain_unseeded
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_grain_unseeded.claim_calc_grain_unseeded_guid = t2.claim_calc_grain_unseeded_guid;
+
+
 
 \o 
