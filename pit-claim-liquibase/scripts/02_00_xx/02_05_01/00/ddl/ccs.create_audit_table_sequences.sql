@@ -35,3 +35,40 @@ CREATE SEQUENCE ccs.ccgba_seq
     NO CYCLE
 ;
 
+CREATE SEQUENCE ccs.ccgqa_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgqda_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgsla_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgua_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+
