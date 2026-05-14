@@ -88,5 +88,48 @@ FROM t2
 WHERE claim_calculation_grain_unseeded.claim_calc_grain_unseeded_guid = t2.claim_calc_grain_unseeded_guid;
 
 
+\qecho Insert claim_calculation_grapes_audit
+WITH t2 AS (
+    SELECT claim_calculation_grapes_guid, update_user
+    FROM claim_calculation_grapes 
+)
+UPDATE claim_calculation_grapes
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_grapes.claim_calculation_grapes_guid = t2.claim_calculation_grapes_guid;
+
+
+\qecho Insert claim_calculation_plant_acres_audit
+WITH t2 AS (
+    SELECT claim_calc_plant_acres_guid, update_user
+    FROM claim_calculation_plant_acres 
+)
+UPDATE claim_calculation_plant_acres
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_plant_acres.claim_calc_plant_acres_guid = t2.claim_calc_plant_acres_guid;
+
+
+\qecho Insert claim_calculation_plant_units_audit
+WITH t2 AS (
+    SELECT claim_calc_plant_units_guid, update_user
+    FROM claim_calculation_plant_units 
+)
+UPDATE claim_calculation_plant_units
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_plant_units.claim_calc_plant_units_guid = t2.claim_calc_plant_units_guid;
+
+
+\qecho Insert claim_calculation_variety_audit
+WITH t2 AS (
+    SELECT claim_calculation_variety_guid, update_user
+    FROM claim_calculation_variety 
+)
+UPDATE claim_calculation_variety
+SET update_user = t2.update_user
+FROM t2
+WHERE claim_calculation_variety.claim_calculation_variety_guid = t2.claim_calculation_variety_guid;
+
 
 \o 

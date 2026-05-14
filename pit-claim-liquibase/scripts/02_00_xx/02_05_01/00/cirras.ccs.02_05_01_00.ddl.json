@@ -25,6 +25,10 @@
 			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_quantity_detail_audit.sql"}},
 			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_spot_loss_audit.sql"}},
 			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_unseeded_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grapes_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_plant_acres_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_plant_units_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_variety_audit.sql"}},
             {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/grants/ccs.ddl.apply_grants.sql"}}
         ] } }
     ]
