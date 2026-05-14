@@ -10,6 +10,10 @@ GRANT SELECT, INSERT ON ccs.claim_calculation_grain_quantity_audit TO "app_ccs_r
 GRANT SELECT, INSERT ON ccs.claim_calculation_grain_quantity_detail_audit TO "app_ccs_rest_proxy";
 GRANT SELECT, INSERT ON ccs.claim_calculation_grain_spot_loss_audit TO "app_ccs_rest_proxy";
 GRANT SELECT, INSERT ON ccs.claim_calculation_grain_unseeded_audit TO "app_ccs_rest_proxy";
+GRANT SELECT, INSERT ON ccs.claim_calculation_grapes_audit TO "app_ccs_rest_proxy";
+GRANT SELECT, INSERT ON ccs.claim_calculation_plant_acres_audit TO "app_ccs_rest_proxy";
+GRANT SELECT, INSERT ON ccs.claim_calculation_plant_units_audit TO "app_ccs_rest_proxy";
+GRANT SELECT, INSERT ON ccs.claim_calculation_variety_audit TO "app_ccs_rest_proxy";
 
 --Grant access to sequences to proxy
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA ccs TO "app_ccs_rest_proxy";

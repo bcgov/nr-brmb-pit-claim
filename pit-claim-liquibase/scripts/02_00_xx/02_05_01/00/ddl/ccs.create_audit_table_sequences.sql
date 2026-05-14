@@ -71,4 +71,40 @@ CREATE SEQUENCE ccs.ccgua_seq
     NO CYCLE
 ;
 
+CREATE SEQUENCE ccs.ccga_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccpaa_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccpua_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccva_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
 
