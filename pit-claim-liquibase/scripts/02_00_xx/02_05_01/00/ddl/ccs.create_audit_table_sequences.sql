@@ -53,7 +53,7 @@ CREATE SEQUENCE ccs.ccgqda_seq
     NO CYCLE
 ;
 
-CREATE SEQUENCE ccs.ccgspa_seq
+CREATE SEQUENCE ccs.ccgsla_seq
     AS bigint
     START WITH 1
     INCREMENT BY 1

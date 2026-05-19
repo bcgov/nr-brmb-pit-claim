@@ -10,7 +10,7 @@ BEGIN
             deductible, revision_count, create_user, create_date, update_user, update_date
         )
         VALUES (
-            nextval('ccs.ccgspa_seq'), 'DELETE', CURRENT_TIMESTAMP,
+            nextval('ccs.ccgsla_seq'), 'DELETE', CURRENT_TIMESTAMP,
             OLD.claim_calc_grain_spot_loss_guid, OLD.claim_calculation_guid, OLD.insured_acres,
             OLD.coverage_amt_per_acre, OLD.coverage_value, OLD.adjusted_acres,
             OLD.percent_yield_reduction, OLD.eligible_yield_reduction, OLD.spot_loss_reduction_value,
@@ -27,7 +27,7 @@ BEGIN
             deductible, revision_count, create_user, create_date, update_user, update_date
         )
         VALUES (
-            nextval('ccs.ccgspa_seq'), TG_OP, CURRENT_TIMESTAMP,
+            nextval('ccs.ccgsla_seq'), TG_OP, CURRENT_TIMESTAMP,
             NEW.claim_calc_grain_spot_loss_guid, NEW.claim_calculation_guid, NEW.insured_acres,
             NEW.coverage_amt_per_acre, NEW.coverage_value, NEW.adjusted_acres,
             NEW.percent_yield_reduction, NEW.eligible_yield_reduction, NEW.spot_loss_reduction_value,
