@@ -5,7 +5,8 @@ import {Store} from "@ngrx/store";
 import {RootState} from "../index";
 import {ApplicationStateService} from "../../services/application-state.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {AppConfigService, TokenService} from "@wf1/wfcc-core-lib";
+import { TokenService } from 'src/app/services/token.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
 @Injectable()
 export class ApplicationEffects {
   constructor(

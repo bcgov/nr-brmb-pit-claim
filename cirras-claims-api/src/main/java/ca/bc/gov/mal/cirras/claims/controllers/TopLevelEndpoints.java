@@ -9,6 +9,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,15 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 			
 			String selfURI = CodeTableResourceFactory.getCodeTablesSelfUri(null, baseUri);
 			result.getLinks().add(new RelLink(ResourceTypes.CODE_TABLE_LIST, selfURI, HttpMethod.GET));
+
+			// for the checktoken ui 
+			selfURI = UriBuilder.fromUri(baseUri)
+					.path(CheckTokenController.class)
+					.build()
+					.toString();
+			
+			result.getLinks().add(new RelLink(ResourceTypes.CHECK_TOKEN, selfURI, HttpMethod.GET));
+	
 			
 			if (hasAuthority(Scopes.SEARCH_CLAIMS)) {
 				selfURI = ClaimRsrcFactory.getClaimListSelfUri(null, null, null, null, null, null, null, baseUri);

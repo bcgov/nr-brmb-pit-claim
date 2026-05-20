@@ -11,7 +11,9 @@ import {ServiceWorkerModule} from "@angular/service-worker";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreModule} from "@ngrx/store";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
-import {AppConfigService, CoreUIModule, TokenService} from "@wf1/wfcc-core-lib"; //MapService, PublicApplicationHeaderModule, 
+import { AppConfigService } from "./services/app-config.service";
+import { TokenService } from "./services/token.service";
+import { CoreUIModule } from "./lib/core-ui.module";
 import {AppRoutingModule} from "./app-routing.module";
 import {AppComponent} from "./containers/application-root/app.component";
 import {environment} from "../environments/environment";
@@ -101,6 +103,9 @@ import { UnsavedDialogComponent } from "./components/dialogs/unsaved-dialog/unsa
 import { CalculationPrintoutGrainQuantityComponent } from "./components/calculation-printout/grain-quantity/grain-quantity.component";
 import { CalculationDetailGrainBasketComponent } from "./components/calculation-detail/grain-basket/grain-basket.component";
 import { CalculationPrintoutGrainBasketComponent } from "./components/calculation-printout/grain-basket/grain-basket.component";
+import { Type } from '@angular/core';
+import { ModuleWithProviders } from '@angular/core';
+
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.
  * Used by the Swagger CodeGen Rest API angular services.
@@ -111,7 +116,9 @@ import { CalculationPrintoutGrainBasketComponent } from "./components/calculatio
   return apiConfiguration;
 }
 
-let devOnlyImports = [];
+// let devOnlyImports = [];
+// Use a union type to allow both standard and configured modules
+let devOnlyImports: Array<Type<any> | ModuleWithProviders<any>> = [];
 
 if (!environment.production || !environment.restrict_imports) {
     devOnlyImports = [

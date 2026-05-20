@@ -99,7 +99,9 @@ public class SecuritySpringConfig  {
 	        new AntPathRequestMatcher("/openapi.*", HttpMethod.OPTIONS.name()),
 	        new AntPathRequestMatcher("/openapi.*", HttpMethod.GET.name()),
 	        new AntPathRequestMatcher("/checkHealth", HttpMethod.OPTIONS.name()),
-	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name())
+	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name()),
+	        new AntPathRequestMatcher("/checkToken", HttpMethod.OPTIONS.name()),
+	        new AntPathRequestMatcher("/checkToken", HttpMethod.GET.name())
 	    );		
 	  }
 	
@@ -112,6 +114,7 @@ public class SecuritySpringConfig  {
 	      .authorizeHttpRequests(authorize -> authorize
 	              .requestMatchers(HttpMethod.OPTIONS, "/openapi.*", "/checkHealth").permitAll()
 	              .requestMatchers(HttpMethod.GET, "/openapi.*", "/checkHealth").permitAll()
+	              .requestMatchers(HttpMethod.GET, "/checkToken").permitAll()
 	              .requestMatchers("/**").hasAuthority("CIRRAS_CLAIMS.GET_TOP_LEVEL")
 	              .anyRequest().denyAll()
 	      ).exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()) );		
