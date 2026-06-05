@@ -41,6 +41,7 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationPlantUnitsD
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationVarietyDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CropCommodityDao;
+import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrainBasketDto;
@@ -55,6 +56,7 @@ import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationVarietyDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropCommodityDto;
+import ca.bc.gov.mal.cirras.claims.data.entities.DeclaredYieldContractCommodityBerriesSyncDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationUserDto;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
@@ -119,6 +121,7 @@ public class CirrasClaimService {
 	private ClaimCalculationGrainBasketProductDao claimCalculationGrainBasketProductDao;
 	private ClaimDao claimDao;
 	private CropCommodityDao cropCommodityDao;
+	private DeclaredYieldContractCommodityBerriesSyncDao declaredYieldContractCommodityBerriesSyncDao;
 
 	// services
 	private CirrasPolicyService cirrasPolicyService;
@@ -220,6 +223,10 @@ public class CirrasClaimService {
 		this.cropCommodityDao = cropCommodityDao;
 	}
 	
+	public void setDeclaredYieldContractCommodityBerriesSyncDao(DeclaredYieldContractCommodityBerriesSyncDao declaredYieldContractCommodityBerriesSyncDao) {
+		this.declaredYieldContractCommodityBerriesSyncDao = declaredYieldContractCommodityBerriesSyncDao;
+	}
+
 	public void setOutOfSync(OutOfSync outOfSync) {
 		this.outOfSync = outOfSync;
 	}
@@ -309,7 +316,9 @@ public class CirrasClaimService {
 			Map<Integer, ClaimDto> quantityClaimMap = null;       // Maps crop id to Claim
 			Map<Integer, CropCommodityDto> quantityCropMap = null;   // Maps crop id to CropCommodity
 			Map<Integer, CropCommodityDto> quantityLinkedCropMap = null;  // Maps crop id to linked CropCommodity.
-			
+
+			// Populated for Berries QTY only.
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto = null;
 			
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())) {
 			
@@ -383,6 +392,11 @@ public class CirrasClaimService {
 					}
 				}
 			
+			} else if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString()) && 
+					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode())) {
+
+				// Will be null if there is no DOP for this contract.
+				dyccbsDto = declaredYieldContractCommodityBerriesSyncDao.getByContractCommodity(policyClaimRsrc.getContractId(), policyClaimRsrc.getCropYear(), policyClaimRsrc.getCropCommodityId());
 			}
 			
 			// Convert InsuranceClaimRsrc to ClaimCalculation
@@ -395,6 +409,7 @@ public class CirrasClaimService {
 					                                                 quantityClaimMap, 
 					                                                 quantityCropMap, 
 					                                                 quantityLinkedCropMap, 
+					                                                 dyccbsDto,
 					                                                 context, 
 					                                                 authentication);
 
@@ -407,6 +422,15 @@ public class CirrasClaimService {
 			// Calculate variety iv
 			calculateVarietyInsurableValues(result);
 
+			// TODO: Do we need to run Berries QTY calcs here if there is yield?
+			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString()) && 
+					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode()) &&
+					result.getClaimCalculationBerries() != null && 
+					result.getClaimCalculationBerries().getHarvestedYield() != null) {
+				
+				calculateTotals(result);
+			}
+			
 			// Set fields from linked calculation, if any.
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
 					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) {
@@ -793,6 +817,9 @@ public class CirrasClaimService {
 				List<ProductRsrc> quantityProducts = null;
 				Map<Integer, CropCommodityDto> quantityCropMap = null;   // Maps crop id to CropCommodity
 				Map<Integer, CropCommodityDto> quantityLinkedCropMap = null;  // Maps crop id to linked CropCommodity.
+
+				// Populated for Berries QTY only.
+				DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto = null;
 				
 				if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 						&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.QuantityGrain.getCode())) 
@@ -837,6 +864,7 @@ public class CirrasClaimService {
 					// Set fields from linked calculation, if any.
 					updateFromLinkedCalculation(result, policyClaimRsrc, productListRsrc, linkedCrpDto, false);
 				}
+				
 				
 				if (!ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString().equals(result.getCalculationStatusCode())
 						&& !ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString().equals(result.getCalculationStatusCode())) {
@@ -886,11 +914,17 @@ public class CirrasClaimService {
 							// If this fails, keep going. refreshManualClaimData() and calculateOutOfSyncFlags() will check if verifiedYieldRsrc is null.
 							logger.error("getUnderwritingVerifiedYield: Error when getting verified yield from CUWS for Claim Number " + claimNumber + ": " + e);
 						}						
+					} else if ( policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString())
+							&& policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode()) ) {
+
+						// Will be null if there is no DOP for this contract.
+						dyccbsDto = declaredYieldContractCommodityBerriesSyncDao.getByContractCommodity(policyClaimRsrc.getContractId(), policyClaimRsrc.getCropYear(), policyClaimRsrc.getCropCommodityId());
 					}
 
 					VerifiedYieldSummary verifiedSummary = getVerifiedYieldSummary(verifiedYieldRsrc, crpDto, linkedCrpDto);
 					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
+						// TODO
 						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc, verifiedSummary, verifiedYieldRsrc, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
 					}
 	
@@ -898,7 +932,7 @@ public class CirrasClaimService {
 					// sync with the Claim in CIRRAS.
 					// If the check cannot be performed because policyClaimRsrc is null, then they
 					// are left null to indicate that the sync status is unknown.
-					outOfSync.calculateOutOfSyncFlags(result, policyClaimRsrc, policyProductRsrc, verifiedSummary, verifiedYieldRsrc, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
+					outOfSync.calculateOutOfSyncFlags(result, policyClaimRsrc, policyProductRsrc, verifiedSummary, verifiedYieldRsrc, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap, dyccbsDto);
 				} else {
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
 						// Only show an error message if the calculation status was approved or archived
@@ -1807,6 +1841,7 @@ public class CirrasClaimService {
                     quantityClaimMap, 
                     quantityCropMap, 
                     quantityLinkedCropMap, 
+                    null, // TODO
 					factoryContext, 
 					authentication);
 

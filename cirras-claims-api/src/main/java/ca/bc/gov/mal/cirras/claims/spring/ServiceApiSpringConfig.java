@@ -106,6 +106,7 @@ public class ServiceApiSpringConfig {
 		result.setClaimCalculationGrainBasketProductDao(persistenceSpringConfig.claimCalculationGrainBasketProductDao());
 		result.setClaimDao(persistenceSpringConfig.claimDao());
 		result.setCropCommodityDao(persistenceSpringConfig.cropCommodityDao());
+		result.setDeclaredYieldContractCommodityBerriesSyncDao(persistenceSpringConfig.declaredYieldContractCommodityBerriesSyncDao());
 		
 		result.setCirrasPolicyService(cirrasPolicyService);
 		result.setCirrasUnderwritingService(cirrasUnderwritingService);

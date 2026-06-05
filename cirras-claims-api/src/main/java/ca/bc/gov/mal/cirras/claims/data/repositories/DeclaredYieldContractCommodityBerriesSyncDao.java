@@ -108,5 +108,28 @@ public class DeclaredYieldContractCommodityBerriesSyncDao extends BaseDao {
 
 		logger.debug(">delete");
 	}
+
+	public DeclaredYieldContractCommodityBerriesSyncDto getByContractCommodity(Integer contractId, Integer cropYear, Integer cropCommodityId) throws DaoException {
+		logger.debug("<getByContractCommodity");
+
+		DeclaredYieldContractCommodityBerriesSyncDto result = null;
+
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("contractId", contractId);
+			parameters.put("cropYear", cropYear);
+			parameters.put("cropCommodityId", cropCommodityId);
+			result = this.mapper.getByContractCommodity(parameters);
+			
+			if(result!=null) {
+				result.resetDirty();
+			}
+		} catch (RuntimeException e) {
+			handleException(e);
+		}
+
+		logger.debug(">getByContractCommodity " + result);
+		return result;
+	}
 	
 }
