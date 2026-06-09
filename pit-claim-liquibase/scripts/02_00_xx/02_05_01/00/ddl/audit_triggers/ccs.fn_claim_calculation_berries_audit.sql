@@ -23,6 +23,12 @@ BEGIN
             OLD.yield_loss_eligible, OLD.revision_count, OLD.create_user, OLD.create_date, 
             OLD.update_user, OLD.update_date
         );
+		
+		INSERT INTO ccs.claim_calculation_berries_ob( ccb_ob_id, claim_calculation_berries_guid, audit_transaction_type_code,
+				create_user, create_date, update_user, update_date )
+		VALUES ( nextval('ccs.ccb_ob_seq'), OLD.claim_calculation_berries_guid, 'DELETE', 
+				OLD.create_user, OLD.create_date, OLD.update_user, OLD.update_date );
+		
         RETURN OLD;
     ELSIF (TG_OP = 'UPDATE' OR TG_OP = 'INSERT') THEN
         INSERT INTO ccs.claim_calculation_berries_audit (
@@ -46,6 +52,12 @@ BEGIN
             NEW.yield_loss_eligible, NEW.revision_count, NEW.create_user, NEW.create_date, 
             NEW.update_user, NEW.update_date
         );
+		
+		INSERT INTO ccs.claim_calculation_berries_ob( ccb_ob_id, claim_calculation_berries_guid, audit_transaction_type_code,
+				create_user, create_date, update_user, update_date )
+		VALUES ( nextval('ccs.ccb_ob_seq'), NEW.claim_calculation_berries_guid, TG_OP, 
+				NEW.create_user, NEW.create_date, NEW.update_user, NEW.update_date );
+	
         RETURN NEW;
     END IF;
 END;

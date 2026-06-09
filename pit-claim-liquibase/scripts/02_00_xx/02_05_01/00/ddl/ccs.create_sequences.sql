@@ -1,0 +1,11 @@
+
+CREATE SEQUENCE ccs.ccb_ob_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+    
+
+;
