@@ -31,7 +31,7 @@ COMMENT ON COLUMN ccs.process_failovr_ownership.update_user IS 'Update User is t
 ;
 COMMENT ON COLUMN ccs.process_failovr_ownership.update_date IS 'Update Date is the date when the record was updated last.'
 ;
-COMMENT ON TABLE ccs.process_failovr_ownership IS 'Dispatch Synchronization Ownership is used to track the active node that will process synchronization jobs between Claims Calculator and CIRRAS. Redundant processing nodes are set up to process synchronization jobs. Only one process node is active at any time, so a single process node will be declared by this table as being the active node for processing jobs. If the active node goes down for some reason, then it will not be able to extend the expiry date in the table to show the node still has ownership of processing jobs. If node ownerships expires, another node will be promoted as the new active node for processing synchronization jobs and will be assigned a new expiry date.'
+COMMENT ON TABLE ccs.process_failovr_ownership IS 'Dispatch Synchronization Ownership is used to track the active node that will process synchronization jobs between Claims Calculator and PIT Underwriting. Redundant processing nodes are set up to process synchronization jobs. Only one process node is active at any time, so a single process node will be declared by this table as being the active node for processing jobs. If the active node goes down for some reason, then it will not be able to extend the expiry date in the table to show the node still has ownership of processing jobs. If node ownerships expires, another node will be promoted as the new active node for processing synchronization jobs and will be assigned a new expiry date.'
 ;
 
 ALTER TABLE ccs.process_failovr_ownership ADD 
