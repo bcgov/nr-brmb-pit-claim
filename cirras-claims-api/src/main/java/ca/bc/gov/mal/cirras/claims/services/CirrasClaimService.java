@@ -924,8 +924,7 @@ public class CirrasClaimService {
 					VerifiedYieldSummary verifiedSummary = getVerifiedYieldSummary(verifiedYieldRsrc, crpDto, linkedCrpDto);
 					
 					if (doRefreshManualClaimData != null && doRefreshManualClaimData.booleanValue()) {
-						// TODO
-						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc, verifiedSummary, verifiedYieldRsrc, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
+						refreshManualClaimData(result, policyClaimRsrc, policyProductRsrc, verifiedSummary, verifiedYieldRsrc, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap, dyccbsDto);
 					}
 	
 					// Sets the out of sync flags for any fields in the calculation that are out of
@@ -1271,7 +1270,8 @@ public class CirrasClaimService {
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
-			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto
 	) throws ServiceException, DaoException {
 		logger.debug("<refreshManualClaimData");
 
@@ -1288,7 +1288,7 @@ public class CirrasClaimService {
 			throw new ServiceException("Unable to refresh Claim data. Product or Verified Yield was not loaded.");
 		}
 		
-		claimCalculationRsrcFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product, verifiedSummary, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap);
+		claimCalculationRsrcFactory.updateCalculationFromClaim(claimCalculation, insuranceClaim, product, verifiedSummary, verifiedYield, quantityProducts, quantityClaimMap, quantityCropMap, quantityLinkedCropMap, dyccbsDto);
 
 		// Recalculate.
 		calculateVarietyInsurableValues(claimCalculation);
@@ -1724,6 +1724,7 @@ public class CirrasClaimService {
 		if (updateType.equals(ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString())) {
 
 			// Replacement is based on the archived calculation
+			// TODO
 			result = claimCalculationRsrcFactory.getCalculationFromCalculation(claimCalculation, factoryContext, authentication);
 
 			// Need to set current claim data: status, type, monitored, recommended and
@@ -1754,6 +1755,7 @@ public class CirrasClaimService {
 			Map<Integer, CropCommodityDto> quantityCropMap = null;   // Maps crop id to CropCommodity
 			Map<Integer, CropCommodityDto> quantityLinkedCropMap = null;  // Maps crop id to linked CropCommodity.
 
+			// TODO
 
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 					&& (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())

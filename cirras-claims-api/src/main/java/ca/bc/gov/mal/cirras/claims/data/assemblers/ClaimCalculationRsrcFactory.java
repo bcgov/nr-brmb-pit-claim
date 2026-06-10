@@ -316,7 +316,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
-			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto
 	) {
 
 		// Update ClaimCalculation fields
@@ -342,7 +343,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString())
 				&& claim.getCommodityCoverageCode()
 						.equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode())) {
-			updateClaimCalculationBerriesFromClaim(claimCalculation, claim);
+			updateClaimCalculationBerriesFromClaim(claimCalculation, claim, dyccbsDto);
 		}
 
 		if (claim.getCommodityCoverageCode()
@@ -426,8 +427,10 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	}
 
 	private void updateClaimCalculationBerriesFromClaim(ClaimCalculation claimCalculation,
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim) {
+			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto) {
 
+		// From CIRRAS
 		claimCalculation.getClaimCalculationBerries().setTotalProbableYield(claim.getTotalProbableYield());
 		claimCalculation.getClaimCalculationBerries().setDeductibleLevel(claim.getDeductibleLevel());
 		claimCalculation.getClaimCalculationBerries().setDeclaredAcres(claim.getDeclaredAcres());
@@ -436,6 +439,24 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		claimCalculation.getClaimCalculationBerries().setInsurableValueHundredPercent(claim.getInsurableValueHundredPercent());
 		claimCalculation.getClaimCalculationBerries().setMaxCoverageAmount(claim.getCoverageAmount());
 
+		// From CUWS
+		// If DOP does not exist for this contract and commodity, then Harvested Yield 
+		// is not synched and is instead user-editable.
+		Double harvestedYieldFromCuws = null;
+		if ( dyccbsDto != null ) {
+			if (dyccbsDto.getTotalProductionOverride() != null) {
+				harvestedYieldFromCuws = dyccbsDto.getTotalProductionOverride();
+			} else if (dyccbsDto.getTotalProduction() != null) {
+				harvestedYieldFromCuws = dyccbsDto.getTotalProduction();
+			}
+		}
+		
+		if ( harvestedYieldFromCuws != null ) {
+			claimCalculation.getClaimCalculationBerries().setHarvestedYield(harvestedYieldFromCuws);
+		}
+
+		claimCalculation.getClaimCalculationBerries().setHarvestedYieldFromCUWS(harvestedYieldFromCuws);
+		claimCalculation.getClaimCalculationBerries().setHarvestedYieldFromCUWSExistsInd(harvestedYieldFromCuws != null);		
 	}
 
 	private void updateClaimCalculationPlantUnitsFromClaim(ClaimCalculation claimCalculation,
