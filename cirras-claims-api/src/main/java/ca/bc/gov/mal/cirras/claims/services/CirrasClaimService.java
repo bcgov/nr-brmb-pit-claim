@@ -421,15 +421,6 @@ public class CirrasClaimService {
 
 			// Calculate variety iv
 			calculateVarietyInsurableValues(result);
-
-			// TODO: Do we need to run Berries QTY calcs here if there is yield?
-			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString()) && 
-					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode()) &&
-					result.getClaimCalculationBerries() != null && 
-					result.getClaimCalculationBerries().getHarvestedYield() != null) {
-				
-				calculateTotals(result);
-			}
 			
 			// Set fields from linked calculation, if any.
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString()) && 
@@ -1724,7 +1715,6 @@ public class CirrasClaimService {
 		if (updateType.equals(ClaimsServiceEnums.UpdateTypes.REPLACE_COPY.toString())) {
 
 			// Replacement is based on the archived calculation
-			// TODO
 			result = claimCalculationRsrcFactory.getCalculationFromCalculation(claimCalculation, factoryContext, authentication);
 
 			// Need to set current claim data: status, type, monitored, recommended and
@@ -1755,8 +1745,9 @@ public class CirrasClaimService {
 			Map<Integer, CropCommodityDto> quantityCropMap = null;   // Maps crop id to CropCommodity
 			Map<Integer, CropCommodityDto> quantityLinkedCropMap = null;  // Maps crop id to linked CropCommodity.
 
-			// TODO
-
+			// Populated for Berries QTY only.
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto = null;
+			
 			if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
 					&& (policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.CropUnseeded.getCode())
 							|| policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.GrainSpotLoss.getCode())
@@ -1830,8 +1821,13 @@ public class CirrasClaimService {
 						throw new ServiceException("Underwriting service threw an exception (CirrasUnderwritingServiceException)", e);
 					}
 				}
+			} else if (policyClaimRsrc.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString()) && 
+					policyClaimRsrc.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode())) {
+
+				// Will be null if there is no DOP for this contract.
+				dyccbsDto = declaredYieldContractCommodityBerriesSyncDao.getByContractCommodity(policyClaimRsrc.getContractId(), policyClaimRsrc.getCropYear(), policyClaimRsrc.getCropCommodityId());
 			}
-			
+
 			// Replacement is based on the current claim and policy data in CIRRAS
 			result = claimCalculationRsrcFactory.getCalculationFromClaim(
 					policyClaimRsrc, 
@@ -1843,7 +1839,7 @@ public class CirrasClaimService {
                     quantityClaimMap, 
                     quantityCropMap, 
                     quantityLinkedCropMap, 
-                    null, // TODO
+                    dyccbsDto,
 					factoryContext, 
 					authentication);
 

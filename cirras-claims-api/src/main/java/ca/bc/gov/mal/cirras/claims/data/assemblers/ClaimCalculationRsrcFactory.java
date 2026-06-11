@@ -1146,6 +1146,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		// model.setTotalYieldForCalculation(claimCalcBerries.getTotalYieldForCalculation());
 		// model.setYieldLossEligible(claimCalcBerries.getYieldLossEligible());
 
+		// HarvestedYieldFromCUWS and HarvestedYieldFromCUWSExistsInd are set with the out of sync flags later.
+
 		return model;
 	}
 
