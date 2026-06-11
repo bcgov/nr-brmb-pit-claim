@@ -64,15 +64,6 @@ BEGIN
             NEW.recommended_by_date, NEW.approved_by_userid, NEW.approved_by_name,
             NEW.approved_by_date, NEW.create_user, NEW.create_date, NEW.update_user, NEW.update_date
         );
-		
-		-- insert records to the outbox table for Quantity Berries when status changes
-		IF (TG_OP = 'UPDATE' AND NEW.insurance_plan_id = 3 AND NEW.commodity_coverage_code = 'CQNT' AND NEW.calculation_status_code <> OLD.calculation_status_code ) THEN
-			INSERT INTO ccs.claim_calculation_berries_ob( ccb_ob_id, claim_calculation_berries_guid, audit_transaction_type_code,
-				create_user, create_date, update_user, update_date )
-			VALUES ( nextval('ccs.ccb_ob_seq'), NEW.claim_calculation_berries_guid, TG_OP, 
-				NEW.create_user, NEW.create_date, NEW.update_user, NEW.update_date );
-		END IF;
-		
         RETURN NEW;
     END IF;
     RETURN NULL;
