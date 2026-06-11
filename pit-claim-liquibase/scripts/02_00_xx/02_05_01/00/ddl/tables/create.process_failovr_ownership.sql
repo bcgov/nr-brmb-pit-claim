@@ -3,7 +3,7 @@ CREATE TABLE ccs.process_failovr_ownership(
     process_name                      varchar(64)                    NOT NULL,
     service_node                      varchar(64)                    NOT NULL,
     revision_count                    numeric(10, 0)                 DEFAULT 0 NOT NULL,
-    expiry_timestamp                  timestamp with time zone(6)    NOT NULL,
+    expiry_timestamp 				  timestamp(6) with time zone    NOT NULL,
     create_user                       varchar(64)                    NOT NULL,
     create_date                       timestamp(0)                   NOT NULL,
     update_user                       varchar(64)                    NOT NULL,
