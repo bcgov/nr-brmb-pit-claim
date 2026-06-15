@@ -3,6 +3,7 @@ package ca.bc.gov.mal.cirras.claims.controllers;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Iterator;
@@ -19,6 +20,8 @@ import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimServiceException;
 import ca.bc.gov.mal.cirras.claims.clients.ValidationException;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.EndpointsRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.UnderwritingSyncEventTypes;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimListRsrc;
@@ -28,6 +31,7 @@ import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationGrainQuantityDeta
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationGrainUnseeded;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationVariety;
+import ca.bc.gov.mal.cirras.claims.data.models.SyncDopYieldContractCommodityBerries;
 import ca.bc.gov.mal.cirras.claims.services.utils.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
 import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
@@ -46,7 +50,11 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Scopes.DELETE_CLAIM,
 		Scopes.SEARCH_CALCULATIONS,
 		Scopes.REFRESH_DATA,
-		Scopes.PRINT_CALCULATION
+		Scopes.PRINT_CALCULATION,
+		Scopes.GET_SYNC_CLAIM,
+		Scopes.CREATE_SYNC_CLAIM,
+		Scopes.UPDATE_SYNC_CLAIM,
+		Scopes.DELETE_SYNC_CLAIM		
 	};
 	
 	private Integer pageNumber = new Integer(0);
@@ -56,6 +64,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 	// Used by out of sync and refresh tests.
 	private Integer outOfSyncClaimNumber = null;
 	private String outOfSyncClaimCalculationGuid = null;
+	private String declaredYieldContractCommodityBerriesGuid = "79fe078407254b25bd7905a840f4084e";
 
 	// Used by replace tests.
 	private Integer replaceClaimNumber = null;
@@ -77,6 +86,9 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid1);
 		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid2);
 		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid3);
+
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+	
 	}
 	
 	@After 
@@ -86,6 +98,8 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid1);
 		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid2);
 		deleteClaimCalculation(replaceClaimNumber, replaceClaimCalculationGuid3);
+
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
 	}
 	
 	@Test
@@ -784,10 +798,18 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		}
 
 		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
-		String testClaimNumber = "28214";  // Needs to be manually set to a real, valid BERRIES Quantity claim in CIRRAS db.
+		String testClaimNumber = "39697";  // Needs to be manually set to a real, valid BERRIES Quantity claim in CIRRAS db.
 
 		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		outOfSyncClaimNumber = Integer.valueOf(testClaimNumber);
 		
+		// Needs to correspond to the value for testClaimNumber.
+		Integer testClaimContractId = 735193;
+		Integer testClaimCropYear = 2026;
+		Integer testClaimCropCommodityId = 10;
+		String testClaimCropCommodityName = "Blueberry";
+
 		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
 		Assert.assertNotNull("getClaimList() returned null", claimList);
 		Assert.assertTrue("getClaimList() returned empty list or more than one result", claimList.getCollection().size() == 1);
@@ -798,55 +820,109 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 
 		claimCalc = service.createClaimCalculation(claimCalc);
 
+		outOfSyncClaimCalculationGuid = claimCalc.getClaimCalculationGuid();
+		
 		assertOutOfSyncFlagsFalse(claimCalc);
 		
 		//2. Update ClaimCalculation, setting each field to check the corresponding Out of Sync flag.
 		//4 Berries specific fields
-		if(claimCalc.getClaimCalculationBerries() != null) {
-			//Total Probable Yield
-			Double oldTotalProbableYield = claimCalc.getClaimCalculationBerries().getTotalProbableYield();
-			claimCalc.getClaimCalculationBerries().setTotalProbableYield(oldTotalProbableYield - 100);
-			claimCalc = service.updateClaimCalculation(claimCalc, null);
-			assertOutOfSyncFlagsFalseExceptOne(claimCalc, "TotalProbableYield");
-			claimCalc.getClaimCalculationBerries().setTotalProbableYield(oldTotalProbableYield);
-			
-			//Deductible Level
-			Integer oldDeductibleLevel = claimCalc.getClaimCalculationBerries().getDeductibleLevel();
-			claimCalc.getClaimCalculationBerries().setDeductibleLevel(oldDeductibleLevel + 10);
-			claimCalc = service.updateClaimCalculation(claimCalc, null);
-			assertOutOfSyncFlagsFalseExceptOne(claimCalc, "DeductibleLevel");
-			claimCalc.getClaimCalculationBerries().setDeductibleLevel(oldDeductibleLevel);
+		Assert.assertNotNull(claimCalc.getClaimCalculationBerries());
 
-			//Production Guarantee
-			Double oldProductionGuarantee = claimCalc.getClaimCalculationBerries().getProductionGuarantee();
-			claimCalc.getClaimCalculationBerries().setProductionGuarantee(oldProductionGuarantee + 10.5);
-			claimCalc = service.updateClaimCalculation(claimCalc, null);
-			assertOutOfSyncFlagsFalseExceptOne(claimCalc, "ProductionGuarantee");
-			claimCalc.getClaimCalculationBerries().setProductionGuarantee(oldProductionGuarantee);
-
-			//Declared Acres
-			Double oldDeclaredAcres = claimCalc.getClaimCalculationBerries().getDeclaredAcres();
-			claimCalc.getClaimCalculationBerries().setDeclaredAcres(oldDeclaredAcres + 0.5);
-			claimCalc = service.updateClaimCalculation(claimCalc, null);
-			assertOutOfSyncFlagsFalseExceptOne(claimCalc, "DeclaredAcres");
-			claimCalc.getClaimCalculationBerries().setDeclaredAcres(oldDeclaredAcres);
+		//Total Probable Yield
+		Double oldTotalProbableYield = claimCalc.getClaimCalculationBerries().getTotalProbableYield();
+		claimCalc.getClaimCalculationBerries().setTotalProbableYield(oldTotalProbableYield - 100);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "TotalProbableYield");
+		claimCalc.getClaimCalculationBerries().setTotalProbableYield(oldTotalProbableYield);
 		
-			//g. InsurableValueSelected
-			Double oldInsurableValueSelected = claimCalc.getClaimCalculationBerries().getInsurableValueSelected();
-			claimCalc.getClaimCalculationBerries().setInsurableValueSelected(123.4567);
-			claimCalc = service.updateClaimCalculation(claimCalc, null);
-			assertOutOfSyncFlagsFalseExceptOne(claimCalc, "InsurableValueSelected");
-			claimCalc.getClaimCalculationBerries().setInsurableValueSelected(oldInsurableValueSelected);
+		//Deductible Level
+		Integer oldDeductibleLevel = claimCalc.getClaimCalculationBerries().getDeductibleLevel();
+		claimCalc.getClaimCalculationBerries().setDeductibleLevel(oldDeductibleLevel + 10);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "DeductibleLevel");
+		claimCalc.getClaimCalculationBerries().setDeductibleLevel(oldDeductibleLevel);
+
+		//Production Guarantee
+		Double oldProductionGuarantee = claimCalc.getClaimCalculationBerries().getProductionGuarantee();
+		claimCalc.getClaimCalculationBerries().setProductionGuarantee(oldProductionGuarantee + 10.5);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "ProductionGuarantee");
+		claimCalc.getClaimCalculationBerries().setProductionGuarantee(oldProductionGuarantee);
+
+		//Declared Acres
+		Double oldDeclaredAcres = claimCalc.getClaimCalculationBerries().getDeclaredAcres();
+		claimCalc.getClaimCalculationBerries().setDeclaredAcres(oldDeclaredAcres + 0.5);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "DeclaredAcres");
+		claimCalc.getClaimCalculationBerries().setDeclaredAcres(oldDeclaredAcres);
+	
+		//g. InsurableValueSelected
+		Double oldInsurableValueSelected = claimCalc.getClaimCalculationBerries().getInsurableValueSelected();
+		claimCalc.getClaimCalculationBerries().setInsurableValueSelected(123.4567);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "InsurableValueSelected");
+		claimCalc.getClaimCalculationBerries().setInsurableValueSelected(oldInsurableValueSelected);
 
 
-			//h. InsurableValueHundredPct
-			Double oldInsurableValueHundredPct = claimCalc.getClaimCalculationBerries().getInsurableValueHundredPercent();
-			claimCalc.getClaimCalculationBerries().setInsurableValueHundredPercent(123.4567);
-			claimCalc = service.updateClaimCalculation(claimCalc, null);
-			assertOutOfSyncFlagsFalseExceptOne(claimCalc, "InsurableValueHundredPct");
-			claimCalc.getClaimCalculationBerries().setInsurableValueHundredPercent(oldInsurableValueHundredPct);
+		//h. InsurableValueHundredPct
+		Double oldInsurableValueHundredPct = claimCalc.getClaimCalculationBerries().getInsurableValueHundredPercent();
+		claimCalc.getClaimCalculationBerries().setInsurableValueHundredPercent(123.4567);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "InsurableValueHundredPct");
+		claimCalc.getClaimCalculationBerries().setInsurableValueHundredPercent(oldInsurableValueHundredPct);
 
-		}
+		//i. HarvestedYield - No DOP from CUWS, so HarvestedYield is user-editable and not synched.
+		SyncDopYieldContractSimpleRsrc sdycsr = service.getSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+		Assert.assertNull(sdycsr);
+		Double harvestedYieldFromCuws = null;
+
+		claimCalc.getClaimCalculationBerries().setHarvestedYield(123.4567);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalse(claimCalc);
+		Assert.assertEquals(harvestedYieldFromCuws, claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());
+		Assert.assertFalse(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());
+
+		//j. HarvestedYield - Null DOP from CUWS, so HarvestedYield is user-editable and not synched.
+		createDeclaredYieldContractCommodityBerriesSync(testClaimContractId, testClaimCropYear, testClaimCropCommodityId, testClaimCropCommodityName, null, null);
+		claimCalc = service.getClaimCalculation(claimCalc, false);
+		assertOutOfSyncFlagsFalse(claimCalc);
+		Assert.assertEquals(harvestedYieldFromCuws, claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());
+		Assert.assertFalse(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());
+		
+		//k. HarvestedYield - TotalProduction from CUWS.
+		harvestedYieldFromCuws = 11.22;
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+		createDeclaredYieldContractCommodityBerriesSync(testClaimContractId, testClaimCropYear, testClaimCropCommodityId, testClaimCropCommodityName, harvestedYieldFromCuws, null);
+
+		claimCalc = service.getClaimCalculation(claimCalc, false);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "HarvestedYield");
+		Assert.assertEquals(harvestedYieldFromCuws, claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());
+		Assert.assertTrue(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());
+
+		claimCalc.getClaimCalculationBerries().setHarvestedYield(harvestedYieldFromCuws);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalse(claimCalc);
+		Assert.assertEquals(harvestedYieldFromCuws, claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());
+		Assert.assertTrue(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());
+		
+		//i. HarvestedYield - TotalProductionOverride from CUWS.
+		harvestedYieldFromCuws = 33.44;
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+		createDeclaredYieldContractCommodityBerriesSync(testClaimContractId, testClaimCropYear, testClaimCropCommodityId, testClaimCropCommodityName, 11.22, harvestedYieldFromCuws);
+
+		claimCalc = service.getClaimCalculation(claimCalc, false);
+		assertOutOfSyncFlagsFalseExceptOne(claimCalc, "HarvestedYield");
+		Assert.assertEquals(harvestedYieldFromCuws, claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());
+		Assert.assertTrue(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());
+
+		claimCalc.getClaimCalculationBerries().setHarvestedYield(harvestedYieldFromCuws);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		assertOutOfSyncFlagsFalse(claimCalc);
+		Assert.assertEquals(harvestedYieldFromCuws, claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());
+		Assert.assertTrue(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());
+
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+		claimCalc.getClaimCalculationBerries().setHarvestedYield(null);
 		
 		claimCalc = service.updateClaimCalculation(claimCalc, null);				
 		assertOutOfSyncFlagsFalse(claimCalc);
@@ -855,17 +931,21 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 		assertOutOfSyncFlagsNull(claimCalc);
+		Assert.assertNull(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());            // Not loaded for APPROVED status.
+		Assert.assertNull(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());   // Not loaded for APPROVED status.
 
 		claimCalc.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 		assertOutOfSyncFlagsNull(claimCalc);
+		Assert.assertNull(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWS());            // Not loaded for ARCHIVED status.
+		Assert.assertNull(claimCalc.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd());   // Not loaded for ARCHIVED status.
 		
 		//3. Delete the Claim Calculation.
 		service.deleteClaimCalculation(claimCalc, true);
 		
 		logger.debug(">testBerriesClaimCalculationOutOfSyncFlags");
 	}
-	
+
 	@Test
 	public void testBerriesClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
 		logger.debug("<testBerriesClaimCalculationReplace");
@@ -876,7 +956,15 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		}
 		
 		//Choose a claim number of a claim without a calculation
-		String claimNumber = "28214";
+		String claimNumber = "39697";
+
+		// Needs to correspond to the value for claimNumber.
+		Integer testClaimContractId = 735193;
+		Integer testClaimCropYear = 2026;
+		Integer testClaimCropCommodityId = 10;
+		String testClaimCropCommodityName = "Blueberry";
+		
+		createDeclaredYieldContractCommodityBerriesSync(testClaimContractId, testClaimCropYear, testClaimCropCommodityId, testClaimCropCommodityName, 11.22, null);
 		
 		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, claimNumber, null, null, null, null, pageNumber, pageRowCount);
 		Assert.assertNotNull("getClaimList() returned null", claimList);
@@ -896,15 +984,17 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Double originalInsurableValueSelected = calculationToUpdate.getClaimCalculationBerries().getInsurableValueSelected();
 		Double originalInsurableValueHundredPercent = calculationToUpdate.getClaimCalculationBerries().getInsurableValueHundredPercent();
 		Double originalMaxCoverageAmount = calculationToUpdate.getClaimCalculationBerries().getMaxCoverageAmount();
+		Double originalHarvestedYield = calculationToUpdate.getClaimCalculationBerries().getHarvestedYield();
 		
 		//Update values for pulled in data to test if replacing NEW and COPY works correctly
-		Double updatedDeclaredAcres = originalDeclaredAcres + 2;
+		Double updatedDeclaredAcres = Math.round((originalDeclaredAcres + 2) * 10000) / 10000.0;   // Round to 4 decimals.
 		Integer updatedDeductibleLevel = originalDeductibleLevel - 5;
 		Double updatedTotalProbableYield = originalTotalProbableYield +1;
 		Double updatedProductionGuarantee = originalProductionGuarantee +1;
 		Double updatedInsurableValueSelected = originalInsurableValueSelected + 1;
 		Double updatedInsurableValueHundredPercent = originalInsurableValueHundredPercent +1;
 		Double updatedMaxCoverageAmount = originalMaxCoverageAmount +1;
+		Double updatedHarvestedYield = originalHarvestedYield + 100;
 		
 		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
 		calculationToUpdate.getClaimCalculationBerries().setDeclaredAcres(updatedDeclaredAcres);
@@ -914,6 +1004,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		calculationToUpdate.getClaimCalculationBerries().setInsurableValueSelected(updatedInsurableValueSelected);
 		calculationToUpdate.getClaimCalculationBerries().setInsurableValueHundredPercent(updatedInsurableValueHundredPercent);
 		calculationToUpdate.getClaimCalculationBerries().setMaxCoverageAmount(updatedMaxCoverageAmount);
+		calculationToUpdate.getClaimCalculationBerries().setHarvestedYield(updatedHarvestedYield);
 		
 		//Saving updated values
 		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
@@ -932,6 +1023,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value Selected Value not correct", originalInsurableValueSelected, newCalculation.getClaimCalculationBerries().getInsurableValueSelected());
 		Assert.assertEquals("New Insurable Value 100% not correct", originalInsurableValueHundredPercent, newCalculation.getClaimCalculationBerries().getInsurableValueHundredPercent());
 		Assert.assertEquals("New Coverage Amount not correct", originalMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
+		Assert.assertEquals("New Harvested Yield not correct", originalHarvestedYield, newCalculation.getClaimCalculationBerries().getHarvestedYield());
 		
 		//Delete new calculation
 		service.deleteClaimCalculation(newCalculation, true);
@@ -955,7 +1047,33 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value Selected Value not correct", updatedInsurableValueSelected, newCalculation.getClaimCalculationBerries().getInsurableValueSelected());
 		Assert.assertEquals("New Insurable Value 100% not correct", updatedInsurableValueHundredPercent, newCalculation.getClaimCalculationBerries().getInsurableValueHundredPercent());
 		Assert.assertEquals("New Max Coverage Amount not correct", updatedMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
+		Assert.assertEquals("New Harvested Yield not correct", updatedHarvestedYield, newCalculation.getClaimCalculationBerries().getHarvestedYield());
 
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation, true);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+		
+		//NEW - But without Berries DOP, so Harvested Yield is no longer a synched field.
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("New Declared Acres not consistent", originalDeclaredAcres, newCalculation.getClaimCalculationBerries().getDeclaredAcres());
+		Assert.assertEquals("New Deductible Level not correct", originalDeductibleLevel, newCalculation.getClaimCalculationBerries().getDeductibleLevel());
+		Assert.assertEquals("New Total Probably Yield not correct", originalTotalProbableYield, newCalculation.getClaimCalculationBerries().getTotalProbableYield());
+		Assert.assertEquals("New Production Guarantee not correct", originalProductionGuarantee, newCalculation.getClaimCalculationBerries().getProductionGuarantee());
+		Assert.assertEquals("New Insurable Value Selected Value not correct", originalInsurableValueSelected, newCalculation.getClaimCalculationBerries().getInsurableValueSelected());
+		Assert.assertEquals("New Insurable Value 100% not correct", originalInsurableValueHundredPercent, newCalculation.getClaimCalculationBerries().getInsurableValueHundredPercent());
+		Assert.assertEquals("New Coverage Amount not correct", originalMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
+		Assert.assertEquals("New Harvested Yield not correct", null, newCalculation.getClaimCalculationBerries().getHarvestedYield());   // Should be null now.
 		
 		//Delete - Clean up
 		service.deleteClaimCalculation(newCalculation, true);
@@ -1934,9 +2052,19 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		}
 
 		//1. Create a new Claim Calculation, verify that Out of Sync flags are all false.
-		String testClaimNumber = "28214";  // Needs to be manually set to a real, valid BERRIES claim in CIRRAS db.
+		String testClaimNumber = "39697";  // Needs to be manually set to a real, valid BERRIES claim in CIRRAS db.
 
 		Assert.assertFalse("testClaimNumber must be set before this test can be run", testClaimNumber.equals("TODO"));
+
+		outOfSyncClaimNumber = Integer.valueOf(testClaimNumber);
+		
+		// Needs to correspond to the value for testClaimNumber.
+		Integer testClaimContractId = 735193;
+		Integer testClaimCropYear = 2026;
+		Integer testClaimCropCommodityId = 10;
+		String testClaimCropCommodityName = "Blueberry";
+		
+		createDeclaredYieldContractCommodityBerriesSync(testClaimContractId, testClaimCropYear, testClaimCropCommodityId, testClaimCropCommodityName, 11.22, null);
 		
 		ClaimListRsrc claimList = service.getClaimList(topLevelEndpoints, testClaimNumber, null, null, null, null, pageNumber, pageRowCount);
 		Assert.assertNotNull("getClaimList() returned null", claimList);
@@ -1945,43 +2073,49 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		ClaimRsrc claim = claimList.getCollection().get(0);
 
 		ClaimCalculationRsrc claimCalc = service.getClaim(claim);
-
+		
 		claimCalc = service.createClaimCalculation(claimCalc);
+
+		outOfSyncClaimCalculationGuid = claimCalc.getClaimCalculationGuid();
 		
 		assertOutOfSyncFlagsBerries(claimCalc, false);
 		
 		//2. Update ClaimCalculation, setting each field to be out of sync with claim.
 
-		if(claimCalc.getClaimCalculationBerries() != null) {
-			//Total Probable Yield
-			Double oldTotalProbableYield = claimCalc.getClaimCalculationBerries().getTotalProbableYield();
-			claimCalc.getClaimCalculationBerries().setTotalProbableYield(oldTotalProbableYield - 100);
-			
-			//Deductible Level
-			Integer oldDeductibleLevel = claimCalc.getClaimCalculationBerries().getDeductibleLevel();
-			claimCalc.getClaimCalculationBerries().setDeductibleLevel(oldDeductibleLevel + 10);
+		Assert.assertNotNull(claimCalc.getClaimCalculationBerries());
 
-			//Production Guarantee
-			Double oldProductionGuarantee = claimCalc.getClaimCalculationBerries().getProductionGuarantee();
-			claimCalc.getClaimCalculationBerries().setProductionGuarantee(oldProductionGuarantee + 10.5);
+		//Total Probable Yield
+		Double oldTotalProbableYield = claimCalc.getClaimCalculationBerries().getTotalProbableYield();
+		claimCalc.getClaimCalculationBerries().setTotalProbableYield(oldTotalProbableYield - 100);
+		
+		//Deductible Level
+		Integer oldDeductibleLevel = claimCalc.getClaimCalculationBerries().getDeductibleLevel();
+		claimCalc.getClaimCalculationBerries().setDeductibleLevel(oldDeductibleLevel + 10);
 
-			//Declared Acres
-			Double oldDeclaredAcres = claimCalc.getClaimCalculationBerries().getDeclaredAcres();
-			claimCalc.getClaimCalculationBerries().setDeclaredAcres(oldDeclaredAcres + 0.5);
+		//Production Guarantee
+		Double oldProductionGuarantee = claimCalc.getClaimCalculationBerries().getProductionGuarantee();
+		claimCalc.getClaimCalculationBerries().setProductionGuarantee(oldProductionGuarantee + 10.5);
 
-			//Insurable Value Selected
-			Double oldInsurableValueSelected = claimCalc.getClaimCalculationBerries().getInsurableValueSelected();
-			claimCalc.getClaimCalculationBerries().setInsurableValueSelected(oldInsurableValueSelected + 0.5);
+		//Declared Acres
+		Double oldDeclaredAcres = claimCalc.getClaimCalculationBerries().getDeclaredAcres();
+		claimCalc.getClaimCalculationBerries().setDeclaredAcres(oldDeclaredAcres + 0.5);
 
-			//Insurable Value 100%
-			Double oldInsurableValueHundredPercent = claimCalc.getClaimCalculationBerries().getInsurableValueHundredPercent();
-			claimCalc.getClaimCalculationBerries().setInsurableValueHundredPercent(oldInsurableValueHundredPercent + 0.5);
+		//Insurable Value Selected
+		Double oldInsurableValueSelected = claimCalc.getClaimCalculationBerries().getInsurableValueSelected();
+		claimCalc.getClaimCalculationBerries().setInsurableValueSelected(oldInsurableValueSelected + 0.5);
 
-			//Coverage Amount
-			Double oldCoverageAmount = claimCalc.getClaimCalculationBerries().getMaxCoverageAmount();
-			claimCalc.getClaimCalculationBerries().setMaxCoverageAmount(oldCoverageAmount + 1000);
+		//Insurable Value 100%
+		Double oldInsurableValueHundredPercent = claimCalc.getClaimCalculationBerries().getInsurableValueHundredPercent();
+		claimCalc.getClaimCalculationBerries().setInsurableValueHundredPercent(oldInsurableValueHundredPercent + 0.5);
 
-		}
+		//Coverage Amount
+		Double oldCoverageAmount = claimCalc.getClaimCalculationBerries().getMaxCoverageAmount();
+		claimCalc.getClaimCalculationBerries().setMaxCoverageAmount(oldCoverageAmount + 1000);
+
+		//Harvested Yield
+		Double oldHarvestedYield = claimCalc.getClaimCalculationBerries().getHarvestedYield();
+		Double newHarvestedYield = oldHarvestedYield + 100;
+		claimCalc.getClaimCalculationBerries().setHarvestedYield(newHarvestedYield);
 		
 		claimCalc = service.updateClaimCalculation(claimCalc, null);
 
@@ -1991,7 +2125,16 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		
 		assertOutOfSyncFlagsBerries(claimCalc, false);
 
-		claimCalc = service.updateClaimCalculation(claimCalc, null);		
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+
+		claimCalc.getClaimCalculationBerries().setHarvestedYield(newHarvestedYield);
+		claimCalc = service.updateClaimCalculation(claimCalc, null);
+		
+		Assert.assertFalse(claimCalc.getClaimCalculationBerries().getIsOutOfSyncHarvestedYield());            // User-editable because DOP does not exist in CUWS.
+
+		claimCalc = service.getClaimCalculation(claimCalc, true);
+		Assert.assertFalse(claimCalc.getClaimCalculationBerries().getIsOutOfSyncHarvestedYield());
+		Assert.assertEquals(newHarvestedYield, claimCalc.getClaimCalculationBerries().getHarvestedYield());   // Make sure the user-edited field is not overwritten by refresh.
 		
 		//4. Delete the Claim Calculation.
 		service.deleteClaimCalculation(claimCalc, true);
@@ -3543,6 +3686,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 			Assert.assertNull("IsOutOfSyncDeclaredAcres", c.getClaimCalculationBerries().getIsOutOfSyncDeclaredAcres());
 			Assert.assertNull("IsOutOfSyncInsurableValueSelected", c.getClaimCalculationBerries().getIsOutOfSyncInsurableValueSelected());
 			Assert.assertNull("IsOutOfSyncInsurableValueHundredPct", c.getClaimCalculationBerries().getIsOutOfSyncInsurableValueHundredPct());
+			Assert.assertNull("IsOutOfSyncHarvestedYield", c.getClaimCalculationBerries().getIsOutOfSyncHarvestedYield());
 		}
 		
 		//plant units
@@ -3626,6 +3770,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("IsOutOfSyncDeclaredAcres", flagValue, c.getClaimCalculationBerries().getIsOutOfSyncDeclaredAcres());
 		Assert.assertEquals("IsOutOfSyncInsurableValueSelected", flagValue, c.getClaimCalculationBerries().getIsOutOfSyncInsurableValueSelected());
 		Assert.assertEquals("IsOutOfSyncInsurableValueHundredPct", flagValue, c.getClaimCalculationBerries().getIsOutOfSyncInsurableValueHundredPct());
+		Assert.assertEquals("IsOutOfSyncHarvestedYieldOutOfSync", flagValue, c.getClaimCalculationBerries().getIsOutOfSyncHarvestedYield());
 
 	}	
 
@@ -3740,6 +3885,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 			Assert.assertEquals("IsOutOfSyncDeclaredAcres", f.equals("DeclaredAcres"), c.getClaimCalculationBerries().getIsOutOfSyncDeclaredAcres());
 			Assert.assertEquals("IsOutOfSyncInsurableValueSelected", f.equals("InsurableValueSelected"), c.getClaimCalculationBerries().getIsOutOfSyncInsurableValueSelected());
 			Assert.assertEquals("IsOutOfSyncInsurableValueHundredPct", f.equals("InsurableValueHundredPct"), c.getClaimCalculationBerries().getIsOutOfSyncInsurableValueHundredPct());
+			Assert.assertEquals("IsOutOfSyncHarvestedYield", f.equals("HarvestedYield"), c.getClaimCalculationBerries().getIsOutOfSyncHarvestedYield());
 		}
 		
 		//plant units
@@ -3801,4 +3947,47 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 
 	}
 
+	private void createDeclaredYieldContractCommodityBerriesSync(Integer contractId, Integer cropYear, Integer cropCommodityId, String cropCommodityName, Double totalProductionYield, Double totalProductionOverride) 
+	  throws ValidationException, CirrasClaimServiceException {
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.MILLISECOND, 0); //Set milliseconds to 0 becauce they are not set in the database
+		Date transactionDate = cal.getTime();
+		
+		Date createTransactionDate = addSeconds(transactionDate, -1);
+
+		//Create 
+		SyncDopYieldContractSimpleRsrc resource = new SyncDopYieldContractSimpleRsrc();
+
+		resource.setDeclaredYieldContractGuid("3991fb6d0abe4696a3574b4d2837bbb4");
+		resource.setContractId(contractId);
+		resource.setCropYear(cropYear);
+		
+		SyncDopYieldContractCommodityBerries sdyccb = new SyncDopYieldContractCommodityBerries();
+
+		sdyccb.setCropCommodityId(cropCommodityId);
+		sdyccb.setCropCommodityName(cropCommodityName);
+		sdyccb.setDeclaredYieldContractCommodityBerriesGuid(declaredYieldContractCommodityBerriesGuid);
+		sdyccb.setTotalAbandonmentYield(null);
+		sdyccb.setTotalProduction(totalProductionYield);
+		sdyccb.setTotalProductionOverride(totalProductionOverride);
+		sdyccb.setTotalSalesYield(null);
+		sdyccb.setTotalSoldShippedYield(null);
+		
+		resource.setSyncDopYieldContractCommodityBerries(sdyccb);
+		
+		resource.setDataSyncTransDate(createTransactionDate);
+		resource.setTransactionType(UnderwritingSyncEventTypes.DopYieldContractCommodityBerriesCreated);
+
+		service.synchronizeDopYieldContractSimple(resource);
+		
+	}
+	
+	private static Date addSeconds(Date date, Integer seconds) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.SECOND, seconds);
+		return cal.getTime();
+	}
+	
 }

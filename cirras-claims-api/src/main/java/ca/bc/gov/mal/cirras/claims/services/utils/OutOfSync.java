@@ -18,6 +18,7 @@ import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationGrainSpotLoss;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropCommodityDto;
+import ca.bc.gov.mal.cirras.claims.data.entities.DeclaredYieldContractCommodityBerriesSyncDto;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
@@ -42,7 +43,8 @@ public class OutOfSync {
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
-			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto
 	) {
 		logger.debug("<calculateOutOfSyncFlags");
 
@@ -80,7 +82,7 @@ public class OutOfSync {
 		isOutOfSync = varietiesDataOutOfSync(claimCalculation, insuranceClaim, isOutOfSync);
 
 		// Set Berries Quantity flags
-		isOutOfSync = berriesQuantityDataOutOfSync(claimCalculation, insuranceClaim, isOutOfSync);
+		isOutOfSync = berriesQuantityDataOutOfSync(claimCalculation, insuranceClaim, dyccbsDto, isOutOfSync);
 		
 		// Set Plant By Units Data flags
 		isOutOfSync = plantByUnitsDataOutOfSync(claimCalculation, insuranceClaim, isOutOfSync);
@@ -179,11 +181,13 @@ public class OutOfSync {
 		return isOutOfSync;
 	}
 	
-	private boolean berriesQuantityDataOutOfSync(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, boolean isOutOfSync) {
+	private boolean berriesQuantityDataOutOfSync(ClaimCalculation claimCalculation, InsuranceClaim insuranceClaim, DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto, boolean isOutOfSync) {
+
 		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString())
 				&& claimCalculation.getCommodityCoverageCode().equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode())) {
 			if (claimCalculation.getClaimCalculationBerries() != null) {
 
+				// Check CIRRAS
 				if (dtoUtils.equals("totalProbableYield", insuranceClaim.getTotalProbableYield(),
 						claimCalculation.getClaimCalculationBerries().getTotalProbableYield(), 4)) {
 					claimCalculation.getClaimCalculationBerries().setIsOutOfSyncTotalProbableYield(false);
@@ -229,6 +233,30 @@ public class OutOfSync {
 					claimCalculation.getClaimCalculationBerries().setIsOutOfSyncInsurableValueHundredPct(false);
 				} else {
 					claimCalculation.getClaimCalculationBerries().setIsOutOfSyncInsurableValueHundredPct(true);
+					isOutOfSync = true;
+				}
+
+				// Check CUWS
+				// If DOP does not exist for this contract and commodity, then Harvested Yield 
+				// is not synched and is instead user-editable.
+				Double harvestedYieldFromCuws = null;
+				if ( dyccbsDto != null ) {
+					if (dyccbsDto.getTotalProductionOverride() != null) {
+						harvestedYieldFromCuws = dyccbsDto.getTotalProductionOverride();
+					} else if (dyccbsDto.getTotalProduction() != null) {
+						harvestedYieldFromCuws = dyccbsDto.getTotalProduction();
+					}
+				}
+				
+				claimCalculation.getClaimCalculationBerries().setHarvestedYieldFromCUWS(harvestedYieldFromCuws);
+				claimCalculation.getClaimCalculationBerries().setHarvestedYieldFromCUWSExistsInd(harvestedYieldFromCuws != null);
+				
+				if (!claimCalculation.getClaimCalculationBerries().getHarvestedYieldFromCUWSExistsInd() ||
+						dtoUtils.equals("harvestedYield", claimCalculation.getClaimCalculationBerries().getHarvestedYieldFromCUWS(),
+						claimCalculation.getClaimCalculationBerries().getHarvestedYield(), 4)) {
+					claimCalculation.getClaimCalculationBerries().setIsOutOfSyncHarvestedYield(false);
+				} else {
+					claimCalculation.getClaimCalculationBerries().setIsOutOfSyncHarvestedYield(true);
 					isOutOfSync = true;
 				}
 				

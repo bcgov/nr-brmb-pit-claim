@@ -50,6 +50,7 @@ import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrapesDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationVarietyDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.CropCommodityDto;
+import ca.bc.gov.mal.cirras.claims.data.entities.DeclaredYieldContractCommodityBerriesSyncDto;
 import ca.bc.gov.mal.cirras.claims.services.utils.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
@@ -163,9 +164,10 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
 			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto,
 			FactoryContext context, 
 			WebAdeAuthentication authentication) throws FactoryException {
-		
+
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
 		// Add policy data to the insurance claim resource
@@ -193,7 +195,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString())
 				&& claim.getCommodityCoverageCode()
 						.equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode())) {
-			resource.setClaimCalculationBerries(createClaimCalculationBerriesFromClaim(claim));
+			resource.setClaimCalculationBerries(createClaimCalculationBerriesFromClaim(claim, dyccbsDto));
 		}
 
 		if (claim.getCommodityCoverageCode()
@@ -314,7 +316,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
-			Map<Integer, CropCommodityDto> quantityLinkedCropMap
+			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto
 	) {
 
 		// Update ClaimCalculation fields
@@ -340,7 +343,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		if (claim.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.BERRIES.toString())
 				&& claim.getCommodityCoverageCode()
 						.equalsIgnoreCase(ClaimsServiceEnums.CommodityCoverageCodes.Quantity.getCode())) {
-			updateClaimCalculationBerriesFromClaim(claimCalculation, claim);
+			updateClaimCalculationBerriesFromClaim(claimCalculation, claim, dyccbsDto);
 		}
 
 		if (claim.getCommodityCoverageCode()
@@ -424,8 +427,10 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	}
 
 	private void updateClaimCalculationBerriesFromClaim(ClaimCalculation claimCalculation,
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim) {
+			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto) {
 
+		// From CIRRAS
 		claimCalculation.getClaimCalculationBerries().setTotalProbableYield(claim.getTotalProbableYield());
 		claimCalculation.getClaimCalculationBerries().setDeductibleLevel(claim.getDeductibleLevel());
 		claimCalculation.getClaimCalculationBerries().setDeclaredAcres(claim.getDeclaredAcres());
@@ -434,6 +439,24 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		claimCalculation.getClaimCalculationBerries().setInsurableValueHundredPercent(claim.getInsurableValueHundredPercent());
 		claimCalculation.getClaimCalculationBerries().setMaxCoverageAmount(claim.getCoverageAmount());
 
+		// From CUWS
+		// If DOP does not exist for this contract and commodity, then Harvested Yield 
+		// is not synched and is instead user-editable.
+		Double harvestedYieldFromCuws = null;
+		if ( dyccbsDto != null ) {
+			if (dyccbsDto.getTotalProductionOverride() != null) {
+				harvestedYieldFromCuws = dyccbsDto.getTotalProductionOverride();
+			} else if (dyccbsDto.getTotalProduction() != null) {
+				harvestedYieldFromCuws = dyccbsDto.getTotalProduction();
+			}
+		}
+		
+		if ( harvestedYieldFromCuws != null ) {
+			claimCalculation.getClaimCalculationBerries().setHarvestedYield(harvestedYieldFromCuws);
+		}
+
+		claimCalculation.getClaimCalculationBerries().setHarvestedYieldFromCUWS(harvestedYieldFromCuws);
+		claimCalculation.getClaimCalculationBerries().setHarvestedYieldFromCUWSExistsInd(harvestedYieldFromCuws != null);		
 	}
 
 	private void updateClaimCalculationPlantUnitsFromClaim(ClaimCalculation claimCalculation,
@@ -683,7 +706,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	}
 
 	private ClaimCalculationBerries createClaimCalculationBerriesFromClaim(
-			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim) {
+			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
+			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto) {
 		ClaimCalculationBerries model = new ClaimCalculationBerries();
 
 		model.setTotalProbableYield(claim.getTotalProbableYield());
@@ -693,6 +717,19 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		model.setInsurableValueSelected(claim.getInsurableValueSelected());
 		model.setInsurableValueHundredPercent(claim.getInsurableValueHundredPercent());
 		model.setMaxCoverageAmount(claim.getCoverageAmount());
+
+		Double harvestedYieldFromCuws = null;
+		if ( dyccbsDto != null ) {
+			if (dyccbsDto.getTotalProductionOverride() != null) {
+				harvestedYieldFromCuws = dyccbsDto.getTotalProductionOverride();
+			} else if (dyccbsDto.getTotalProduction() != null) {
+				harvestedYieldFromCuws = dyccbsDto.getTotalProduction();
+			}
+		}
+		
+		model.setHarvestedYield(harvestedYieldFromCuws);
+		model.setHarvestedYieldFromCUWS(harvestedYieldFromCuws);
+		model.setHarvestedYieldFromCUWSExistsInd(harvestedYieldFromCuws != null);
 
 		return model;
 	}
@@ -1108,6 +1145,8 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		// model.setTotalYieldFromDop(claimCalcBerries.getTotalYieldFromDop());
 		// model.setTotalYieldForCalculation(claimCalcBerries.getTotalYieldForCalculation());
 		// model.setYieldLossEligible(claimCalcBerries.getYieldLossEligible());
+
+		// HarvestedYieldFromCUWS and HarvestedYieldFromCUWSExistsInd are set with the out of sync flags later.
 
 		return model;
 	}
@@ -2134,7 +2173,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	protected static String nvl(Integer value, String defaultValue) {
 		return (value == null) ? defaultValue : value.toString();
 	}
-
+	
 	private static void setLinks(ClaimCalculationListRsrc resource, Integer claimNumber, String policyNumber,
 			Integer cropYear, String calculationStatusCode, String createClaimCalcUserGuid,
 			String updateClaimCalcUserGuid, String sortColumn, String sortDirection, int pageNumber, int pageRowCount,

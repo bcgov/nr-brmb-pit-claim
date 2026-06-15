@@ -13,5 +13,7 @@ public interface DeclaredYieldContractCommodityBerriesSyncMapper {
 	int update(Map<String, Object> parameters);
 	
 	int delete(Map<String, Object> parameters);
+
+	DeclaredYieldContractCommodityBerriesSyncDto getByContractCommodity(Map<String, Object> parameters);
 	
 }

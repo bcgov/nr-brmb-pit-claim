@@ -127,6 +127,23 @@ public class DeclaredYieldContractCommodityBerriesSyncDaoTest {
 		Assert.assertEquals("TotalSalesYield", fetchedDto.getTotalSalesYield(), updatedDto.getTotalSalesYield());
 		Assert.assertEquals("TotalSoldShippedYield", fetchedDto.getTotalSoldShippedYield(), updatedDto.getTotalSoldShippedYield());
 		Assert.assertTrue("DataSyncTransDate", fetchedDto.getDataSyncTransDate().compareTo(updatedDto.getDataSyncTransDate()) == 0);
+
+		//GetByContractCommodity
+		updatedDto = dao.getByContractCommodity(888888889, 2021, 11);
+
+		Assert.assertEquals("ContractId", fetchedDto.getContractId(), updatedDto.getContractId());
+		Assert.assertEquals("CropCommodityId", fetchedDto.getCropCommodityId(), updatedDto.getCropCommodityId());
+		Assert.assertEquals("CropCommodityName", fetchedDto.getCropCommodityName(), updatedDto.getCropCommodityName());
+		Assert.assertEquals("CropYear", fetchedDto.getCropYear(), updatedDto.getCropYear());
+		Assert.assertEquals("DeclaredYieldContractCommodityBerriesGuid", fetchedDto.getDeclaredYieldContractCommodityBerriesGuid(), updatedDto.getDeclaredYieldContractCommodityBerriesGuid());
+		Assert.assertEquals("DeclaredYieldContractGuid", fetchedDto.getDeclaredYieldContractGuid(), updatedDto.getDeclaredYieldContractGuid());
+		Assert.assertEquals("TotalAbandonmentYield", fetchedDto.getTotalAbandonmentYield(), updatedDto.getTotalAbandonmentYield());
+		Assert.assertEquals("TotalProduction", fetchedDto.getTotalProduction(), updatedDto.getTotalProduction());
+		Assert.assertEquals("TotalProductionOverride", fetchedDto.getTotalProductionOverride(), updatedDto.getTotalProductionOverride());
+		Assert.assertEquals("TotalSalesYield", fetchedDto.getTotalSalesYield(), updatedDto.getTotalSalesYield());
+		Assert.assertEquals("TotalSoldShippedYield", fetchedDto.getTotalSoldShippedYield(), updatedDto.getTotalSoldShippedYield());
+		Assert.assertTrue("DataSyncTransDate", fetchedDto.getDataSyncTransDate().compareTo(updatedDto.getDataSyncTransDate()) == 0);
+		
 		
 		//DELETE
 		dao.delete(updatedDto.getDeclaredYieldContractCommodityBerriesGuid());

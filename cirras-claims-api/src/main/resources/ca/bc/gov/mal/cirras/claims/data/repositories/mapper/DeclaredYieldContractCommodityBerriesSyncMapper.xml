@@ -123,4 +123,15 @@
 		delete from declared_yield_contract_commodity_berries_sync where declared_yield_contract_commodity_berries_guid = #{declaredYieldContractCommodityBerriesGuid}
 	</delete>
 
+
+	<select id="getByContractCommodity" resultMap="DeclaredYieldContractCommodityBerriesSyncDtoMap">
+		<include refid="selectColumns"/>,
+			cc.commodity_name as crop_commodity_name
+		from declared_yield_contract_commodity_berries_sync t
+		join crop_commodity cc on cc.crop_commodity_id = t.crop_commodity_id
+		where t.contract_id = #{contractId}
+		  and t.crop_year = #{cropYear}
+		  and t.crop_commodity_id = #{cropCommodityId}
+	</select>
+
 </mapper>

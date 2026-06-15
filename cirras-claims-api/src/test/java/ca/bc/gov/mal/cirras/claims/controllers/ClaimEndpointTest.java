@@ -1698,7 +1698,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testGetInsertUpdateDeleteBerriesClaim() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
 		logger.debug("<testGetInsertUpdateDeleteBerriesClaim");
@@ -1708,7 +1708,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			return;
 		}
 		
-        String claimNumber = "28088";// Needs to be manually set to a real, valid BERRIES Quantity claim in CIRRAS db.
+        String claimNumber = "39697";// Needs to be manually set to a real, valid BERRIES Quantity claim in CIRRAS db.
 		String policyNumber = null;
 		Integer pageNumber = new Integer(0);
 		Integer pageRowCount = new Integer(100);
@@ -1767,7 +1767,7 @@ public class ClaimEndpointTest extends EndpointsTest {
 			createdCalculation.getClaimCalculationBerries().setDeclaredAcres(createdCalculation.getClaimCalculationBerries().getDeclaredAcres());
 			createdCalculation.getClaimCalculationBerries().setInsurableValueHundredPercent(1.51);
 			createdCalculation.getClaimCalculationBerries().setInsurableValueSelected(1.21);
-			createdCalculation.getClaimCalculationBerries().setConfirmedAcres(claimCalculationRsrc.getClaimCalculationBerries().getDeclaredAcres() +1);
+			createdCalculation.getClaimCalculationBerries().setConfirmedAcres(Math.round((claimCalculationRsrc.getClaimCalculationBerries().getDeclaredAcres() + 1) * 10000) / 10000.0);   // Round to 4 decimals.
 			createdCalculation.getClaimCalculationBerries().setHarvestedYield((double)10001);
 			createdCalculation.getClaimCalculationBerries().setAppraisedYield((double)1001);
 			createdCalculation.getClaimCalculationBerries().setAbandonedYield((double)501);

@@ -22,6 +22,8 @@ public class ClaimCalculationBerries implements Serializable {
 	private Double coverageAmountAdjusted;
 	private Double maxCoverageAmount;
 	private Double harvestedYield;
+	private Double harvestedYieldFromCUWS;
+	private Boolean harvestedYieldFromCUWSExistsInd;
 	private Double appraisedYield;
 	private Double abandonedYield;
 	private Double totalYieldFromDop;
@@ -38,6 +40,7 @@ public class ClaimCalculationBerries implements Serializable {
 	private Boolean isOutOfSyncInsurableValueSelected;
 	private Boolean isOutOfSyncInsurableValueHundredPct;
 	private Boolean isOutOfSyncMaxCoverageAmount;
+	private Boolean isOutOfSyncHarvestedYield;
 
 
 	public String getClaimCalculationBerriesGuid() {
@@ -151,6 +154,22 @@ public class ClaimCalculationBerries implements Serializable {
 	public void setHarvestedYield(Double harvestedYield) {
 		this.harvestedYield = harvestedYield;
 	}
+
+	public Double getHarvestedYieldFromCUWS() {
+		return harvestedYieldFromCUWS;
+	}
+
+	public void setHarvestedYieldFromCUWS(Double harvestedYieldFromCUWS) {
+		this.harvestedYieldFromCUWS = harvestedYieldFromCUWS;
+	}
+
+	public Boolean getHarvestedYieldFromCUWSExistsInd() {
+		return harvestedYieldFromCUWSExistsInd;
+	}
+
+	public void setHarvestedYieldFromCUWSExistsInd(Boolean harvestedYieldFromCUWSExistsInd) {
+		this.harvestedYieldFromCUWSExistsInd = harvestedYieldFromCUWSExistsInd;
+	}
 	
 	public Double getAppraisedYield() {
 		return appraisedYield;
@@ -255,4 +274,12 @@ public class ClaimCalculationBerries implements Serializable {
 	public void setIsOutOfSyncInsurableValueHundredPct(Boolean isOutOfSyncInsurableValueHundredPct) {
 		this.isOutOfSyncInsurableValueHundredPct = isOutOfSyncInsurableValueHundredPct;
 	}
+	
+	public Boolean getIsOutOfSyncHarvestedYield() {
+		return isOutOfSyncHarvestedYield;
+	}
+
+	public void setIsOutOfSyncHarvestedYield(Boolean isOutOfSyncHarvestedYield) {
+		this.isOutOfSyncHarvestedYield = isOutOfSyncHarvestedYield;
+	}	
 }
