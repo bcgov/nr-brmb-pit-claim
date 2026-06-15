@@ -946,7 +946,6 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		logger.debug(">testBerriesClaimCalculationOutOfSyncFlags");
 	}
 
-	// TODO
 	@Test
 	public void testBerriesClaimCalculationReplace() throws CirrasClaimServiceException, Oauth2ClientException, ValidationException {
 		logger.debug("<testBerriesClaimCalculationReplace");
@@ -988,7 +987,7 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Double originalHarvestedYield = calculationToUpdate.getClaimCalculationBerries().getHarvestedYield();
 		
 		//Update values for pulled in data to test if replacing NEW and COPY works correctly
-		Double updatedDeclaredAcres = originalDeclaredAcres + 2;
+		Double updatedDeclaredAcres = Math.round((originalDeclaredAcres + 2) * 10000) / 10000.0;   // Round to 4 decimals.
 		Integer updatedDeductibleLevel = originalDeductibleLevel - 5;
 		Double updatedTotalProbableYield = originalTotalProbableYield +1;
 		Double updatedProductionGuarantee = originalProductionGuarantee +1;
@@ -1049,6 +1048,32 @@ public class ClaimCalculationEndpointTest extends EndpointsTest {
 		Assert.assertEquals("New Insurable Value 100% not correct", updatedInsurableValueHundredPercent, newCalculation.getClaimCalculationBerries().getInsurableValueHundredPercent());
 		Assert.assertEquals("New Max Coverage Amount not correct", updatedMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
 		Assert.assertEquals("New Harvested Yield not correct", updatedHarvestedYield, newCalculation.getClaimCalculationBerries().getHarvestedYield());
+
+		//Delete new calculation
+		service.deleteClaimCalculation(newCalculation, true);
+		
+		//Reset calculation to be replaced to approved
+		//Need to load the original calculation again to prevent precondition error (http 412) because of etag differences
+		calculationToUpdate = service.getClaimCalculation(calculationToUpdate, false);
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.APPROVED.toString());
+		calculationToUpdate = service.updateClaimCalculation(calculationToUpdate, null);
+
+		service.deleteSyncDopYieldContractSimple(topLevelEndpoints, declaredYieldContractCommodityBerriesGuid);
+		
+		//NEW - But without Berries DOP, so Harvested Yield is no longer a synched field.
+		calculationToUpdate.setCalculationStatusCode(ClaimsServiceEnums.CalculationStatusCodes.ARCHIVED.toString());
+		newCalculation = service.updateClaimCalculation(calculationToUpdate, ClaimsServiceEnums.UpdateTypes.REPLACE_NEW.toString());
+
+		//Check if newCalculation contains the original values from the replaced one
+		Assert.assertEquals("New Calculation Status", newCalculation.getCalculationStatusCode(), ClaimsServiceEnums.CalculationStatusCodes.DRAFT.toString());
+		Assert.assertEquals("New Declared Acres not consistent", originalDeclaredAcres, newCalculation.getClaimCalculationBerries().getDeclaredAcres());
+		Assert.assertEquals("New Deductible Level not correct", originalDeductibleLevel, newCalculation.getClaimCalculationBerries().getDeductibleLevel());
+		Assert.assertEquals("New Total Probably Yield not correct", originalTotalProbableYield, newCalculation.getClaimCalculationBerries().getTotalProbableYield());
+		Assert.assertEquals("New Production Guarantee not correct", originalProductionGuarantee, newCalculation.getClaimCalculationBerries().getProductionGuarantee());
+		Assert.assertEquals("New Insurable Value Selected Value not correct", originalInsurableValueSelected, newCalculation.getClaimCalculationBerries().getInsurableValueSelected());
+		Assert.assertEquals("New Insurable Value 100% not correct", originalInsurableValueHundredPercent, newCalculation.getClaimCalculationBerries().getInsurableValueHundredPercent());
+		Assert.assertEquals("New Coverage Amount not correct", originalMaxCoverageAmount, newCalculation.getClaimCalculationBerries().getMaxCoverageAmount());
+		Assert.assertEquals("New Harvested Yield not correct", null, newCalculation.getClaimCalculationBerries().getHarvestedYield());   // Should be null now.
 		
 		//Delete - Clean up
 		service.deleteClaimCalculation(newCalculation, true);
