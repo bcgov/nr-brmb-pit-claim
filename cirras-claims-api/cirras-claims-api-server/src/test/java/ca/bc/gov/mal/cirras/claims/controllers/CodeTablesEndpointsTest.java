@@ -46,7 +46,7 @@ public class CodeTablesEndpointsTest extends EndpointsTest {
 		Assert.assertNotNull(codeTables);
 		List<CodeTableRsrc> codeTableList = codeTables.getCodeTableList();
 		Assert.assertNotNull(codeTableList);
-		//Assert.assertEquals(8, codeTableList.size());
+		Assert.assertEquals(8, codeTableList.size());
 
 		for (CodeTableRsrc codeTable : codeTableList) {
 			codeTable = service.getCodeTable(codeTable, effectiveAsOfDate);
