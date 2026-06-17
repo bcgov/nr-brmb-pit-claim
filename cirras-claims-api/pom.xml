@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.bc.gov.mal.cirras.claims</groupId>
-	<artifactId>cirras-claims-api</artifactId>
-	<name>cirras-claims-api</name>
+	<artifactId>cirras-claims-api-parent</artifactId>
+	<name>cirras-claims-api-parent</name>
 	<version>2.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
