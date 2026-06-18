@@ -86,11 +86,10 @@ import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ClaimCalculationSubmit
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
-import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingService;
-import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingServiceException;
-import ca.bc.gov.mal.cirras.underwriting.api.rest.v1.resource.VerifiedYieldContractSimpleRsrc;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
+import ca.bc.gov.mal.cirras.underwriting.clients.CirrasUnderwritingService;
+import ca.bc.gov.mal.cirras.underwriting.clients.CirrasUnderwritingServiceException;
+import ca.bc.gov.mal.cirras.underwriting.data.resources.VerifiedYieldContractSimpleRsrc;
+import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldSummary;
 
 
 public class CirrasClaimService {
@@ -949,7 +948,7 @@ public class CirrasClaimService {
 	}
 	
 	private VerifiedYieldSummary getVerifiedYieldSummary(
-			VerifiedYieldContractSimple verifiedYield, 
+			VerifiedYieldContractSimpleRsrc verifiedYield, 
 			CropCommodityDto crpDto,
 			CropCommodityDto linkedCrpDto) {
 		// From CUWS
@@ -1061,7 +1060,7 @@ public class CirrasClaimService {
 			Boolean loadVerifiedYieldGrainBasket
 	) throws CirrasUnderwritingServiceException {
 
-		ca.bc.gov.mal.cirras.underwriting.api.rest.v1.resource.EndpointsRsrc uwTopLevelEndpoints = cirrasUnderwritingService.getTopLevelEndpoints();
+		ca.bc.gov.mal.cirras.underwriting.data.resources.EndpointsRsrc uwTopLevelEndpoints = cirrasUnderwritingService.getTopLevelEndpoints();
 		return cirrasUnderwritingService.getVerifiedYieldContractSimple(
 				uwTopLevelEndpoints, 
 				policyClaimRsrc.getContractId().toString(), 
@@ -1257,7 +1256,7 @@ public class CirrasClaimService {
 			InsuranceClaim insuranceClaim, 
 			Product product,
 			VerifiedYieldSummary verifiedSummary,
-			VerifiedYieldContractSimple verifiedYield,
+			VerifiedYieldContractSimpleRsrc verifiedYield,
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,

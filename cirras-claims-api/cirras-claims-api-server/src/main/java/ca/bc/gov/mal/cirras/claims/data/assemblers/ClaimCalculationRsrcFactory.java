@@ -55,11 +55,11 @@ import ca.bc.gov.mal.cirras.claims.services.utils.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.UnderwritingComment;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldAmendment;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldGrainBasket;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
+import ca.bc.gov.mal.cirras.underwriting.data.models.UnderwritingComment;
+import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldAmendment;
+import ca.bc.gov.mal.cirras.underwriting.data.resources.VerifiedYieldContractSimpleRsrc;
+import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldGrainBasket;
+import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldSummary;
 
 public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 
@@ -159,7 +159,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			ProductRsrc productRsrc, 
 			CropCommodityDto crpDto,
 			CropCommodityDto linkedCrpDto,
-			VerifiedYieldContractSimple verifiedYield,
+			VerifiedYieldContractSimpleRsrc verifiedYield,
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
@@ -312,7 +312,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim claim,
 			Product product,
 			VerifiedYieldSummary verifiedSummary,
-			VerifiedYieldContractSimple verifiedYield,
+			VerifiedYieldContractSimpleRsrc verifiedYield,
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
@@ -522,7 +522,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 
 	}
 
-	private void updateClaimCalculationGrainBasketFromClaim(ClaimCalculation claimCalculation, Product product, VerifiedYieldContractSimple verifiedYield) {
+	private void updateClaimCalculationGrainBasketFromClaim(ClaimCalculation claimCalculation, Product product, VerifiedYieldContractSimpleRsrc verifiedYield) {
 
 		ClaimCalculationGrainBasket grainBasket = claimCalculation.getClaimCalculationGrainBasket();
 
@@ -542,7 +542,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	// Since this contains no user-entered data, the existing products are cleared and re-created from up to date source data.
 	private void updateClaimCalculationGrainBasketProductsFromClaim(ClaimCalculation claimCalculation, 
 			                                                        Product product, 
-			                                                        VerifiedYieldContractSimple verifiedYield, 
+			                                                        VerifiedYieldContractSimpleRsrc verifiedYield, 
 			                                                        List<ProductRsrc> quantityProducts,
 			                                                        Map<Integer, ClaimDto> quantityClaimMap,
 			                                                        Map<Integer, CropCommodityDto> quantityCropMap,
@@ -611,7 +611,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		resource.setLatestLinkedCalculationVersion(null);
 	}
 	
-	private void populateCommentForGrainQuantity(ClaimCalculationRsrc resource, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
+	private void populateCommentForGrainQuantity(ClaimCalculationRsrc resource, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimpleRsrc verifiedYield) {
 
 		// CUWS stores yield data always using the non-pedigree crop id, whereas CCS stores Calculations for pedigree commodities using that crop id. So we have to account for this mis-match 
 		// here when filtering for Verified Yield.
@@ -679,7 +679,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		
 	}
 
-	private void populateCommentForGrainBasket(ClaimCalculationRsrc resource, VerifiedYieldContractSimple verifiedYield) {
+	private void populateCommentForGrainBasket(ClaimCalculationRsrc resource, VerifiedYieldContractSimpleRsrc verifiedYield) {
 		
 		StringBuilder commentStr = new StringBuilder();
 
@@ -806,7 +806,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		return model;
 	}
 
-	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetailFromClaim(ProductRsrc productRsrc, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
+	private ClaimCalculationGrainQuantityDetail createClaimCalculationGrainQuantityDetailFromClaim(ProductRsrc productRsrc, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimpleRsrc verifiedYield) {
 
 		ClaimCalculationGrainQuantityDetail model = new ClaimCalculationGrainQuantityDetail();
 
@@ -861,7 +861,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		return model;
 	}
 
-	private ClaimCalculationGrainBasket createClaimCalculationGrainBasketFromClaim(ProductRsrc productRsrc, VerifiedYieldContractSimple verifiedYield) {
+	private ClaimCalculationGrainBasket createClaimCalculationGrainBasketFromClaim(ProductRsrc productRsrc, VerifiedYieldContractSimpleRsrc verifiedYield) {
 
 		ClaimCalculationGrainBasket model = new ClaimCalculationGrainBasket();
 
@@ -888,7 +888,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 		return model;
 	}
 
-	private ClaimCalculationGrainBasketProduct createClaimCalculationGrainBasketProductFromClaim(ProductRsrc productRsrc, ClaimDto claimDto, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimple verifiedYield) {
+	private ClaimCalculationGrainBasketProduct createClaimCalculationGrainBasketProductFromClaim(ProductRsrc productRsrc, ClaimDto claimDto, CropCommodityDto crpDto, CropCommodityDto linkedCrpDto, VerifiedYieldContractSimpleRsrc verifiedYield) {
 		
 		ClaimCalculationGrainBasketProduct model = new ClaimCalculationGrainBasketProduct();
 
