@@ -13,7 +13,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
-import ca.bc.gov.mal.cirras.underwriting.api.rest.client.v1.CirrasUnderwritingService;
+import ca.bc.gov.mal.cirras.underwriting.clients.CirrasUnderwritingService;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;

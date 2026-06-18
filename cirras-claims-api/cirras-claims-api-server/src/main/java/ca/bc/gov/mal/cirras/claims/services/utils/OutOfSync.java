@@ -23,9 +23,9 @@ import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
 import ca.bc.gov.mal.cirras.policies.model.v1.Product;
 import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldContractSimple;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldGrainBasket;
-import ca.bc.gov.mal.cirras.underwriting.model.v1.VerifiedYieldSummary;
+import ca.bc.gov.mal.cirras.underwriting.data.resources.VerifiedYieldContractSimpleRsrc;
+import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldGrainBasket;
+import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldSummary;
 import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
 
 public class OutOfSync {
@@ -39,7 +39,7 @@ public class OutOfSync {
 			InsuranceClaim insuranceClaim, 
 			Product product,
 			VerifiedYieldSummary verifiedSummary,
-			VerifiedYieldContractSimple verifiedYield,
+			VerifiedYieldContractSimpleRsrc verifiedYield,
 			List<ProductRsrc> quantityProducts,
 			Map<Integer, ClaimDto> quantityClaimMap,
 			Map<Integer, CropCommodityDto> quantityCropMap,
@@ -513,7 +513,7 @@ public class OutOfSync {
 	private boolean grainBasketDataOutOfSync(
 			ClaimCalculation claimCalculation, 
 			Product product,
-			VerifiedYieldContractSimple verifiedYield,
+			VerifiedYieldContractSimpleRsrc verifiedYield,
 			boolean isOutOfSync) {
 
 		if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
@@ -549,7 +549,7 @@ public class OutOfSync {
 	}
 
 	private boolean grainBasketProductsDataOutOfSync(ClaimCalculation claimCalculation, 
-			                                         VerifiedYieldContractSimple verifiedYield,
+			                                         VerifiedYieldContractSimpleRsrc verifiedYield,
 			                                         List<ProductRsrc> quantityProducts,
 			                                         Map<Integer, ClaimDto> quantityClaimMap,
 			                                         Map<Integer, CropCommodityDto> quantityCropMap,
