@@ -1,5 +1,5 @@
 <div class="cirras-claims-base-container page-width-container desktop">
-  <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail && !displayNoYieldMessage()">
+  <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
 
 
     <cirras-calculation-detail-header 
@@ -185,9 +185,8 @@
         <div class="ccc-container ccc-coverage">
           <div>
             <span class="ccc-expression">1</span> Harvested Yield (lbs) 
-            <span #el matTooltip="No Yield exists in the Inventory and Yield App" 
-              *ngIf="allowEnteringHarvestedYield() && calculationDetail.claimCalculationBerries.harvestedYieldFromCUWSExistsInd !== true &&
-              ( calculationDetail.calculationStatusCode == 'DRAFT' || calculationDetail.calculationStatusCode == 'SUBMITTED')" 
+            <span #el matTooltip="No yield exists in the Inventory and Yield App" 
+              *ngIf="allowEnteringHarvestedYield()" 
               style="margin-left: 10px;">
              <mat-icon [ngStyle]="{'color':'grey'}">info</mat-icon>    
             </span> 

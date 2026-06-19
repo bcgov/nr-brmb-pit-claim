@@ -30,9 +30,6 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
     @Input() calculationDetail: vmCalculation;
     @Input() isUnsaved: boolean;
 
-    // starting in 2026, the Claims Calculator will check for entered yield in the Inventory and Yield App
-    startYearToCheckForYield = parseInt(this.appConfigService.getConfig().rest["pit_underwriting_ui"])
-
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];
 
@@ -99,43 +96,18 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
       this.viewModel.formGroup.controls.yieldAssessment.valueChanges.subscribe(value => this.updateCalculated() )
     }
 
-    displayNoYieldMessage(){
-      
-      if (this.calculationDetail.cropYear >= this.startYearToCheckForYield && this.calculationDetail.claimCalculationBerries &&  
-            this.calculationDetail.claimCalculationBerries.harvestedYieldFromCUWSExistsInd == false){
-
-              return true 
-            } else {
-              return false
-            }
-    }
-
     allowEnteringHarvestedYield(){
-      
-      if (this.calculationDetail.cropYear < this.startYearToCheckForYield){
-              return true 
-            } else {
-              return false
-            }
+      // If there is no yield entered in the underwriting app
+      if (this.calculationDetail.claimCalculationBerries?.harvestedYieldFromCUWSExistsInd !== true ){
+        return true 
+      } else {
+        return false
+      }
     }
-
 
     ngOnChanges2(changes: SimpleChanges) {
         var self = this
         if ( changes.calculationDetail && this.calculationDetail ) {
-
-          // check if yield is entered in the Inventory and Yield app
-          if (this.displayNoYieldMessage()){
-
-              let verifiedYieldUrl = this.appConfigService.getConfig().rest["pit_underwriting_ui"]
-                  if (verifiedYieldUrl.length > 0) {
-                    verifiedYieldUrl = verifiedYieldUrl + "/landingpage/" + this.calculationDetail.policyNumber + "/yield"
-                  }
-                  let verifiedYieldMissingText = "No yield found for claim: " + this.calculationDetail.claimNumber + ". Use this URL to check the yield of the policy: " + verifiedYieldUrl
-                  displayErrorMessage(this.snackbarService, verifiedYieldMissingText) 
-
-              return
-            }
 
           this.adjustmentFactor = this.calculationDetail.claimCalculationBerries.adjustmentFactor ? this.calculationDetail.claimCalculationBerries.adjustmentFactor : 1;
           this.adjustedProductionGuarantee = this.calculationDetail.claimCalculationBerries.adjustedProductionGuarantee 
