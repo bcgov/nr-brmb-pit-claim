@@ -31,7 +31,7 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
     @Input() isUnsaved: boolean;
 
     // starting in 2026, the Claims Calculator will check for entered yield in the Inventory and Yield App
-    startYearToCheckForYield = 2026; 
+    startYearToCheckForYield = parseInt(this.appConfigService.getConfig().rest["pit_underwriting_ui"])
 
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];

@@ -33,9 +33,12 @@
       pitUnderwritingUiUrl = pitUnderwritingUiUrl.substring(0, pitUnderwritingUiUrl.length() - 1); //Strip off trailing slash, if it exists.
     }
 
+    String startYearToCheckForBerriesYield = EnvironmentVariable.getVariable("START_YEAR_TO_CHECK_FOR_BERRIES_YIELD");
+
     json = json.append("\"rest\":{");
     json = json.append("\"cirras_claims\":\"").append(pitClaimRestUri).append("\"").append(",");
-    json = json.append("\"pit_underwriting_ui\":\"").append(pitUnderwritingUiUrl).append("\"");
+    json = json.append("\"pit_underwriting_ui\":\"").append(pitUnderwritingUiUrl).append("\"").append(",");
+    json = json.append("\"start_year_to_check_for_berries_yield\":\"").append(startYearToCheckForBerriesYield).append("\"");
     json = json.append("},");
 
     String WEBADE_OAUTH2_AUTHORIZE_URL = EnvironmentVariable.getVariable("WEBADE_OAUTH2_AUTHORIZE_URL");
