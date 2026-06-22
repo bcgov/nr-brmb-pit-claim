@@ -184,16 +184,30 @@
         <label>Yield Determination</label>
         <div class="ccc-container ccc-coverage">
           <div>
-            <span class="ccc-expression">1</span> Harvested Yield (lbs)
+            <span class="ccc-expression">1</span> Harvested Yield (lbs) 
+            <span #el matTooltip="No yield exists in the Inventory and Yield App" 
+              *ngIf="allowEnteringHarvestedYield()" 
+              style="margin-left: 10px;">
+             <mat-icon [ngStyle]="{'color':'grey'}">info</mat-icon>    
+            </span> 
           </div>
           <div class="ccc-border-right ccc-right">
           </div>
-          <div class="ccc-right ccc-fill ccc-number">               
-            <mat-form-field appearance="fill">
+          <div class="ccc-right ccc-fill ccc-number">   
+            <span #el matTooltip="Harvested Yield doesn't match with the Inventory and Yield App" *ngIf="calculationDetail.claimCalculationBerries.isOutOfSyncHarvestedYield" style="margin-left: 10px;">
+             <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>    
+            </span>  
+
+            <mat-form-field *ngIf="allowEnteringHarvestedYield(); else readOnlyYield" appearance="fill">
               <input matInput formControlName="harvestedYield" 
               (keypress)="numberOnly($event)" maxlength="14"
               (blur)="isMyFormDirty()">
             </mat-form-field>
+
+            <ng-template #readOnlyYield>
+              {{ calculationDetail.claimCalculationBerries.harvestedYield | number:'1.0-3' }}
+            </ng-template>
+
           </div>
           <div>
             <span class="ccc-expression">2</span> Appraised Yield (lbs)
