@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: cirras-claims-api
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sts.windows.net/${TENANT_ID}/
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        credential:
+          client-id: ${CLIENT_ID}
+        app-id-uri: api://${CLIENT_ID}
