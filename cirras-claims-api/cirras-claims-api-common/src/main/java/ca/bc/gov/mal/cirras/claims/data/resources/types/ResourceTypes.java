@@ -56,5 +56,8 @@ public class ResourceTypes extends BaseResourceTypes {
 	public static final String SYNCHRONIZE_DOP_YIELD_CONTRACT_SIMPLE = NAMESPACE + "SynchronizeDopYieldContractSimple";
 	public static final String DELETE_SYNC_DOP_YIELD_CONTRACT_SIMPLE = NAMESPACE + "deleteSyncDopYieldContractSimple";
 	
+	//Test the checktoken endpoint for tests only
+	public static final String CHECK_TOKEN = NAMESPACE + "checkToken";
+	
 }
 
