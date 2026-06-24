@@ -1,0 +1,21 @@
+{
+  "application": {
+    "acronym": "PIT-CLAIM",
+    "version": "#{TARGET_VER}#",
+    "baseUrl": "#{BASE_URL}#",
+    "environment": "#{TARGET_ENV}#",
+    "buildNumber": "#{GITHUB_RUN_NUMBER}#"
+  },
+  "rest": {
+    "cirras_claims": "#{CIRRAS_CLAIMS_REST_URI}#",
+    "pit_underwriting_ui": "#{PIT_UNDERWRITING_UI_URL}#"
+  },
+  "webade": {
+    "oauth2Url": "#{WEBADE_OAUTH2_AUTHORIZE_URL}#",
+    "clientId": "#{CIRRAS_CLAIMS_UI}#",
+    "authScopes": "#{WEBADE_OAUTH2_SCOPES}#",
+    "enableCheckToken": "#{WEBADE_OAUTH2_ENABLE_CHECKTOKEN}#",
+    "checkTokenUrl": "#{UI_CHECKTOKEN_ENDPOINT}#",
+    "siteminderUrlPrefix": "#{WEBADE_OAUTH2_SITEMINDER_URL}#"   
+  }
+}

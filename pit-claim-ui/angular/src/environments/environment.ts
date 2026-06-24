@@ -4,7 +4,8 @@
 
 export const environment = {
     production: false,
-    app_config_location: "dev-config/appConfig.json",
+    // app_config_location: "dev-config/appConfig.json",
+    app_config_location: "assets/data/appConfig.local.json",
     override_sign_up: false,
     restrict_imports: false,
     staff_supplier_invs_location: "assets/stub-data/staff-supplier-invs-data.json",
