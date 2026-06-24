@@ -2,6 +2,10 @@ package ca.bc.gov.mal.cirras.claims.spring;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -104,12 +111,35 @@ public class SecuritySpringConfig  {
 	        new AntPathRequestMatcher("/checkToken", HttpMethod.GET.name())
 	        );		
 	  }
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter(AppSecurityProperties properties) {
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+		converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+			Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+			List<String> roles = jwt.getClaimAsStringList("roles");
+			if (roles != null) {
+				roles.forEach(role -> {
+					List<String> scopes = properties.getScopesForRole(role);
+					if (scopes != null) {
+						scopes.forEach(scope -> authorities.add(new SimpleGrantedAuthority("SCOPE_" + scope)));
+					}
+				});
+			}
+
+			return authorities;
+		});
+
+		return converter;
+	}
 	
 	  @Bean
-	  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	  public SecurityFilterChain filterChain(HttpSecurity http, AppSecurityProperties properties) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 		  .cors(cors -> cors.disable())
-	      .oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(authenticationManagerResolver()) )
+	      .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter(properties))) )
 	      .httpBasic(Customizer.withDefaults())
 	      .authorizeHttpRequests(authorize -> authorize
 	              .requestMatchers(HttpMethod.OPTIONS, "/openapi.*", "/checkHealth").permitAll()
