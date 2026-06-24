@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-			<artifactId>wfone-common-webade-oauth2-test</artifactId>
+			<artifactId>wfone-common-webade-oauth2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
