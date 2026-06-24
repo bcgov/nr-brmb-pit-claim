@@ -1,7 +1,6 @@
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
 
 import {Injector} from "@angular/core";
-import {AppConfigService, TokenService} from "@wf1/wfcc-core-lib";
 import { HttpErrorResponse, HttpHandler } from "@angular/common/http";
 import {catchError, map, defaultIfEmpty} from "rxjs/operators";
 import {forkJoin, of} from "rxjs";
@@ -9,6 +8,8 @@ import {UUID} from "angular2-uuid";
 import {CODE_TABLE_CACHE, DATE_FORMATS} from "./index";
 import {ApplicationStateService} from "../services/application-state.service";
 import moment from "moment";
+import { AppConfigService } from "../services/app-config.service";
+import { TokenService } from "../services/token.service";
 
 export function appInitFn(httpHandler: HttpHandler, injector: Injector): () => Promise<any> {
   const appStateService = injector.get(ApplicationStateService);

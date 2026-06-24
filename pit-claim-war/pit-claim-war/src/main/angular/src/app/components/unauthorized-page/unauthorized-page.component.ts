@@ -1,7 +1,5 @@
 import {Component} from "@angular/core";
-import {TokenService} from "@wf1/wfcc-core-lib";
 import {BaseComponent} from "../common/base/base.component";
-import { AppConfigService } from "@wf1/wfcc-core-lib";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DomSanitizer, Title} from "@angular/platform-browser";
 import {Store} from "@ngrx/store";
@@ -17,6 +15,8 @@ import {SecurityUtilService} from "../../services/security-util.service";
 import {
   ChangeDetectorRef,
 } from "@angular/core";
+import { TokenService } from "src/app/services/token.service";
+import { AppConfigService } from "src/app/services/app-config.service";
 
 @Component({
     selector: "cirras-claims-unauthorized-page",

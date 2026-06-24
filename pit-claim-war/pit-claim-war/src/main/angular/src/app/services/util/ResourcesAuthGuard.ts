@@ -1,4 +1,3 @@
-import {AppConfigService, AuthGuard, TokenService} from "@wf1/wfcc-core-lib";
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {AsyncSubject, Observable, of} from "rxjs";
@@ -6,6 +5,9 @@ import {mergeMap} from "rxjs/operators";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {displayErrorMessage} from "../../utils/user-feedback-utils";
 import {ResourcesRoutes} from "../../utils";
+import { AuthGuard } from "src/app/utils/auth-guard";
+import { TokenService } from "../token.service";
+import { AppConfigService } from "../app-config.service";
 
 @Injectable({
     providedIn: "root",

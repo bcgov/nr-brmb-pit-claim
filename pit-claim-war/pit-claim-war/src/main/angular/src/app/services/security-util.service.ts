@@ -1,9 +1,9 @@
 import {Injectable, Injector} from "@angular/core";
-import {TokenService} from "@wf1/wfcc-core-lib";
 import {ROLES_UI} from "../utils/scopes";
 import {
   vmCalculation
 } from "../conversion/models";
+import { TokenService } from "./token.service";
 
 @Injectable({
     providedIn: "root"
