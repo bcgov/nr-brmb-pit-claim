@@ -1,0 +1,140 @@
+<base-wrapper [errorState]="errorState">
+<!-- GRAPES -->
+  <cirras-claims-calculation-detail-grapes  
+    *ngIf=" calculationDetail && (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+    [isUnsaved]="isUnsaved"
+  ></cirras-claims-calculation-detail-grapes>
+
+  <cirras-calculation-printout 
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid &&
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout> 
+
+  <!-- BLUEBERRIES QUANTITY LOSS -->
+  <cirras-claims-calculation-detail-berries  
+    *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQNT'"
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+    [isUnsaved]="isUnsaved"
+  ></cirras-claims-calculation-detail-berries>
+
+  <cirras-calculation-printout-berries 
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid && 
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQNT'"
+    [calculationDetail]="calculationDetail"> 
+  </cirras-calculation-printout-berries>
+
+  <!-- BLUEBERRIES PLANT LOSS -->
+  <cirras-calculation-detail-berries-plant  
+    *ngIf=" calculationDetail &&  
+            (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+            (calculationDetail.insuredByMeasurementType).toUpperCase() === 'UNITS'"
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+    [isUnsaved]="isUnsaved"
+  ></cirras-calculation-detail-berries-plant>
+
+  <cirras-calculation-printout-berries-plant
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid &&  
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+          (calculationDetail.insuredByMeasurementType).toUpperCase() === 'UNITS'"
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout-berries-plant> 
+
+  <!-- STRAWBERRIES PLANT LOSS -->
+  <cirras-calculation-detail-strawberries-plant
+    *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+            (calculationDetail.insuredByMeasurementType).toUpperCase() === 'ACRES'"
+    [claimCalculationGuid]="claimCalculationGuid"
+    [calculationDetail]="calculationDetail"
+    [isUnsaved]="isUnsaved"
+  ></cirras-calculation-detail-strawberries-plant>
+
+  <cirras-calculation-printout-strawberries-plant
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid && 
+          (calculationDetail.insurancePlanName).toUpperCase() === 'BERRIES' && 
+          (calculationDetail.commodityCoverageCode).toUpperCase() === 'CPLANT' &&
+          (calculationDetail.insuredByMeasurementType).toUpperCase() === 'ACRES'"
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout-strawberries-plant> 
+
+
+    <!-- GRAIN UNSEEDED -->
+    <calculation-detail-grain-unseeded
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CUNS' &&
+            calculationDetail.claimCalculationGrainUnseeded "
+      [claimCalculationGuid]="claimCalculationGuid"
+      [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
+  ></calculation-detail-grain-unseeded>
+
+  <calculation-printout-grain-unseeded
+    *ngIf=" calculationDetail && 
+        (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+        (calculationDetail.commodityCoverageCode).toUpperCase() === 'CUNS' &&
+        calculationDetail.claimCalculationGrainUnseeded "
+    [calculationDetail]="calculationDetail">
+  </calculation-printout-grain-unseeded> 
+
+  <!-- GRAIN SPOT LOSS -->
+  <calculation-detail-grain-spot-loss
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL' &&
+            calculationDetail.claimCalculationGrainSpotLoss "
+      [claimCalculationGuid]="claimCalculationGuid"
+      [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
+  ></calculation-detail-grain-spot-loss>
+
+  <calculation-printout-grain-spot-loss
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CSL' &&
+            calculationDetail.claimCalculationGrainSpotLoss "
+    [calculationDetail]="calculationDetail">
+  </calculation-printout-grain-spot-loss> 
+
+  <!-- GRAIN QUANTITY LOSS -->
+  <calculation-detail-grain-quantity
+      *ngIf=" calculationDetail && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'CQG' &&
+            calculationDetail.claimCalculationGrainQuantityDetail "
+      [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
+  ></calculation-detail-grain-quantity>
+
+  <!-- GRAIN QUANTITY Printout is in the upper component -->
+
+  <!-- GRAIN BASKET LOSS -->
+  <calculation-detail-grain-basket
+      *ngIf=" calculationDetail  && 
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN'  && 
+            (calculationDetail.commodityCoverageCode).toUpperCase() === 'GB' &&
+            calculationDetail.claimCalculationGrainBasket "
+      [calculationDetail]="calculationDetail"
+      [isUnsaved]="isUnsaved"
+  ></calculation-detail-grain-basket>
+  
+  <calculation-printout-grain-basket
+    *ngIf=" calculationDetail && 
+        (calculationDetail.insurancePlanName).toUpperCase() === 'GRAIN' && 
+        (calculationDetail.commodityCoverageCode).toUpperCase() === 'GB' &&
+        calculationDetail.claimCalculationGrainBasket "
+    [calculationDetail]="calculationDetail">
+  </calculation-printout-grain-basket> 
+
+</base-wrapper>

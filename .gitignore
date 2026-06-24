@@ -33,3 +33,8 @@ pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/spring/TokenSe
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/util/ApplicationContextProvider.class
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/util/EnvironmentVariable.class
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/web/controller/CheckTokenController.class
+pit-claim-ui/angular/.npmrc
+pit-claim-ui/angular/.angular/
+pit-claim-ui/angular/dist/
+pit-claim-ui/angular/node_modules/
+pit-claim-ui/express-server/node_modules/

@@ -1,0 +1,25 @@
+FROM node:20
+
+WORKDIR /app
+
+# Copy express-server
+COPY express-server ./express-server
+
+# Copy angular (client)
+COPY angular ./angular
+
+# Install server deps
+WORKDIR /app/express-server
+RUN npm install
+
+# Install client deps + build Angular
+WORKDIR /app/angular
+RUN npm install --force
+RUN npm run build
+
+# Run Express
+WORKDIR /app/express-server
+
+EXPOSE 8080
+
+CMD ["node", "server.js"]
