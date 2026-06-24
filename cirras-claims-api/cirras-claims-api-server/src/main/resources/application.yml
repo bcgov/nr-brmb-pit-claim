@@ -15,71 +15,89 @@ spring:
         app-id-uri: api://${CLIENT_ID}
 app:
   security:
-    role-scope-mappings:
-      CLAIMS_MONITOR:
-        - "CLAIMS_MONITOR"
-        - "SEARCH_CALCULATIONS"
-        - "SEARCH_CLAIMS"
-        - "GET_CALCULATION"
-        - "CREATE_CALCULATION"
-        - "UPDATE_CALCULATION"
-        - "REFRESH_DATA"
-        - "PRINT_CALCULATION"
-        - "FINALIZE_CALCULATION"
-        - "REPLACE_CALCULATION"
-        - "GET_CODE_TABLES"
-        - "GET_TOP_LEVEL"
-      CLAIMS_MANAGER:
-        - "CLAIMS_MANAGER"
-        - "SEARCH_CALCULATIONS"
-        - "SEARCH_CLAIMS"
-        - "GET_CALCULATION"
-        - "CREATE_CALCULATION"
-        - "UPDATE_CALCULATION"
-        - "REFRESH_DATA"
-        - "PRINT_CALCULATION"
-        - "FINALIZE_CALCULATION"
-        - "REPLACE_CALCULATION"
-        - "DELETE_CALCULATION"
-        - "GET_CODE_TABLES"
-        - "GET_TOP_LEVEL"
-      CLAIMS_SUPER_ADMIN:
-        - "CLAIMS_SUPER_ADMIN"
-        - "SEARCH_CALCULATIONS"
-        - "SEARCH_CLAIMS"
-        - "SEARCH_PRODUCTS"
-        - "GET_CALCULATION"
-        - "CREATE_CALCULATION"
-        - "UPDATE_CALCULATION"
-        - "REFRESH_DATA"
-        - "PRINT_CALCULATION"
-        - "FINALIZE_CALCULATION"
-        - "REPLACE_CALCULATION"
-        - "DELETE_CALCULATION"
-        - "GET_CODE_TABLES"
-        - "GET_TOP_LEVEL"
-      CLAIMS_VIEWER:
-        - "CLAIMS_VIEWER"
-        - "SEARCH_CALCULATIONS"
-        - "SEARCH_CLAIMS"
-        - "GET_CALCULATION"
-        - "PRINT_CALCULATION"
-        - "GET_CODE_TABLES"
-        - "GET_TOP_LEVEL"
-      CIRRAS_CLAIMS_SYNC_REST:
-        - "GET_TOP_LEVEL"
-        - "CIRRAS_CLAIMS_SYNC_REST"
-        - "GET_SYNCRONIZATION_STATUS"
-        - "GET_SYNC_CLAIM"
-        - "CREATE_SYNC_CLAIM"
-        - "UPDATE_SYNC_CLAIM"
-        - "DELETE_SYNC_CLAIM"
-      CIRRAS_POLICIES_SYNC_REST:
-        - "GET_TOP_LEVEL"
-        - "CIRRAS_POLICIES_SYNC_REST"
-        - "GET_SYNCRONIZATION_STATUS"
-      POLICIES_REST_SERVICE:
-        - "SEARCH_PRODUCTS"
-        - "GET_TOP_LEVEL"
-      CLAIMS_REST_SERVICE:
-        - "CLAIMS_REST_SERVICE"
+    role-scope-mappings: >
+      {
+        "CLAIMS_MONITOR":
+          [
+            "CLAIMS_MONITOR",
+            "SEARCH_CALCULATIONS",
+            "SEARCH_CLAIMS",
+            "GET_CALCULATION",
+            "CREATE_CALCULATION",
+            "UPDATE_CALCULATION",
+            "REFRESH_DATA",
+            "PRINT_CALCULATION",
+            "FINALIZE_CALCULATION",
+            "REPLACE_CALCULATION",
+            "GET_CODE_TABLES",
+            "GET_TOP_LEVEL"
+          ],
+        "CLAIMS_MANAGER":
+          [
+            "CLAIMS_MANAGER",
+            "SEARCH_CALCULATIONS",
+            "SEARCH_CLAIMS",
+            "GET_CALCULATION",
+            "CREATE_CALCULATION",
+            "UPDATE_CALCULATION",
+            "REFRESH_DATA",
+            "PRINT_CALCULATION",
+            "FINALIZE_CALCULATION",
+            "REPLACE_CALCULATION",
+            "DELETE_CALCULATION",
+            "GET_CODE_TABLES",
+            "GET_TOP_LEVEL"
+          ],
+        "CLAIMS_SUPER_ADMIN":
+          [
+            "CLAIMS_SUPER_ADMIN",
+            "SEARCH_CALCULATIONS",
+            "SEARCH_CLAIMS",
+            "SEARCH_PRODUCTS",
+            "GET_CALCULATION",
+            "CREATE_CALCULATION",
+            "UPDATE_CALCULATION",
+            "REFRESH_DATA",
+            "PRINT_CALCULATION",
+            "FINALIZE_CALCULATION",
+            "REPLACE_CALCULATION",
+            "DELETE_CALCULATION",
+            "GET_CODE_TABLES",
+            "GET_TOP_LEVEL"
+          ],
+        "CLAIMS_VIEWER":
+          [
+            "CLAIMS_VIEWER",
+            "SEARCH_CALCULATIONS",
+            "SEARCH_CLAIMS",
+            "GET_CALCULATION",
+            "PRINT_CALCULATION",
+            "GET_CODE_TABLES",
+            "GET_TOP_LEVEL"
+          ],
+        "CIRRAS_CLAIMS_SYNC_REST":
+          [
+            "GET_TOP_LEVEL",
+            "CIRRAS_CLAIMS_SYNC_REST",
+            "GET_SYNCRONIZATION_STATUS",
+            "GET_SYNC_CLAIM",
+            "CREATE_SYNC_CLAIM",
+            "UPDATE_SYNC_CLAIM",
+            "DELETE_SYNC_CLAIM"
+          ],
+        "CIRRAS_POLICIES_SYNC_REST":
+          [
+            "GET_TOP_LEVEL",
+            "CIRRAS_POLICIES_SYNC_REST",
+            "GET_SYNCRONIZATION_STATUS"
+          ],
+        "POLICIES_REST_SERVICE":
+          [
+            "SEARCH_PRODUCTS",
+            "GET_TOP_LEVEL"
+          ],
+        "CLAIMS_REST_SERVICE":
+          [
+            "CLAIMS_REST_SERVICE"
+          ]
+      }

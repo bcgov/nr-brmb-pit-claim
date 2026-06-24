@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -63,10 +64,16 @@ public class PropertiesSpringConfig {
 	public static Properties applicationProperties() throws IOException, SQLException {
 		Properties result;
 		
+		YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
+        yamlFactory.setResources(new ClassPathResource("application.yml"));
+        yamlFactory.afterPropertiesSet();
+        Properties yamlProperties = yamlFactory.getObject();
+
 		PropertiesFactoryBean propertiesFactory = new PropertiesFactoryBean();
 		propertiesFactory.setLocalOverride(true);
 //		propertiesFactory.setPropertiesArray(bootstrapProperties());
 		propertiesFactory.setLocation(new ClassPathResource("static.properties"));
+		propertiesFactory.setPropertiesArray(yamlProperties);
 		propertiesFactory.afterPropertiesSet();
 		
 	    result =  propertiesFactory.getObject();

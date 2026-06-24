@@ -15,9 +15,8 @@ public class AppSecurityProperties {
     private final Map<String, List<String>> roleScopeMappings;
 
     public AppSecurityProperties(
-            @Value("${app.security.role-scope-mappings}") String jsonMappings,
-            ObjectMapper objectMapper) throws Exception {
-        this.roleScopeMappings = objectMapper.readValue(jsonMappings, new TypeReference<>() {
+            @Value("${app.security.role-scope-mappings}") String jsonMappings) throws Exception {
+        this.roleScopeMappings = new ObjectMapper().readValue(jsonMappings, new TypeReference<>() {
         });
     }
 

@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
@@ -79,6 +80,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 	})
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@PreAuthorize("hasAuthority('SCOPE_SEARCH_CALCULATIONS')")
 	public Response getClaimCalculationList(
 		@Parameter(description = "Filter the results by the claim number") @QueryParam("claimNumber") String claimNumber,
 		@Parameter(description = "Filter the results by the policy number") @QueryParam("policyNumber") String policyNumber,
@@ -94,12 +96,6 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 	) {
 		
 		Response response = null;
-		
-		logRequest();
-		
-		if(!hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
-			return Response.status(Status.FORBIDDEN).build();
-		}
 
 		try {
 			
