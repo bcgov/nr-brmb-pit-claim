@@ -12,8 +12,9 @@ import {Subscription} from "rxjs";
 import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice } from "@wf1/wfcc-application-ui";
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
-import { AppConfigService, TokenService } from "@wf1/wfcc-core-lib";
 import { SecurityUtilService } from "src/app/services/security-util.service";
+import { TokenService } from "src/app/services/token.service";
+import { AppConfigService } from "src/app/services/app-config.service";
 
 const DEVICE: WfDevice = 'desktop';
 

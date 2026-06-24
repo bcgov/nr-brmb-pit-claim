@@ -35,6 +35,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.ws.rs.core.UriBuilder;
 
 @Path("/")
 public class TopLevelEndpoints extends BaseEndpointsImpl {
@@ -67,6 +68,14 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 			
 			String selfURI = CodeTableResourceFactory.getCodeTablesSelfUri(null, baseUri);
 			result.getLinks().add(new RelLink(ResourceTypes.CODE_TABLE_LIST, selfURI, HttpMethod.GET));
+			
+			// for the checktoken ui 
+			selfURI = UriBuilder.fromUri(baseUri)
+					.path(CheckTokenController.class)
+					.build()
+					.toString();
+			
+			result.getLinks().add(new RelLink(ResourceTypes.CHECK_TOKEN, selfURI, HttpMethod.GET));
 			
 			if (hasAuthority(Scopes.SEARCH_CLAIMS)) {
 				selfURI = ClaimRsrcFactory.getClaimListSelfUri(null, null, null, null, null, null, null, baseUri);

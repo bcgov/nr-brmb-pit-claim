@@ -2,7 +2,7 @@ import {inject, Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Action, Store} from "@ngrx/store";
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
-import {SortDirection, TokenService} from "@wf1/wfcc-core-lib";
+import {SortDirection} from "@wf1/wfcc-core-lib";
 import {UUID} from "angular2-uuid";
 import {Observable, of} from 'rxjs';
 import {catchError, debounceTime, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
@@ -11,6 +11,7 @@ import {SEARCH_CALCULATIONS, SearchCalculationsAction, searchCalculationsSuccess
 import {formatSort, getPageInfoRequestForSearchState} from "../../utils";
 import {initCalculationsPaging} from "./calculations.state";
 import {RootState} from "../index";
+import { TokenService } from "src/app/services/token.service";
 
 @Injectable()
 export class CalculationsEffects {

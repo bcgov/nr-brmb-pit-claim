@@ -34,3 +34,4 @@ pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/util/Applicati
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/util/EnvironmentVariable.class
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/web/controller/CheckTokenController.class
 cirras-claims-api/src/test/resources/static.properties
+pit-claim-ui/angular/.npmrc
