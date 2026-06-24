@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+
 import jakarta.ws.rs.core.UriBuilder;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
@@ -12,7 +14,6 @@ import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.resource.factory.BaseResourceFactory;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimListEndpoint;
@@ -20,6 +21,7 @@ import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimListRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.data.models.Claim;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimList;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimDto;
@@ -39,7 +41,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 			String sortDirection,
 			Integer pageRowCount,
 			FactoryContext context, 
-			WebAdeAuthentication authentication
+			Authentication authentication
 	) throws FactoryException, DaoException {
 		
 		URI baseUri = getBaseURI(context);
@@ -169,10 +171,10 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 		ClaimRsrc resource, 
 		boolean hasCalculation,
 		URI baseUri, 
-		WebAdeAuthentication authentication) {
+		Authentication authentication) {
 		
 		if(hasCalculation) {
-			if (authentication.hasAuthority(Scopes.GET_CALCULATION)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.GET_CALCULATION)) {
 				String result = UriBuilder
 					.fromUri(baseUri)
 					.path(ClaimCalculationEndpoint.class)
@@ -180,7 +182,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 				resource.getLinks().add(new RelLink(ResourceTypes.CLAIM_CALCULATION, result, "GET"));
 			}
 		} else {
-			if (authentication.hasAuthority(Scopes.CREATE_CALCULATION)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
 				String result = UriBuilder
 					.fromUri(baseUri)
 					.path(ClaimEndpoint.class)
@@ -253,7 +255,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 		int pageRowCount, 
 		int totalRowCount,
 		URI baseUri, 
-		WebAdeAuthentication authentication) {
+		Authentication authentication) {
 		
 		if(pageNumber > 1) {
 			String previousUri = getClaimListSelfUri(

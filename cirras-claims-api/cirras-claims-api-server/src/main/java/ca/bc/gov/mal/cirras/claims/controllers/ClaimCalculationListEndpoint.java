@@ -18,7 +18,6 @@ import jakarta.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
@@ -42,6 +41,7 @@ import ca.bc.gov.mal.cirras.claims.controllers.parameters.PagingQueryParameters;
 import ca.bc.gov.mal.cirras.claims.controllers.parameters.validation.ParameterValidator;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/calculations")
@@ -80,7 +80,6 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 	})
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@PreAuthorize("hasAuthority('SCOPE_SEARCH_CALCULATIONS')")
 	public Response getClaimCalculationList(
 		@Parameter(description = "Filter the results by the claim number") @QueryParam("claimNumber") String claimNumber,
 		@Parameter(description = "Filter the results by the policy number") @QueryParam("policyNumber") String policyNumber,
@@ -96,6 +95,12 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 	) {
 		
 		Response response = null;
+		
+		//logRequest();
+		
+		if(!AuthenticationUtil.hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 
 		try {
 			
@@ -125,7 +130,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 						toInteger(pageNumber), 
 						toInteger(pageRowCount), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 
 				GenericEntity<ClaimCalculationListRsrc> entity = new GenericEntity<ClaimCalculationListRsrc>(results) {
 					/* do nothing */
@@ -168,18 +173,18 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 		logger.debug("<createClaimCalculation");
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		//if(!hasAuthority(Scopes.CREATE_CALCULATION)) {
-		//	return Response.status(Status.FORBIDDEN).build();
-		//}
+		if(!AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 
 		try {
 
 			ClaimCalculationRsrc result = (ClaimCalculationRsrc) cirrasClaimService.createClaimCalculation(
 					claim, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			URI createdUri = URI.create(result.getSelfLink());
 

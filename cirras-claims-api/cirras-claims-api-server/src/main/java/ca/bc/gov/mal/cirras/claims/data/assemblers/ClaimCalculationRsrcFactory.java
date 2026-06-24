@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.security.core.Authentication;
+
 import jakarta.ws.rs.core.UriBuilder;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
@@ -17,7 +19,6 @@ import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.resource.factory.BaseResourceFactory;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationListEndpoint;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
@@ -65,7 +66,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 
 	
 	public ClaimCalculation getClaimCalculation(ClaimCalculationDto dto, Map<Integer, ClaimDto> quantityClaimMap, FactoryContext context,
-			WebAdeAuthentication authentication) throws FactoryException {
+			Authentication authentication) throws FactoryException {
 
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
@@ -166,7 +167,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
 			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto,
 			FactoryContext context, 
-			WebAdeAuthentication authentication) throws FactoryException {
+			Authentication authentication) throws FactoryException {
 
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
@@ -262,7 +263,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 
 		URI baseUri = getBaseURI(context);
 
-		// if (authentication.hasAuthority(Scopes.CREATE_CALCULATION)) {
+		// if (AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
 		String result = UriBuilder.fromUri(baseUri).path(ClaimCalculationListEndpoint.class).build().toString();
 		resource.getLinks().add(new RelLink(ResourceTypes.CREATE_CLAIM_CALCULATION, result, "POST"));
 		// }
@@ -952,7 +953,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	
 	
 	public ClaimCalculation getCalculationFromCalculation(ClaimCalculation claimCalculation, FactoryContext context,
-			WebAdeAuthentication authentication) throws FactoryException {
+			Authentication authentication) throws FactoryException {
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
 		// Copy from claimCalculation.
@@ -1337,7 +1338,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	public ClaimCalculationList<? extends ClaimCalculation> getClaimCalculationList(PagedDtos<ClaimCalculationDto> dtos,
 			Integer claimNumber, String policyNumber, Integer cropYear, String calculationStatusCode,
 			String createClaimCalcUserGuid, String updateClaimCalcUserGuid, Integer insurancePlanId, String sortColumn,
-			String sortDirection, Integer pageRowCount, FactoryContext context, WebAdeAuthentication authentication)
+			String sortDirection, Integer pageRowCount, FactoryContext context, Authentication authentication)
 			throws FactoryException, DaoException {
 		URI baseUri = getBaseURI(context);
 
@@ -2177,9 +2178,9 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	private static void setLinks(ClaimCalculationListRsrc resource, Integer claimNumber, String policyNumber,
 			Integer cropYear, String calculationStatusCode, String createClaimCalcUserGuid,
 			String updateClaimCalcUserGuid, String sortColumn, String sortDirection, int pageNumber, int pageRowCount,
-			int totalRowCount, URI baseUri, WebAdeAuthentication authentication) {
+			int totalRowCount, URI baseUri, Authentication authentication) {
 
-		// if (authentication.hasAuthority(Scopes.CREATE_CALCULATION)) {
+		// if (AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
 		String result = UriBuilder.fromUri(baseUri).path(ClaimCalculationListEndpoint.class).build().toString();
 		resource.getLinks().add(new RelLink(ResourceTypes.CREATE_CLAIM_CALCULATION, result, "POST"));
 		// }
@@ -2200,15 +2201,15 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	}
 
 	private static void setLinks(String claimCalculationGuid, ClaimCalculationRsrc resource, URI baseUri,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
-		// if (authentication.hasAuthority(Scopes.UPDATE_CALCULATION)) {
+		// if (AuthenticationUtil.hasAuthority(Scopes.UPDATE_CALCULATION)) {
 		String result = UriBuilder.fromUri(baseUri).path(ClaimCalculationEndpoint.class).build(claimCalculationGuid)
 				.toString();
 		resource.getLinks().add(new RelLink(ResourceTypes.UPDATE_CLAIM_CALCULATION, result, "PUT"));
 		// }
 
-		// if (authentication.hasAuthority(Scopes.DELETE_CLAIM)) {
+		// if (AuthenticationUtil.hasAuthority(Scopes.DELETE_CLAIM)) {
 		result = UriBuilder.fromUri(baseUri).path(ClaimCalculationEndpoint.class).build(claimCalculationGuid)
 				.toString();
 		resource.getLinks().add(new RelLink(ResourceTypes.DELETE_CLAIM_CALCULATION, result, "DELETE"));

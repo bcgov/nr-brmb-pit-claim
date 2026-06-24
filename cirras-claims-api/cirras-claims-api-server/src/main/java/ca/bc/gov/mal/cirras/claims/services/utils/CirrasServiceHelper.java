@@ -2,13 +2,12 @@ package ca.bc.gov.mal.cirras.claims.services.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 
-import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationGrainQuantityDetail;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainBasketDao;
@@ -22,8 +21,8 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationPlantAcresD
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationPlantUnitsDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationUserDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationVarietyDao;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
-import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrainQuantityDetailDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationUserDto;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
@@ -34,7 +33,6 @@ import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
 import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
 import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
 import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
 
 public class CirrasServiceHelper {
 
@@ -110,25 +108,25 @@ public class CirrasServiceHelper {
 	// Retrieves the ClaimCalculationUserDto corresponding to the given authentication.
 	// If it does not exist, it is created. If Given Name or Family Name has changed, it is updated.
 	// If it cannot be determined, then returns null.
-	public ClaimCalculationUserDto getClaimCalculationUserDto(WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+	public ClaimCalculationUserDto getClaimCalculationUserDto(Authentication authentication) throws ServiceException, NotFoundException {
 		logger.debug("<getClaimCalculationUserDto");
 			
 		ClaimCalculationUserDto dto = null;
 
-		if (authentication != null && authentication.getUserGuid() != null) {
+		if (authentication != null && AuthenticationUtil.getUserGuid(authentication) != null) {
 
 			try {
 				String claimCalcUserGuid = null;
 
-				dto = claimCalculationUserDao.getByLoginUserGuid(authentication.getUserGuid());
+				dto = claimCalculationUserDao.getByLoginUserGuid(AuthenticationUtil.getUserGuid(authentication));
 				
 				//Service accounts don't have a family name set. To prevent showing unknown in the app the
 				//family name is set to System
 				String familyName = null;
-				if(authentication.getFamilyName() == null && authentication.getUserTypeCode().equalsIgnoreCase("SCL")) {
+				if(AuthenticationUtil.getFamilyName(authentication) == null) {
 					familyName = "System";
 				} else {
-					familyName = authentication.getFamilyName();
+					familyName = AuthenticationUtil.getFamilyName(authentication);
 				}
 				
 
@@ -137,10 +135,10 @@ public class CirrasServiceHelper {
 
 					dto.setClaimCalculationUserGuid(null);
 					dto.setFamilyName(familyName);
-					dto.setGivenName(authentication.getGivenName());
-					dto.setLoginUserGuid(authentication.getUserGuid());
-					dto.setLoginUserId(authentication.getUserId());
-					dto.setLoginUserType(authentication.getUserTypeCode());
+					dto.setGivenName(AuthenticationUtil.getGivenName(authentication));
+					dto.setLoginUserGuid(AuthenticationUtil.getUserGuid(authentication));
+					dto.setLoginUserId(AuthenticationUtil.getUserId(authentication));
+					dto.setLoginUserType(AuthenticationUtil.getFamilyName(authentication) == null ? "SCL" : "GOV");
 
 					claimCalculationUserDao.insert(dto, dto.getLoginUserId());
 
@@ -155,7 +153,7 @@ public class CirrasServiceHelper {
 												
 					// Update Given Name and Family Name in case they changed.
 					dto.setFamilyName(familyName);
-					dto.setGivenName(authentication.getGivenName());
+					dto.setGivenName(AuthenticationUtil.getGivenName(authentication));
 						
 					if (dto.isDirty()) {
 						claimCalcUserGuid = dto.getClaimCalculationUserGuid();

@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/syncclaimrelateddata")
@@ -63,9 +64,9 @@ public class SyncClaimRelatedDataEndpoint extends BaseEndpointsImpl {
 		logger.debug("<updateSyncClaimRelatedData");
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -74,7 +75,7 @@ public class SyncClaimRelatedDataEndpoint extends BaseEndpointsImpl {
 			cirrasDataSyncService.updateSyncClaimRelatedData(
 					claim, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			response = Response.status(200).build();
 		} catch (Throwable t) {

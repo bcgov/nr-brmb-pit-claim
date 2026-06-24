@@ -6,6 +6,8 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.springframework.security.core.Authentication;
+
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.UriBuilder;
 
@@ -13,7 +15,6 @@ import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.resource.factory.BaseResourceFactory;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimRelatedDataEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCodeEndpoint;
@@ -26,6 +27,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncCommodityVarietyRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncClaim;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCode;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCommodityVariety;
@@ -49,7 +51,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 	public SyncClaim getSyncClaim(
 			ClaimDto dto, 
 			FactoryContext context, 
-			WebAdeAuthentication authentication
+			Authentication authentication
 		) throws FactoryException {
 		SyncClaimRsrc resource = new SyncClaimRsrc();
 		
@@ -582,9 +584,9 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 	private static void setClaimDataLinks(
 			SyncClaimRsrc resource, 
 			URI baseUri, 
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 			
-		if (authentication.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if (AuthenticationUtil.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			String result = UriBuilder
 				.fromUri(baseUri)
 				.path(SyncClaimEndpoint.class)
@@ -592,7 +594,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 				.build().toString();
 			resource.getLinks().add(new RelLink(ResourceTypes.UPDATE_SYNC_CLAIM, result, HttpMethod.PUT));
 		}
-		if (authentication.hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+		if (AuthenticationUtil.hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
 
 			String result = UriBuilder
 				.fromUri(baseUri)

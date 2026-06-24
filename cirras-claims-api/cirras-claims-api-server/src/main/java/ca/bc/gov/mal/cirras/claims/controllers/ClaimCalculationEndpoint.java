@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
@@ -40,6 +41,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/calculations/{claimCalculationGuid}")
@@ -72,9 +74,9 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.GET_CALCULATION)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.GET_CALCULATION)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		
@@ -83,7 +85,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 					claimCalculationGuid,
 					toBoolean(doRefreshManualClaimData),
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 
 		} catch (NotFoundException e) {
@@ -127,9 +129,9 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_CALCULATION)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.UPDATE_CALCULATION)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -138,7 +140,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 					claimCalculationGuid, 
 					false,
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			EntityTag currentTag = EntityTag.valueOf(currentClaimCalculation.getQuotedETag());
 
@@ -155,7 +157,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 						optimisticLock, 
 						claim, 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 				
 				response = Response.ok(result).tag(result.getUnquotedETag()).build();
 				
@@ -206,9 +208,9 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.DELETE_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -219,7 +221,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 						claimCalculationGuid, 
 						false,
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 	
 				EntityTag currentTag = EntityTag.valueOf(current.getQuotedETag());
 	
@@ -233,7 +235,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 					cirrasClaimService.deleteClaimCalculation(
 							claimCalculationGuid, 
 							optimisticLock, 
-							getWebAdeAuthentication());
+							AuthenticationUtil.getAuthentication());
 	
 					response = Response.status(204).build();
 				} else {

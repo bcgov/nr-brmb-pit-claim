@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/claims/{claimNumber}")
@@ -60,9 +61,9 @@ public class ClaimEndpoint extends BaseEndpointsImpl {
 		logger.debug("<getClaim");
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.CREATE_CALCULATION)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -71,7 +72,7 @@ public class ClaimEndpoint extends BaseEndpointsImpl {
 			ClaimCalculationRsrc result = (ClaimCalculationRsrc) cirrasClaimService.getClaim(
 					claimNumber, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 

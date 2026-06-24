@@ -41,6 +41,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/syncclaim")
@@ -71,9 +72,9 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 		
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.GET_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.GET_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		
@@ -81,7 +82,7 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 			SyncClaimRsrc result = (SyncClaimRsrc) cirrasDataSyncService.getSyncClaim(
 					toInteger(colId),
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 
 		} catch (NotFoundException e) {
@@ -121,9 +122,9 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 		logger.debug("<createSyncClaim");
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.CREATE_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.CREATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -131,7 +132,7 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 			SyncClaimRsrc result = (SyncClaimRsrc) cirrasDataSyncService.createSyncClaim(
 					claim, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 
@@ -174,9 +175,9 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -184,7 +185,7 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 			SyncClaimRsrc currentSyncClaim = (SyncClaimRsrc) cirrasDataSyncService.getSyncClaim(
 					claim.getColId(),
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			EntityTag currentTag = EntityTag.valueOf(currentSyncClaim.getQuotedETag());
 
@@ -196,7 +197,7 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 				SyncClaimRsrc result = (SyncClaimRsrc) cirrasDataSyncService.updateSyncClaim(
 						claim, 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 
 				response = Response.ok(result).tag(result.getUnquotedETag()).build();
 				
@@ -247,9 +248,9 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -257,7 +258,7 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 			SyncClaimRsrc currentSyncClaim = (SyncClaimRsrc) cirrasDataSyncService.getSyncClaim(
 					toInteger(colId),
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			EntityTag currentTag = EntityTag.valueOf(currentSyncClaim.getQuotedETag());
 
@@ -271,7 +272,7 @@ public class SyncClaimEndpoint extends BaseEndpointsImpl {
 				cirrasDataSyncService.deleteSyncClaim(
 						toInteger(colId), 
 						optimisticLock, 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 
 				response = Response.status(204).build();
 			} else {

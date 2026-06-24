@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/synccoverageperil")
@@ -65,9 +66,9 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 		logger.debug("<synchronizeCoveragePeril");
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -76,7 +77,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 			cirrasDataSyncService.synchronizeCoveragePeril(
 					resource, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			response = Response.status(200).build();
 		} catch (Throwable t) {
@@ -112,9 +113,9 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -122,13 +123,13 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 			SyncCoveragePerilRsrc resource = (SyncCoveragePerilRsrc) cirrasDataSyncService.getSyncCoveragePeril(
 					toInteger(coveragePerilId), 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 			
 			if(resource != null) {
 				cirrasDataSyncService.deleteSyncCoveragePeril(
 						toInteger(coveragePerilId), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 			}
 			response = Response.status(204).build();
 		} catch (NotFoundException e) {
