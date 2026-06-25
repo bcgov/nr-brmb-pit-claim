@@ -69,9 +69,7 @@ public class SecuritySpringConfig  {
 	        new AntPathRequestMatcher("/openapi.*", HttpMethod.OPTIONS.name()),
 	        new AntPathRequestMatcher("/openapi.*", HttpMethod.GET.name()),
 	        new AntPathRequestMatcher("/checkHealth", HttpMethod.OPTIONS.name()),
-	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name()),
-    		new AntPathRequestMatcher("/checkToken", HttpMethod.OPTIONS.name()),
-	        new AntPathRequestMatcher("/checkToken", HttpMethod.GET.name())
+	        new AntPathRequestMatcher("/checkHealth", HttpMethod.GET.name())
 	        );		
 	  }
 
@@ -92,7 +90,7 @@ public class SecuritySpringConfig  {
 				roles.forEach(role -> {
 					List<String> scopes = properties.getScopesForRole(role);
 					if (scopes != null) {
-						scopes.forEach(scope -> authorities.add(new SimpleGrantedAuthority("SCOPE_" + scope)));
+						scopes.forEach(scope -> authorities.add(new SimpleGrantedAuthority("CIRRAS_CLAIMS." + scope)));
 					}
 				});
 			}
@@ -111,8 +109,7 @@ public class SecuritySpringConfig  {
 	      .authorizeHttpRequests(authorize -> authorize
 	              .requestMatchers(HttpMethod.OPTIONS, "/openapi.*", "/checkHealth").permitAll()
 	              .requestMatchers(HttpMethod.GET, "/openapi.*", "/checkHealth").permitAll()
-	              .requestMatchers(HttpMethod.GET, "/checkToken").permitAll()
-	              .requestMatchers("/**").hasAuthority("SCOPE_GET_TOP_LEVEL")
+	              .requestMatchers("/**").hasAuthority("CIRRAS_CLAIMS.GET_TOP_LEVEL")
 	              .anyRequest().denyAll()
 	      ).exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()) );		
 		return http.build();
