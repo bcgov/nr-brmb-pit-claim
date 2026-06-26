@@ -1,4 +1,6 @@
 GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.declared_yield_contract_commodity_berries_sync TO "app_ccs_rest_proxy";
+GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.claim_calculation_berries_ob TO "app_ccs_rest_proxy";
+GRANT SELECT, INSERT, UPDATE, DELETE ON ccs.process_failovr_ownership TO "app_ccs_rest_proxy";
 
 -- Grant permissios to the audit tables
 GRANT SELECT, INSERT ON ccs.audit_transaction_type_code TO "app_ccs_rest_proxy";
