@@ -1,4 +1,4 @@
-FROM node:20
+node:22-alpine
 
 WORKDIR /app
 
@@ -13,12 +13,12 @@ WORKDIR /app/express-server
 RUN npm install
 
 # Install client deps + build Angular
-WORKDIR /app/angular
-RUN npm install --force
-RUN npm run build
+# WORKDIR /app/angular
+# RUN npm install --force
+# RUN npm run build
 
 # Run Express
-WORKDIR /app/express-server
+# WORKDIR /app/express-server
 
 EXPOSE 8080
 

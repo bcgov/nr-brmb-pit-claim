@@ -1,0 +1,102 @@
+name: build ui angular
+
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+      MICROSERVICE_NAME:
+        required: true
+        type: string
+      TAG:
+        required: true
+        type: string
+
+env:
+  DIRECTORY_SUFFIX: ${{ contains(inputs.MICROSERVICE_NAME, '-api') && '-rest-endpoints' || '' }}
+  NPMRC: ${{ secrets.NPMRC }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.ENVIRONMENT }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version number
+        id: getVersion
+        # run: echo "VERSION_NUMBER=$(grep -Po -m 1 '(?<=<version>)[0-9\.]+(-SNAPSHOT)?'  ${{ inputs.MICROSERVICE_NAME }}/pom.xml )" >> $GITHUB_OUTPUT
+        run: echo "VERSION_NUMBER=$(grep -Po '"version"\s*:\s*"\K[^"]+' "${{ inputs.MICROSERVICE_NAME }}/angular/package.json") >> $GITHUB_OUTPUT
+
+      - name: Set up nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      #NOTE: necessary to build client-angular 
+      - name: Add .npmrc file
+        run: echo -e $NPMRC > ~/.npmrc
+          
+      #NOTE: build the angular app 
+      - name: Install dependencies for Angular project
+        run: |
+          cd ${{ inputs.MICROSERVICE_NAME }}/${{ inputs.MICROSERVICE_NAME }}/angular
+          npm install
+
+      - name: Build angular app
+        run: |
+          cd ${{ inputs.MICROSERVICE_NAME }}/${{ inputs.MICROSERVICE_NAME }}/angular
+          npm run build -- --configuration=production
+
+      - name: Cache local angular build directory
+        uses: actions/cache@v4
+        with:
+          path: dist/pit-claim
+          key: ${{ runner.os }}-angular-${{ hashFiles('**.js') }}
+          restore-keys: |
+            ${{ runner.os }}-angular-
+
+
+      #NOTE: docker related step 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta_pr
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.REGISTRY}}/${{ github.repository_owner }}/${{ inputs.MICROSERVICE_NAME }}
+          tags: |
+            type=schedule
+            type=raw,value=${{ github.base_ref }}
+            type=raw,value=latest
+            type=ref,event=tag
+            type=raw,value=${{ steps.getVersion.outputs.VERSION_NUMBER }}
+            type=raw,value=${{ inputs.TAG }}
+            ${{ toJson(github.event.pull_request.number) == '{}' && format( 'type=raw,value=pr-{0}', github.event.pull_request.number) || '' }} 
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ inputs.MICROSERVICE_NAME }}
+          push: true
+          tags: ${{ steps.meta_pr.outputs.tags }}
+          labels: ${{ steps.meta_pr.outputs.labels }}
+
+      # NOTE: We store built images in ghcr.io, but use artifactory as a pull-through repository - artifacts.developer.gov.bc.ca/github-docker-remote/bcgov

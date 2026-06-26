@@ -1,0 +1,20 @@
+name: Build All UI
+
+on:
+  workflow_dispatch:
+    inputs:
+      TAG:
+          required: true
+          type: string
+          description: Additional tag to apply to images being built
+          default: latest
+
+jobs:
+  
+  build-claims-ui:
+    uses: ./.github/workflows/build-package.yml
+    secrets: inherit
+    with:
+      TAG: ${{ inputs.tag }}
+      ENVIRONMENT: DEV
+      MICROSERVICE_NAME: pit-claim-ui 

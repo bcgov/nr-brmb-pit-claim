@@ -1,6 +1,6 @@
 {
   "name": "pit-claim",
-  "version": "0.0.0",
+  "version": "2.5.3-SNAPSHOT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
