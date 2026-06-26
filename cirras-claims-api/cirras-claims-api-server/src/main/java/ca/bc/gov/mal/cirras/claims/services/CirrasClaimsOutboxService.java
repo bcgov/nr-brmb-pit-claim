@@ -15,9 +15,12 @@ import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationBerriesOutboxDto;
 import ca.bc.gov.mal.cirras.claims.controllers.publisher.EventPublisher;
 import ca.bc.gov.mal.cirras.claims.controllers.publisher.EventPublisherException;
+import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationSimpleRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.OutboxFactory;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesOutboxDao;
+import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationSimpleRsrc;
+import ca.bc.gov.mal.cirras.claims.data.resources.ClaimEventTypes;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
 import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
@@ -32,11 +35,11 @@ public class CirrasClaimsOutboxService {
 
 	// factories
 	private OutboxFactory outboxFactory;
-//	private DopYieldContractSimpleRsrcFactory dopYieldContractSimpleRsrcFactory;
+	private ClaimCalculationSimpleRsrcFactory claimCalculationSimpleRsrcFactory;
 
 	// daos
-	private ClaimCalculationBerriesOutboxDao declaredYieldContractCommodityBerriesOutboxDao;
-	private ClaimCalculationBerriesDao declaredYieldContractCommodityBerriesDao;
+	private ClaimCalculationBerriesOutboxDao claimCalculationBerriesOutboxDao;
+	private ClaimCalculationBerriesDao claimCalculationBerriesDao;
 
 	private EventPublisher eventPublisher;
 
@@ -48,16 +51,16 @@ public class CirrasClaimsOutboxService {
 		this.outboxFactory = outboxFactory;
 	}
 
-//	public void setDopYieldContractSimpleRsrcFactory(DopYieldContractSimpleRsrcFactory dopYieldContractSimpleRsrcFactory) {
-//		this.dopYieldContractSimpleRsrcFactory = dopYieldContractSimpleRsrcFactory;
-//	}
-
-	public void setClaimCalculationBerriesOutboxDao(ClaimCalculationBerriesOutboxDao declaredYieldContractCommodityBerriesOutboxDao) {
-		this.declaredYieldContractCommodityBerriesOutboxDao = declaredYieldContractCommodityBerriesOutboxDao;
+	public void setClaimCalculationSimpleRsrcFactory(ClaimCalculationSimpleRsrcFactory claimCalculationSimpleRsrcFactory) {
+		this.claimCalculationSimpleRsrcFactory = claimCalculationSimpleRsrcFactory;
 	}
 
-	public void setClaimCalculationBerriesDao(ClaimCalculationBerriesDao declaredYieldContractCommodityBerriesDao) {
-		this.declaredYieldContractCommodityBerriesDao = declaredYieldContractCommodityBerriesDao;
+	public void setClaimCalculationBerriesOutboxDao(ClaimCalculationBerriesOutboxDao claimCalculationBerriesOutboxDao) {
+		this.claimCalculationBerriesOutboxDao = claimCalculationBerriesOutboxDao;
+	}
+
+	public void setClaimCalculationBerriesDao(ClaimCalculationBerriesDao claimCalculationBerriesDao) {
+		this.claimCalculationBerriesDao = claimCalculationBerriesDao;
 	}
 	
 	public void setEventPublisher(EventPublisher eventPublisher) {
@@ -65,92 +68,91 @@ public class CirrasClaimsOutboxService {
 	}
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
-	public List<ClaimCalculationBerriesOutbox> getNextDopYieldContractCommodityBerriesOutboxes(
+	public List<ClaimCalculationBerriesOutbox> getNextClaimCalculationBerriesOutboxes(
 		Integer maxRecords, 
 		WebAdeAuthentication authentication
 	) throws ServiceException
 	{
-		logger.debug("<getNextDopYieldContractCommodityBerriesOutboxes");
+		logger.debug("<getNextClaimCalculationBerriesOutboxes");
 
 		List<ClaimCalculationBerriesOutbox> results = null;
 
 		try {
-			List<ClaimCalculationBerriesOutboxDto> dtos = declaredYieldContractCommodityBerriesOutboxDao.select(maxRecords);
-			results = outboxFactory.getDopYieldContractCommodityBerriesOutboxList(dtos);
+			List<ClaimCalculationBerriesOutboxDto> dtos = claimCalculationBerriesOutboxDao.select(maxRecords);
+			results = outboxFactory.getClaimCalculationBerriesOutboxList(dtos);
 		} catch (DaoException e) {
 			throw new ServiceException("DAO threw an exception", e);
 		}
 
-		logger.debug(">getNextDopYieldContractCommodityBerriesOutboxes");
+		logger.debug(">getNextClaimCalculationBerriesOutboxes");
 		
 		return results;
 	}
 	
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public void processDopYieldContractCommodityBerriesOutbox(
-			ClaimCalculationBerriesOutbox dopYieldContractCommodityBerriesOutbox,
+	public void processClaimCalculationBerriesOutbox(
+			ClaimCalculationBerriesOutbox claimCalculationBerriesOutbox,
 		Boolean doPublishEvent,
 		WebAdeAuthentication authentication
 	) 
 	throws ServiceException
 	{
-		logger.debug("<processDopYieldContractCommodityBerriesOutbox");
+		logger.debug("<processClaimCalculationBerriesOutbox");
 
-//TODO: PIM-2509
-//		try {
-//
-//			if ( doPublishEvent.booleanValue() ) { 
-//				String eventType = null;
-//				DopYieldContractSimpleRsrc beforeDopYieldContractSimpleRsrc = null;
-//				DopYieldContractSimpleRsrc afterDopYieldContractSimpleRsrc = null;
-//				Map<String, String> sourceIdentifiers = new HashMap<>();
-//					
-//				if ( dopYieldContractCommodityBerriesOutbox.getTransactionType().equals(OutboxTransactionTypes.Insert) ) {
-//					eventType = ClaimEventTypes.DopYieldContractCommodityBerriesCreated;
-//					afterDopYieldContractSimpleRsrc = getDopYieldContractCommdityBerries(dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesGuid());
-//					sourceIdentifiers.put("declaredYieldContractCommodityBerriesGuid", afterDopYieldContractSimpleRsrc.getDopYieldContractCommodityBerries().getClaimCalculationBerriesGuid());
-//						
-//				} else if (dopYieldContractCommodityBerriesOutbox.getTransactionType().equals(OutboxTransactionTypes.Update) ) {
-//					eventType = UnderwritingEventTypes.DopYieldContractCommodityBerriesUpdated;
-//					afterDopYieldContractSimpleRsrc = getDopYieldContractCommdityBerries(dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesGuid());
-//					sourceIdentifiers.put("declaredYieldContractCommodityBerriesGuid", afterDopYieldContractSimpleRsrc.getDopYieldContractCommodityBerries().getClaimCalculationBerriesGuid());
-//						
-//				} else if (dopYieldContractCommodityBerriesOutbox.getTransactionType().equals(OutboxTransactionTypes.Delete) ) {
-//					eventType = UnderwritingEventTypes.DopYieldContractCommodityBerriesDeleted;
-//
-//					// Since the delete has already happened, no resource is included in the event.
-//					sourceIdentifiers.put("declaredYieldContractCommodityBerriesGuid", dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesGuid());
-//						
-//				} else { 
-//					throw new ServiceException("Declared Yield Contract Commodity Berries Outbox returned invalid transaction type");
-//				}
-//
-//				// Delete Outbox record before publishing event. If the publish fails, the exception 
-//				// rolls back the delete.
-//				deleteClaimCalculationBerriesOutbox(dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesOutboxId());
-//				publishDopYieldContractSimple(eventType, beforeDopYieldContractSimpleRsrc, afterDopYieldContractSimpleRsrc, sourceIdentifiers);
-//			} else {
-//				// Not publishing an event because it would be a duplicate, so just delete the outbox record.
-//				deleteClaimCalculationBerriesOutbox(dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesOutboxId());
-//			}
-//
-//		} catch (NotFoundException e) {
-//			// If cropId does not exist, then there must be a delete event that will be processed later.
-//			// So we can ignore this insert/update event and just delete the outbox record.
-//			logger.info("Skipped insert/update event for declaredYieldContractCommodityBerriesGuid " + dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesGuid() + " as it no longer exists.");
-//			try { 
-//				deleteClaimCalculationBerriesOutbox(dopYieldContractCommodityBerriesOutbox.getClaimCalculationBerriesOutboxId());
-//			} catch (DaoException e2) { 
-//				throw new ServiceException("DAO threw an exception", e2);
-//			}
-//
-//		} catch (DaoException e) {
-//			throw new ServiceException("DAO threw an exception", e);
-//		} catch (EventPublisherException e) {
-//			throw new ServiceException("Event Publisher threw an exception", e);
-//		}
+		try {
+
+			if ( doPublishEvent.booleanValue() ) { 
+				String eventType = null;
+				ClaimCalculationSimpleRsrc beforeClaimCalculationSimpleRsrc = null;
+				ClaimCalculationSimpleRsrc afterClaimCalculationSimpleRsrc = null;
+				Map<String, String> sourceIdentifiers = new HashMap<>();
+					
+				if ( claimCalculationBerriesOutbox.getTransactionType().equals(OutboxTransactionTypes.Insert) ) {
+					eventType = ClaimEventTypes.ClaimCalculationBerriesCreated;
+					afterClaimCalculationSimpleRsrc = getClaimCalculationCommdityBerries(claimCalculationBerriesOutbox.getClaimCalculationBerriesGuid());
+					sourceIdentifiers.put("claimCalculationBerriesGuid", afterClaimCalculationSimpleRsrc.getClaimCalculationBerries().getClaimCalculationBerriesGuid());
+						
+				} else if (claimCalculationBerriesOutbox.getTransactionType().equals(OutboxTransactionTypes.Update) ) {
+					eventType = ClaimEventTypes.ClaimCalculationBerriesUpdated;
+					afterClaimCalculationSimpleRsrc = getClaimCalculationCommdityBerries(claimCalculationBerriesOutbox.getClaimCalculationBerriesGuid());
+					sourceIdentifiers.put("claimCalculationBerriesGuid", afterClaimCalculationSimpleRsrc.getClaimCalculationBerries().getClaimCalculationBerriesGuid());
+						
+				} else if (claimCalculationBerriesOutbox.getTransactionType().equals(OutboxTransactionTypes.Delete) ) {
+					eventType = ClaimEventTypes.ClaimCalculationBerriesDeleted;
+
+					// Since the delete has already happened, no resource is included in the event.
+					sourceIdentifiers.put("claimCalculationBerriesGuid", claimCalculationBerriesOutbox.getClaimCalculationBerriesGuid());
+						
+				} else { 
+					throw new ServiceException("Claim Calculation Berries Outbox returned invalid transaction type");
+				}
+
+				// Delete Outbox record before publishing event. If the publish fails, the exception 
+				// rolls back the delete.
+				deleteClaimCalculationBerriesOutbox(claimCalculationBerriesOutbox.getClaimCalculationBerriesOutboxId());
+				publishClaimCalculationSimple(eventType, beforeClaimCalculationSimpleRsrc, afterClaimCalculationSimpleRsrc, sourceIdentifiers);
+			} else {
+				// Not publishing an event because it would be a duplicate, so just delete the outbox record.
+				deleteClaimCalculationBerriesOutbox(claimCalculationBerriesOutbox.getClaimCalculationBerriesOutboxId());
+			}
+
+		} catch (NotFoundException e) {
+			// If cropId does not exist, then there must be a delete event that will be processed later.
+			// So we can ignore this insert/update event and just delete the outbox record.
+			logger.info("Skipped insert/update event for claimCalculationBerriesGuid " + claimCalculationBerriesOutbox.getClaimCalculationBerriesGuid() + " as it no longer exists.");
+			try { 
+				deleteClaimCalculationBerriesOutbox(claimCalculationBerriesOutbox.getClaimCalculationBerriesOutboxId());
+			} catch (DaoException e2) { 
+				throw new ServiceException("DAO threw an exception", e2);
+			}
+
+		} catch (DaoException e) {
+			throw new ServiceException("DAO threw an exception", e);
+		} catch (EventPublisherException e) {
+			throw new ServiceException("Event Publisher threw an exception", e);
+		}
 		
-		logger.debug(">processDopYieldContractCommodityBerriesOutbox");
+		logger.debug(">processClaimCalculationBerriesOutbox");
 	}
 	
 	public boolean publishAndDelete = true;
@@ -164,50 +166,48 @@ public class CirrasClaimsOutboxService {
 		logger.debug(">setPublishAndDelete");
 	}
 
-//TODO: PIM-2509
-//	public void publishDopYieldContractSimple(String eventType, DopYieldContractSimpleRsrc beforeDopYieldContractSimpleRsrc,
-//			DopYieldContractSimpleRsrc afterDopYieldContractSimpleRsrc, Map<String, String> sourceIdentifiers)
-//			throws EventPublisherException {
-//		if(publishAndDelete) {
-//			eventPublisher.publish(eventType, beforeDopYieldContractSimpleRsrc, afterDopYieldContractSimpleRsrc, sourceIdentifiers);
-//		} else {
-//			logger.info("Message not published because publishAndDelete is set to false. sourceIdentifier: " + sourceIdentifiers.values().stream()
-//                    .findFirst()
-//                    .orElse("No sourceIdentifier found"));
-//		}
-//
-//	}
+	public void publishClaimCalculationSimple(String eventType, ClaimCalculationSimpleRsrc beforeClaimCalculationSimpleRsrc,
+			ClaimCalculationSimpleRsrc afterClaimCalculationSimpleRsrc, Map<String, String> sourceIdentifiers)
+			throws EventPublisherException {
+		if(publishAndDelete) {
+			eventPublisher.publish(eventType, beforeClaimCalculationSimpleRsrc, afterClaimCalculationSimpleRsrc, sourceIdentifiers);
+		} else {
+			logger.info("Message not published because publishAndDelete is set to false. sourceIdentifier: " + sourceIdentifiers.values().stream()
+                    .findFirst()
+                    .orElse("No sourceIdentifier found"));
+		}
+
+	}
 
 	public void deleteClaimCalculationBerriesOutbox(
-			Integer declaredYieldContractCommodityBerriesOutboxId) throws DaoException, NotFoundDaoException {
+			Integer claimCalculationBerriesOutboxId) throws DaoException, NotFoundDaoException {
 		if(publishAndDelete) {
-			declaredYieldContractCommodityBerriesOutboxDao.delete(declaredYieldContractCommodityBerriesOutboxId);
+			claimCalculationBerriesOutboxDao.delete(claimCalculationBerriesOutboxId);
 		} else {
-			logger.info("Record not deleted because publishAndDelete is set to false. declaredYieldContractCommodityBerriesOutboxId: " + declaredYieldContractCommodityBerriesOutboxId.toString());
+			logger.info("Record not deleted because publishAndDelete is set to false. claimCalculationBerriesOutboxId: " + claimCalculationBerriesOutboxId.toString());
 		}
 	}
 
-//TODO: PIM-2509
-//	private DopYieldContractSimpleRsrc getDopYieldContractCommdityBerries(String declaredYieldContractCommodityBerriesGuid) throws ServiceException, NotFoundException {
-//		logger.debug("<getDopYieldContractCommdityBerries");
-//			
-//		DopYieldContractSimpleRsrc result = null;
-//
-//		try {
-//			ClaimCalculationBerriesDto berriesDto = declaredYieldContractCommodityBerriesDao.fetch(declaredYieldContractCommodityBerriesGuid);
-//				
-//			if(berriesDto == null) {
-//				throw new NotFoundException("no declared yield contract commodity berries record found for " + declaredYieldContractCommodityBerriesGuid);
-//			}
-//				
-//			result = dopYieldContractSimpleRsrcFactory.getDopYieldContractSimple(berriesDto);
-//		} catch (DaoException e) {
-//			throw new ServiceException("DAO threw an exception", e);
-//		}
-//			
-//		logger.debug(">getDopYieldContractCommdityBerries");
-//		return result;
-//	}
+	private ClaimCalculationSimpleRsrc getClaimCalculationCommdityBerries(String claimCalculationBerriesGuid) throws ServiceException, NotFoundException {
+		logger.debug("<getClaimCalculationCommdityBerries");
+			
+		ClaimCalculationSimpleRsrc result = null;
+
+		try {
+			ClaimCalculationBerriesDto berriesDto = claimCalculationBerriesDao.fetch(claimCalculationBerriesGuid);
+				
+			if(berriesDto == null) {
+				throw new NotFoundException("no claim calculation berries record found for " + claimCalculationBerriesGuid);
+			}
+				
+			result = claimCalculationSimpleRsrcFactory.getClaimCalculationSimple(berriesDto);
+		} catch (DaoException e) {
+			throw new ServiceException("DAO threw an exception", e);
+		}
+			
+		logger.debug(">getClaimCalculationCommdityBerries");
+		return result;
+	}
 
 
 

@@ -28,17 +28,14 @@ public class ClaimCalculationBerriesOutboxProcessor extends OutboxProcessor{
 	@Override
 	protected List<? extends BaseOutbox> getNextOutboxes(int maxRecords, WebAdeAuthentication authentication,
 			CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException {
-		//TODO: PIM-2509
-		//return cirrasClaimsOutboxService.getNextClaimCalculationBerriesOutboxes(maxRecords, authentication);
-		return null;
+		return cirrasClaimsOutboxService.getNextClaimCalculationBerriesOutboxes(maxRecords, authentication);
 	}
 
 	@Override
 	protected void processOutbox(BaseOutbox outbox, boolean doPublishEvent, WebAdeAuthentication authentication,
 			CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException {
-		ClaimCalculationBerriesOutbox dopYieldContractCommodityBerriesOutbox = (ClaimCalculationBerriesOutbox)outbox;
-		//TODO: PIM-2509
-		//cirrasClaimsOutboxService.processClaimCalculationBerriesOutbox(dopYieldContractCommodityBerriesOutbox, doPublishEvent, authentication);
+		ClaimCalculationBerriesOutbox claimCalculationBerriesOutbox = (ClaimCalculationBerriesOutbox)outbox;
+		cirrasClaimsOutboxService.processClaimCalculationBerriesOutbox(claimCalculationBerriesOutbox, doPublishEvent, authentication);
 	}
 
 	@Override

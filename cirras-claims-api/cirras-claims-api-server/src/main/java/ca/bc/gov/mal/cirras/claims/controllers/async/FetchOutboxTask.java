@@ -28,11 +28,11 @@ public class FetchOutboxTask extends AsynchronousTimerTask {
 	public FetchOutboxTask(Properties applicationProperties) throws AddressException {
 		super(applicationProperties);
 
-		OutboxProcessor dopYieldContractCommodityBerriesOutboxProcessor = new ClaimCalculationBerriesOutboxProcessor(applicationProperties);
+		OutboxProcessor claimCalculationBerriesOutboxProcessor = new ClaimCalculationBerriesOutboxProcessor(applicationProperties);
 
 		// Outboxes are processed in order of dependency.
 		outboxProcessorList = new ArrayList<OutboxProcessor>();
-		outboxProcessorList.add(dopYieldContractCommodityBerriesOutboxProcessor);
+		outboxProcessorList.add(claimCalculationBerriesOutboxProcessor);
 		
 	}
 	

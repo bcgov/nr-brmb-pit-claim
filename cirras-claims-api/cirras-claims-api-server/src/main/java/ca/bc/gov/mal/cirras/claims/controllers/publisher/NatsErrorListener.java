@@ -8,7 +8,6 @@ import io.nats.client.Consumer;
 import io.nats.client.ErrorListener;
 import io.nats.client.JetStreamSubscription;
 import io.nats.client.Message;
-import io.nats.client.ErrorListener.FlowControlSource;
 import io.nats.client.support.Status;
 
 public class NatsErrorListener implements ErrorListener {

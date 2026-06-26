@@ -30,7 +30,7 @@ public class AsyncMasterTask extends AsynchronousTimerTask {
 	private FailOverService failOverService;
 	
 	private static final String LOGGING_ID_SOURCE = "SYNCFR";
-	private static final String PROCESS_NAME = "UNDERWRITING_EVENT_PUBLISHER";
+	private static final String PROCESS_NAME = "CLAIMS_EVENT_PUBLISHER";
 	
 	private String NODE_NAME;
 	
