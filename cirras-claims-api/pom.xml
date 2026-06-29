@@ -140,9 +140,18 @@
 	        <dependency>
 	            <groupId>org.springframework.security</groupId>
 	            <artifactId>spring-security-web</artifactId>
-	            <version>6.2.1</version>
-	            <scope>compile</scope>
+	            <version>${spring.version}</version>
 	        </dependency>
+	        <dependency>
+	            <groupId>org.springframework.security</groupId>
+	            <artifactId>spring-security-oauth2-jose</artifactId>
+	            <version>${spring.version}</version>
+	        </dependency>
+			<dependency>
+				<groupId>com.azure.spring</groupId>
+				<artifactId>spring-cloud-azure-autoconfigure</artifactId>
+				<version>4.20.0</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>

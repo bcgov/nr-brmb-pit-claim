@@ -18,17 +18,17 @@
     json = json.append("\"application\":{");
     json = json.append("\"acronym\":\"").append(properties.getProperty("project.acronym", "")).append("\"").append(",");
     json = json.append("\"version\":\"").append(properties.getProperty("application.version", "")).append("\"").append(",");
-    json = json.append("\"environment\":\"").append(EnvironmentVariable.getVariable("APPLICATION_ENVIRONMENT_NAME").toUpperCase()).append("\"").append(",");
+    json = json.append("\"environment\":\"").append("LOCAL".toUpperCase()).append("\"").append(",");
 	  json = json.append("\"baseUrl\":\"").append(baseUrl).append("\"");
     json = json.append("},");
 
     // REST API Section
-    String pitClaimRestUri = EnvironmentVariable.getVariable("CIRRAS_CLAIMS_REST_URI");	
+    String pitClaimRestUri = "http://localhost:8080/cirras-claims-api-server-2.5.3-SNAPSHOT";	
     if (pitClaimRestUri.endsWith("/")) {
       pitClaimRestUri = pitClaimRestUri.substring(0, pitClaimRestUri.length() - 1); //Strip off trailing slash, if it exists.
     }
 
-    String pitUnderwritingUiUrl = EnvironmentVariable.getVariable("PIT_UNDERWRITING_UI_URL");
+    String pitUnderwritingUiUrl = "https://cirras-underwriting-ui-route-dev-a12541-dev.apps.silver.devops.gov.bc.ca/pub/cirras-underwriting";
     if (pitUnderwritingUiUrl.endsWith("/")) {
       pitUnderwritingUiUrl = pitUnderwritingUiUrl.substring(0, pitUnderwritingUiUrl.length() - 1); //Strip off trailing slash, if it exists.
     }
@@ -38,18 +38,20 @@
     json = json.append("\"pit_underwriting_ui\":\"").append(pitUnderwritingUiUrl).append("\"");
     json = json.append("},");
 
-    String WEBADE_OAUTH2_AUTHORIZE_URL = EnvironmentVariable.getVariable("WEBADE_OAUTH2_AUTHORIZE_URL");
-    String WEBADE_OAUTH2_ENABLE_CHECKTOKEN = EnvironmentVariable.getVariable("WEBADE_OAUTH2_ENABLE_CHECKTOKEN");
-    String UI_CHECKTOKEN_ENDPOINT = EnvironmentVariable.getVariable("UI_CHECKTOKEN_ENDPOINT");
+    String TENANT_ID = EnvironmentVariable.getVariable("TENANT_ID");
+    String CLIENT_ID = EnvironmentVariable.getVariable("CLIENT_ID");
+    String WEBADE_OAUTH2_AUTHORIZE_URL = "https://login.microsoftonline.com/" + TENANT_ID + "/oauth2/v2.0/authorize";
+    String WEBADE_OAUTH2_ENABLE_CHECKTOKEN = "true";
+    String UI_CHECKTOKEN_ENDPOINT = "http://localhost:8080/cirras-claims-api-server-2.5.3-SNAPSHOT/checkToken";
     String WEBADE_CHECK_TOKEN_URL = EnvironmentVariable.getVariable("WEBADE_CHECK_TOKEN_URL");
     String WEBADE_OAUTH2_SITEMINDER_URL = EnvironmentVariable.getVariable("WEBADE_OAUTH2_SITEMINDER_URL");
-    String WEBADE_OAUTH2_SCOPES = EnvironmentVariable.getVariable("WEBADE_OAUTH2_SCOPES");
+    String WEBADE_OAUTH2_SCOPES = CLIENT_ID + "/.default";
     String WEBADE_GET_TOKEN_URL = EnvironmentVariable.getVariable("WEBADE_GET_TOKEN_URL");
 
     // WebADE OAuth Section
     json = json.append("\"webade\":{");
     json = json.append("\"oauth2Url\":\"").append(WEBADE_OAUTH2_AUTHORIZE_URL).append("\"").append(",");	
-    json = json.append("\"clientId\":\"").append("CIRRAS_CLAIMS_UI").append("\"").append(",");
+    json = json.append("\"clientId\":\"").append(CLIENT_ID).append("\"").append(",");
     json = json.append("\"enableCheckToken\":").append(WEBADE_OAUTH2_ENABLE_CHECKTOKEN).append(",");	
     json = json.append("\"checkTokenUrl\":\"").append(UI_CHECKTOKEN_ENDPOINT).append("\"").append(",");	
 	  json = json.append("\"siteminderUrlPrefix\":\"").append(WEBADE_OAUTH2_SITEMINDER_URL).append("\"").append(",");		

@@ -41,6 +41,7 @@ import ca.bc.gov.mal.cirras.claims.controllers.parameters.PagingQueryParameters;
 import ca.bc.gov.mal.cirras.claims.controllers.parameters.validation.ParameterValidator;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/calculations")
@@ -95,9 +96,9 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 		
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -129,7 +130,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 						toInteger(pageNumber), 
 						toInteger(pageRowCount), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 
 				GenericEntity<ClaimCalculationListRsrc> entity = new GenericEntity<ClaimCalculationListRsrc>(results) {
 					/* do nothing */
@@ -172,18 +173,18 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 		logger.debug("<createClaimCalculation");
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		//if(!hasAuthority(Scopes.CREATE_CALCULATION)) {
-		//	return Response.status(Status.FORBIDDEN).build();
-		//}
+		if(!AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 
 		try {
 
 			ClaimCalculationRsrc result = (ClaimCalculationRsrc) cirrasClaimService.createClaimCalculation(
 					claim, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					AuthenticationUtil.getAuthentication());
 
 			URI createdUri = URI.create(result.getSelfLink());
 

@@ -36,6 +36,7 @@ import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.controllers.parameters.PagingQueryParameters;
 import ca.bc.gov.mal.cirras.claims.controllers.parameters.validation.ParameterValidator;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimListRsrc;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/claims")
@@ -86,9 +87,9 @@ public class ClaimListEndpoint extends BaseEndpointsImpl {
 		
 		Response response = null;
 		
-		logRequest();
+		//logRequest();
 		
-		if(!hasAuthority(Scopes.SEARCH_CLAIMS)) {
+		if(!AuthenticationUtil.hasAuthority(Scopes.SEARCH_CLAIMS)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -116,7 +117,7 @@ public class ClaimListEndpoint extends BaseEndpointsImpl {
 						toInteger(pageNumber), 
 						toInteger(pageRowCount), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						AuthenticationUtil.getAuthentication());
 
 				GenericEntity<ClaimListRsrc> entity = new GenericEntity<ClaimListRsrc>(results) {
 					/* do nothing */

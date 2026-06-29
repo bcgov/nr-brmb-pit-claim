@@ -3,10 +3,11 @@ package ca.bc.gov.mal.cirras.claims.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
 import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
-import ca.bc.gov.nrs.wfone.common.utils.HttpServletRequestHolder;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.CheckedToken;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,12 +16,10 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -61,20 +60,16 @@ public class CheckTokenController extends BaseEndpointsImpl  {
         Response response = null;
         
         try {
-	        HttpServletRequest request = HttpServletRequestHolder.getHttpServletRequest();
-	       
-	        CheckedToken result = null;
-	        String authorizationHeader = request.getHeader("Authorization");
-
-            if (authorizationHeader == null) {
-            	logger.debug("checkTokenUI ->  authorizationHeader is null");
-            	response = Response.status(Status.UNAUTHORIZED).build();
-            	
-            } else {
-                result = tokenService.checkToken(authorizationHeader.replace("Bearer ", ""));
-                logger.debug("checkTokenUI -> result : " + result);
-                response = Response.ok(result).build();
-            }
+			if (AuthenticationUtil.isTokenExpired()) {
+				response = Response.status(Status.UNAUTHORIZED).build();
+			} else {
+				CheckedToken checkedToken = new CheckedToken();
+				checkedToken.setGivenName(AuthenticationUtil.getGivenName());
+				checkedToken.setFamilyName(AuthenticationUtil.getFamilyName());
+				checkedToken.setExp(AuthenticationUtil.getExp());
+				checkedToken.setScope(AuthenticationUtil.getScope());
+				response = Response.ok(checkedToken).build();
+			}
         } catch (Throwable t) {
 
         	response = getInternalServerErrorResponse(t);

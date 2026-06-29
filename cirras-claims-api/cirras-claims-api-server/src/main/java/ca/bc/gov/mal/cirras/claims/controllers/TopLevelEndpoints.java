@@ -19,6 +19,7 @@ import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
 import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
 import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
@@ -77,35 +78,35 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 			
 			result.getLinks().add(new RelLink(ResourceTypes.CHECK_TOKEN, selfURI, HttpMethod.GET));
 			
-			if (hasAuthority(Scopes.SEARCH_CLAIMS)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.SEARCH_CLAIMS)) {
 				selfURI = ClaimRsrcFactory.getClaimListSelfUri(null, null, null, null, null, null, null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CLAIM_LIST, selfURI, HttpMethod.GET));
 			}
 			
-			if (hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
 				selfURI = ClaimCalculationRsrcFactory.getClaimCalculationListSelfUri(null, null, null, null, null, null, null, null, null, null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CLAIM_CALCULATION_LIST, selfURI, HttpMethod.GET));
 			}
 
-			if (hasAuthority(Scopes.CREATE_CALCULATION)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.CREATE_CALCULATION)) {
 				selfURI = ClaimCalculationRsrcFactory.getClaimCalculationListSelfUri(null, null, null, null, null, null, null, null, null, null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CREATE_CLAIM_CALCULATION, selfURI, HttpMethod.POST));
 			}
 			
 			//DATA SYNC ENDPOINTS
-			if (hasAuthority(Scopes.GET_SYNC_CLAIM)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.GET_SYNC_CLAIM)) {
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.SYNC_CLAIM, selfURI, HttpMethod.GET));
 
 				selfURI = CirrasDataSyncRsrcFactory.getSyncDopYieldContractSimpleSelfUri(baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.SYNC_DOP_YIELD_CONTRACT_SIMPLE, selfURI, HttpMethod.GET));
 			}
-			if (hasAuthority(Scopes.CREATE_SYNC_CLAIM)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.CREATE_SYNC_CLAIM)) {
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CREATE_SYNC_CLAIM, selfURI, HttpMethod.POST));
 			}
 				
-			if (hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+			if (AuthenticationUtil.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 				//grower and policy updates
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimRelatedDataSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.UPDATE_SYNC_CLAIM_RELATED_DATA, selfURI, HttpMethod.PUT));

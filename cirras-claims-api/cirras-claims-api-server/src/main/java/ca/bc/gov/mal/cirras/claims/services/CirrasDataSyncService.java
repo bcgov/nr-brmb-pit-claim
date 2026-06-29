@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
@@ -14,6 +15,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncCommodityVarietyRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.UnderwritingSyncEventTypes;
+import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncClaim;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCode;
@@ -55,7 +57,6 @@ import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
 import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
 import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
 import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.CodeTableTypes;
 import ca.bc.gov.mal.cirras.policies.model.v1.PoliciesEventTypes;
@@ -145,21 +146,8 @@ public class CirrasDataSyncService {
 		this.declaredYieldContractCommodityBerriesSyncDao = declaredYieldContractCommodityBerriesSyncDao;
 	}
 
-	//
-	// The "proof of concept" REST service doesn't have any security
-	//
-	private String getUserId(WebAdeAuthentication authentication) {
-		String userId = "DEFAULT_USERID";
-
-		if (authentication != null) {
-			userId = authentication.getUserId();
-		}
-
-		return userId;
-	}
-
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
-	public SyncClaim getSyncClaim(Integer colId, FactoryContext factoryContext, WebAdeAuthentication authentication)
+	public SyncClaim getSyncClaim(Integer colId, FactoryContext factoryContext, Authentication authentication)
 			throws ServiceException, NotFoundException {
 		logger.debug("<getSyncClaim");
 
@@ -184,7 +172,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public SyncClaim createSyncClaim(SyncClaim syncClaim, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, ForbiddenException,
+			Authentication authentication) throws ServiceException, NotFoundException, ForbiddenException,
 			ConflictException, ValidationFailureException {
 		logger.debug("<createSyncClaim");
 
@@ -192,7 +180,7 @@ public class CirrasDataSyncService {
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			ClaimDto dto = cirrasDataSyncRsrcFactory.createClaimDto(syncClaim);
 			claimDao.insert(dto, userId);
@@ -210,7 +198,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public SyncClaim updateSyncClaim(SyncClaim syncClaim, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, ForbiddenException,
+			Authentication authentication) throws ServiceException, NotFoundException, ForbiddenException,
 			ConflictException, ValidationFailureException, DaoException {
 
 		logger.debug("<updateSyncClaim");
@@ -252,7 +240,7 @@ public class CirrasDataSyncService {
 	// It checks CIRRAS for the latest claim status and updates it automatically
 	public Boolean syncClaimData(ClaimCalculation claimCalculation, InsuranceClaimRsrc policyClaim,
 			ClaimCalculationDto dto, String claimCalculationGuid, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, DaoException, NotFoundException {
+			Authentication authentication) throws ServiceException, DaoException, NotFoundException {
 
 		logger.debug("<syncClaimData");
 		
@@ -346,7 +334,7 @@ public class CirrasDataSyncService {
 	// Updates the cached claim data if the claim data sync transaction date in the
 	// database is older than the date of the update in CIRRAS
 	private boolean saveClaimData(SyncClaim syncClaim, Boolean isMessagingUpdate, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, DaoException {
+			Authentication authentication) throws ServiceException, DaoException {
 		logger.debug("<saveClaimData");
 
 		boolean result = false;
@@ -373,7 +361,7 @@ public class CirrasDataSyncService {
 			}
 
 			if (updateClaimData) {
-				String userId = getUserId(authentication);
+				String userId = AuthenticationUtil.getUserId(authentication);
 
 				cirrasDataSyncRsrcFactory.updateClaimDataDto(dto, syncClaim);
 				claimDao.updateClaimData(dto, userId);
@@ -392,7 +380,7 @@ public class CirrasDataSyncService {
 	// claimCalculation = current data in the database
 	// syncClaim = possibly newer data
 	private Boolean updateClaimAndCalculationStatus(ClaimCalculation claimCalculation, SyncClaim syncClaim,
-			ClaimCalculationDto dto, WebAdeAuthentication authentication, String claimCalculationGuid)
+			ClaimCalculationDto dto, Authentication authentication, String claimCalculationGuid)
 			throws DaoException, NotFoundException {
 
 		logger.debug("<updateClaimAndCalculationStatus");
@@ -492,7 +480,7 @@ public class CirrasDataSyncService {
 	}
 
 	private void setClaimDataAndUpdateStatus(ClaimCalculation claimCalculation, SyncClaim syncClaim,
-			ClaimCalculationDto dto, WebAdeAuthentication authentication, String claimCalculationGuid)
+			ClaimCalculationDto dto, Authentication authentication, String claimCalculationGuid)
 			throws NotFoundException, DaoException {
 		// The source field for submitted by user in CIRRAS is not set to null if claim
 		// is rolled back to Open
@@ -513,14 +501,14 @@ public class CirrasDataSyncService {
 		claimCalculation.setApprovedByDate(syncClaim.getApprovedByDate());
 		claimCalculation.setHasChequeReqInd(syncClaim.getHasChequeReqInd());
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 		claimCalculation.setClaimStatusCode(syncClaim.getClaimStatusCode());
 		
 		saveUpdateClaimCalculation(claimCalculation, dto, authentication, claimCalculationGuid, userId);
 	}
 
 	private void saveUpdateClaimCalculation(ClaimCalculation claimCalculation, ClaimCalculationDto dto,
-			WebAdeAuthentication authentication, String claimCalculationGuid, String userId)
+			Authentication authentication, String claimCalculationGuid, String userId)
 			throws NotFoundException, DaoException {
 
 		claimCalculationRsrcFactory.updateDto(dto, claimCalculation);
@@ -537,7 +525,7 @@ public class CirrasDataSyncService {
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public void deleteSyncClaim(Integer colId, String optimisticLock, WebAdeAuthentication authentication)
+	public void deleteSyncClaim(Integer colId, String optimisticLock, Authentication authentication)
 			throws ServiceException, NotFoundException, ForbiddenException, ConflictException {
 
 		logger.debug("<deleteSyncClaim");
@@ -574,14 +562,14 @@ public class CirrasDataSyncService {
 	}
 
 	public void updateSyncClaimRelatedData(SyncClaimRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication webAdeAuthentication) {
+			Authentication authentication) {
 
 		switch (resource.getTransactionType()) {
 		case PoliciesEventTypes.PolicyUpdated:
-			updatePolicyData(resource, factoryContext, webAdeAuthentication);
+			updatePolicyData(resource, factoryContext, authentication);
 			break;
 		case PoliciesEventTypes.GrowerUpdated:
-			updateGrowerData(resource, factoryContext, webAdeAuthentication);
+			updateGrowerData(resource, factoryContext, authentication);
 			break;
 		default:
 			break;
@@ -589,14 +577,14 @@ public class CirrasDataSyncService {
 	}
 
 	private void updatePolicyData(SyncClaim syncClaim, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 		logger.debug("<updatePolicyData");
 
 		// SyncClaim result = null;
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			ClaimDto dto = cirrasDataSyncRsrcFactory.updatePolicyDataDto(syncClaim);
 			claimDao.updatePolicyData(dto, userId);
@@ -613,14 +601,14 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateGrowerData(SyncClaim syncClaim, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 		logger.debug("<updateGrowerData");
 
 		// SyncClaim result = null;
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			ClaimDto dto = cirrasDataSyncRsrcFactory.updateGrowerDataDto(syncClaim);
 			claimDao.updateGrowerData(dto, userId);
@@ -638,7 +626,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void synchronizeCommodityVariety(SyncCommodityVarietyRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<synchronizeCommodityVariety");
 
@@ -683,13 +671,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createCropCommodity(SyncCommodityVarietyRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication webAdeAuthentication) {
+			Authentication authentication) {
 
 		logger.debug("<createCropCommodity");
 
 		try {
 
-			String userId = getUserId(webAdeAuthentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			CropCommodityDto dto = cirrasDataSyncRsrcFactory.createCropCommodity(resource);
 			cropCommodityDao.insert(dto, userId);
@@ -704,13 +692,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateCropCommodity(SyncCommodityVarietyRsrc resource, CropCommodityDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication webAdeAuthentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateCropCommodity");
 
 		try {
 
-			String userId = getUserId(webAdeAuthentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateCropCommodity(dto, resource);
 			cropCommodityDao.update(dto, userId);
@@ -725,13 +713,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createCropVariety(SyncCommodityVarietyRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication webAdeAuthentication) {
+			Authentication authentication) {
 
 		logger.debug("<createCropVariety");
 
 		try {
 
-			String userId = getUserId(webAdeAuthentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			CropVarietyDto dto = cirrasDataSyncRsrcFactory.createCropVariety(resource);
 			cropVarietyDao.insert(dto, userId);
@@ -746,13 +734,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateCropVariety(SyncCommodityVarietyRsrc resource, CropVarietyDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication webAdeAuthentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateCropVariety");
 
 		try {
 
-			String userId = getUserId(webAdeAuthentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateCropVariety(dto, resource);
 			cropVarietyDao.update(dto, userId);
@@ -769,12 +757,12 @@ public class CirrasDataSyncService {
 	// The crop record is not deleted but the expiry date is set to the current
 	// date.
 	// It's possible that the record doesn't exist in the calculator.
-	private void inactivateSyncCommodityVariety(SyncCommodityVarietyRsrc resource, WebAdeAuthentication authentication)
+	private void inactivateSyncCommodityVariety(SyncCommodityVarietyRsrc resource, Authentication authentication)
 			throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<inactivateSyncCommodityVariety");
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 
 		CropVarietyDto dtoVariety = cropVarietyDao.fetch(resource.getCropId());
 
@@ -797,7 +785,7 @@ public class CirrasDataSyncService {
 	// This is not actually used if a crop gets deleted in CIRRAS.
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void deleteSyncCommodityVariety(Integer crptId, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<deleteSyncCommodityVariety");
 
@@ -820,7 +808,7 @@ public class CirrasDataSyncService {
 	// return the cropId and the parentId (if it's a variety)
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public SyncCommodityVariety getSyncCommodityVariety(Integer crptId, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+			Authentication authentication) throws ServiceException, NotFoundException {
 
 		logger.debug("<getSyncCommodityVariety");
 
@@ -861,7 +849,7 @@ public class CirrasDataSyncService {
 	////////////////////////////////////////////////////////////////////
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public SyncCode getSyncCode(String codeTableType, String uniqueKey, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<getSyncCode");
 
@@ -909,7 +897,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void synchronizeCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<synchronizeCode");
 
@@ -936,7 +924,7 @@ public class CirrasDataSyncService {
 	}
 
 	private void synchronizePerilCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws DaoException {
+			Authentication authentication) throws DaoException {
 
 		logger.debug("<synchronizePerilCode");
 
@@ -964,13 +952,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updatePerilCode(SyncCodeRsrc resource, PerilCodeDto dto, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
 		logger.debug("<updatePerilCode");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updatePerilCode(dto, resource);
 			perilCodeDao.update(dto, userId);
@@ -985,13 +973,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createPerilCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
 		logger.debug("<createPerilCode");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			PerilCodeDto dto = cirrasDataSyncRsrcFactory.createPerilCode(resource);
 			perilCodeDao.insert(dto, userId);
@@ -1005,11 +993,11 @@ public class CirrasDataSyncService {
 
 	}
 
-	private void inactivatePerilCode(SyncCodeRsrc resource, WebAdeAuthentication authentication) throws DaoException {
+	private void inactivatePerilCode(SyncCodeRsrc resource, Authentication authentication) throws DaoException {
 
 		logger.debug("<inactivatePerilCode");
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 
 		PerilCodeDto dto = perilCodeDao.fetch(resource.getUniqueKeyString());
 
@@ -1023,7 +1011,7 @@ public class CirrasDataSyncService {
 	}
 	
 	private void synchronizeCommodityCoverageCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws DaoException {
+			Authentication authentication) throws DaoException {
 
 		logger.debug("<synchronizeCommodityCoverageCode");
 
@@ -1050,13 +1038,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateCommodityCoverageCode(SyncCodeRsrc resource, CommodityCoverageCodeDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication authentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateClaimStatusCode");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateCommodityCoverageCode(dto, resource);
 			commodityCoverageCodeDao.update(dto, userId);
@@ -1071,13 +1059,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createCommodityCoverageCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
 		logger.debug("<createCommodityCoverageCode");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			CommodityCoverageCodeDto dto = cirrasDataSyncRsrcFactory.createCommodityCoverageCode(resource);
 			commodityCoverageCodeDao.insert(dto, userId);
@@ -1091,11 +1079,11 @@ public class CirrasDataSyncService {
 
 	}
 
-	private void inactivateCommodityCoverageCode(SyncCodeRsrc resource, WebAdeAuthentication authentication) throws DaoException {
+	private void inactivateCommodityCoverageCode(SyncCodeRsrc resource, Authentication authentication) throws DaoException {
 
 		logger.debug("<inactivateCommodityCoverage");
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 
 		CommodityCoverageCodeDto dto = commodityCoverageCodeDao.fetch(resource.getUniqueKeyString());
 
@@ -1109,7 +1097,7 @@ public class CirrasDataSyncService {
 	}	
 	
 	private void synchronizeClaimStatusCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws DaoException {
+			Authentication authentication) throws DaoException {
 
 		logger.debug("<synchronizeClaimStatusCode");
 
@@ -1136,13 +1124,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateClaimStatusCode(SyncCodeRsrc resource, ClaimStatusCodeDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication authentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateClaimStatusCode");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateClaimStatusCode(dto, resource);
 			claimStatusCodeDao.update(dto, userId);
@@ -1157,13 +1145,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createClaimStatusCode(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
 		logger.debug("<createClaimStatusCode");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			ClaimStatusCodeDto dto = cirrasDataSyncRsrcFactory.createClaimStatusCode(resource);
 			claimStatusCodeDao.insert(dto, userId);
@@ -1177,11 +1165,11 @@ public class CirrasDataSyncService {
 
 	}
 
-	private void inactivateClaimStatusCode(SyncCodeRsrc resource, WebAdeAuthentication authentication) throws DaoException {
+	private void inactivateClaimStatusCode(SyncCodeRsrc resource, Authentication authentication) throws DaoException {
 
 		logger.debug("<inactivateClaimStatusCode");
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 
 		ClaimStatusCodeDto dto = claimStatusCodeDao.fetch(resource.getUniqueKeyString());
 
@@ -1195,7 +1183,7 @@ public class CirrasDataSyncService {
 	}	
 
 	private void synchronizeInsurancePlan(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws DaoException {
+			Authentication authentication) throws DaoException {
 
 		logger.debug("<synchronizeInsurancePlan");
 
@@ -1222,13 +1210,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateInsurancePlan(SyncCodeRsrc resource, InsurancePlanDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication authentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateInsurancePlan");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateInsurancePlan(dto, resource);
 			insurancePlanDao.update(dto, userId);
@@ -1243,13 +1231,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createInsurancePlan(SyncCodeRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
 		logger.debug("<createInsurancePlan");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			InsurancePlanDto dto = cirrasDataSyncRsrcFactory.createInsurancePlan(resource);
 			insurancePlanDao.insert(dto, userId);
@@ -1263,11 +1251,11 @@ public class CirrasDataSyncService {
 
 	}
 
-	private void inactivateInsurancePlan(SyncCodeRsrc resource, WebAdeAuthentication authentication) throws DaoException {
+	private void inactivateInsurancePlan(SyncCodeRsrc resource, Authentication authentication) throws DaoException {
 
 		logger.debug("<inactivatePerilCode");
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 
 		InsurancePlanDto dto = insurancePlanDao.fetch(resource.getUniqueKeyInteger());
 
@@ -1283,7 +1271,7 @@ public class CirrasDataSyncService {
 	// This is not actually used if a crop gets deleted in CIRRAS at the moment.
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void deleteSyncCode(String codeTableType, String uniqueKey, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<deleteSyncCode");
 
@@ -1310,7 +1298,7 @@ public class CirrasDataSyncService {
 	}
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
-	public SyncCoveragePeril getSyncCoveragePeril(Integer coveragePerilId, FactoryContext factoryContext, WebAdeAuthentication authentication)
+	public SyncCoveragePeril getSyncCoveragePeril(Integer coveragePerilId, FactoryContext factoryContext, Authentication authentication)
 			throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<getSyncCoveragePeril");
@@ -1336,7 +1324,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void synchronizeCoveragePeril(SyncCoveragePerilRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<synchronizeCoveragePeril");
 
@@ -1364,13 +1352,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateCoveragePeril(SyncCoveragePerilRsrc resource, CoveragePerilDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication authentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateCoveragePeril");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateCoveragePeril(dto, resource);
 			coveragePerilDao.update(dto, userId);
@@ -1385,13 +1373,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createCoveragePeril(SyncCoveragePerilRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) {
+			Authentication authentication) {
 
 		logger.debug("<createCoveragePeril");
 
 		try {
 
-			String userId = getUserId(authentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			CoveragePerilDto dto = cirrasDataSyncRsrcFactory.createCoveragePeril(resource);
 			coveragePerilDao.insert(dto, userId);
@@ -1405,12 +1393,12 @@ public class CirrasDataSyncService {
 
 	}
 
-	private void inactivateCoveragePeril(SyncCoveragePerilRsrc resource, WebAdeAuthentication authentication)
+	private void inactivateCoveragePeril(SyncCoveragePerilRsrc resource, Authentication authentication)
 			throws DaoException {
 
 		logger.debug("<inactivateCoveragePeril");
 
-		String userId = getUserId(authentication);
+		String userId = AuthenticationUtil.getUserId(authentication);
 
 		CoveragePerilDto dto = coveragePerilDao.fetch(resource.getCoveragePerilId());
 
@@ -1425,7 +1413,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void deleteSyncCoveragePeril(Integer coveragePerilId,
-			FactoryContext factoryContext, WebAdeAuthentication authentication)
+			FactoryContext factoryContext, Authentication authentication)
 			throws ServiceException, NotFoundException, DaoException {
 		logger.debug("<deleteSyncCoveragePeril");
 
@@ -1437,7 +1425,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void synchronizeDopYieldContractSimple(SyncDopYieldContractSimpleRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, DaoException {
+			Authentication authentication) throws ServiceException, NotFoundException, DaoException {
 
 		logger.debug("<synchronizeDopYieldContractSimple");
 
@@ -1471,13 +1459,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void createDeclaredYieldContractCommodityBerriesSync(SyncDopYieldContractSimpleRsrc resource, FactoryContext factoryContext,
-			WebAdeAuthentication webAdeAuthentication) {
+			Authentication authentication) {
 
 		logger.debug("<createDeclaredYieldContractCommodityBerriesSync");
 
 		try {
 
-			String userId = getUserId(webAdeAuthentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			DeclaredYieldContractCommodityBerriesSyncDto dto = cirrasDataSyncRsrcFactory.createDeclaredYieldContractCommodityBerriesSync(resource);
 			declaredYieldContractCommodityBerriesSyncDao.insert(dto, userId);
@@ -1492,13 +1480,13 @@ public class CirrasDataSyncService {
 	}
 
 	private void updateDeclaredYieldContractCommodityBerriesSync(SyncDopYieldContractSimpleRsrc resource, DeclaredYieldContractCommodityBerriesSyncDto dto, 
-			FactoryContext factoryContext, WebAdeAuthentication webAdeAuthentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<updateDeclaredYieldContractCommodityBerriesSync");
 
 		try {
 
-			String userId = getUserId(webAdeAuthentication);
+			String userId = AuthenticationUtil.getUserId(authentication);
 
 			cirrasDataSyncRsrcFactory.updateDeclaredYieldContractCommodityBerriesSync(dto, resource);
 			declaredYieldContractCommodityBerriesSyncDao.update(dto, userId);
@@ -1513,7 +1501,7 @@ public class CirrasDataSyncService {
 	}
 
 	private void deleteDeclaredYieldContractCommodityBerriesSync(String declaredYieldContractCommodityBerriesGuid, 
-			FactoryContext factoryContext, WebAdeAuthentication webAdeAuthentication) {
+			FactoryContext factoryContext, Authentication authentication) {
 
 		logger.debug("<deleteDeclaredYieldContractCommodityBerriesSync");
 
@@ -1533,7 +1521,7 @@ public class CirrasDataSyncService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void deleteSyncDopYieldContractSimple(String declaredYieldContractCommodityBerriesGuid, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+			Authentication authentication) throws ServiceException, NotFoundException {
 
 		logger.debug("<deleteSyncDopYieldContractSimple");
 
@@ -1546,7 +1534,7 @@ public class CirrasDataSyncService {
 	
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public SyncDopYieldContractSimpleRsrc getSyncDopYieldContractSimple(String declaredYieldContractCommodityBerriesGuid, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+			Authentication authentication) throws ServiceException, NotFoundException {
 
 		logger.debug("<getSyncDopYieldContractSimple");
 
