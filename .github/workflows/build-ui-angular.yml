@@ -14,7 +14,6 @@ on:
         type: string
 
 env:
-  DIRECTORY_SUFFIX: ${{ contains(inputs.MICROSERVICE_NAME, '-api') && '-rest-endpoints' || '' }}
   NPMRC: ${{ secrets.NPMRC }}
 
 jobs:
@@ -47,20 +46,20 @@ jobs:
       - name: Install dependencies for Angular project
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/${{ inputs.MICROSERVICE_NAME }}/angular
-          npm install
+          npm clean-install --registry=${{ vars.REGISTRY }} --force
 
       - name: Build angular app
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/${{ inputs.MICROSERVICE_NAME }}/angular
-          npm run build -- --configuration=production
+          npm run build --configuration production --sourceMap=true --base-href /pub/pit-claim/ && replace-in-file /ngsw:/g ngsw:pit-claim: dist/pit-claim/ngsw-worker.js --verbose --isRegex
 
       - name: Cache local angular build directory
         uses: actions/cache@v4
         with:
-          path: dist/pit-claim
-          key: ${{ runner.os }}-angular-${{ hashFiles('**.js') }}
+          path: staging
+          key: ${{ runner.os }}-dist-${{ hashFiles('**.js') }}
           restore-keys: |
-            ${{ runner.os }}-angular-
+            ${{ runner.os }}-dist-
 
 
       #NOTE: docker related step 

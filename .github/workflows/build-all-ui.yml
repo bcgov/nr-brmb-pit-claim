@@ -12,7 +12,7 @@ on:
 jobs:
   
   build-claims-ui:
-    uses: ./.github/workflows/build-package.yml
+    uses: ./.github/workflows/build-ui-angular.yml
     secrets: inherit
     with:
       TAG: ${{ inputs.tag }}
