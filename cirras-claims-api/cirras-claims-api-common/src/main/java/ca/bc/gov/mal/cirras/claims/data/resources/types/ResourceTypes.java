@@ -19,6 +19,10 @@ public class ResourceTypes extends BaseResourceTypes {
 	public static final String UPDATE_CLAIM_CALCULATION = NAMESPACE + "updateClaimCalculation";
 	public static final String DELETE_CLAIM_CALCULATION = NAMESPACE + "deleteClaimCalculation";
 
+	//Claim Calculation Simple
+	public static final String CLAIM_CALCULATION_SIMPLE_NAME = "ClaimCalculationSimple";
+	public static final String CLAIM_CALCULATION_SIMPLE = NAMESPACE + CLAIM_CALCULATION_SIMPLE_NAME;
+	
 	public static final String CLAIM_LIST_NAME = "claimList";
 	public static final String CLAIM_LIST = NAMESPACE + CLAIM_LIST_NAME;
 	public static final String CLAIM_NAME = "claim";

@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import io.nats.client.Connection;
 import io.nats.client.ConnectionListener;
-import io.nats.client.ConnectionListener.Events;
 
 
 public class NatsConnectionListener implements ConnectionListener {

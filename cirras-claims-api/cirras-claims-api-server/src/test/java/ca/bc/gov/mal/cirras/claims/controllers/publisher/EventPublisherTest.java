@@ -14,6 +14,8 @@ import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimServiceException;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.EndpointsRsrc;
+import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationBerries;
+import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimEventTypes;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
@@ -53,62 +55,53 @@ public class EventPublisherTest extends EndpointsTest {
 		logger.debug(">testSimplePublish");		
 	}
 	
-//TODO: PIM-2509
-//	@Test
-//	public void testDopContractCommodityBerriesEventPublish() throws Oauth2ClientException, EventPublisherException {
-//		logger.debug("<testDopContractCommodityBerriesEventPublish");
-//		
-//		if(skipTests) {
-//			logger.warn("Skipping tests");
-//			return;
-//		}
-//		
-//		//The unit test ClaimClaimsListenerTest.testClaimClaimsEventConsume in the Claims-Listener-api
-//		// is processing this message
-//
-//		String claimEventType = ClaimEventTypes.DopYieldContractCommodityBerriesUpdated;
-//		Integer contractId = 987654;
-//		Integer cropYear = 2026;
-//		String declaredYieldContractGuid = "testDeclaredYieldContractGuid";
-//		String declaredYieldContractCommodityBerriesGuid = "testDopContractCommodityBerriesGuid";
-//		Integer cropCommodityId = 11111;
-//		String cropCommodityName = "testCommodity";
-//		Double totalProduction = 100.0;
-//		Double totalProductionOverride = 200.0;
-//		Double totalPlantedAcres = 10.0;
-//		Double totalMatureEquivalentAcres = 20.0;
-//		Double totalSoldShippedYield = 300.0;
-//		Double totalSalesYield = 400.0;
-//		Double totalAbandonmentYield = 500.0;
-//
-//		//Declared Yield Contract
-//		DopYieldContractSimpleRsrc resource = new DopYieldContractSimpleRsrc();
-//		resource.setContractId(contractId);
-//		resource.setCropYear(cropYear);
-//		resource.setDeclaredYieldContractGuid(declaredYieldContractGuid);
-//
-//		// Declared Yield Contract Commodity Berries
-//		DopYieldContractCommodityBerries model = new DopYieldContractCommodityBerries();
-//		model.setDeclaredYieldContractCommodityBerriesGuid(declaredYieldContractCommodityBerriesGuid);
-//		model.setCropCommodityId(cropCommodityId);
-//		model.setCropCommodityName(cropCommodityName);
-//		model.setDeclaredYieldContractGuid(declaredYieldContractGuid);
-//		model.setTotalProduction(totalProduction);
-//		model.setTotalProductionOverride(totalProductionOverride);
-//		model.setTotalPlantedAcres(totalPlantedAcres);
-//		model.setTotalMatureEquivalentAcres(totalMatureEquivalentAcres);
-//		model.setTotalSoldShippedYield(totalSoldShippedYield);
-//		model.setTotalSalesYield(totalSalesYield);
-//		model.setTotalAbandonmentYield(totalAbandonmentYield);
-//
-//		resource.setDopYieldContractCommodityBerries(model);
-//
-//		Map<String, String> sourceIdentifiers = new HashMap<>();
-//		sourceIdentifiers.put("declaredYieldContractCommodityBerriesGuid", model.getDeclaredYieldContractCommodityBerriesGuid().toString());
-//		
-//		EventPublisher eventPublisher = (EventPublisher)webApplicationContext.getBean("eventPublisher");
-//		eventPublisher.publish(claimsEventType, null, resource, sourceIdentifiers);
-//				
-//		logger.debug(">testDopContractCommodityBerriesEventPublish");		
-//	}
+	@Test
+	public void testClaimCalculationBerriesEventPublish() throws Oauth2ClientException, EventPublisherException {
+		logger.debug("<testClaimCalculationBerriesEventPublish");
+		
+		if(skipTests) {
+			logger.warn("Skipping tests");
+			return;
+		}
+		
+		//The unit test ClaimClaimsListenerTest.testClaimClaimsEventConsume in the Claims-Listener-api
+		// is processing this message
+
+		String claimEventType = ClaimEventTypes.ClaimCalculationBerriesUpdated;
+		String claimCalculationGuid = "testClaimCalculationGuid";
+		String claimCalculationBerriesGuid = "testClaimCalculationBerriesGuid";
+		Integer contractId = 987654;
+		Integer cropYear = 2026;
+		Integer calculationVersion = 1;
+		Integer cropCommodityId = 11111;
+		String calculationStatusCode = "DRAFT";
+		Double totalYieldForCalculation = 100.0;
+
+
+		//Declared Yield Contract
+		ClaimCalculationSimpleRsrc resource = new ClaimCalculationSimpleRsrc();
+		resource.setContractId(contractId);
+		resource.setCropYear(cropYear);
+		resource.setClaimCalculationGuid(claimCalculationGuid);
+		resource.setCalculationVersion(calculationVersion);
+		resource.setCropCommodityId(cropCommodityId);
+		resource.setCalculationStatusCode(calculationStatusCode);
+		
+
+		// Declared Yield Contract Commodity Berries
+		ClaimCalculationBerries model = new ClaimCalculationBerries();
+
+		model.setClaimCalculationBerriesGuid(claimCalculationBerriesGuid);
+		model.setTotalYieldForCalculation(totalYieldForCalculation);
+
+		resource.setClaimCalculationBerries(model);
+
+		Map<String, String> sourceIdentifiers = new HashMap<>();
+		sourceIdentifiers.put("claimCalculationBerriesGuid", model.getClaimCalculationBerriesGuid().toString());
+		
+		EventPublisher eventPublisher = (EventPublisher)webApplicationContext.getBean("eventPublisher");
+		eventPublisher.publish(claimEventType, null, resource, sourceIdentifiers);
+				
+		logger.debug(">testClaimCalculationBerriesEventPublish");		
+	}
 }

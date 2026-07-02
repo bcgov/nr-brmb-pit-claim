@@ -42,6 +42,13 @@ public class ClaimCalculationBerriesDto extends BaseDto<ClaimCalculationBerriesD
 	private String updateUser;
 	private Date updateDate;
 	
+	private Integer cropYear;
+	private Integer contractId;
+	private Integer cropCommodityId;
+	private Integer calculationVersion;
+	private String calculationStatusCode;
+
+	
 	public ClaimCalculationBerriesDto() {
 	}
 	
@@ -73,6 +80,13 @@ public class ClaimCalculationBerriesDto extends BaseDto<ClaimCalculationBerriesD
 		this.createDate = dto.createDate;
 		this.updateUser = dto.updateUser;
 		this.updateDate = dto.updateDate;
+		
+		this.cropYear = dto.cropYear;
+		this.contractId = dto.contractId;
+		this.cropCommodityId = dto.cropCommodityId;
+		this.calculationVersion = dto.calculationVersion;
+		this.calculationStatusCode = dto.calculationStatusCode;
+
 	}
 	
 
@@ -336,4 +350,44 @@ public class ClaimCalculationBerriesDto extends BaseDto<ClaimCalculationBerriesD
 		this.updateDate = updateDate;
 	}
 
+	public Integer getContractId() {
+		return contractId;
+	}
+
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
+	}
+
+	public Integer getCropYear() {
+		return cropYear;
+	}
+
+	public void setCropYear(Integer cropYear) {
+		this.cropYear = cropYear;
+	}
+
+	public Integer getCropCommodityId() {
+		return cropCommodityId;
+	}
+
+	public void setCropCommodityId(Integer cropCommodityId) {
+		this.cropCommodityId = cropCommodityId;
+	}
+
+	public Integer getCalculationVersion() {
+		return calculationVersion;
+	}
+
+	public void setCalculationVersion(Integer calculationVersion) {
+		this.calculationVersion = calculationVersion;
+	}
+	
+	public String getCalculationStatusCode() {
+		return calculationStatusCode;
+	}
+
+	public void setCalculationStatusCode(String calculationStatusCode) {
+		this.calculationStatusCode = calculationStatusCode;
+	}
+	
 }

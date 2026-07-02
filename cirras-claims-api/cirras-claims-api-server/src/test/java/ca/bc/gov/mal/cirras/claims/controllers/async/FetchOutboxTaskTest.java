@@ -59,9 +59,9 @@ public class FetchOutboxTaskTest extends EndpointsTest {
 		Assert.assertFalse(enableAsyncProcs);
 		
 		// Not really a unit test, but can use to just run the web server for x minutes. Useful for testing the AsynchronousProcessesService and its associated threads.
-		synchronized (this) { 
-			this.wait(1*60*1000);  // 10 minutes.
-		}
+//		synchronized (this) { 
+//			this.wait(1*60*1000);  // 10 minutes.
+//		}
 
 
 		FetchOutboxTask fetchOutboxTask = (FetchOutboxTask)webApplicationContext.getBean("fetchOutboxTask");

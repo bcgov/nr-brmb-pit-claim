@@ -15,24 +15,24 @@ public class OutboxFactory extends BaseResourceFactory {
 	// Claim Calculation Berries Outbox
 	//======================================================================================================================
 
-	public List<ClaimCalculationBerriesOutbox> getDopYieldContractCommodityBerriesOutboxList(List<ClaimCalculationBerriesOutboxDto> dtos)
+	public List<ClaimCalculationBerriesOutbox> getClaimCalculationBerriesOutboxList(List<ClaimCalculationBerriesOutboxDto> dtos)
 			throws FactoryException {
 
-		List<ClaimCalculationBerriesOutbox> dopYieldContractCommodityBerriesOutboxes = null;
+		List<ClaimCalculationBerriesOutbox> claimCalculationBerriesOutbox = null;
 		
 		if ( dtos != null && !dtos.isEmpty() ) {
 
-			dopYieldContractCommodityBerriesOutboxes = new ArrayList<ClaimCalculationBerriesOutbox>();
+			claimCalculationBerriesOutbox = new ArrayList<ClaimCalculationBerriesOutbox>();
 			
 			for ( ClaimCalculationBerriesOutboxDto dto : dtos ) { 
 				ClaimCalculationBerriesOutbox model = new ClaimCalculationBerriesOutbox();
 				populateModel(model, dto);
-				dopYieldContractCommodityBerriesOutboxes.add(model);
+				claimCalculationBerriesOutbox.add(model);
 			}
 			
 		}
 		
-		return dopYieldContractCommodityBerriesOutboxes;
+		return claimCalculationBerriesOutbox;
 	}
 
 	

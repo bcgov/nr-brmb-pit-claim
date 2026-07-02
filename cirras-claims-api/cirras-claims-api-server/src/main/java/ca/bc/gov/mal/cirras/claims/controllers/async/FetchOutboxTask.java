@@ -28,11 +28,11 @@ public class FetchOutboxTask extends AsynchronousTimerTask {
 	public FetchOutboxTask(Properties applicationProperties) throws AddressException {
 		super(applicationProperties);
 
-		OutboxProcessor dopYieldContractCommodityBerriesOutboxProcessor = new ClaimCalculationBerriesOutboxProcessor(applicationProperties);
+		OutboxProcessor claimCalculationBerriesOutboxProcessor = new ClaimCalculationBerriesOutboxProcessor(applicationProperties);
 
 		// Outboxes are processed in order of dependency.
 		outboxProcessorList = new ArrayList<OutboxProcessor>();
-		outboxProcessorList.add(dopYieldContractCommodityBerriesOutboxProcessor);
+		outboxProcessorList.add(claimCalculationBerriesOutboxProcessor);
 		
 	}
 	
@@ -84,8 +84,6 @@ public class FetchOutboxTask extends AsynchronousTimerTask {
 			logger.error(e.getMessage(), e);
 			addError(ERROR_TYPE_UNRECOVERABLE, "Encountered an unrecoverable error: "+e.getMessage());
 		}
-		
-		addError("Test Error Email", "This is a test of the error email.");
 		
 		sendErrors();
 		

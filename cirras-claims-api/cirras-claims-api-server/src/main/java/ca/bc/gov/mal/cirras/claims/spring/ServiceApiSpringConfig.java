@@ -24,6 +24,7 @@ import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
 import ca.bc.gov.mal.cirras.claims.services.utils.OutOfSync;
 
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationRsrcFactory;
+import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationSimpleRsrcFactory;
 
 @Configuration
 @Import({
@@ -54,6 +55,7 @@ public class ServiceApiSpringConfig {
 	@Autowired ClaimRsrcFactory claimRsrcFactory;
 	@Autowired ClaimCalculationRsrcFactory claimCalculationRsrcFactory;
 	@Autowired OutboxFactory outboxFactory;
+	@Autowired ClaimCalculationSimpleRsrcFactory claimCalculationSimpleRsrcFactory;
 	
 	// Imported Spring Config
 	@Autowired CodeTableSpringConfig codeTableSpringConfig;
@@ -159,6 +161,10 @@ public class ServiceApiSpringConfig {
 		result.setApplicationProperties(applicationProperties);
 
 		result.setOutboxFactory(outboxFactory);
+		result.setClaimCalculationSimpleRsrcFactory(claimCalculationSimpleRsrcFactory);
+		
+		result.setClaimCalculationBerriesDao(persistenceSpringConfig.claimCalculationBerriesDao());
+		result.setClaimCalculationBerriesOutboxDao(persistenceSpringConfig.claimCalculationBerriesOutboxDao());
 
 		result.setEventPublisher(eventPublisher);
 		
