@@ -42,30 +42,10 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.CropVarietyDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.InsurancePlanDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.PerilCodeDao;
+import ca.bc.gov.mal.cirras.claims.data.repositories.SyncOwnershipDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CalculationStatusCodeDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainBasketDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainBasketProductDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainQuantityDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainQuantityDetailDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainSpotLossDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrainUnseededDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationPlantAcresDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationPlantUnitsDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationGrapesDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationUserDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationVarietyDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimStatusCodeDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.CommodityCoverageCodeDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.CoveragePerilDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.CropCommodityDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.CropVarietyDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.InsurancePlanDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.PerilCodeDao;
-import ca.bc.gov.mal.cirras.claims.data.repositories.CalculationStatusCodeDao;
+import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesOutboxDao;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.mybatis.BooleanTypeHandler;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.mybatis.InstantTypeHandler;
 import ca.bc.gov.nrs.wfone.common.persistence.dao.mybatis.LocalDateTimeTypeHandler;
@@ -238,6 +218,16 @@ public class PersistenceSpringConfig {
 	@Bean
 	public DeclaredYieldContractCommodityBerriesSyncDao declaredYieldContractCommodityBerriesSyncDao() { 
 		return new DeclaredYieldContractCommodityBerriesSyncDao(); 
+	}
+
+	@Bean
+	public ClaimCalculationBerriesOutboxDao claimCalculationBerriesOutboxDao() { 
+		return new ClaimCalculationBerriesOutboxDao(); 
+	}
+	
+	@Bean
+	public SyncOwnershipDao syncOwnershipDao() {
+		return new SyncOwnershipDao();
 	}
 	
 }
