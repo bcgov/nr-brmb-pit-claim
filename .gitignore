@@ -33,3 +33,5 @@ pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/spring/TokenSe
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/util/ApplicationContextProvider.class
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/util/EnvironmentVariable.class
 pit-claim-war/pit-claim-war/src/main/java/ca/bc/gov/mal/pit/claim/web/controller/CheckTokenController.class
+cirras-claims-api/src/test/resources/static.properties
+pit-claim-ui/
