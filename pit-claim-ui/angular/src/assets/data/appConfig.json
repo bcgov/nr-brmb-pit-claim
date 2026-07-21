@@ -1,10 +1,10 @@
 {
   "application": {
     "acronym": "PIT-CLAIM",
-    "version": "#{TARGET_VER}#",
+    "version": "2.5.3-SNAPSHOT",
     "baseUrl": "#{BASE_URL}#",
-    "environment": "#{TARGET_ENV}#",
-    "buildNumber": "#{GITHUB_RUN_NUMBER}#"
+    "environment": "#{ENV}#",
+    "buildNumber": "0000"
   },
   "rest": {
     "cirras_claims": "#{CIRRAS_CLAIMS_REST_URI}#",
