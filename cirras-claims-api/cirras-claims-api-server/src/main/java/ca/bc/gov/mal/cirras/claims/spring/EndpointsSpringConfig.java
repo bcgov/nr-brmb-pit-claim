@@ -20,8 +20,6 @@ import ca.bc.gov.nrs.wfone.common.checkhealth.CompositeValidator;
 import ca.bc.gov.nrs.wfone.common.checkhealth.DatabaseCheckHealthValidator;
 import ca.bc.gov.nrs.wfone.common.utils.ApplicationContextProvider;
 import ca.bc.gov.mal.cirras.claims.controllers.parameters.validation.ParameterValidator;
-//import ca.bc.gov.mal.cirras.claims.services.spring.DataSyncServiceSpringConfig;
-import ca.bc.gov.mal.cirras.claims.spring.ServiceApiSpringConfig;
 
 @Configuration
 @Import({
@@ -34,7 +32,9 @@ import ca.bc.gov.mal.cirras.claims.spring.ServiceApiSpringConfig;
 	CirrasPolicyServiceSpringConfig.class,
 	CirrasUnderwritingServiceSpringConfig.class,
 	WebConfig.class,
-	CorsFilter.class
+	CorsFilter.class,
+	EventPublisherSpringConfig.class,
+	AsynchronousProcessesSpringConfig.class
 })
 public class EndpointsSpringConfig {
 

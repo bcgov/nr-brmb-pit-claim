@@ -28,6 +28,7 @@ import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.stub.TokenServiceSt
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.ValidationException;
+import ca.bc.gov.mal.cirras.claims.controllers.async.AsynchronousProcessesService;
 import ca.bc.gov.mal.cirras.claims.jetty.EmbeddedServer;
 
 public abstract class EndpointsTest {
@@ -35,6 +36,9 @@ public abstract class EndpointsTest {
 	private static final Logger logger = LoggerFactory.getLogger(EndpointsTest.class);
 	
 	protected static boolean skipTests = false;
+	
+	// Set to true to enable Asynchronous Processes that process outboxes and publish events.
+	protected static boolean enableAsyncProcs = false;
 
 	protected static final int port = 8889;
 	protected static final String contextPath = "/cirras-claims-api/v1";
@@ -91,6 +95,19 @@ public abstract class EndpointsTest {
 			swappableTokenService.swap(tokenService);
 		}
 
+		if ( enableAsyncProcs )
+		{
+			logger.warn("Asynchronous Processes are enabled.");
+		} 
+		else 
+		{
+			// Turn Off the AsynchronousProcesses by default.
+			AsynchronousProcessesService asynchronousProcessesService = webApplicationContext.getBean("asynchronousProcessesService", AsynchronousProcessesService.class);
+			asynchronousProcessesService.stop();
+
+			logger.warn("Asynchronous Processes are disabled.");
+		}
+		
 		logger.debug(">startServer");
 	}
 

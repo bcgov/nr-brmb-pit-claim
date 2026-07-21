@@ -22,7 +22,7 @@ BEGIN
             OLD.total_yield_from_adjuster, OLD.yield_assessment, OLD.total_yield_for_calculation,
             OLD.yield_loss_eligible, OLD.revision_count, OLD.create_user, OLD.create_date, 
             OLD.update_user, OLD.update_date
-        );
+        );		
         RETURN OLD;
     ELSIF (TG_OP = 'UPDATE' OR TG_OP = 'INSERT') THEN
         INSERT INTO ccs.claim_calculation_berries_audit (
@@ -45,7 +45,7 @@ BEGIN
             NEW.total_yield_from_adjuster, NEW.yield_assessment, NEW.total_yield_for_calculation,
             NEW.yield_loss_eligible, NEW.revision_count, NEW.create_user, NEW.create_date, 
             NEW.update_user, NEW.update_date
-        );
+        );	
         RETURN NEW;
     END IF;
 END;

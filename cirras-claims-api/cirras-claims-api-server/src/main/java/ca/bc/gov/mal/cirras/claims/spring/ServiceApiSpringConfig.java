@@ -11,16 +11,20 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
+import ca.bc.gov.mal.cirras.claims.services.CirrasClaimsOutboxService;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
+import ca.bc.gov.mal.cirras.claims.services.FailOverService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
 import ca.bc.gov.mal.cirras.underwriting.clients.CirrasUnderwritingService;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
-import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
+import ca.bc.gov.mal.cirras.claims.data.assemblers.OutboxFactory;
+import ca.bc.gov.mal.cirras.claims.controllers.publisher.EventPublisher;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
 import ca.bc.gov.mal.cirras.claims.services.utils.OutOfSync;
 
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationRsrcFactory;
+import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationSimpleRsrcFactory;
 
 @Configuration
 @Import({
@@ -44,11 +48,14 @@ public class ServiceApiSpringConfig {
 	@Autowired CirrasPolicyService cirrasPolicyService;
 	@Autowired CirrasUnderwritingService cirrasUnderwritingService;
 	@Autowired CirrasDataSyncRsrcFactory cirrasDataSyncRsrcFactory; 
+	@Autowired EventPublisher eventPublisher;
 	
 	
     // Beans provided by ResourceFactorySpringConfig
 	@Autowired ClaimRsrcFactory claimRsrcFactory;
 	@Autowired ClaimCalculationRsrcFactory claimCalculationRsrcFactory;
+	@Autowired OutboxFactory outboxFactory;
+	@Autowired ClaimCalculationSimpleRsrcFactory claimCalculationSimpleRsrcFactory;
 	
 	// Imported Spring Config
 	@Autowired CodeTableSpringConfig codeTableSpringConfig;
@@ -145,5 +152,33 @@ public class ServiceApiSpringConfig {
 		
 		return result;
 	}
+	
+	@Bean()
+	public CirrasClaimsOutboxService cirrasClaimsOutboxService() {
+		CirrasClaimsOutboxService result;
+		
+		result = new CirrasClaimsOutboxService();
+		result.setApplicationProperties(applicationProperties);
+
+		result.setOutboxFactory(outboxFactory);
+		result.setClaimCalculationSimpleRsrcFactory(claimCalculationSimpleRsrcFactory);
+		
+		result.setClaimCalculationBerriesDao(persistenceSpringConfig.claimCalculationBerriesDao());
+		result.setClaimCalculationBerriesOutboxDao(persistenceSpringConfig.claimCalculationBerriesOutboxDao());
+
+		result.setEventPublisher(eventPublisher);
+		
+		return result;
+	}
+	
+	@Bean()
+	public FailOverService failOverService() {
+		FailOverService result;
+		
+		result = new FailOverService();
+		result.setSyncOwnershipDao(persistenceSpringConfig.syncOwnershipDao());
+		
+		return result;
+	}	
 	
 }

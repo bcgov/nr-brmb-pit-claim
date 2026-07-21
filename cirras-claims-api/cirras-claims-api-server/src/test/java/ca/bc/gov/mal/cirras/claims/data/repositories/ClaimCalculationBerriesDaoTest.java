@@ -1,6 +1,11 @@
 package ca.bc.gov.mal.cirras.claims.data.repositories;
 
+import java.util.Date;
+import java.util.List;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +16,8 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationDao;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.spring.PersistenceSpringConfig;
+import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
+import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -19,12 +26,52 @@ public class ClaimCalculationBerriesDaoTest {
 	
 	@Autowired 
 	private PersistenceSpringConfig persistenceSpringConfig;
+	
+	private Integer claimNumber = 99778865;
+	private String claimCalculationBerriesGuid = null;
+
+	private Integer contractId = 253216515;
+	private Integer cropCommodityId = 10;
+	private Integer calculationVersion = 1;
+	private Integer cropYear = 2020;
+	private String calculationStatusCode = "DRAFT";
+	
+	@Before
+	public void prepareTests() throws NotFoundDaoException, DaoException{
+		delete();
+	}
+
+	@After 
+	public void cleanUp() throws NotFoundDaoException, DaoException{
+		delete();
+	}
+	
+	private void delete() throws DaoException {
+		
+		if (claimCalculationBerriesGuid != null) {
+			ClaimCalculationBerriesDao dao = persistenceSpringConfig.claimCalculationBerriesDao();
+			ClaimCalculationBerriesDto dto = dao.fetch(claimCalculationBerriesGuid);
+			if(dto != null) {
+				dao.delete(claimCalculationBerriesGuid);
+			}
+		}
+
+		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
+		List<ClaimCalculationDto> ccDtos = dao.getCalculationsByClaimNumber(claimNumber, null);
+
+		if(ccDtos != null && ccDtos.size() > 0) {
+			for (ClaimCalculationDto dto : ccDtos) {
+				//delete claim calculation
+				dao.delete(dto.getClaimCalculationGuid());
+			}
+		}
+	}
 
 	@Test 
 	public void testInsertUpdateDeleteClaimCalculationBerries() throws Exception {
 
 		//Get any existing calculation and add a plant unit record
-		ClaimCalculationDto dto = getDto();
+		ClaimCalculationDto dto = createClaimCalculation();
 		
 		ClaimCalculationBerriesDto newDto = new ClaimCalculationBerriesDto();
 
@@ -55,8 +102,10 @@ public class ClaimCalculationBerriesDaoTest {
 		ClaimCalculationBerriesDao dao = persistenceSpringConfig.claimCalculationBerriesDao();
 		//INSERT
 		dao.insert(newDto, userId);
-		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
-		
+		Assert.assertNotNull(newDto.getClaimCalculationBerriesGuid()); 
+
+		claimCalculationBerriesGuid = newDto.getClaimCalculationBerriesGuid();
+				
 		//FETCH
 		ClaimCalculationBerriesDto fetchedDto = dao.fetch(newDto.getClaimCalculationBerriesGuid());
 		
@@ -80,6 +129,11 @@ public class ClaimCalculationBerriesDaoTest {
 		Assert.assertEquals("YieldAssessment", newDto.getYieldAssessment(), fetchedDto.getYieldAssessment());
 		Assert.assertEquals("TotalYieldForCalculation", newDto.getTotalYieldForCalculation(), fetchedDto.getTotalYieldForCalculation());
 		Assert.assertEquals("YieldLossEligible", newDto.getYieldLossEligible(), fetchedDto.getYieldLossEligible());
+		Assert.assertEquals("CropCommodityId", cropCommodityId, fetchedDto.getCropCommodityId());
+		Assert.assertEquals("CropYear", cropYear, fetchedDto.getCropYear());
+		Assert.assertEquals("ContractId", contractId, fetchedDto.getContractId());
+		Assert.assertEquals("CalculationVersion", calculationVersion, fetchedDto.getCalculationVersion());
+		Assert.assertEquals("CalculationStatusCode", calculationStatusCode, fetchedDto.getCalculationStatusCode());
 
 		//UPDATE
 		fetchedDto.setClaimCalculationGuid(dto.getClaimCalculationGuid());
@@ -107,34 +161,92 @@ public class ClaimCalculationBerriesDaoTest {
 		
 		//FETCH
 		ClaimCalculationBerriesDto updatedDto = dao.fetch(fetchedDto.getClaimCalculationBerriesGuid());
-
 		
-		Assert.assertEquals("ClaimCalculationGuid", updatedDto.getClaimCalculationGuid(), updatedDto.getClaimCalculationGuid());
-		Assert.assertEquals("TotalProbableYield", updatedDto.getTotalProbableYield(), updatedDto.getTotalProbableYield());
-		Assert.assertEquals("DeductibleLevel", updatedDto.getDeductibleLevel(), updatedDto.getDeductibleLevel());
-		Assert.assertEquals("ProductionGuarantee", updatedDto.getProductionGuarantee(), updatedDto.getProductionGuarantee());
-		Assert.assertEquals("DeclaredAcres", updatedDto.getDeclaredAcres(), updatedDto.getDeclaredAcres());
-		Assert.assertEquals("ConfirmedAcres", updatedDto.getConfirmedAcres(), updatedDto.getConfirmedAcres());
-		Assert.assertEquals("AdjustmentFactor", updatedDto.getAdjustmentFactor(), updatedDto.getAdjustmentFactor());
-		Assert.assertEquals("AdjustedProductionGuarantee", updatedDto.getAdjustedProductionGuarantee(), updatedDto.getAdjustedProductionGuarantee());
-		Assert.assertEquals("InsurableValueSelected", updatedDto.getInsurableValueSelected(), updatedDto.getInsurableValueSelected());
-		Assert.assertEquals("InsurableValueHundredPercent", updatedDto.getInsurableValueHundredPercent(), updatedDto.getInsurableValueHundredPercent());
-		Assert.assertEquals("CoverageAmountAdjusted", updatedDto.getCoverageAmountAdjusted(), updatedDto.getCoverageAmountAdjusted());
-		Assert.assertEquals("MaxCoverageAmount", updatedDto.getMaxCoverageAmount(), updatedDto.getMaxCoverageAmount());
-		Assert.assertEquals("HarvestedYield", updatedDto.getHarvestedYield(), updatedDto.getHarvestedYield());
-		Assert.assertEquals("AppraisedYield", updatedDto.getAppraisedYield(), updatedDto.getAppraisedYield());
-		Assert.assertEquals("AbandonedYield", updatedDto.getAbandonedYield(), updatedDto.getAbandonedYield());
-		Assert.assertEquals("TotalYieldFromDop", updatedDto.getTotalYieldFromDop(), updatedDto.getTotalYieldFromDop());
-		Assert.assertEquals("TotalYieldFromAdjuster", updatedDto.getTotalYieldFromAdjuster(), updatedDto.getTotalYieldFromAdjuster());
-		Assert.assertEquals("YieldAssessment", updatedDto.getYieldAssessment(), updatedDto.getYieldAssessment());
-		Assert.assertEquals("TotalYieldForCalculation", updatedDto.getTotalYieldForCalculation(), updatedDto.getTotalYieldForCalculation());
-		Assert.assertEquals("YieldLossEligible", updatedDto.getYieldLossEligible(), updatedDto.getYieldLossEligible());
+		Assert.assertEquals("ClaimCalculationBerriesGuid", fetchedDto.getClaimCalculationBerriesGuid(), updatedDto.getClaimCalculationBerriesGuid());
+		Assert.assertEquals("ClaimCalculationGuid", fetchedDto.getClaimCalculationGuid(), updatedDto.getClaimCalculationGuid());
+		Assert.assertEquals("TotalProbableYield", fetchedDto.getTotalProbableYield(), updatedDto.getTotalProbableYield());
+		Assert.assertEquals("DeductibleLevel", fetchedDto.getDeductibleLevel(), updatedDto.getDeductibleLevel());
+		Assert.assertEquals("ProductionGuarantee", fetchedDto.getProductionGuarantee(), updatedDto.getProductionGuarantee());
+		Assert.assertEquals("DeclaredAcres", fetchedDto.getDeclaredAcres(), updatedDto.getDeclaredAcres());
+		Assert.assertEquals("ConfirmedAcres", fetchedDto.getConfirmedAcres(), updatedDto.getConfirmedAcres());
+		Assert.assertEquals("AdjustmentFactor", fetchedDto.getAdjustmentFactor(), updatedDto.getAdjustmentFactor());
+		Assert.assertEquals("AdjustedProductionGuarantee", fetchedDto.getAdjustedProductionGuarantee(), updatedDto.getAdjustedProductionGuarantee());
+		Assert.assertEquals("InsurableValueSelected", fetchedDto.getInsurableValueSelected(), updatedDto.getInsurableValueSelected());
+		Assert.assertEquals("InsurableValueHundredPercent", fetchedDto.getInsurableValueHundredPercent(), updatedDto.getInsurableValueHundredPercent());
+		Assert.assertEquals("CoverageAmountAdjusted", fetchedDto.getCoverageAmountAdjusted(), updatedDto.getCoverageAmountAdjusted());
+		Assert.assertEquals("MaxCoverageAmount", fetchedDto.getMaxCoverageAmount(), updatedDto.getMaxCoverageAmount());
+		Assert.assertEquals("HarvestedYield", fetchedDto.getHarvestedYield(), updatedDto.getHarvestedYield());
+		Assert.assertEquals("AppraisedYield", fetchedDto.getAppraisedYield(), updatedDto.getAppraisedYield());
+		Assert.assertEquals("AbandonedYield", fetchedDto.getAbandonedYield(), updatedDto.getAbandonedYield());
+		Assert.assertEquals("TotalYieldFromDop", fetchedDto.getTotalYieldFromDop(), updatedDto.getTotalYieldFromDop());
+		Assert.assertEquals("TotalYieldFromAdjuster", fetchedDto.getTotalYieldFromAdjuster(), updatedDto.getTotalYieldFromAdjuster());
+		Assert.assertEquals("YieldAssessment", fetchedDto.getYieldAssessment(), updatedDto.getYieldAssessment());
+		Assert.assertEquals("TotalYieldForCalculation", fetchedDto.getTotalYieldForCalculation(), updatedDto.getTotalYieldForCalculation());
+		Assert.assertEquals("YieldLossEligible", fetchedDto.getYieldLossEligible(), updatedDto.getYieldLossEligible());
+		Assert.assertEquals("CropCommodityId", cropCommodityId, updatedDto.getCropCommodityId());
+		Assert.assertEquals("CropYear", cropYear, updatedDto.getCropYear());
+		Assert.assertEquals("ContractId", contractId, updatedDto.getContractId());
+		Assert.assertEquals("CalculationVersion", calculationVersion, updatedDto.getCalculationVersion());
+		Assert.assertEquals("CalculationStatusCode", calculationStatusCode, updatedDto.getCalculationStatusCode());
 
 		//DELETE
 		dao.delete(updatedDto.getClaimCalculationBerriesGuid());
+		
+		ClaimCalculationBerriesDto deletedDto = dao.fetch(claimCalculationBerriesGuid);
+		Assert.assertNull(deletedDto);
 
 	}
 	
+	private ClaimCalculationDto createClaimCalculation() throws DaoException {
+		ClaimCalculationDto newDto = new ClaimCalculationDto();
+
+		Date transactionDate = new Date();
+		newDto.setPrimaryPerilCode("DROUGHT");
+		newDto.setSecondaryPerilCode("FIRE");
+		newDto.setClaimStatusCode("OPEN");
+		newDto.setCommodityCoverageCode("CQNT");
+		newDto.setCalculationStatusCode(calculationStatusCode );
+		newDto.setInsurancePlanId(1);
+		newDto.setCropCommodityId(cropCommodityId);
+		newDto.setCropYear(cropYear);
+		newDto.setInsuredByMeasurementType("ACRES");
+		newDto.setPolicyNumber("100100-20");
+		newDto.setContractId(contractId);
+		newDto.setClaimNumber(claimNumber);
+		newDto.setCalculationVersion(calculationVersion);
+		newDto.setGrowerNumber(11111);
+		newDto.setGrowerName("Name 1");
+		newDto.setGrowerAddressLine1("Line 1");
+		newDto.setGrowerAddressLine2("Line 2");
+		newDto.setGrowerPostalCode("V1V1V1");
+		newDto.setGrowerCity("Victoria");
+		newDto.setGrowerProvince("BC");
+		newDto.setTotalClaimAmount(15000.0);
+		newDto.setCalculationComment("Test Comment");
+		newDto.setSubmittedByUserid("user1");
+		newDto.setSubmittedByName("user 1");
+		newDto.setSubmittedByDate(transactionDate);
+		newDto.setRecommendedByUserid("user2");
+		newDto.setRecommendedByName("user 2");
+		newDto.setRecommendedByDate(transactionDate);
+		newDto.setApprovedByUserid("user3");
+		newDto.setApprovedByName("user 3");
+		newDto.setApprovedByDate(transactionDate);
+		newDto.setCalculateIivInd("Y");
+		newDto.setHasChequeReqInd(true);
+		newDto.setClaimCalculationGrainQuantityGuid(null);
+		newDto.setIsPedigreeInd(false);
+		
+		String userId = "JUNIT_TEST";
+
+		ClaimCalculationDao dao = persistenceSpringConfig.claimCalculationDao();
+		//INSERT
+		dao.insert(newDto, userId);
+		Assert.assertNotNull(newDto.getClaimCalculationGuid()); 
+		
+		return newDto;
+		
+	}
 	
 	private ClaimCalculationDto getDto() throws Exception {
 		String claimCalculationGuid = "0282C14368490524E0632FB3228E11C3";
