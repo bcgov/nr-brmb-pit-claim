@@ -31,6 +31,13 @@
 		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
 		
+		<result property="cropYear" column="CROP_YEAR" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="contractId" column="CONTRACT_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="calculationVersion" column="CALCULATION_VERSION" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="cropCommodityId" column="CROP_COMMODITY_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+		<result property="calculationStatusCode" column="CALCULATION_STATUS_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+
+		
 	</resultMap>
 	
 	
@@ -66,7 +73,13 @@
     
 	<select id="fetch" resultMap="ClaimCalculationBerriesDtoMap">
 		<include refid="selectColumns"/>
+   		,C.CROP_YEAR
+	    ,C.CONTRACT_ID
+	    ,C.CALCULATION_VERSION
+	    ,C.CROP_COMMODITY_ID
+	   ,C.CALCULATION_STATUS_CODE
 		FROM CLAIM_CALCULATION_BERRIES T
+		JOIN CLAIM_CALCULATION C ON C.CLAIM_CALCULATION_GUID = T.CLAIM_CALCULATION_GUID
 		WHERE T.CLAIM_CALCULATION_BERRIES_GUID = #{claimCalculationBerriesGuid}
 	</select>
 	

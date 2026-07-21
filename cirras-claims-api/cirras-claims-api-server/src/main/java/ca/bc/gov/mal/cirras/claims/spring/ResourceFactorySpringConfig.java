@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationRsrcFactory;
+import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationSimpleRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
+import ca.bc.gov.mal.cirras.claims.data.assemblers.OutboxFactory;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;
 
 
@@ -39,4 +41,17 @@ public class ResourceFactorySpringConfig {
 		CirrasDataSyncRsrcFactory result = new CirrasDataSyncRsrcFactory();
 		return result;
 	}
+
+	@Bean
+	public OutboxFactory outboxFactory() {
+		OutboxFactory result = new OutboxFactory();
+		return result;
+	}
+
+	@Bean
+	public ClaimCalculationSimpleRsrcFactory claimCalculationSimpleRsrcFactory() {
+		ClaimCalculationSimpleRsrcFactory result = new ClaimCalculationSimpleRsrcFactory();
+		return result;
+	}
+
 }
