@@ -2,21 +2,23 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const fs = require('fs');
 
 const app = express();
 
 // Host setup
 const port = process.env.PORT || 8080;
-//const hostname = "0.0.0.0";
+const hostname = "0.0.0.0";
 
-// Env values to replace in appConfig.json
-// This code updates the file once, when the Node server starts
-// needs a bit of tweaking - right now it has trouble replacing WEBADE_OAUTH2_SCOPES
-const configPath = path.join(__dirname, '../angular/dist/pit-claim/assets/data/appConfig.json');
+const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
 
-try {
+function setEnvironmentValues() {
+	// Env values to replace in appConfig.json
+	// This code updates the file only once, when the Node server starts
+	
+	console.log(`Updating appConfig.json`);
+	
+	const configPath = path.join(angularPath, '/assets/data/appConfig.json');
 
 	let config = fs.readFileSync(configPath, 'utf8');
 
@@ -34,31 +36,46 @@ try {
 
 	fs.writeFileSync(configPath, config);
 
-    console.log(`Updated appConfig.json`);
-    //console.log(`ENV: ${config.environment}`);
-} catch (err) {
-    console.error(`Failed to update ${configPath}:`, err.message);
-}
+	console.log(`Updated appConfig.json`);
+};
 
-// Middleware
-app.use(cors());
-// app.use(bodyParser.json());
+function startServer() {
+	try {
+		setEnvironmentValues();
+		
+		// Middleware
+		app.use(cors());
+		app.use(express.json());
 
-//// Serve static files from the Angular app
-// app.use('/pub/wfprev', express.static(path.join(__dirname, 'dist/wfprev')));
+		//// Serve static files from the Angular app
+		// app.use('/pub/wfprev', express.static(path.join(__dirname, 'dist/wfprev')));
 
-const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
-app.use( express.static(angularPath));
+		app.use(express.static(angularPath));
+
+		// Send all requests to Angular app
+		app.get((req, res) => {
+			res.sendFile(path.join(angularPath, 'index.html'));
+		});
+
+		// Listen on {port} and {hostname} to be accessible from public IP address
+		// app.listen(port, () => {
+		// 	console.log(`Server running on http://localhost:${port}`);
+		// });
+
+		const server = http.createServer(app); 
+		
+		// Bind to a Specific IP / Hostname (Crucial for Docker/Clouds)
+		server.listen(port, hostname, () => {
+			console.log(`angular app running on http://${hostname}:${port}`);
+		});
+		
+	} catch (error) {
+		console.error('Failed to initialize server:', error.message);
+		// Exit process with failure status code so Docker detects container failure
+		process.exit(1);
+	};
+};
+
+startServer();
 
 
-// Send all requests to Angular app
-app.get((req, res) => {
-    res.sendFile(path.join(angularPath, 'index.html'));
-});
-
-// const server = http.createServer(app);
-
-// Listen on {port} and {hostname} to be accessible from public IP address
-app.listen(port, () => {
-   console.log(`Server running on http://localhost:${port}`);
-});

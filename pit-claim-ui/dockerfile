@@ -6,11 +6,12 @@ WORKDIR /app
 COPY express-server ./express-server
 
 # Copy angular (client)
-COPY angular ./angular
+# COPY angular ./angular
+COPY ./pit-claim-ui/angular/dist/pit-claim ./angular
 
 # Install server deps
 WORKDIR /app/express-server
-RUN npm install
+RUN npm clean-install --only=production
 
 # Install client deps + build Angular
 # WORKDIR /app/angular
