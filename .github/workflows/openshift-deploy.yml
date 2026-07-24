@@ -68,7 +68,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # export IMAGE_NAME="$([ "${{inputs.MICROSERVICE_NAME}}" == "pit-claim-ui" ] && echo 'pit-claim-war' || echo 'cirras-claims-api')"
       - name: update IMAGE NAME variable if needed
         id: updateImageName
         if: ${{ inputs.MICROSERVICE_NAME == 'cirras-claims-api' || inputs.MICROSERVICE_NAME == 'pit-claim-ui' }}

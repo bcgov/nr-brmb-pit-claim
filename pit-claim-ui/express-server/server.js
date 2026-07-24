@@ -24,7 +24,7 @@ function setEnvironmentValues() {
 
 	config = config
 		.replace(/#\{BASE_URL\}#/g, process.env.BASE_URL)
-		.replace(/#\{ENV\}#/g, process.env.ENV )
+		.replace(/#\{APPLICATION_ENVIRONMENT_NAME\}#/g, process.env.APPLICATION_ENVIRONMENT_NAME )
 		.replace(/#\{CIRRAS_CLAIMS_REST_URI\}#/g, process.env.CIRRAS_CLAIMS_REST_URI)
 		.replace(/#\{PIT_UNDERWRITING_UI_URL\}#/g, process.env.PIT_UNDERWRITING_UI_URL)
 		.replace(/#\{WEBADE_OAUTH2_AUTHORIZE_URL\}#/g, process.env.WEBADE_OAUTH2_AUTHORIZE_URL)
