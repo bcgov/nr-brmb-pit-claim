@@ -23,9 +23,9 @@ spec:
           #   ['sh', '-c']
           # args:
           #   ['. /vault/secrets/env && catalina.sh run']
-          ports:
-            - containerPort: #{TOMCAT_PORT}#
-              protocol: TCP
+          # ports:
+          #   - containerPort: #{TOMCAT_PORT}#
+          #     protocol: TCP
           env:
             - name: TOMCAT_PORT
               valueFrom: 
