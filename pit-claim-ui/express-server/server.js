@@ -7,7 +7,7 @@ const fs = require('fs');
 const app = express();
 
 // Host setup
-const port = process.env.PORT || 8080;
+const port = process.env.TOMCAT_PORT || 8080;
 const hostname = "0.0.0.0";
 
 const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
