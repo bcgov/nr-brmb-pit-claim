@@ -51,8 +51,7 @@ jobs:
       - name: Build angular app
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
-          npm run build --configuration production --sourceMap=true --base-href /pub/pit-claim/ && replace-in-file /ngsw:/g ngsw:pit-claim: dist/pit-claim/ngsw-worker.js --verbose --isRegex
-
+          npm run build
 
       #NOTE: docker related step 
       - name: Set up QEMU
