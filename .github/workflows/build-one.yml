@@ -16,6 +16,7 @@ on:
           - cirras-claims-api
           - pit-claim-war
           - cirras-claims-ngclient-lib
+          - pit-claim-ui
 
 
 jobs:
@@ -48,3 +49,12 @@ jobs:
       ENVIRONMENT: DEV
       MICROSERVICE_NAME: pit-claim-war
       TAG: ${{ inputs.TAG }}
+  
+  build-claims-ui:
+    uses: ./.github/workflows/build-ui-angular.yml
+    if: ${{ inputs.COMPONENT == 'pit-claim-ui' }}
+    secrets: inherit
+    with:
+      TAG: ${{ inputs.tag }}
+      ENVIRONMENT: DEV
+      MICROSERVICE_NAME: pit-claim-ui 
