@@ -45,12 +45,12 @@ jobs:
       #NOTE: build the angular app 
       - name: Install dependencies for Angular project
         run: |
-          cd ${{ inputs.MICROSERVICE_NAME }}/${{ inputs.MICROSERVICE_NAME }}/angular
+          cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm clean-install --registry=${{ vars.REGISTRY }} --force
 
       - name: Build angular app
         run: |
-          cd ${{ inputs.MICROSERVICE_NAME }}/${{ inputs.MICROSERVICE_NAME }}/angular
+          cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm run build --configuration production --sourceMap=true --base-href /pub/pit-claim/ && replace-in-file /ngsw:/g ngsw:pit-claim: dist/pit-claim/ngsw-worker.js --verbose --isRegex
 
 
