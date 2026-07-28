@@ -3,11 +3,10 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy express-server
-COPY ./pit-claim-ui/express-server ./express-server
+COPY ./express-server ./express-server
 
 # Copy angular (client)
-# COPY angular ./angular
-COPY ./pit-claim-ui/angular/dist/pit-claim ./angular
+COPY ./angular/dist/pit-claim ./angular
 
 # Install server deps
 WORKDIR /app/express-server
