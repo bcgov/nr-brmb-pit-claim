@@ -7,7 +7,7 @@
     "serve": "ng serve",
     "start.prod": "ng serve --configuration production --sourceMap=true",
     "build": "ng build",
-    "build.prod": "ng build --configuration production --sourceMap=true --base-href /pub/pit-claim/ && replace-in-file /ngsw:/g ngsw:pit-claim: dist/pit-claim/ngsw-worker.js --verbose --isRegex",
+    "build.prod": "ng build --configuration production --base-href /pub/pit-claim/ && replace-in-file /ngsw:/g ngsw:pit-claim: dist/pit-claim/ngsw-worker.js --verbose --isRegex",
     "test": "ng test",
     "test-and-coverage": "ng test --browsers ChromeHeadlessCustom --watch=false --code-coverage",
     "test-dev": "ng test --reporters=mocha",
