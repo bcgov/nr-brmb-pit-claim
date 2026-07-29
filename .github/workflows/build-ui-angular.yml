@@ -53,6 +53,9 @@ jobs:
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm run build.prod
 
+      # TODO: push build to jfrog artifactory -> see build-npm.yml
+      # the builds should presumably go here: https://artifacts.developer.gov.bc.ca/ui/repos/tree/General/nb3e-pit-claim-libs-release/ca/bc/gov/mal/pit
+
       #NOTE: docker related step 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
