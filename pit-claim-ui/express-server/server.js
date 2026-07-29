@@ -12,43 +12,66 @@ const hostname = "0.0.0.0";
 
 const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
 
-function setEnvironmentValues() {
-	// Env values to replace in appConfig.json
-	// This code updates the file only once, when the Node server starts
+// function setEnvironmentValues() {
+// 	// Env values to replace in appConfig.json
+// 	// This code updates the file only once, when the Node server starts
 	
-	console.log(`Updating appConfig.json`);
+// 	console.log(`Updating appConfig.json`);
 	
-	const configPath = path.join(angularPath, '/assets/data/appConfig.json');
+// 	const configPath = path.join(angularPath, '/assets/data/appConfig.json');
 
-	let config = fs.readFileSync(configPath, 'utf8');
+// 	let config = fs.readFileSync(configPath, 'utf8');
 
-	config = config
-		.replace(/#\{BASE_URL\}#/g, process.env.BASE_URL)
-		.replace(/#\{APPLICATION_ENVIRONMENT_NAME\}#/g, process.env.APPLICATION_ENVIRONMENT_NAME )
-		.replace(/#\{CIRRAS_CLAIMS_REST_URI\}#/g, process.env.CIRRAS_CLAIMS_REST_URI)
-		.replace(/#\{PIT_UNDERWRITING_UI_URL\}#/g, process.env.PIT_UNDERWRITING_UI_URL)
-		.replace(/#\{WEBADE_OAUTH2_AUTHORIZE_URL\}#/g, process.env.WEBADE_OAUTH2_AUTHORIZE_URL)
-		.replace(/#\{CIRRAS_CLAIMS_UI\}#/g, process.env.CIRRAS_CLAIMS_UI)
-		.replace(/#\{WEBADE_OAUTH2_SCOPES\}#/g, process.env.WEBADE_OAUTH2_SCOPES)
-		.replace(/#\{WEBADE_OAUTH2_ENABLE_CHECKTOKEN\}#/g, process.env.WEBADE_OAUTH2_ENABLE_CHECKTOKEN )
-		.replace(/#\{UI_CHECKTOKEN_ENDPOINT\}#/g, process.env.UI_CHECKTOKEN_ENDPOINT )
-		.replace(/#\{WEBADE_OAUTH2_SITEMINDER_URL\}#/g, process.env.WEBADE_OAUTH2_SITEMINDER_URL );
+// 	config = config
+// 		.replace(/#\{BASE_URL\}#/g, process.env.BASE_URL)
+// 		.replace(/#\{APPLICATION_ENVIRONMENT_NAME\}#/g, process.env.APPLICATION_ENVIRONMENT_NAME )
+// 		.replace(/#\{CIRRAS_CLAIMS_REST_URI\}#/g, process.env.CIRRAS_CLAIMS_REST_URI)
+// 		.replace(/#\{PIT_UNDERWRITING_UI_URL\}#/g, process.env.PIT_UNDERWRITING_UI_URL)
+// 		.replace(/#\{WEBADE_OAUTH2_AUTHORIZE_URL\}#/g, process.env.WEBADE_OAUTH2_AUTHORIZE_URL)
+// 		.replace(/#\{CIRRAS_CLAIMS_UI\}#/g, process.env.CIRRAS_CLAIMS_UI)
+// 		.replace(/#\{WEBADE_OAUTH2_SCOPES\}#/g, process.env.WEBADE_OAUTH2_SCOPES)
+// 		.replace(/#\{WEBADE_OAUTH2_ENABLE_CHECKTOKEN\}#/g, process.env.WEBADE_OAUTH2_ENABLE_CHECKTOKEN )
+// 		.replace(/#\{UI_CHECKTOKEN_ENDPOINT\}#/g, process.env.UI_CHECKTOKEN_ENDPOINT )
+// 		.replace(/#\{WEBADE_OAUTH2_SITEMINDER_URL\}#/g, process.env.WEBADE_OAUTH2_SITEMINDER_URL );
 
-	fs.writeFileSync(configPath, config);
+// 	fs.writeFileSync(configPath, config);
 
-	console.log(`Updated appConfig.json`);
-};
+// 	console.log(`Updated appConfig.json`);
+// };
 
 function startServer() {
 	try {
-		setEnvironmentValues();
-		
+		// setEnvironmentValues();
+
+		console.log(`Updating appConfig.json`);
+
+		const configPath = path.join(angularPath, '/assets/data/appConfig.json');
+
+		// Read the template and perform replacement in memory safely at startup
+		let configTemplate = fs.readFileSync(configPath, 'utf8');
+		let processedConfig = configTemplate
+			.replace(/#\{BASE_URL\}#/g, process.env.BASE_URL)
+			.replace(/#\{APPLICATION_ENVIRONMENT_NAME\}#/g, process.env.APPLICATION_ENVIRONMENT_NAME )
+			.replace(/#\{CIRRAS_CLAIMS_REST_URI\}#/g, process.env.CIRRAS_CLAIMS_REST_URI)
+			.replace(/#\{PIT_UNDERWRITING_UI_URL\}#/g, process.env.PIT_UNDERWRITING_UI_URL)
+			.replace(/#\{WEBADE_OAUTH2_AUTHORIZE_URL\}#/g, process.env.WEBADE_OAUTH2_AUTHORIZE_URL)
+			.replace(/#\{CIRRAS_CLAIMS_UI\}#/g, process.env.CIRRAS_CLAIMS_UI)
+			.replace(/#\{WEBADE_OAUTH2_SCOPES\}#/g, process.env.WEBADE_OAUTH2_SCOPES)
+			.replace(/#\{WEBADE_OAUTH2_ENABLE_CHECKTOKEN\}#/g, process.env.WEBADE_OAUTH2_ENABLE_CHECKTOKEN )
+			.replace(/#\{UI_CHECKTOKEN_ENDPOINT\}#/g, process.env.UI_CHECKTOKEN_ENDPOINT )
+			.replace(/#\{WEBADE_OAUTH2_SITEMINDER_URL\}#/g, process.env.WEBADE_OAUTH2_SITEMINDER_URL );
+
+
 		// Middleware
 		app.use(cors());
 		app.use(express.json());
 
-		//// Serve static files from the Angular app
-		// app.use('/pub/wfprev', express.static(path.join(__dirname, 'dist/wfprev')));
+		// Serve the modified config dynamically when requested
+		console.log(`Serve the modified config dynamically`);
+		app.get('/assets/data/appConfig.json', (req, res) => {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(processedConfig);
+		});
 
 		app.use(express.static(angularPath));
 
@@ -56,11 +79,6 @@ function startServer() {
 		app.get((req, res) => {
 			res.sendFile(path.join(angularPath, 'index.html'));
 		});
-
-		// Listen on {port} and {hostname} to be accessible from public IP address
-		// app.listen(port, () => {
-		// 	console.log(`Server running on http://localhost:${port}`);
-		// });
 
 		const server = http.createServer(app); 
 		
