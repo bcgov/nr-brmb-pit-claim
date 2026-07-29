@@ -51,7 +51,7 @@ jobs:
       - name: Build angular app
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
-          npm run build.prod
+          npm run build -- --configuration production
 
       #NOTE: docker related step 
       - name: Set up QEMU
