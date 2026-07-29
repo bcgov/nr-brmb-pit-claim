@@ -68,15 +68,15 @@ function startServer() {
 
 		// Serve the modified config dynamically when requested
 		console.log(`Serve the modified config dynamically`);
-		app.get('/assets/data/appConfig.json', (req, res) => {
+		app.get('/pub/pit-claim/assets/data/appConfig.json', (req, res) => {
 			res.setHeader('Content-Type', 'application/json');
 			res.send(processedConfig);
 		});
 
-		app.use(express.static(angularPath));
+		app.use('/pub/pit-claim', express.static(angularPath));
 
 		// Send all requests to Angular app
-		app.get((req, res) => {
+		app.get('/pub/pit-claim/*', (req, res) => {
 			res.sendFile(path.join(angularPath, 'index.html'));
 		});
 
