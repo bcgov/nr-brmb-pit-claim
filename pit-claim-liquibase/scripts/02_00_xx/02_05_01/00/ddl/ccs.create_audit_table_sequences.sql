@@ -1,0 +1,110 @@
+CREATE SEQUENCE ccs.cca_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccba_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+
+;
+
+CREATE SEQUENCE ccs.ccgbpa_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgba_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgqa_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgqda_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgsla_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccgua_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccga_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccpaa_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccpua_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+CREATE SEQUENCE ccs.ccva_seq
+    AS bigint
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999
+    NO CYCLE
+;
+
+

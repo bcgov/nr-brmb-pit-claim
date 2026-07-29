@@ -1,0 +1,40 @@
+
+{
+    "databaseChangeLog": [
+        { "changeSet": {"author":"mhostettler","id":"9","changes": [
+            {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.ddl.create.ccs.ddl.create.declared_yield_contract_commodity_berries_sync.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/create.claim_calculation_berries_ob.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/create.process_failovr_ownership.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.audit_transaction_type_code.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_berries_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_basket_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_basket_product_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_quantity_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_quantity_detail_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_spot_loss_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grain_unseeded_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_grapes_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_plant_acres_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_plant_units_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_tables/ccs.create.claim_calculation_variety_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/ccs.create_audit_table_sequences.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/ccs.create_sequences.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_berries_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_basket_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_basket_product_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_quantity_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_quantity_detail_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_spot_loss_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grain_unseeded_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_grapes_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_plant_acres_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_plant_units_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/audit_triggers/ccs.fn_claim_calculation_variety_audit.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/triggers/ccs.fn_claim_calculation_berries_ob.sql"}},
+			{"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/triggers/ccs.fn_claim_calculation_ob.sql"}},
+            {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/grants/ccs.ddl.apply_grants.sql"}}
+        ] } }
+    ]
+}

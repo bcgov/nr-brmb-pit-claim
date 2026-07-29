@@ -20,7 +20,7 @@
         <dependencies>
         <dependency>
             <groupId>ca.bc.gov.mal.cirras.claims</groupId>
-            <artifactId>cirras-claims-api</artifactId>
+            <artifactId>cirras-claims-api-server</artifactId>
             <version>2.5.1-SNAPSHOT</version>
             <type>json</type>
             <classifier>swagger</classifier>

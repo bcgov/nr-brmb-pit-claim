@@ -14,8 +14,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dollar>$</dollar>
-        <node.version>v20.18.0</node.version>
-        <npm.version>10.9.0</npm.version>
+        <node.version>v22.18.0</node.version>
+		<npm.version>10.9.3</npm.version>
         <node.path>${user.home}/.node</node.path>
         <typescript.path>src/main/angular</typescript.path>
         <npm.url>https://apps.vividsolutions.com/artifactory/api/npm/npm/</npm.url>
@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>ca.bc.gov.mal.cirras.claims</groupId>
-            <artifactId>cirras-claims-api</artifactId>
+            <artifactId>cirras-claims-api-server</artifactId>
             <version>2.5.1-SNAPSHOT</version>
             <type>json</type>
             <classifier>swagger</classifier>
@@ -56,7 +56,7 @@
                     <artifactItems>
                         <artifactItem>
                             <groupId>ca.bc.gov.mal.cirras.claims</groupId>
-                            <artifactId>cirras-claims-api</artifactId>
+                            <artifactId>cirras-claims-api-server</artifactId>
                             <version>${project.version}</version>
                             <type>json</type>
                             <classifier>swagger</classifier>
