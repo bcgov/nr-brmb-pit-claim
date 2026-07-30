@@ -33,6 +33,10 @@ jobs:
         # run: echo "VERSION_NUMBER=$(grep -Po -m 1 '(?<=<version>)[0-9\.]+(-SNAPSHOT)?'  ${{ inputs.MICROSERVICE_NAME }}/pom.xml )" >> $GITHUB_OUTPUT
         run: echo "VERSION_NUMBER=$(grep -Po '"version"\s*:\s*"\K[^"]+' "${{ inputs.MICROSERVICE_NAME }}/angular/package.json")" >> $GITHUB_OUTPUT
 
+      # TODO: push build to jfrog artifactory -> see build-npm.yml; Not tested yet.
+      # - name: Setup artifactory
+      #  uses: jfrog/setup-jfrog-cli@v4
+
       - name: Set up nodejs
         uses: actions/setup-node@v4
         with:
@@ -52,9 +56,12 @@ jobs:
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm run build.prod
+      #   cd dist/${{ inputs.MICROSERVICE_NAME }}   # go into the build directory and zip it up 
+      #   npm pack
 
-      # TODO: push build to jfrog artifactory -> see build-npm.yml
-      # the builds should presumably go here: https://artifacts.developer.gov.bc.ca/ui/repos/tree/General/nb3e-pit-claim-libs-release/ca/bc/gov/mal/pit
+      # the build should presumably be pushed to here: https://artifacts.developer.gov.bc.ca/ui/repos/tree/General/nb3e-pit-claim-libs-release/ca/bc/gov/mal/pit
+
+
 
       #NOTE: docker related step 
       - name: Set up QEMU
