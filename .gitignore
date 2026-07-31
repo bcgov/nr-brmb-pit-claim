@@ -39,3 +39,4 @@ pit-claim-ui/angular/.npmrc
 pit-claim-ui/angular/.angular/
 pit-claim-ui/angular/dist/
 pit-claim-ui/angular/node_modules/
+pit-claim-ui/express-server/node_modules/

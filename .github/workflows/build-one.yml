@@ -14,8 +14,8 @@ on:
         type: choice
         options:
           - cirras-claims-api
-          - pit-claim-war
           - cirras-claims-ngclient-lib
+          - pit-claim-ui
 
 
 jobs:
@@ -39,12 +39,12 @@ jobs:
       API_TARGET: cirras-claims-api
       SWAGGER_TARGET_PATH: cirras-claims-ngclient-lib/cirras-claims-ngclient-lib/src/main/angular/src/swagger/swagger.json
       NPM_ARTIFACT_PATH: \@cirras/cirras-claims-api/-/@cirras
-
-  build-claim-war:
-    uses: ./.github/workflows/build-package.yml
-    if: ${{ inputs.COMPONENT == 'pit-claim-war' }}
+  
+  build-claims-ui:
+    uses: ./.github/workflows/build-ui-angular.yml
+    if: ${{ inputs.COMPONENT == 'pit-claim-ui' }}
     secrets: inherit
     with:
+      TAG: ${{ inputs.tag }}
       ENVIRONMENT: DEV
-      MICROSERVICE_NAME: pit-claim-war
-      TAG: ${{ inputs.TAG }}
+      MICROSERVICE_NAME: pit-claim-ui 

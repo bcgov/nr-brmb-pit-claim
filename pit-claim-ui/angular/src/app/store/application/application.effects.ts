@@ -1,0 +1,21 @@
+import { HttpClient } from '@angular/common/http';
+import {Injectable} from "@angular/core";
+import {Actions} from "@ngrx/effects";
+import {Store} from "@ngrx/store";
+import {RootState} from "../index";
+import {ApplicationStateService} from "../../services/application-state.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import { TokenService } from 'src/app/services/token.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
+@Injectable()
+export class ApplicationEffects {
+  constructor(
+      private actions: Actions,
+      private store: Store<RootState>,
+      private snackbarService: MatSnackBar,
+      private tokenService: TokenService,
+      private applicationStateService: ApplicationStateService,
+      private httpClient: HttpClient,
+      private appConfigService: AppConfigService) {
+  }
+}
