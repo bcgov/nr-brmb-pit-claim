@@ -33,7 +33,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: copy crunchydb files
         run: mkdir staging && cp -r crunchy-postgres/charts/crunchy-postgres staging/crunchy-postgres
