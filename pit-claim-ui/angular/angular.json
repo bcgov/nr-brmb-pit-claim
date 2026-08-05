@@ -50,7 +50,6 @@
               "node_modules/multiple-select/dist/multiple-select.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.slim.js",
               "node_modules/multiple-select/dist/multiple-select.js"
             ],
             "aot": false,
@@ -150,7 +149,6 @@
               "node_modules/multiple-select/dist/multiple-select.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.slim.js",
               "node_modules/multiple-select/dist/multiple-select.js"
             ],
             "assets": [
