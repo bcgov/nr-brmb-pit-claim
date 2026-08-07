@@ -61,7 +61,7 @@ jobs:
         run: |
           export VERSION_NUMBER=${{ steps.getVersion.outputs.VERSION_NUMBER }}
           mv ${{ inputs.MICROSERVICE_NAME }}/angular/${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz  ${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz
-          export BUILD_NAME="pit-${{ inputs.UI_TARGET}}-$VERSION_NUMBER"
+          export BUILD_NAME="${{ inputs.UI_TARGET}}-$VERSION_NUMBER"
           export BUILD_MODULE="${{ inputs.UI_TARGET}}"
           
           jf rt upload  --url ${{ vars.ARTIFACTORY_URL }} --user ${{ secrets.OPENSHIFT_ACCOUNT }} --password ${{ secrets.OPENSHIFT_PASSWORD }} --build-name $BUILD_NAME --module $BUILD_MODULE --target-props npm.version=$VERSION_NUMBER "pit-${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz" ${{ vars.NPM_REPO }}/${{ inputs.NPM_ARTIFACT_PATH}}/${{inputs.UI_TARGET}}-$VERSION_NUMBER.${{ github.run_number }}.tgz

@@ -40,5 +40,5 @@ jobs:
       TAG: ${{ inputs.tag }}
       ENVIRONMENT: DEV
       MICROSERVICE_NAME: pit-claim-ui 
-      UI_TARGET: pit-claim
-      NPM_ARTIFACT_PATH: \@pit/pit-claim/-/@pit
+      UI_TARGET: pit-claim-ui
+      NPM_ARTIFACT_PATH: \@pit/pit-claim-ui/-/@pit
