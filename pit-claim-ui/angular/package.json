@@ -1,5 +1,5 @@
 {
-  "name": "pit-claim",
+  "name": "pit-claim-ui",
   "version": "2.5.3-SNAPSHOT",
   "scripts": {
     "ng": "ng",

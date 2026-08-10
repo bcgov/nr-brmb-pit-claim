@@ -64,7 +64,7 @@ jobs:
           export BUILD_NAME="${{ inputs.UI_TARGET}}-$VERSION_NUMBER"
           export BUILD_MODULE="${{ inputs.UI_TARGET}}"
           
-          jf rt upload  --url ${{ vars.ARTIFACTORY_URL }} --user ${{ secrets.OPENSHIFT_ACCOUNT }} --password ${{ secrets.OPENSHIFT_PASSWORD }} --build-name $BUILD_NAME --module $BUILD_MODULE --target-props npm.version=$VERSION_NUMBER "pit-${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz" ${{ vars.NPM_REPO }}/${{ inputs.NPM_ARTIFACT_PATH}}/${{inputs.UI_TARGET}}-$VERSION_NUMBER.${{ github.run_number }}.tgz
+          jf rt upload  --url ${{ vars.ARTIFACTORY_URL }} --user ${{ secrets.OPENSHIFT_ACCOUNT }} --password ${{ secrets.OPENSHIFT_PASSWORD }} --build-name $BUILD_NAME --module $BUILD_MODULE --target-props npm.version=$VERSION_NUMBER "${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz" ${{ vars.NPM_REPO }}/${{ inputs.NPM_ARTIFACT_PATH}}/${{inputs.UI_TARGET}}-$VERSION_NUMBER.${{ github.run_number }}.tgz
 
       #NOTE: docker related step 
       - name: Set up QEMU
