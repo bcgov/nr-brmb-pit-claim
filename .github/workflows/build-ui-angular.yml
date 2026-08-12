@@ -12,6 +12,12 @@ on:
       TAG:
         required: true
         type: string
+      UI_TARGET:
+        required: true
+        type: string
+      NPM_ARTIFACT_PATH: 
+        required: true
+        type: string
 
 env:
   NPMRC: ${{ secrets.NPMRC }}
