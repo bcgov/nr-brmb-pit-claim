@@ -61,6 +61,7 @@ jobs:
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm run build.prod
+          export VERSION_NUMBER=${{ steps.getVersion.outputs.VERSION_NUMBER }}
           export INPUT_NAME="${{ inputs.MICROSERVICE_NAME }}"
           export DIST_NAME="dist/${INPUT_NAME%-ui}"
           tar -cvzf ${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz $DIST_NAME
