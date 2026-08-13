@@ -5,9 +5,7 @@
     "module": "commonjs",
     "experimentalDecorators": true,
     "types": [
-      "jasmine",
-      "node",
-      "karma-viewport"
+      "node"
     ]
   },
   "files": [
