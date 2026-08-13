@@ -62,7 +62,7 @@ jobs:
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm run build.prod
           export INPUT_NAME="${{ inputs.MICROSERVICE_NAME }}"
-          export DIST_NAME="dist/${INPUT_NAME%-ui}"
+          export DIST_NAME="/dist/${INPUT_NAME%-ui}"
           tar -czvf ${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz DIST_NAME
 
       - name: Push Build to Artifactory
