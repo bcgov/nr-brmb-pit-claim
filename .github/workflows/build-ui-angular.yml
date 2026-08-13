@@ -12,6 +12,12 @@ on:
       TAG:
         required: true
         type: string
+      UI_TARGET:
+        required: true
+        type: string
+      NPM_ARTIFACT_PATH: 
+        required: true
+        type: string
 
 env:
   NPMRC: ${{ secrets.NPMRC }}
@@ -33,9 +39,8 @@ jobs:
         # run: echo "VERSION_NUMBER=$(grep -Po -m 1 '(?<=<version>)[0-9\.]+(-SNAPSHOT)?'  ${{ inputs.MICROSERVICE_NAME }}/pom.xml )" >> $GITHUB_OUTPUT
         run: echo "VERSION_NUMBER=$(grep -Po '"version"\s*:\s*"\K[^"]+' "${{ inputs.MICROSERVICE_NAME }}/angular/package.json")" >> $GITHUB_OUTPUT
 
-      # TODO: push build to jfrog artifactory -> see build-npm.yml; Not tested yet.
-      # - name: Setup artifactory
-      #  uses: jfrog/setup-jfrog-cli@v4
+      - name: Setup artifactory
+        uses: jfrog/setup-jfrog-cli@v4
 
       - name: Set up nodejs
         uses: actions/setup-node@v5
@@ -56,12 +61,19 @@ jobs:
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm run build.prod
-      #   cd dist/${{ inputs.MICROSERVICE_NAME }}   # go into the build directory and zip it up 
-      #   npm pack
+          export VERSION_NUMBER=${{ steps.getVersion.outputs.VERSION_NUMBER }}
+          export INPUT_NAME="${{ inputs.MICROSERVICE_NAME }}"
+          export DIST_NAME="dist/${INPUT_NAME%-ui}"
+          tar -cvzf ${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz $DIST_NAME
 
-      # the build should presumably be pushed to here: https://artifacts.developer.gov.bc.ca/ui/repos/tree/General/nb3e-pit-claim-libs-release/ca/bc/gov/mal/pit
-
-
+      - name: Push Build to Artifactory
+        run: |
+          export VERSION_NUMBER=${{ steps.getVersion.outputs.VERSION_NUMBER }}
+          mv ${{ inputs.MICROSERVICE_NAME }}/angular/${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz  ${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz
+          export BUILD_NAME="${{ inputs.UI_TARGET}}-$VERSION_NUMBER"
+          export BUILD_MODULE="${{ inputs.UI_TARGET}}"
+          
+          jf rt upload  --url ${{ vars.ARTIFACTORY_URL }} --user ${{ secrets.OPENSHIFT_ACCOUNT }} --password ${{ secrets.OPENSHIFT_PASSWORD }} --build-name $BUILD_NAME --module $BUILD_MODULE --target-props npm.version=$VERSION_NUMBER "${{ inputs.UI_TARGET}}-$VERSION_NUMBER.tgz" ${{ vars.NPM_REPO }}/${{ inputs.NPM_ARTIFACT_PATH}}/${{inputs.UI_TARGET}}-$VERSION_NUMBER.${{ github.run_number }}.tgz
 
       #NOTE: docker related step 
       - name: Set up QEMU
