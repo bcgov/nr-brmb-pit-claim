@@ -77,7 +77,6 @@
               "assets": [
                 "src/favicon.ico",
                 "src/assets",
-                "src/dev-config",
                 "src/manifest.json",
                 "src/refresh-token.html",
                 {
