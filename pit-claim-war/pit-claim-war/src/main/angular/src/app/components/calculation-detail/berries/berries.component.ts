@@ -96,6 +96,15 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
       this.viewModel.formGroup.controls.yieldAssessment.valueChanges.subscribe(value => this.updateCalculated() )
     }
 
+    allowEnteringHarvestedYield(){
+      // If there is no yield entered in the underwriting app
+      if (this.calculationDetail.claimCalculationBerries?.harvestedYieldFromCUWSExistsInd !== true ){
+        return true 
+      } else {
+        return false
+      }
+    }
+
     ngOnChanges2(changes: SimpleChanges) {
         var self = this
         if ( changes.calculationDetail && this.calculationDetail ) {

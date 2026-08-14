@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ca.bc.gov.mal.cirras.claims.data.repositories.mapper.PerilCodeMapper">
+
+	<resultMap id="PerilCodeDtoMap" type="ca.bc.gov.mal.cirras.claims.data.entities.PerilCodeDto">
+	
+		<result property="perilCode" column="PERIL_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="description" column="DESCRIPTION" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="effectiveDate" column="EFFECTIVE_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="expiryDate" column="EXPIRY_DATE" javaType="java.util.Date" jdbcType="DATE" />
+		<result property="dataSyncTransDate" column="DATA_SYNC_TRANS_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		<result property="updateUser" column="UPDATE_USER" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="updateDate" column="UPDATE_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+		
+		<!-- used for coverage - peril queries -->
+		<result property="commodityCoverageCode" column="COMMODITY_COVERAGE_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="cropCommodityId" column="CROP_COMMODITY_ID" javaType="java.lang.Integer" jdbcType="NUMERIC" />
+	</resultMap>
+	
+	
+    <sql id="selectColumns">
+    	SELECT 	T.PERIL_CODE, 
+    		   	T.DESCRIPTION
+    </sql>
+	
+	<select id="fetchAll" resultMap="PerilCodeDtoMap">  
+		<include refid="selectColumns"/>
+		FROM PERIL_CODE T
+		ORDER BY T.DESCRIPTION
+	</select> 
+	
+	<select id="selectForCoverage" resultMap="PerilCodeDtoMap">  
+		<include refid="selectColumns"/>
+		FROM COVERAGE_PERIL CP
+		JOIN PERIL_CODE T ON T.PERIL_CODE = CP.PERIL_CODE
+		WHERE CP.COMMODITY_COVERAGE_CODE = #{commodityCoverageCode}
+		AND CP.CROP_COMMODITY_ID = #{cropCommodityId}
+		ORDER BY T.DESCRIPTION
+	</select> 
+	
+	<select id="fetch" resultMap="PerilCodeDtoMap">
+		SELECT 	T.PERIL_CODE, 
+				T.DESCRIPTION, 
+				T.EFFECTIVE_DATE, 
+				T.EXPIRY_DATE, 
+				T.DATA_SYNC_TRANS_DATE, 
+				T.CREATE_USER, 
+				T.CREATE_DATE, 
+				T.UPDATE_USER, 
+				T.UPDATE_DATE 
+		FROM PERIL_CODE T
+		WHERE T.PERIL_CODE = #{perilCode}
+	</select>
+	
+	<insert id="insert">
+
+		INSERT INTO PERIL_CODE (
+			PERIL_CODE,
+			DESCRIPTION,
+			EFFECTIVE_DATE,
+			EXPIRY_DATE,
+			DATA_SYNC_TRANS_DATE,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		) 
+		VALUES (
+			#{dto.perilCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.description, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN},
+			#{dto.effectiveDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.expiryDate, javaType=java.util.Date , jdbcType=DATE, mode=IN},
+			#{dto.dataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN},
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP,
+			#{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN},
+			CURRENT_TIMESTAMP
+		 )
+	</insert> 
+
+	<update id="update">
+		UPDATE PERIL_CODE SET
+			DESCRIPTION = #{dto.description, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}, 
+			EFFECTIVE_DATE = #{dto.effectiveDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			EXPIRY_DATE = #{dto.expiryDate, javaType=java.util.Date , jdbcType=DATE, mode=IN}, 
+			DATA_SYNC_TRANS_DATE = #{dto.dataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}, 
+			UPDATE_USER = #{userId, javaType=java.lang.String, jdbcType=VARCHAR, mode=IN}, 
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		 WHERE PERIL_CODE = #{dto.perilCode, javaType=java.lang.String , jdbcType=VARCHAR, mode=IN}
+		 AND DATA_SYNC_TRANS_DATE <![CDATA[ < ]]> #{dto.dataSyncTransDate, javaType=java.util.Date , jdbcType=TIMESTAMP, mode=IN}
+	</update> 
+
+	<delete id="delete">
+		DELETE FROM PERIL_CODE WHERE PERIL_CODE = #{perilCode}
+	</delete>
+
+	
+</mapper>
