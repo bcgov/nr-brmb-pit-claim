@@ -56,7 +56,7 @@
 		<dependency>
 		   <groupId>com.fasterxml.jackson.dataformat</groupId>
 		   <artifactId>jackson-dataformat-yaml</artifactId>
-		   <version>2.19.0</version>
+		   <version>2.22.1</version>
 		</dependency>
 		
 		<dependency>
@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.10.0</version>
+			<version>1.15.0</version>
 		</dependency>
 
 		<dependency>
@@ -156,19 +156,19 @@
 		<dependency>
 		  <groupId>jakarta.servlet</groupId>
 		  <artifactId>jakarta.servlet-api</artifactId>
-		  <version>6.0.0</version>
+		  <version>6.1.0</version>
 		</dependency>
 		
 		<dependency>
 		    <groupId>jakarta.xml.bind</groupId>
 		    <artifactId>jakarta.xml.bind-api</artifactId>
-		    <version>4.0.2</version> 
+		    <version>4.0.5</version> 
 		</dependency>
 		
 		<dependency>
 	      <groupId>org.glassfish.jaxb</groupId>
 	      <artifactId>jaxb-runtime</artifactId>
-	      <version>4.0.2</version>
+	      <version>4.0.9</version>
 		</dependency>
 		
 		<dependency>
@@ -184,7 +184,7 @@
 		<dependency>
 		    <groupId>io.swagger.core.v3</groupId>
 		    <artifactId>swagger-jaxrs2-jakarta</artifactId>
-		    <version>2.2.20</version>
+		    <version>2.2.53</version>
 		</dependency>
 		<dependency>
 		    <groupId>jakarta.ws.rs</groupId>
@@ -267,7 +267,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.24.2</version>
+			<version>2.26.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -291,45 +291,45 @@
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-annotations</artifactId>
-		    <version>12.1.0</version>
+		    <version>12.1.12</version>
 		</dependency>
 
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-webapp</artifactId>
-		    <version>12.1.0</version>
+		    <version>12.1.12</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-jndi</artifactId>
-		    <version>12.1.0</version>
+		    <version>12.1.12</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-plus</artifactId>
-		    <version>12.1.0</version>
+		    <version>12.1.12</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty.ee10</groupId>
 		    <artifactId>jetty-ee10-apache-jsp</artifactId>
-		    <version>12.1.0</version>
+		    <version>12.1.12</version>
 		</dependency>
 
 	  <dependency>
 	      <groupId>org.glassfish.jersey.ext</groupId>
 	      <artifactId>jersey-spring6</artifactId>
-	      <version>4.0.0-M2</version>
+	      <version>4.0.2</version>
 	  </dependency>
 	  <dependency>
 	      <groupId>org.glassfish.jersey.core</groupId>
 	      <artifactId>jersey-server</artifactId>
-	      <version>4.0.0-M2</version>
+	      <version>4.0.2</version>
 	  </dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
+			<version>4.13.2</version>
 		</dependency>
 
 	</dependencies>
@@ -350,7 +350,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.5.1</version>
 				<configuration>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
@@ -359,7 +359,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
+				<version>2.10</version>
 				<configuration>
 					<additionalProjectnatures>
 						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
@@ -374,7 +374,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
+				<version>3.15.0</version>
 				<configuration>
 					<source>${java-source-version}</source>
 					<target>${java-target-version}</target>
@@ -386,7 +386,7 @@
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.2.20</version>
+                <version>2.2.53</version>
                 <configuration>
                     <outputFileName>swagger</outputFileName>
                     <outputPath>${project.build.directory}</outputPath>
@@ -411,7 +411,7 @@
 			<plugin>
 			    <groupId>org.codehaus.mojo</groupId>
 			    <artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.6.1</version>
 			    <executions>
 			        <execution>
 			            <id>attach-swagger</id>
@@ -434,7 +434,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
+				<version>1.6.0</version>
 				<configuration>
 					<mainClass>org.test.int1.Main</mainClass>
 				</configuration>
@@ -442,7 +442,7 @@
 			<plugin>
 			     <groupId>org.apache.maven.plugins</groupId>
 			     <artifactId>maven-surefire-plugin</artifactId>
-			     <version>2.12.4</version>
+			     <version>2.22.2</version>
 			     <configuration>
 			       <skipTests>true</skipTests>
 			     </configuration>
