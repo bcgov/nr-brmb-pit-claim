@@ -43,8 +43,10 @@
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
  */
-import "zone.js"; // Included with Angular CLI.
-import "wicg-inert"; //TODO add explanation
+
+// if we remove zone.js then we have to start using signals https://angular.dev/guide/zoneless#removing-zonejs
+import "zone.js"; // Included with Angular CLI. 
+// import "wicg-inert"; // support for old browsers
 
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents

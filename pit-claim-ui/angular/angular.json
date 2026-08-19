@@ -20,7 +20,6 @@
             "allowedCommonJsDependencies": [
               "lodash",
               "deep-equal",
-              "moment-timezone",
               "moment",
               "angular2-uuid",
               "vanilla-text-mask"
@@ -122,6 +121,6 @@
     }
   },
   "cli": {
-    "analytics": "aaf8cc4c-1e16-4ec7-97ef-08ee82b5af61"
+    "analytics": false
   }
 }

@@ -37,7 +37,6 @@ import {CalculationDetailContainer} from "./containers/calculation-detail/calcul
 import {CalculationPrintoutComponent} from './components/calculation-printout/grapes/grapes.component';
 import {CdkTableModule} from "@angular/cdk/table";
 import {appInitFn} from "./utils/app-initializer";
-import {AutoFocusDirective} from "./directives/auto-focus.directive";
 import {BaseDialogComponent} from "./components/dialogs/base-dialog/base-dialog.component";
 import {UpdateService} from "./services/update.service";
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -65,17 +64,9 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatButtonModule} from "@angular/material/button";
 import {OWL_DATE_TIME_FORMATS, OwlDateTimeModule, OwlMomentDateTimeModule} from "@busacca/ng-pick-datetime";
-import {BaseExpansionPanelComponent} from "./components/common/base-expansion-panel/base-expansion-panel.component";
 import {WFSnackbarComponent} from "./components/common/snackbars/wf-snackbar.component";
-import {TimeMaskDirective} from "./directives/time-mask.directive";
-import {DateTimeMaskDirective} from "./directives/date-time-mask.directive";
-import {DateMaskDirective} from "./directives/date-mask.directive";
 import {ErrorDialogComponent} from "./components/dialogs/error-dialog/error-dialog.component";
-import {DateRangeMaskDirective} from "./directives/date-range-mask.directive";
-import {ReadonlyFieldDirective} from "./directives/readonly-field.directive";
-import {ReadonlyFormDirective} from "./directives/readonly-form.directive";
 import {A11yModule} from "@angular/cdk/a11y";
-import {MultiSelectDirective} from "./directives/multi-select.directive";
 import {SingleSelectDirective} from "./directives/singleselect.directive";
 import { ReplaceOptionsDialogComponent } from './components/dialogs/replace-options-dialog/replace-options-dialog.component';
 import { CalculationDetailBerriesComponent } from './components/calculation-detail/berries/berries.component';
@@ -129,20 +120,10 @@ if (!environment.production || !environment.restrict_imports) {
 }
 
 @NgModule({ declarations: [
-        DateMaskDirective,
-        TimeMaskDirective,
-        DateTimeMaskDirective,
-        DateRangeMaskDirective,
-        ReadonlyFieldDirective,
-        ReadonlyFormDirective,
-        MultiSelectDirective,
         SingleSelectDirective,
-        MultiSelectDirective,
         SingleSelectDirective,
         WFSnackbarComponent,
-        BaseExpansionPanelComponent,
         BaseDialogComponent,
-        AutoFocusDirective,
         ClaimsContainer,
         ClaimsComponent,
         CalculationDetailContainer,

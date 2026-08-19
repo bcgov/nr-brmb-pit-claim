@@ -20,21 +20,7 @@ export class UpdateService {
 
     public checkForUpdates(): void {
         if (this.swUpdate.isEnabled) {
-            // this.swUpdate.versionUpdates.subscribe(event => {
-            //     if(event.type === 'VERSION_READY'){
-            //         console.log("current version is", event.currentVersion);
-            //         console.log("available version is", event.latestVersion);
-
-            //         let snackbarRef = this.snackbarService.openFromComponent(WFSnackbarComponent, getSnackbarConfig("A new version is available", WF_SNACKBAR_TYPES.UPDATE));
-            //         snackbarRef.onAction().subscribe(
-            //             () => {
-            //                 this.swUpdate.activateUpdate().then(() => document.location.reload());
-            //             }
-            //         );
-            //     }
-
-            // });
-
+            
             this.swUpdate.versionUpdates.subscribe((evt) => {
                 switch (evt.type) {
                   case 'VERSION_DETECTED':
