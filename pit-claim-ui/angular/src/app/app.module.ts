@@ -96,6 +96,7 @@ import { CalculationDetailGrainBasketComponent } from "./components/calculation-
 import { CalculationPrintoutGrainBasketComponent } from "./components/calculation-printout/grain-basket/grain-basket.component";
 import { Type } from '@angular/core';
 import { ModuleWithProviders } from '@angular/core';
+import { CalculationDetailGrapesContainer } from "./containers/calculation-detail/calculation-detail-grapes-container.component";
 
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.
@@ -128,6 +129,7 @@ if (!environment.production || !environment.restrict_imports) {
         ClaimsComponent,
         CalculationDetailContainer,
         CalculationDetailComponent,
+        CalculationDetailGrapesContainer,
         CalculationDetailGrapesComponent,
         CalculationPrintoutComponent,
         CalculationsContainer,

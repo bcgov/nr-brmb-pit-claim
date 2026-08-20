@@ -1,13 +1,15 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, AfterViewInit} from "@angular/core";
+import {ParamMap} from "@angular/router";
 import {CalculationDetailGrapesComponentModel} from "./grapes.component.model";
 import {
+    clearCalculationDetail,
   loadCalculationDetail,
   updateCalculationDetailMetadata
 } from "../../../store/calculation-detail/calculation-detail.actions";
 import {CALCULATION_DETAIL_COMPONENT_ID} from "../../../store/calculation-detail/calculation-detail.state";
 import {BaseComponent} from "../../common/base/base.component";
 import {vmCalculation} from "../../../conversion/models";
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {UntypedFormArray, UntypedFormGroup} from "@angular/forms";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
@@ -24,15 +26,21 @@ import { setFormStateUnsaved } from "src/app/store/application/application.actio
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";
-    @Input() claimCalculationGuid?: string;
-    @Input() claimNumber?: string;
+    // @Input() claimCalculationGuid?: string;
+    // @Input() claimNumber?: string;
     @Input() calculationDetail: vmCalculation;
-    @Input() updatedCalculation: any;
+    // @Input() updatedCalculation: any;
     @Input() isUnsaved: boolean;
+    @Input() loadState: LoadState;
+    @Input() errorState: ErrorState[];
 
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];
     cropVarietyCodes: (CodeData|Option)[];
+
+    claimCalculationGuid: string;
+    claimNumber: string;
+    policyNumber: string;
 
     isClaimTotalHigh: boolean = false;
 
@@ -42,7 +50,24 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
         this.viewModel = new CalculationDetailGrapesComponentModel(this.sanitizer, this.fb, this.calculationDetail);
     }
 
+    loadCalculation() {
+        this.route.paramMap.subscribe(
+            (params: ParamMap) => {
+                this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+                this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+                this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+
+                if (!this.claimCalculationGuid) {
+                    this.store.dispatch(clearCalculationDetail());
+                }   
+                this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+            }
+        );
+    }
+
+
     loadPage() {
+        this.loadCalculation()
         this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
         this.perilCodeOptions = getCodeOptions("PERIL_CODE");
         this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -185,15 +210,15 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
         return vla.controls.map( ( c: UntypedFormGroup ) => c.value.cropVarietyId )
     }
 
-    updateVarietyField( claimIndex, updateIndex, fieldName ) {
-        let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
+    // updateVarietyField( claimIndex, updateIndex, fieldName ) {
+    //     let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
 
-        if ( this.updatedCalculation.varieties[ updateIndex][ fieldName ] == vla.controls[ claimIndex ].value[ fieldName ] ) return
+    //     if ( this.updatedCalculation.varieties[ updateIndex][ fieldName ] == vla.controls[ claimIndex ].value[ fieldName ] ) return
 
-        console.log( 'updating variety', claimIndex, fieldName, 'to', this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
-        let fg = vla.controls[ claimIndex ] as UntypedFormGroup
-        fg.controls[ fieldName ].setValue( this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
-    }
+    //     console.log( 'updating variety', claimIndex, fieldName, 'to', this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
+    //     let fg = vla.controls[ claimIndex ] as UntypedFormGroup
+    //     fg.controls[ fieldName ].setValue( this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
+    // }
 
     updatingCalculated = false
     updateCalculated() {

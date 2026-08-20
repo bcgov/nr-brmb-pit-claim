@@ -10,6 +10,7 @@ import {SCOPES_UI} from "./utils/scopes";
 import { CalculationsContainer } from "./containers/calculations/calculations-container.component";
 import { ClaimsContainer } from "./containers/claims/claims-container.component";
 import { DeactivateGuard } from "./services/util/DeactivateGuard";
+import { CalculationDetailGrapesContainer } from "./containers/calculation-detail/calculation-detail-grapes-container.component";
 
 const LANDING_SCOPES = [[SCOPES_UI.GET_TOP_LEVEL, SCOPES_UI.GET_CODE_TABLES, SCOPES_UI.SEARCH_CALCULATIONS]];
 const CLAIMS_SCOPES = [[SCOPES_UI.SEARCH_CLAIMS]];
@@ -23,7 +24,27 @@ const routesDesktop: Routes = [
     { 
       path: R.CALCULATION_LIST, component: CalculationsContainer, data: {scopes: CALCULATION_SCOPES},
       canActivate: [ResourcesAuthGuard]      
-    },  
+    },
+
+
+    { path: R.CALCULATION_DETAIL_GRAPES, children: [
+      { 
+        path: ':policyNumber/:claimNumber', 
+        component: CalculationDetailGrapesContainer, 
+        data: {scopes: CALCULATION_DETAIL_SCOPES},
+        canActivate: [ResourcesAuthGuard],
+        canDeactivate: [DeactivateGuard]
+      },
+      { 
+        path: ':policyNumber/:claimNumber/:claimCalculationGuid', 
+        component: CalculationDetailGrapesContainer, 
+        data: {scopes: CALCULATION_DETAIL_SCOPES},
+        canActivate: [ResourcesAuthGuard],
+        canDeactivate: [DeactivateGuard]
+      }
+    ] },
+
+
     { path: R.CALCULATION_DETAIL, children: [
       { 
         path: ':policyNumber/:claimNumber', component: CalculationDetailContainer, data: {scopes: CALCULATION_DETAIL_SCOPES},

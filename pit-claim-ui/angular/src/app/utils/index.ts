@@ -32,11 +32,33 @@ export enum ResourcesRoutes {
     CLAIM_LIST = "claim-list",
     CALCULATION_LIST = "calculation-list",    
     CALCULATION_DETAIL = "calculation-detail",
+    CALCULATION_DETAIL_GRAPES = "calculation-detail/grapes",
     UNAUTHORIZED = "unauthorized",
     ERROR_PAGE = "error",
     SIGN_UP = "sign-up",
     SIGN_OUT = "sign-out-page"
 }
+
+export const INSURANCE_PLAN = {
+    "GRAPES"        : 1,  
+    "TREEFRUITS"    : 2,  
+    "BERRIES"       : 3,   
+    "GRAIN"         : 4, 
+    "FORAGE"        : 5,
+    "VEGETABLES"    : 6,
+    "FLOWERS"       : 8
+}
+
+export const INSURANCE_NAME = {
+    "GRAPES"        : "GRAPES",  
+    "TREEFRUITS"    : "TREEFRUITS",  
+    "BERRIES"       : "BERRIES",   
+    "GRAIN"         : "GRAIN", 
+    "FORAGE"        : "FORAGE",
+    "VEGETABLES"    : "VEGETABLES",
+    "FLOWERS"       : "FLOWERS"
+}
+
 
 export const DATE_FORMATS = {
     fullPickerInput: "Y-MM-DD HH:mm",
@@ -266,11 +288,21 @@ export function requiredIfValidator(predicate) {
 }
 
 export function navigateToCalculation(item: vmCalculation, router: Router) {
-  navigateToCalculationHelper(item.policyNumber, item.claimNumber.toString(), item.claimCalculationGuid, router);
+  navigateToCalculationHelper(item.insurancePlanId, item.policyNumber, item.claimNumber.toString(), item.claimCalculationGuid, router);
 }
 
-export function navigateToCalculationHelper(policyNumber:string, claimNumber:string, claimCalculationGuid: string, router: Router) {
-  router.navigate([ResourcesRoutes.CALCULATION_DETAIL, policyNumber, claimNumber, claimCalculationGuid]);
+export function navigateToCalculationHelper(insurancePlanId: number, policyNumber:string, claimNumber:string, claimCalculationGuid: string, router: Router) {
+    let res = ""
+
+    switch (insurancePlanId){
+        case INSURANCE_PLAN.GRAPES:
+            res = ResourcesRoutes.CALCULATION_DETAIL_GRAPES;
+            break;
+        default:
+            res = ResourcesRoutes.CALCULATION_DETAIL;
+    }
+
+    router.navigate([res, policyNumber, claimNumber, claimCalculationGuid]);
 }
 
 export function dollars( val ) {
