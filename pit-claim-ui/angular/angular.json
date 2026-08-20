@@ -21,8 +21,7 @@
               "lodash",
               "deep-equal",
               "moment",
-              "angular2-uuid",
-              "vanilla-text-mask"
+              "angular2-uuid"
            ],
             "outputPath": "dist/pit-claim",
             "index": "src/index.html",
