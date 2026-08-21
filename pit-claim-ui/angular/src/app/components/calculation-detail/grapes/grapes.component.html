@@ -354,4 +354,13 @@
             </form>
           </div>
         </div>
+
+  <!-- printout -->
+  <cirras-calculation-printout 
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid &&
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout>
+
+
 </base-wrapper>

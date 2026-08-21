@@ -17,7 +17,7 @@ import {
 import {ErrorState, LoadState} from "../../store/application/application.state";
 
 @Component({
-    selector: "cirras-claims-calculation-detail-container",
+    selector: "cirras-claims-calculation-detail-grapes-container",
     template: `
         <cirras-claims-calculation-detail-grapes 
             [calculationDetail]="calculationDetail$ | async"
@@ -29,7 +29,7 @@ import {ErrorState, LoadState} from "../../store/application/application.state";
     standalone: false
 })
 export class CalculationDetailGrapesContainer extends BaseContainer  {
-    displayLabel = "Calculation Detail";
+
     calculationDetail$: Observable<vmCalculation> = this.store.pipe(select(selectCalculationDetail()));
 
     loadState$: Observable<LoadState> = this.store.pipe(select(selectCalculationDetailMetadataLoadState()));

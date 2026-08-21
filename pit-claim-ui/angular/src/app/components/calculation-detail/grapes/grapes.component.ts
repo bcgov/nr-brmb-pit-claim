@@ -90,7 +90,7 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
 
       if (changes.calculationDetail) {
           this.calculationDetail = changes.calculationDetail.currentValue;
-          this.calculationComment = this.calculationDetail.calculationComment
+          this.calculationComment = (this.calculationDetail ? this.calculationDetail.calculationComment : "")
 
           setTimeout(() => {
               this.cdr.detectChanges();

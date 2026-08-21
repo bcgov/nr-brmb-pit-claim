@@ -1,6 +1,6 @@
 import { Injector, NgModule, inject, provideAppInitializer } from "@angular/core";
 import {ScrollingModule} from "@angular/cdk/scrolling";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormsModule} from "@angular/forms";
 import {
   ApiModule as CirrasClaimsAPIServiceModule,
   Configuration as CirrasClaimsAPIServiceConfiguration
@@ -22,27 +22,20 @@ import {DATE_FORMATS , provideBootstrapEffects} from "./utils"; //
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
 import {MomentModule} from "ngx-moment";
 import {UnauthorizedPageComponent} from "./components/unauthorized-page/unauthorized-page.component";
-import {ErrorPanelComponent} from "./components/common/error-panel/error-panel.component";
 import {ConnectionServiceOptions, ConnectionServiceOptionsToken} from "ngx-connection-service";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomReuseStrategy} from "./utils/custom-route-reuse-strategy";
-import {BaseWrapperComponent} from "./components/common/base-wrapper/base-wrapper.component";
 import { HTTP_INTERCEPTORS, HttpHandler, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {ResourcesInterceptor} from "./interceptors/resources-interceptor";
 import {NgxPaginationModule} from "ngx-pagination";
 import {CalculationDetailComponent} from "./components/calculation-detail/calculation-detail.component";
-import {CalculationDetailGrapesComponent} from "./components/calculation-detail/grapes/grapes.component";
 import {CalculationDetailContainer} from "./containers/calculation-detail/calculation-detail-container.component";
-import {CalculationPrintoutComponent} from './components/calculation-printout/grapes/grapes.component';
 import {CdkTableModule} from "@angular/cdk/table";
 import {appInitFn} from "./utils/app-initializer";
 import {BaseDialogComponent} from "./components/dialogs/base-dialog/base-dialog.component";
 import {UpdateService} from "./services/update.service";
 import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatIconModule} from "@angular/material/icon";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatListModule} from "@angular/material/list";
 import {MatInputModule} from "@angular/material/input";
@@ -72,13 +65,9 @@ import { ReplaceOptionsDialogComponent } from './components/dialogs/replace-opti
 import { CalculationDetailBerriesComponent } from './components/calculation-detail/berries/berries.component';
 import { CalculationPrintoutBerriesComponent } from './components/calculation-printout/berries/berries.component';
 import { CalculationDetailBlueberriesPlantComponent } from './components/calculation-detail/blueberries-plant/blueberries-plant.component';
-import { CalculationDetailHeaderComponent } from './components/calculation-detail/calculation-detail-header/calculation-detail-header.component';
 import { CalculationPrintoutBlueberriesPlantComponent } from './components/calculation-printout/blueberries-plant/blueberries-plant.component';
 import { CalculationDetailStrawberriesPlantComponent } from './components/calculation-detail/strawberries-plant/strawberries-plant.component';
 import { CalculationPrintoutStrawberriesPlantComponent } from "./components/calculation-printout/strawberries-plant/strawberries-plant.component";
-import { CalculationPrintoutLogoComponent } from './components/calculation-printout/calculation-printout-logo/calculation-printout-logo.component';
-import { CalculationPrintoutHeaderComponent } from './components/calculation-printout/calculation-printout-header/calculation-printout-header.component';
-import { CalculationPrintoutFooterComponent } from './components/calculation-printout/calculation-printout-footer/calculation-printout-footer.component';
 import { WildfireApplicationModule, WildfireResourceManagerModule } from "@wf1/wfcc-application-ui";
 import { CalculationsContainer } from "./containers/calculations/calculations-container.component";
 import { CalculationsComponent } from "./components/calculations/calculations.component";
@@ -96,7 +85,7 @@ import { CalculationDetailGrainBasketComponent } from "./components/calculation-
 import { CalculationPrintoutGrainBasketComponent } from "./components/calculation-printout/grain-basket/grain-basket.component";
 import { Type } from '@angular/core';
 import { ModuleWithProviders } from '@angular/core';
-import { CalculationDetailGrapesContainer } from "./containers/calculation-detail/calculation-detail-grapes-container.component";
+import { AppSharedModule } from "./app-shared.module";
 
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.
@@ -129,29 +118,20 @@ if (!environment.production || !environment.restrict_imports) {
         ClaimsComponent,
         CalculationDetailContainer,
         CalculationDetailComponent,
-        CalculationDetailGrapesContainer,
-        CalculationDetailGrapesComponent,
-        CalculationPrintoutComponent,
         CalculationsContainer,
         CalculationsComponent,
         AppComponent,
-        BaseWrapperComponent,
         UnauthorizedPageComponent,
-        ErrorPanelComponent,
         ErrorDialogComponent,
         ReplaceOptionsDialogComponent,
         CalculationDetailBerriesComponent,
         CalculationPrintoutBerriesComponent,
         CalculationDetailBlueberriesPlantComponent,
-        CalculationDetailHeaderComponent,
         CalculationPrintoutBlueberriesPlantComponent,
         CalculationDetailStrawberriesPlantComponent,
         CalculationPrintoutStrawberriesPlantComponent,
         CalculationDetailGrainUnseededComponent,
         CalculationPrintoutGrainUnseededComponent,
-        CalculationPrintoutLogoComponent,
-        CalculationPrintoutHeaderComponent,
-        CalculationPrintoutFooterComponent,
         CalculationDetailGrainSpotLossComponent,
         CalculationPrintoutGrainSpotLossComponent,
         CalculationDetailGrainQuantityComponent,
@@ -160,7 +140,10 @@ if (!environment.production || !environment.restrict_imports) {
         CalculationPrintoutGrainBasketComponent,
         UnsavedDialogComponent
     ],
-    bootstrap: [AppComponent], imports: [CirrasClaimsAPIServiceModule,
+    bootstrap: [AppComponent], 
+    imports: [
+        AppSharedModule,
+        CirrasClaimsAPIServiceModule,
         DragDropModule,
         CdkTableModule,
         BrowserModule,
@@ -174,13 +157,9 @@ if (!environment.production || !environment.restrict_imports) {
         MatCardModule,
         MatCheckboxModule,
         MatDialogModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
         MatListModule,
         MatMenuModule,
         MatRadioModule,
-        MatSelectModule,
         MatSnackBarModule,
         MatSortModule,
         MatTabsModule,
@@ -196,7 +175,6 @@ if (!environment.production || !environment.restrict_imports) {
         NgxMaskPipe,
         OwlDateTimeModule,
         OwlMomentDateTimeModule,
-        ReactiveFormsModule,
         ScrollingModule,
         CoreUIModule.forRoot({ configurationPath: environment.app_config_location }),
         StoreModule.forRoot(rootReducers, { initialState: initialRootState }),
