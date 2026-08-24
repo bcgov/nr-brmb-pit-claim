@@ -11,7 +11,6 @@ import { TokenService } from "./app/services/token.service";
 import { Title, BrowserModule, bootstrapApplication } from "@angular/platform-browser";
 import { appInitFn } from "./app/utils/app-initializer";
 import { HttpHandler, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeModule, OwlMomentDateTimeModule } from "@busacca/ng-pick-datetime";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "./app/utils/custom-route-reuse-strategy";
 import { ResourcesInterceptor } from "./app/interceptors/resources-interceptor";
@@ -94,8 +93,6 @@ providers: [
         MatProgressSpinnerModule, 
         NgxMaskDirective, 
         NgxMaskPipe, 
-        OwlDateTimeModule, 
-        OwlMomentDateTimeModule, 
         ScrollingModule, 
         CoreUIModule.forRoot({ configurationPath: environment.app_config_location }), 
         StoreModule.forRoot(rootReducers, { initialState: initialRootState }), 
@@ -126,7 +123,6 @@ providers: [
         multi: false,
         deps: [AppConfigService]
     },
-    { provide: OWL_DATE_TIME_FORMATS, useValue: DATE_FORMATS },
     { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
     {
         provide: HTTP_INTERCEPTORS,

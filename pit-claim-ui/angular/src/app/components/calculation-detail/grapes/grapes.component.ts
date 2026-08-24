@@ -124,23 +124,24 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
 
             this.viewModel.formGroup.controls.primaryPerilCode.setValue( this.calculationDetail.primaryPerilCode )
             this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )
-            this.viewModel.formGroup.controls.coverageAssessedReason.setValue( this.calculationDetail.claimCalculationGrapes.coverageAssessedReason )
-            this.viewModel.formGroup.controls.coverageAmount.setValue( this.calculationDetail.claimCalculationGrapes.coverageAmount )            
-            this.viewModel.formGroup.controls.coverageAmountAssessed.setValue( dollars(this.calculationDetail.claimCalculationGrapes.coverageAmountAssessed) )
-            this.viewModel.formGroup.controls.coverageAmountAdjusted.setValue( dollars(this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted) )
+            this.viewModel.formGroup.controls.coverageAssessedReason.setValue( this.calculationDetail.claimCalculationGrapes?.coverageAssessedReason )
+            this.viewModel.formGroup.controls.coverageAmount.setValue( this.calculationDetail.claimCalculationGrapes?.coverageAmount )            
+            this.viewModel.formGroup.controls.coverageAmountAssessed.setValue( dollars(this.calculationDetail.claimCalculationGrapes?.coverageAmountAssessed) )
+            this.viewModel.formGroup.controls.coverageAmountAdjusted.setValue( dollars(this.calculationDetail.claimCalculationGrapes?.coverageAmountAdjusted) )
             this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )            
-            this.viewModel.formGroup.controls.totalProductionValue.setValue( dollars(this.calculationDetail.claimCalculationGrapes.totalProductionValue ))
+            this.viewModel.formGroup.controls.totalProductionValue.setValue( dollars(this.calculationDetail.claimCalculationGrapes?.totalProductionValue ))
             this.viewModel.formGroup.controls.totalClaimAmount.setValue( dollars(this.calculationDetail.totalClaimAmount ))
 
 
             let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
             vla.clear()
-            this.calculationDetail.varieties.forEach( v => this.addVariety( v ) )
+            this.calculationDetail.varieties?.forEach( v => this.addVariety( v ) )
 
             this.enableDisableFormControls();
 
             this.isClaimTotalHigh = false
-            if (this.calculationDetail.totalClaimAmount > this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted ) {
+            if (this.calculationDetail.claimCalculationGrapes && this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted &&
+                 this.calculationDetail.totalClaimAmount > this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted ) {
                 this.isClaimTotalHigh = true
             }
         }
@@ -219,16 +220,6 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
         let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
         return vla.controls.map( ( c: UntypedFormGroup ) => c.value.cropVarietyId )
     }
-
-    // updateVarietyField( claimIndex, updateIndex, fieldName ) {
-    //     let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
-
-    //     if ( this.updatedCalculation.varieties[ updateIndex][ fieldName ] == vla.controls[ claimIndex ].value[ fieldName ] ) return
-
-    //     console.log( 'updating variety', claimIndex, fieldName, 'to', this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
-    //     let fg = vla.controls[ claimIndex ] as UntypedFormGroup
-    //     fg.controls[ fieldName ].setValue( this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
-    // }
 
     updatingCalculated = false
     updateCalculated() {
