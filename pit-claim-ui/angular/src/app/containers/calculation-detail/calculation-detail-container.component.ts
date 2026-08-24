@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common";
+import { Location, LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
 import {BaseContainer} from "../base/base-container.component";
 import {Observable} from "rxjs";
 import {vmCalculation} from "../../conversion/models";
@@ -15,6 +15,7 @@ import {
     selectFormStateUnsaved
 } from "../../store/application/application.selectors";
 import {ErrorState, LoadState} from "../../store/application/application.state";
+import { CalculationDetailComponent } from "../../components/calculation-detail/calculation-detail.component";
 
 @Component({
     selector: "cirras-claims-calculation-detail-container",
@@ -26,7 +27,7 @@ import {ErrorState, LoadState} from "../../store/application/application.state";
             [isUnsaved]="isUnsaved$ | async"
         ></cirras-claims-calculation-detail>`,
     providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
-    standalone: false
+    imports: [CalculationDetailComponent, AsyncPipe]
 })
 export class CalculationDetailContainer extends BaseContainer  {
     displayLabel = "Calculation Detail";

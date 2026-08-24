@@ -13,14 +13,23 @@ import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
 import {dollars, dollarsToNumber, makeNumberOnly, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, getPrintTitle, CLAIM_STATUS_CODE, areNotEqual} from "../../../utils"
 import { StrawberriesPlantComponentModel } from "./strawberries-plant.component.model";
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
-import { UntypedFormGroup } from "@angular/forms";
+import { UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
+import { MatFormField, MatError } from "@angular/material/form-field";
+import { MatSelect, MatOption } from "@angular/material/select";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { MatButton } from "@angular/material/button";
 
 @Component({
     selector: 'cirras-calculation-detail-strawberries-plant',
     templateUrl: './strawberries-plant.component.html',
     styleUrls: ['./strawberries-plant.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailStrawberriesPlantComponent extends BaseComponent implements OnChanges, AfterViewInit {
 

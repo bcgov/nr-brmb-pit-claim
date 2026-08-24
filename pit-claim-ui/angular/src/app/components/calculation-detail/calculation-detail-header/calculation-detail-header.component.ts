@@ -6,12 +6,14 @@ import { loadCalculationDetail } from "../../../store/calculation-detail/calcula
 import { ReplaceOptionsDialogComponent } from "src/app/components/dialogs/replace-options-dialog/replace-options-dialog.component";
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
+import { NgIf, NgStyle, DatePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'cirras-calculation-detail-header',
     templateUrl: './calculation-detail-header.component.html',
     styleUrls: ['./calculation-detail-header.component.scss'],
-    standalone: false
+    imports: [NgIf, MatIcon, NgStyle, DatePipe]
 })
 export class CalculationDetailHeaderComponent extends BaseComponent implements OnChanges, AfterViewInit {
 

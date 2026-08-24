@@ -1,12 +1,17 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { vmCalculation } from 'src/app/conversion/models';
 import { makeTitleCase } from 'src/app/utils';
+import { CalculationPrintoutLogoComponent } from '../calculation-printout-logo/calculation-printout-logo.component';
+import { NgIf, NgFor, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { CalculationPrintoutHeaderComponent } from '../calculation-printout-header/calculation-printout-header.component';
+import { CalculationPrintoutFooterComponent } from '../calculation-printout-footer/calculation-printout-footer.component';
 
 @Component({
     selector: 'calculation-printout-grain-basket',
     templateUrl: './grain-basket.component.html',
     styleUrl: './grain-basket.component.scss',
-    standalone: false
+    imports: [CalculationPrintoutLogoComponent, NgIf, CalculationPrintoutHeaderComponent, NgFor, 
+      CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
 })
 export class CalculationPrintoutGrainBasketComponent  implements OnChanges {
   @Input() calculationDetail: vmCalculation;

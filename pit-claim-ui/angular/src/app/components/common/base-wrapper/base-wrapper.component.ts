@@ -5,6 +5,8 @@ import {ApplicationStateService} from "../../../services/application-state.servi
 import {Store} from "@ngrx/store";
 import {RootState} from "../../../store";
 import {SecurityUtilService} from "../../../services/security-util.service";
+import { NgClass } from "@angular/common";
+import { ErrorPanelComponent } from "../error-panel/error-panel.component";
 
 export interface NavItem {
     icon?: any;
@@ -25,7 +27,7 @@ export interface ActionItem {
     selector: "base-wrapper",
     templateUrl: "./base-wrapper.component.html",
     styleUrls: ["./base-wrapper.component.scss"],
-    standalone: false
+    imports: [NgClass, ErrorPanelComponent]
 })
 export class BaseWrapperComponent  {
     @Input() errorState?: ErrorState[];

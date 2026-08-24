@@ -6,6 +6,18 @@ import {CollectionComponent} from "../common/base-collection/collection.componen
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnChanges, SimpleChanges} from "@angular/core";
 import {getCodeOptions} from "../../utils/code-table-utils";
 import {navigateToCalculation} from "../../utils";
+import { BaseWrapperComponent } from '../common/base-wrapper/base-wrapper.component';
+import { NgIf, NgFor, CurrencyPipe, DatePipe } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatLabel, MatSuffix } from '@angular/material/form-field';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { SingleSelectDirective } from '../../directives/singleselect.directive';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
     selector: "cirras-claims-calculations",
@@ -14,7 +26,10 @@ import {navigateToCalculation} from "../../utils";
         "../common/base-collection/collection.component.scss",
         "calculations.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [BaseWrapperComponent, NgIf, MatProgressSpinner,  MatLabel, ReactiveFormsModule, FormsModule, MatIconButton, 
+      MatSuffix, MatTooltip, MatIcon, SingleSelectDirective, NgFor, MatButton, MatTable, MatSort, MatColumnDef, 
+      MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, 
+      MatRow, NgxPaginationModule, CurrencyPipe, DatePipe]
 })
 
 export class CalculationsComponent extends CollectionComponent implements OnChanges, AfterViewInit {

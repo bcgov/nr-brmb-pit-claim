@@ -6,7 +6,7 @@ import { CalculationDetailGrapesComponent } from './calculation-detail/grapes/gr
 import { ResourcesAuthGuard } from '../services/util/ResourcesAuthGuard';
 import { DeactivateGuard } from '../services/util/DeactivateGuard';
 import { CALCULATION_DETAIL_SCOPES } from '../app-routing.module';
-import { AppSharedModule } from '../app-shared.module';
+
 import { CalculationPrintoutComponent } from './calculation-printout/grapes/grapes.component';
 
 const routes: Routes = [
@@ -27,16 +27,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    CalculationDetailGrapesContainer,
-    CalculationDetailGrapesComponent,
-    CalculationPrintoutComponent
-  ],
-  imports: [
-    CommonModule,
-    AppSharedModule,
-    RouterModule.forChild(routes)
-  ] 
+    imports: [
+      CommonModule,
+      RouterModule.forChild(routes),
+      CalculationDetailGrapesContainer,
+      CalculationDetailGrapesComponent,
+      CalculationPrintoutComponent
+    ]
 })
 
 export class GrapesModule {}

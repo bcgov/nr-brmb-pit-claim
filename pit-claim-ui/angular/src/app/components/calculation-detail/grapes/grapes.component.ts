@@ -11,10 +11,18 @@ import {BaseComponent} from "../../common/base/base.component";
 import {vmCalculation} from "../../../conversion/models";
 import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
-import {UntypedFormArray, UntypedFormGroup} from "@angular/forms";
+import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import {dollars, dollarsToNumber, makeTitleCase, makeNumberOnly, CALCULATION_UPDATE_TYPE, CALCULATION_STATUS_CODE, getPrintTitle, CLAIM_STATUS_CODE, areNotEqual} from "../../../utils"
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
+import { BaseWrapperComponent } from "../../common/base-wrapper/base-wrapper.component";
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
+import { MatFormField, MatError } from "@angular/material/form-field";
+import { MatSelect, MatOption } from "@angular/material/select";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { CalculationPrintoutComponent } from "../../calculation-printout/grapes/grapes.component";
 
 @Component({
     selector: "cirras-claims-calculation-detail-grapes",
@@ -22,7 +30,9 @@ import { setFormStateUnsaved } from "src/app/store/application/application.actio
     styleUrls: ["../../common/base/base.component.scss",
         "./grapes.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [BaseWrapperComponent, NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, 
+        MatSelect, MatOption, NgFor, MatError, MatIcon, NgStyle, MatInput, CalculationPrintoutComponent, 
+        DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";

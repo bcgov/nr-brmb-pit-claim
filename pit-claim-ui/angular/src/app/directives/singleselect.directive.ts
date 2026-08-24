@@ -6,18 +6,13 @@ import {
     Input,
     OnChanges,
     Output,
-    Renderer2,
     SimpleChanges
 } from "@angular/core";
-import {ApplicationStateService} from "../services/application-state.service";
 import {arrayEquals} from "../utils";
 
 declare var $: any;
 
-@Directive({
-    selector: '[appWFSingleSelect]',
-    standalone: false
-})
+@Directive({ selector: '[appWFSingleSelect]' })
 export class SingleSelectDirective implements AfterViewInit, OnChanges {
     @Input() appWFPlaceholder?: string;
     @Output() updated: EventEmitter<any> = new EventEmitter();

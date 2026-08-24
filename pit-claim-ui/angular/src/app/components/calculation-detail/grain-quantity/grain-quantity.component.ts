@@ -8,16 +8,27 @@ import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.c
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
 import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundUpDecimals, setHttpHeaders } from 'src/app/utils';
 import { lastValueFrom } from 'rxjs';
-import { FormControl, UntypedFormGroup } from '@angular/forms';
+import { FormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { CalculationDetailHeaderComponent } from '../calculation-detail-header/calculation-detail-header.component';
+import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { CalculationPrintoutGrainQuantityComponent } from '../../calculation-printout/grain-quantity/grain-quantity.component';
 
 @Component({
     selector: 'calculation-detail-grain-quantity',
     templateUrl: './grain-quantity.component.html',
     styleUrl: './grain-quantity.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+      NgFor, MatError, NgStyle, MatTooltip, MatIcon, MatInput, MatLabel, MatButton, 
+      CalculationPrintoutGrainQuantityComponent, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrainQuantityComponent extends BaseComponent implements OnChanges, AfterViewInit{
 

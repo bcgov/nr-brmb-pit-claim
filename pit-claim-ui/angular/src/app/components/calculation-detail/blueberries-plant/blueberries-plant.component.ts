@@ -13,14 +13,23 @@ import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculatio
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
 import {areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
-import { UntypedFormGroup } from "@angular/forms";
+import { UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
+import { MatFormField, MatError } from "@angular/material/form-field";
+import { MatSelect, MatOption } from "@angular/material/select";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { MatButton } from "@angular/material/button";
 
 @Component({
     selector: 'cirras-calculation-detail-berries-plant',
     templateUrl: './blueberries-plant.component.html',
     styleUrls: ['./blueberries-plant.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailBlueberriesPlantComponent extends BaseComponent implements OnChanges, AfterViewInit {
   displayLabel = "Calculation Detail";
