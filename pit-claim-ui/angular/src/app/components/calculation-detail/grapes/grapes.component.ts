@@ -36,10 +36,7 @@ import { CalculationPrintoutComponent } from "../../calculation-printout/grapes/
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";
-    // @Input() claimCalculationGuid?: string;
-    // @Input() claimNumber?: string;
     @Input() calculationDetail: vmCalculation;
-    // @Input() updatedCalculation: any;
     @Input() isUnsaved: boolean;
     @Input() loadState: LoadState;
     @Input() errorState: ErrorState[];
