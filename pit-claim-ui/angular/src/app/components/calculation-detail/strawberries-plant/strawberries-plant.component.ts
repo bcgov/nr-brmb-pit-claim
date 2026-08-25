@@ -1,12 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges, AfterViewInit, ChangeDetectionStrategy} from "@angular/core";
+import {ParamMap} from "@angular/router";
 import {
+  clearCalculationDetail,
   loadCalculationDetail,
   updateCalculationDetailMetadata
 } from "../../../store/calculation-detail/calculation-detail.actions";
 import {CALCULATION_DETAIL_COMPONENT_ID} from "../../../store/calculation-detail/calculation-detail.state";
 import {BaseComponent} from "../../common/base/base.component";
 import {vmCalculation} from "../../../conversion/models";
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
@@ -22,22 +24,28 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
+import { BaseWrapperComponent } from "../../common/base-wrapper/base-wrapper.component";
+import { CalculationPrintoutStrawberriesPlantComponent } from "../../calculation-printout/strawberries-plant/strawberries-plant.component";
 
 @Component({
     selector: 'cirras-calculation-detail-strawberries-plant',
     templateUrl: './strawberries-plant.component.html',
     styleUrls: ['./strawberries-plant.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+    imports: [BaseWrapperComponent, CalculationPrintoutStrawberriesPlantComponent, NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
       NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailStrawberriesPlantComponent extends BaseComponent implements OnChanges, AfterViewInit {
 
   displayLabel = "Calculation Detail";
-  @Input() claimCalculationGuid?: string;
-  @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
   @Input() isUnsaved: boolean;
+  @Input() loadState: LoadState;
+  @Input() errorState: ErrorState[];
+
+  claimCalculationGuid: string;
+  claimNumber: string;
+  policyNumber: string;
 
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -56,7 +64,23 @@ export class CalculationDetailStrawberriesPlantComponent extends BaseComponent i
       this.viewModel = new StrawberriesPlantComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
+  loadCalculation() {
+    this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+            this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+            this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+            this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+
+            if (!this.claimCalculationGuid) {
+                this.store.dispatch(clearCalculationDetail());
+            }   
+            this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+        }
+    );
+  }
+
   loadPage() {
+      this.loadCalculation()
       this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
       this.perilCodeOptions = getCodeOptions("PERIL_CODE");
       this.componentId = CALCULATION_DETAIL_COMPONENT_ID;

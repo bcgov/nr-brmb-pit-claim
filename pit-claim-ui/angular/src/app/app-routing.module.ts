@@ -24,16 +24,43 @@ const routesDesktop: Routes = [
       path: R.CALCULATION_LIST, component: CalculationsContainer, data: {scopes: CALCULATION_SCOPES},
       canActivate: [ResourcesAuthGuard]      
     },
-
     { 
       path: R.CALCULATION_DETAIL_GRAPES, 
+      children: [{
+          path: '',
+          loadChildren: () => import('src/app/components/calculation-detail/grapes/grapes.module')
+            .then(m => m.GrapesModule)
+        }] 
+    },
+    { 
+      path: R.CALCULATION_DETAIL_BERRIES_QTY, 
+      children: [{
+          path: '',
+          loadChildren: () => import('src/app/components/calculation-detail/berries/berries-quantity.module')
+            .then(m => m.BerriesQuantityModule)
+        }] 
+    },
+    { 
+      path: R.CALCULATION_DETAIL_BERRIES_PLANT_UNITS, 
       children: [
         {
           path: '',
-          loadChildren: () => import('src/app/components/grapes.module').then(m => m.GrapesModule)
+          loadChildren: () => import('src/app/components/calculation-detail/blueberries-plant/blueberries-plant.module')
+            .then(m => m.BlueberriesPlantModule)
         }
       ] 
     },
+    { 
+      path: R.CALCULATION_DETAIL_BERRIES_PLANT_ACRES, 
+      children: [
+        {
+          path: '',
+          loadChildren: () => import('src/app/components/calculation-detail/strawberries-plant/strawberries-plant.module')
+            .then(m => m.StrawberriesPlantModule)
+        }
+      ] 
+    },
+
 
     { path: R.CALCULATION_DETAIL, children: [
       { 

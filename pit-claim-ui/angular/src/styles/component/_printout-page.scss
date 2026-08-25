@@ -2,21 +2,21 @@
 .container, .container-fluid {padding: 0;}
 
 @media screen {
-  cirras-calculation-printout {
-    display: none !important;
-  }
+  // cirras-calculation-printout {
+  //   display: none !important;
+  // }
 
-  cirras-calculation-printout-berries {
-    display: none !important;
-  }
+  // cirras-calculation-printout-berries {
+  //   display: none !important;
+  // }
 
-  cirras-calculation-printout-berries-plant {
-    display: none !important;
-  }
+  // cirras-calculation-printout-berries-plant {
+  //   display: none !important;
+  // }
 
-  cirras-calculation-printout-strawberries-plant {
-    display: none !important;
-  }
+  // cirras-calculation-printout-strawberries-plant {
+  //   display: none !important;
+  // }
 
   calculation-printout-grain-unseeded {
     display: none !important;
@@ -76,33 +76,33 @@
   }
 
   /* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
-  cirras-calculation-printout {
-    display: block !important;
-  }
-  cirras-claims-calculation-detail-grapes {
-    display: none !important;
-  }
+  // cirras-calculation-printout {
+  //   display: block !important;
+  // }
+  // #div-cirras-claims-calculation-detail-grapes {
+  //   display: none !important;
+  // }
 
-  cirras-calculation-printout-berries {
-    display: block !important;
-  }
-  cirras-claims-calculation-detail-berries {
-    display: none !important;
-  }
+  // cirras-calculation-printout-berries {
+  //   display: block !important;
+  // }
+  // #div-cirras-claims-calculation-detail-berries {
+  //   display: none !important;
+  // }
 
-  cirras-calculation-printout-berries-plant {
-    display: block !important;
-  }
-  cirras-calculation-detail-berries-plant {
-    display: none !important;
-  }
+  // cirras-calculation-printout-berries-plant {
+  //   display: block !important;
+  // }
+  // #div-cirras-calculation-detail-berries-plant {
+  //   display: none !important;
+  // }
 
-  cirras-calculation-printout-strawberries-plant {
-    display: block !important;
-  }
-  cirras-calculation-detail-strawberries-plant {
-    display: none !important;
-  }
+  // cirras-calculation-printout-strawberries-plant {
+  //   display: block !important;
+  // }
+  // #div-cirras-calculation-detail-strawberries-plant {
+  //   display: none !important;
+  // }
 
   calculation-detail-grain-unseeded {
     display: none !important;

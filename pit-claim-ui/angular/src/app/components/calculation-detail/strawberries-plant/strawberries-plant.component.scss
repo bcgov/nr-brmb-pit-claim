@@ -1,0 +1,17 @@
+@use '../../../../styles/variables';
+
+@media screen {
+  cirras-calculation-printout-strawberries-plant {
+    display: none !important;
+  }
+}
+
+@media print {
+/* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
+  cirras-calculation-printout-strawberries-plant {
+    display: block !important;
+  }
+  #div-cirras-calculation-detail-strawberries-plant {
+    display: none !important;
+  }
+}

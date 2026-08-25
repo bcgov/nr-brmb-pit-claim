@@ -31,8 +31,11 @@ export enum ResourcesRoutes {
     LANDING = "",
     CLAIM_LIST = "claim-list",
     CALCULATION_LIST = "calculation-list",    
-    CALCULATION_DETAIL = "calculation-detail",
+    CALCULATION_DETAIL = "calculation-detail", // deprecate
     CALCULATION_DETAIL_GRAPES = "calculation-detail/grapes",
+    CALCULATION_DETAIL_BERRIES_QTY = "calculation-detail/berries/quantity",
+    CALCULATION_DETAIL_BERRIES_PLANT_UNITS = "calculation-detail/berries/plant/units",
+    CALCULATION_DETAIL_BERRIES_PLANT_ACRES = "calculation-detail/berries/plant/acres",
     UNAUTHORIZED = "unauthorized",
     ERROR_PAGE = "error",
     SIGN_UP = "sign-up",
@@ -288,21 +291,37 @@ export function requiredIfValidator(predicate) {
 }
 
 export function navigateToCalculation(item: vmCalculation, router: Router) {
-  navigateToCalculationHelper(item.insurancePlanId, item.policyNumber, item.claimNumber.toString(), item.claimCalculationGuid, router);
-}
-
-export function navigateToCalculationHelper(insurancePlanId: number, policyNumber:string, claimNumber:string, claimCalculationGuid: string, router: Router) {
     let res = ""
 
-    switch (insurancePlanId){
+    switch (item.insurancePlanId){
         case INSURANCE_PLAN.GRAPES:
             res = ResourcesRoutes.CALCULATION_DETAIL_GRAPES;
             break;
+        case INSURANCE_PLAN.BERRIES:
+            if (item.commodityCoverageCode.toUpperCase() === 'CQNT') {
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_QTY;
+                break;
+            }
+            
+            if (item.commodityCoverageCode.toUpperCase() === 'CPLANT' && 
+                item.insuredByMeasurementType && item.insuredByMeasurementType.toUpperCase() === 'UNITS') {
+
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_UNITS;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === 'CPLANT' && 
+                item.insuredByMeasurementType && item.insuredByMeasurementType.toUpperCase() === 'ACRES') {
+
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_ACRES;
+                break;
+            }
+
         default:
             res = ResourcesRoutes.CALCULATION_DETAIL;
     }
 
-    router.navigate([res, policyNumber, claimNumber, claimCalculationGuid]);
+    router.navigate([res, item.policyNumber, item.claimNumber, item.claimCalculationGuid]);
 }
 
 export function dollars( val ) {
