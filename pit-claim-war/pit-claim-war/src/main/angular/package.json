@@ -24,7 +24,7 @@
     "@angular-devkit/core": "19.2.15",
     "@angular/animations": "19.2.15",
     "@angular/cdk": "19.2.19",
-    "@angular/common": "19.2.15",
+    "@angular/common": "19.2.23",
     "@angular/core": "19.2.15",
     "@angular/forms": "19.2.15",
     "@angular/material": "19.2.19",
