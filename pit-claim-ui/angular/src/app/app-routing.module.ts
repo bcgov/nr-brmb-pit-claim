@@ -28,16 +28,16 @@ const routesDesktop: Routes = [
       path: R.CALCULATION_DETAIL_GRAPES, 
       children: [{
           path: '',
-          loadChildren: () => import('src/app/components/calculation-detail/grapes/grapes.module')
-            .then(m => m.GrapesModule)
+          loadChildren: () => import('src/app/components/calculation-detail/grapes/grapes-routing.module')
+            .then(m => m.GrapesRoutingModule)
         }] 
     },
     { 
       path: R.CALCULATION_DETAIL_BERRIES_QTY, 
       children: [{
           path: '',
-          loadChildren: () => import('src/app/components/calculation-detail/berries/berries-quantity.module')
-            .then(m => m.BerriesQuantityModule)
+          loadChildren: () => import('src/app/components/calculation-detail/berries/berries-routing.module')
+            .then(m => m.BerriesRoutingModule)
         }] 
     },
     { 
@@ -45,8 +45,8 @@ const routesDesktop: Routes = [
       children: [
         {
           path: '',
-          loadChildren: () => import('src/app/components/calculation-detail/blueberries-plant/blueberries-plant.module')
-            .then(m => m.BlueberriesPlantModule)
+          loadChildren: () => import('src/app/components/calculation-detail/blueberries-plant/blueberries-plant-routing.module')
+            .then(m => m.BlueberriesPlantRoutingModule)
         }
       ] 
     },
@@ -55,11 +55,21 @@ const routesDesktop: Routes = [
       children: [
         {
           path: '',
-          loadChildren: () => import('src/app/components/calculation-detail/strawberries-plant/strawberries-plant.module')
-            .then(m => m.StrawberriesPlantModule)
+          loadChildren: () => import('src/app/components/calculation-detail/strawberries-plant/strawberries-plant-routing.module')
+            .then(m => m.StrawberriesPlantRoutingModule)
         }
       ] 
     },
+
+    { 
+      path: R.CALCULATION_DETAIL_GRAIN_UNSEEDED, 
+      children: [{
+          path: '',
+          loadChildren: () => import('src/app/components/calculation-detail/grain-unseeded/grain-unseeded-routing.module')
+            .then(m => m.GrainUnseededsRoutingModule)
+        }] 
+    },
+
 
 
     { path: R.CALCULATION_DETAIL, children: [

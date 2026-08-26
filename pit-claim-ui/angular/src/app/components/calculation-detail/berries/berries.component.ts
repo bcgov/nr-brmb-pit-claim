@@ -76,10 +76,7 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
                 this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
                 this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
                 this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
-
-                if (!this.claimCalculationGuid) {
-                    this.store.dispatch(clearCalculationDetail());
-                }   
+  
                 this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
             }
         );

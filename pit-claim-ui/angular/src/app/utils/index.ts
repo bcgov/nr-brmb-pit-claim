@@ -36,6 +36,7 @@ export enum ResourcesRoutes {
     CALCULATION_DETAIL_BERRIES_QTY = "calculation-detail/berries/quantity",
     CALCULATION_DETAIL_BERRIES_PLANT_UNITS = "calculation-detail/berries/plant/units",
     CALCULATION_DETAIL_BERRIES_PLANT_ACRES = "calculation-detail/berries/plant/acres",
+    CALCULATION_DETAIL_GRAIN_UNSEEDED = "calculation-detail/grain/unseeded",
     UNAUTHORIZED = "unauthorized",
     ERROR_PAGE = "error",
     SIGN_UP = "sign-up",
@@ -290,7 +291,7 @@ export function requiredIfValidator(predicate) {
     });
 }
 
-export function navigateToCalculation(item: vmCalculation, router: Router) {
+export function getRouterLink(item: vmCalculation) {
     let res = ""
 
     switch (item.insurancePlanId){
@@ -316,12 +317,29 @@ export function navigateToCalculation(item: vmCalculation, router: Router) {
                 res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_ACRES;
                 break;
             }
+        case INSURANCE_PLAN.GRAIN:
+            if (item.commodityCoverageCode.toUpperCase() === 'CUNS') {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_UNSEEDED;
+                break;
+            }
 
         default:
             res = ResourcesRoutes.CALCULATION_DETAIL;
     }
 
-    router.navigate([res, item.policyNumber, item.claimNumber, item.claimCalculationGuid]);
+    return res;
+}
+
+export function navigateToCalculation(item: vmCalculation, router: Router) {
+    
+    let routerLink = getRouterLink(item)
+
+    if (item.claimCalculationGuid) {
+        router.navigate([routerLink, item.policyNumber, item.claimNumber, item.claimCalculationGuid]);
+    } else {
+        router.navigate([routerLink, item.policyNumber, item.claimNumber]);
+    }
+    
 }
 
 export function dollars( val ) {

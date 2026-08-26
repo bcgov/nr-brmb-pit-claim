@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, AfterViewInit, SimpleChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnChanges, AfterViewInit, SimpleChanges } from '@angular/core';
 import { vmCalculation } from 'src/app/conversion/models';
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import { BaseComponent } from '../../common/base/base.component';
 import { GrainUnseededComponentModel } from './grain-unseeded.component.model';
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
-import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
+import { clearCalculationDetail, loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
 import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
@@ -18,21 +18,31 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
+import { ParamMap } from '@angular/router';
+import { BaseWrapperComponent } from '../../common/base-wrapper/base-wrapper.component';
+import { CalculationPrintoutGrainUnseededComponent } from '../../calculation-printout/grain-unseeded/grain-unseeded.component';
 
 @Component({
     selector: 'calculation-detail-grain-unseeded',
     templateUrl: './grain-unseeded.component.html',
     styleUrl: './grain-unseeded.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainUnseededComponent,
+      NgIf, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
       NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
-export class CalculationDetailGrainUnseededComponent extends BaseComponent implements OnChanges, AfterViewInit {
+export class CalculationDetailGrainUnseededComponent extends BaseComponent implements OnInit, OnChanges, AfterViewInit {
 
   displayLabel = "Calculation Detail";
-  @Input() claimCalculationGuid?: string;
+  
   @Input() calculationDetail: vmCalculation;
   @Input() isUnsaved: boolean;
+  @Input() loadState: LoadState;
+  @Input() errorState: ErrorState[];
+
+  claimCalculationGuid: string;
+  claimNumber: string;
+  policyNumber: string;
 
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -50,7 +60,20 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
       this.viewModel = new GrainUnseededComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
+  loadCalculation() {
+    this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+            this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+            this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+            this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+ 
+            this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+        }
+    );
+  }
+
   loadPage() {
+      this.loadCalculation()
       this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
       this.perilCodeOptions = getCodeOptions("PERIL_CODE");
       this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -62,7 +85,7 @@ export class CalculationDetailGrainUnseededComponent extends BaseComponent imple
   }
 
   ngOnInit() {
-    super.ngOnInit()
+    this.loadPage() 
 
     this.viewModel.formGroup.controls.lessAdjustmentAcres.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.unseededAcres.valueChanges.subscribe(value => this.updateCalculated() )

@@ -72,10 +72,7 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
             this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
             this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
             this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
-
-            if (!this.claimCalculationGuid) {
-                this.store.dispatch(clearCalculationDetail());
-            }   
+   
             this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
         }
     );
@@ -116,7 +113,7 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
   }
 
   ngOnInit() {
-    super.ngOnInit()
+    this.loadPage()
 
     this.viewModel.formGroup.controls.lessAdjustmentUnits.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.damagedUnits.valueChanges.subscribe(value => this.updateCalculated() )

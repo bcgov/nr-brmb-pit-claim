@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { ResourcesAuthGuard } from '../../../services/util/ResourcesAuthGuard';
 import { DeactivateGuard } from '../../../services/util/DeactivateGuard';
 import { CALCULATION_DETAIL_SCOPES } from '../../../app-routing.module';
+import { CalculationDetailGrapesComponent } from './grapes.component';
+import { CalculationPrintoutComponent } from '../../calculation-printout/grapes/grapes.component';
 import { CalculationDetailContainer } from '../../../containers/calculation-detail/calculation-detail-container.component';
-import { CalculationDetailStrawberriesPlantComponent } from './strawberries-plant.component';
-import { CalculationPrintoutStrawberriesPlantComponent } from '../../calculation-printout/strawberries-plant/strawberries-plant.component';
 
 const routes: Routes = [
  { 
@@ -30,9 +30,9 @@ const routes: Routes = [
       CommonModule,
       RouterModule.forChild(routes),
       CalculationDetailContainer,
-      CalculationDetailStrawberriesPlantComponent,
-      CalculationPrintoutStrawberriesPlantComponent
+      CalculationDetailGrapesComponent,
+      CalculationPrintoutComponent
     ]
 })
 
-export class StrawberriesPlantModule {}
+export class GrapesRoutingModule {}

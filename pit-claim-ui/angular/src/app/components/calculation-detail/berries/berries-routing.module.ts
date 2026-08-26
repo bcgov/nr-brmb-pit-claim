@@ -35,4 +35,4 @@ const routes: Routes = [
     ]
 })
 
-export class BerriesQuantityModule {}
+export class BerriesRoutingModule {}

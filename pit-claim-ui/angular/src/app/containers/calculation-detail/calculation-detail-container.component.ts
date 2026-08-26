@@ -74,10 +74,17 @@ export class CalculationDetailContainer extends BaseContainer  {
                 }
             }
 
+            if (detail?.insurancePlanId === INSURANCE_PLAN.GRAIN) {
+                
+                return from(
+                    import('../../components/calculation-detail/grain-unseeded/grain-unseeded.component')
+                        .then(m => m.CalculationDetailGrainUnseededComponent)
+                );
+            } 
 
-            // Default: TODO return an error component?
+            // Default: go to the new calculation component
             return from(
-                import('../../components/calculation-detail/grapes/grapes.component').then(m => m.CalculationDetailGrapesComponent)
+                import('../../components/calculation-detail/new-calculation/new-calculation.component').then(m => m.NewCalculationComponent)
             );
             // return "<h2>Not Supported</h2>"
         })
