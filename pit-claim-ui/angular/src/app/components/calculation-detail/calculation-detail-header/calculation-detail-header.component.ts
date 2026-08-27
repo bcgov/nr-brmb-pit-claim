@@ -4,16 +4,15 @@ import {BaseComponent} from "../../common/base/base.component";
 import { makeTitleCase, removeDuplicateWords, ResourcesRoutes } from "../../../utils"
 import { loadCalculationDetail } from "../../../store/calculation-detail/calculation-detail.actions";
 import { ReplaceOptionsDialogComponent } from "src/app/components/dialogs/replace-options-dialog/replace-options-dialog.component";
-import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
-import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { NgIf, NgStyle, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'cirras-calculation-detail-header',
     templateUrl: './calculation-detail-header.component.html',
     styleUrls: ['./calculation-detail-header.component.scss'],
-    imports: [NgIf, MatIcon, NgStyle, DatePipe]
+    imports: [NgIf, MatIcon, MatButton, NgStyle, DatePipe]
 })
 export class CalculationDetailHeaderComponent extends BaseComponent implements OnChanges, AfterViewInit {
 

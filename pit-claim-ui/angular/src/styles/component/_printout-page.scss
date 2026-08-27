@@ -1,47 +1,6 @@
 // @use url("https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap-grid.min.css");
 .container, .container-fluid {padding: 0;}
 
-@media screen {
-  // cirras-calculation-printout {
-  //   display: none !important;
-  // }
-
-  // cirras-calculation-printout-berries {
-  //   display: none !important;
-  // }
-
-  // cirras-calculation-printout-berries-plant {
-  //   display: none !important;
-  // }
-
-  // cirras-calculation-printout-strawberries-plant {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-unseeded {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-spot-loss {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-quantity {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-basket {
-  //   display: none !important;
-  // }
-}
-
-
-
-/* Template with Header & Footer */
-// @page {
-//   margin: 20mm
-// }
-
 @media print {
   /* set for entire printout */
   html, body {
@@ -74,71 +33,6 @@
   body {
     -webkit-print-color-adjust: exact !important;
   }
-
-  /* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
-  // cirras-calculation-printout {
-  //   display: block !important;
-  // }
-  // #div-cirras-claims-calculation-detail-grapes {
-  //   display: none !important;
-  // }
-
-  // cirras-calculation-printout-berries {
-  //   display: block !important;
-  // }
-  // #div-cirras-claims-calculation-detail-berries {
-  //   display: none !important;
-  // }
-
-  // cirras-calculation-printout-berries-plant {
-  //   display: block !important;
-  // }
-  // #div-cirras-calculation-detail-berries-plant {
-  //   display: none !important;
-  // }
-
-  // cirras-calculation-printout-strawberries-plant {
-  //   display: block !important;
-  // }
-  // #div-cirras-calculation-detail-strawberries-plant {
-  //   display: none !important;
-  // }
-
-  // calculation-detail-grain-unseeded {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-unseeded  {
-  //   display: block !important;
-  // }
-
-  // calculation-detail-grain-spot-loss {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-spot-loss  {
-  //   display: block !important;
-  // }
-
-  // calculation-detail-grain-quantity {
-  //   display: none !important;
-  // }
-
-  // #grain-quantity  {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-quantity  {
-  //   display: block !important;
-  // }
-
-  // calculation-detail-grain-basket {
-  //   display: none !important;
-  // }
-
-  // calculation-printout-grain-basket  {
-  //   display: block !important;
-  // }
 
   #core-interface-container mat-sidenav-container mat-sidenav-content {
     top: 0px !important;

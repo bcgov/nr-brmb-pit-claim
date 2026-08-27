@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges, AfterViewInit, ChangeDetectionStrategy} from "@angular/core";
 import {CalculationDetailBlueberriesPlantComponentModel} from "./blueberries-plant.component.model";
 import {
-  clearCalculationDetail,
   loadCalculationDetail,
   updateCalculationDetailMetadata
 } from "../../../store/calculation-detail/calculation-detail.actions";

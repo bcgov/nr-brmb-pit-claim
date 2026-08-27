@@ -23,6 +23,7 @@ import { MatSelect, MatOption } from "@angular/material/select";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { CalculationPrintoutComponent } from "../../calculation-printout/grapes/grapes.component";
+import { MatButton } from "@angular/material/button";
 
 @Component({
     selector: "cirras-claims-calculation-detail-grapes",
@@ -31,7 +32,7 @@ import { CalculationPrintoutComponent } from "../../calculation-printout/grapes/
         "./grapes.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [BaseWrapperComponent, NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, 
-        MatSelect, MatOption, NgFor, MatError, MatIcon, NgStyle, MatInput, CalculationPrintoutComponent, 
+        MatSelect, MatOption, NgFor, MatError, MatIcon, NgStyle, MatInput, MatButton, CalculationPrintoutComponent, 
         DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
