@@ -3,7 +3,7 @@ import { Location, LocationStrategy, PathLocationStrategy, AsyncPipe, NgComponen
 import {BaseContainer} from "../base/base-container.component";
 import {switchMap, from, Observable} from "rxjs";
 import {vmCalculation} from "../../conversion/models";
-import {select, Store} from "@ngrx/store";
+import {select} from "@ngrx/store";
 import {selectCalculationDetail} from "../../store/calculation-detail/calculation-detail.selectors";
 import {
     CALCULATION_DETAIL_COMPONENT_ID
@@ -15,7 +15,7 @@ import {
     selectFormStateUnsaved
 } from "../../store/application/application.selectors";
 import {ErrorState, LoadState} from "../../store/application/application.state";
-import { INSURANCE_PLAN } from "src/app/utils";
+import { COVERAGE_TYPE, INSURANCE_PLAN, MEASUREMENT_TYPE } from "src/app/utils";
 
 @Component({
     selector: "cirras-claims-calculation-detail-container",
@@ -35,7 +35,7 @@ export class CalculationDetailContainer extends BaseContainer  {
     calculationDetail$: Observable<vmCalculation> = this.store.pipe(select(selectCalculationDetail()));
 
     // 1. Listen to data changes
-    // 2. Trigger a lazy runtime chunk import based on the commodityType
+    // 2. Trigger a lazy runtime chunk import based on the insurance plan and coverage
     // 3. Resolve the underlying class reference dynamically
     dynamicComponent$: Observable<any> = this.calculationDetail$.pipe(
         switchMap(detail => {
@@ -49,7 +49,7 @@ export class CalculationDetailContainer extends BaseContainer  {
 
             if (detail?.insurancePlanId === INSURANCE_PLAN.BERRIES) {
                 
-                if ((detail.commodityCoverageCode).toUpperCase() === 'CQNT') {
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.BERRIES_QUANTITY) {
                     // Dynamically fetch the Berries file chunk from the network
                     return from(
                         import('../../components/calculation-detail/berries/berries.component')
@@ -57,16 +57,16 @@ export class CalculationDetailContainer extends BaseContainer  {
                     );
                 }
 
-                if ((detail.commodityCoverageCode).toUpperCase() === 'CPLANT' && 
-                    detail.insuredByMeasurementType && detail.insuredByMeasurementType.toUpperCase() === 'UNITS') {
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.BERRIES_PLANT && 
+                    detail.insuredByMeasurementType && detail.insuredByMeasurementType.toUpperCase() === MEASUREMENT_TYPE.UNITS) {
                     return from(
                         import('../../components/calculation-detail/blueberries-plant/blueberries-plant.component')
                             .then(m => m.CalculationDetailBlueberriesPlantComponent)
                     );
                 }
                 
-                if ((detail.commodityCoverageCode).toUpperCase() === 'CPLANT' && 
-                    detail.insuredByMeasurementType && detail.insuredByMeasurementType.toUpperCase() === 'ACRES') {
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.BERRIES_PLANT && 
+                    detail.insuredByMeasurementType && detail.insuredByMeasurementType.toUpperCase() === MEASUREMENT_TYPE.ACRES) {
                     return from(
                         import('../../components/calculation-detail/strawberries-plant/strawberries-plant.component')
                             .then(m => m.CalculationDetailStrawberriesPlantComponent)
@@ -75,18 +75,40 @@ export class CalculationDetailContainer extends BaseContainer  {
             }
 
             if (detail?.insurancePlanId === INSURANCE_PLAN.GRAIN) {
-                
-                return from(
-                    import('../../components/calculation-detail/grain-unseeded/grain-unseeded.component')
-                        .then(m => m.CalculationDetailGrainUnseededComponent)
-                );
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.GRAIN_BASKET) {
+                    return from(
+                        import('../../components/calculation-detail/grain-basket/grain-basket.component')
+                            .then(m => m.CalculationDetailGrainBasketComponent)
+                    );
+                }
+
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.GRAIN_QUANTITY) {
+                    return from(
+                        import('../../components/calculation-detail/grain-quantity/grain-quantity.component')
+                            .then(m => m.CalculationDetailGrainQuantityComponent)
+                    );
+                }
+
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.GRAIN_SPOT_LOSS) {
+                    return from(
+                        import('../../components/calculation-detail/grain-spot-loss/grain-spot-loss.component')
+                            .then(m => m.CalculationDetailGrainSpotLossComponent)
+                    );
+                }
+
+                if ((detail.commodityCoverageCode).toUpperCase() === COVERAGE_TYPE.GRAIN_UNSEEDED) {
+                    return from(
+                        import('../../components/calculation-detail/grain-unseeded/grain-unseeded.component')
+                            .then(m => m.CalculationDetailGrainUnseededComponent)
+                    );
+                }
             } 
 
             // Default: go to the new calculation component
             return from(
                 import('../../components/calculation-detail/new-calculation/new-calculation.component').then(m => m.NewCalculationComponent)
             );
-            // return "<h2>Not Supported</h2>"
+
         })
     );
 

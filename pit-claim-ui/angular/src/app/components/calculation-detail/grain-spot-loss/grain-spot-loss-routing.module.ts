@@ -5,8 +5,8 @@ import { ResourcesAuthGuard } from '../../../services/util/ResourcesAuthGuard';
 import { DeactivateGuard } from '../../../services/util/DeactivateGuard';
 import { CALCULATION_DETAIL_SCOPES } from '../../../app-routing.module';
 import { CalculationDetailContainer } from '../../../containers/calculation-detail/calculation-detail-container.component';
-import { CalculationDetailGrainUnseededComponent } from './grain-unseeded.component';
-import { CalculationPrintoutGrainUnseededComponent } from '../../calculation-printout/grain-unseeded/grain-unseeded.component';
+import { CalculationDetailGrainSpotLossComponent } from './grain-spot-loss.component';
+import { CalculationPrintoutGrainSpotLossComponent } from '../../calculation-printout/grain-spot-loss/grain-spot-loss.component';
 
 const routes: Routes = [
  { 
@@ -30,9 +30,9 @@ const routes: Routes = [
       CommonModule,
       RouterModule.forChild(routes),
       CalculationDetailContainer,
-      CalculationDetailGrainUnseededComponent,
-      CalculationPrintoutGrainUnseededComponent
+      CalculationDetailGrainSpotLossComponent,
+      CalculationPrintoutGrainSpotLossComponent
     ]
 })
 
-export class GrainUnseededRoutingModule {}
+export class GrainSpotLossRoutingModule {}

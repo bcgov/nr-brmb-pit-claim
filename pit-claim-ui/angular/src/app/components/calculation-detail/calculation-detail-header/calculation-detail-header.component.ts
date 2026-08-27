@@ -80,7 +80,7 @@ export class CalculationDetailHeaderComponent extends BaseComponent implements O
 
 
   goToLinkedCalulation() {
-    let resourceRoute = ResourcesRoutes.CALCULATION_DETAIL
+    let resourceRoute = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_QTY
 
     let claimCalculationGuid = "";
 
