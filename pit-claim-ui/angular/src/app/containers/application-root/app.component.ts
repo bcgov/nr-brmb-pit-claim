@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from "@angular/core";
 import {UpdateService} from "../../services/update.service";
-import {Router} from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import {Store} from "@ngrx/store";
 import {RootState} from "../../store";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -9,12 +9,13 @@ import {ApplicationStateService} from "../../services/application-state.service"
 import {addRemoveCdkOverlayClass, ResourcesRoutes} from "../../utils";
 
 import {Subscription} from "rxjs";
-import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice } from "@wf1/wfcc-application-ui";
+import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "src/app/services/security-util.service";
 import { TokenService } from "src/app/services/token.service";
 import { AppConfigService } from "src/app/services/app-config.service";
+import { NgTemplateOutlet } from "@angular/common";
 
 const DEVICE: WfDevice = 'desktop';
 
@@ -23,7 +24,7 @@ const DEVICE: WfDevice = 'desktop';
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [WildfireApplicationModule, RouterOutlet, NgTemplateOutlet]
 })
 export class AppComponent implements OnInit {
 

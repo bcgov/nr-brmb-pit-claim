@@ -16,10 +16,15 @@ import {ApplicationStateService} from "../../../services/application-state.servi
 import {RootState} from "../../../store";
 import {BaseComponentModel} from "../../common/base/base.component.model";
 import {ErrorMessages, getDisplayErrorMessage} from "../../../utils/error-messages";
-import {MatDialogRef} from "@angular/material/dialog";
+import { MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import {addRemoveCdkOverlayClass, CONSTANTS, hasValues} from "../../../utils";
 import {setFormStateUnsaved} from "../../../store/application/application.actions";
 import {ErrorState, LoadState} from "../../../store/application/application.state";
+import { NgIf, NgClass } from "@angular/common";
+import { CdkDrag, CdkDragHandle } from "@angular/cdk/drag-drop";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { CdkTrapFocus } from "@angular/cdk/a11y";
+import { ErrorPanelComponent } from "../../common/error-panel/error-panel.component";
 
 export enum DIALOG_TYPE {
     INFO,
@@ -31,7 +36,7 @@ export enum DIALOG_TYPE {
     templateUrl: "./base-dialog.component.html",
     styleUrls: ["../../common/base/base.component.scss", "./base-dialog.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [NgIf, MatDialogTitle, CdkDrag, CdkDragHandle, MatProgressSpinner, CdkTrapFocus, NgClass, ErrorPanelComponent]
 })
 export class BaseDialogComponent implements AfterViewInit, OnChanges, OnDestroy {
     DIALOG_TYPE_OBJ = DIALOG_TYPE;

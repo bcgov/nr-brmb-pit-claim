@@ -7,28 +7,45 @@ import {
 import {CALCULATION_DETAIL_COMPONENT_ID} from "../../../store/calculation-detail/calculation-detail.state";
 import {BaseComponent} from "../../common/base/base.component";
 import {vmCalculation} from "../../../conversion/models";
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
 import {areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
-import { UntypedFormGroup } from "@angular/forms";
+import { UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
+import { MatFormField, MatError } from "@angular/material/form-field";
+import { MatSelect, MatOption } from "@angular/material/select";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { MatButton } from "@angular/material/button";
+import { CalculationPrintoutBlueberriesPlantComponent } from "../../calculation-printout/blueberries-plant/blueberries-plant.component";
+import { BaseWrapperComponent } from "../../common/base-wrapper/base-wrapper.component";
+import { ParamMap } from "@angular/router";
 
 @Component({
     selector: 'cirras-calculation-detail-berries-plant',
     templateUrl: './blueberries-plant.component.html',
     styleUrls: ['./blueberries-plant.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutBlueberriesPlantComponent,
+      NgIf, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailBlueberriesPlantComponent extends BaseComponent implements OnChanges, AfterViewInit {
   displayLabel = "Calculation Detail";
-  @Input() claimCalculationGuid?: string;
-  @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
   @Input() isUnsaved: boolean;
-  
+  @Input() loadState: LoadState;
+  @Input() errorState: ErrorState[];
+
+  claimCalculationGuid: string;
+  claimNumber: string;
+  policyNumber: string;
+
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
 
@@ -48,7 +65,20 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
       this.viewModel = new CalculationDetailBlueberriesPlantComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
+  loadCalculation() {
+    this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+            this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+            this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+            this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+   
+            this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+        }
+    );
+  }
+
   loadPage() {
+      this.loadCalculation()
       this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
       this.perilCodeOptions = getCodeOptions("PERIL_CODE");
       this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -82,7 +112,7 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
   }
 
   ngOnInit() {
-    super.ngOnInit()
+    this.loadPage()
 
     this.viewModel.formGroup.controls.lessAdjustmentUnits.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.damagedUnits.valueChanges.subscribe(value => this.updateCalculated() )

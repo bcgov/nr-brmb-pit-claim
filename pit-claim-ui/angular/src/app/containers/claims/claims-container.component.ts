@@ -11,8 +11,9 @@ import {
 import {SEARCH_CLAIMS_COMPONENT_ID} from "../../store/claims/claims.state";
 // import {SearchState} from "@wf1/wfcc-core-lib";
 import {Component} from "@angular/core";
-import { LocationStrategy, PathLocationStrategy } from "@angular/common";
+import { LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
 import { SearchState } from "src/app/search/store/state";
+import { ClaimsComponent } from "../../components/claims/claims.component";
 
 
 @Component({
@@ -25,7 +26,7 @@ import { SearchState } from "src/app/search/store/state";
               [errorState]="errorState$ | async"
       ></cirras-claims-desktop>`,
     providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
-    standalone: false
+    imports: [ClaimsComponent, AsyncPipe]
 })
 export class ClaimsContainer extends BaseContainer {
     collection$: Observable<any> = this.store.pipe(select(selectClaims()));

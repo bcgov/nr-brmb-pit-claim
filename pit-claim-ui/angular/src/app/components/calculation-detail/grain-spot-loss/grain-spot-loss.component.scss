@@ -1,0 +1,17 @@
+@use '../../../../styles/variables';
+
+@media screen {
+  calculation-printout-grain-spot-loss {
+    display: none !important;
+  }
+}
+
+@media print {
+/* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
+  calculation-printout-grain-spot-loss {
+    display: block !important;
+  }
+  #div-calculation-detail-grain-spot-loss {
+    display: none !important;
+  }
+}

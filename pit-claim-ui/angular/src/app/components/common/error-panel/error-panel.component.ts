@@ -13,13 +13,15 @@ import {
 import {ERROR_TYPE, ErrorState} from "../../../store/application/application.state";
 import {getDisplayErrorMessage} from "../../../utils/error-messages";
 import scrollIntoView from "scroll-into-view-if-needed";
+import { NgIf, NgClass, NgFor } from "@angular/common";
+import { ReactiveFormsModule } from "@angular/forms";
 
 @Component({
     selector: "cirras-claims-base-error-panel",
     templateUrl: "./error-panel.component.html",
     styleUrls: ["../base/base.component.scss", "./error-panel.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [NgIf, NgClass, NgFor, ReactiveFormsModule]
 })
 export class ErrorPanelComponent implements OnChanges {
     @ViewChild("errorContainer") errorContainer: ElementRef;

@@ -3,12 +3,13 @@ import { CodeData, Option } from 'src/app/store/application/application.state';
 import { vmCalculation } from "../../../conversion/models";
 import { getCodeOptions } from "../../../utils/code-table-utils";
 import { removeDuplicateWords } from "../../../utils"
+import { NgIf, UpperCasePipe } from '@angular/common';
 
 @Component({
     selector: 'cirras-calculation-printout-header',
     templateUrl: './calculation-printout-header.component.html',
     styleUrls: ['./calculation-printout-header.component.scss'],
-    standalone: false
+    imports: [NgIf, UpperCasePipe]
 })
 export class CalculationPrintoutHeaderComponent implements OnInit, OnChanges {
 

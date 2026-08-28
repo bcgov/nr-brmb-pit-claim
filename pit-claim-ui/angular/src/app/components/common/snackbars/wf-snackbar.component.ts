@@ -2,6 +2,8 @@ import {Component, Inject} from "@angular/core";
 // External
 import {MAT_SNACK_BAR_DATA, MatSnackBarRef} from "@angular/material/snack-bar";
 import {WF_SNACKBAR_TYPES, WFSnackbarData} from "../../../utils";
+import { NgIf } from "@angular/common";
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
     selector: 'cirras-claims-snackbar',
@@ -20,7 +22,7 @@ import {WF_SNACKBAR_TYPES, WFSnackbarData} from "../../../utils";
       </div>
 
   `,
-    standalone: false
+    imports: [NgIf, MatIcon]
 })
 export class WFSnackbarComponent {
   SNACKBAR_TYPES = WF_SNACKBAR_TYPES;

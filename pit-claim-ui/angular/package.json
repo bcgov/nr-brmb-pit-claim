@@ -31,7 +31,6 @@
     "@angular/platform-browser-dynamic": "19.2.25",
     "@angular/router": "19.2.25",
     "@angular/service-worker": "19.2.25",
-    "@busacca/ng-pick-datetime": "15.0.0",
     "@cirras/cirras-claims-api": "^2.5.3-SNAPSHOT",
     "@ngrx/effects": "19.2.1",
     "@ngrx/store": "19.2.1",

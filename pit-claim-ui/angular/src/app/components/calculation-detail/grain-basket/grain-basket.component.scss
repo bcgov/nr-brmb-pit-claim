@@ -1,3 +1,20 @@
+@use '../../../../styles/variables';
 .right-space{
     padding-right:6px;
+}
+
+@media screen {
+  calculation-printout-grain-basket {
+    display: none !important;
+  }
+}
+
+@media print {
+/* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
+  calculation-printout-grain-basket {
+    display: block !important;
+  }
+  #div-calculation-detail-grain-basket {
+    display: none !important;
+  }
 }

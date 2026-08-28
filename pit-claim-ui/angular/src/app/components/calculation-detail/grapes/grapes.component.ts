@@ -1,18 +1,29 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, AfterViewInit} from "@angular/core";
+import {ParamMap} from "@angular/router";
 import {CalculationDetailGrapesComponentModel} from "./grapes.component.model";
 import {
+    clearCalculationDetail,
   loadCalculationDetail,
   updateCalculationDetailMetadata
 } from "../../../store/calculation-detail/calculation-detail.actions";
 import {CALCULATION_DETAIL_COMPONENT_ID} from "../../../store/calculation-detail/calculation-detail.state";
 import {BaseComponent} from "../../common/base/base.component";
 import {vmCalculation} from "../../../conversion/models";
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
-import {UntypedFormArray, UntypedFormGroup} from "@angular/forms";
+import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import {dollars, dollarsToNumber, makeTitleCase, makeNumberOnly, CALCULATION_UPDATE_TYPE, CALCULATION_STATUS_CODE, getPrintTitle, CLAIM_STATUS_CODE, areNotEqual} from "../../../utils"
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
+import { BaseWrapperComponent } from "../../common/base-wrapper/base-wrapper.component";
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
+import { MatFormField, MatError } from "@angular/material/form-field";
+import { MatSelect, MatOption } from "@angular/material/select";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { CalculationPrintoutComponent } from "../../calculation-printout/grapes/grapes.component";
+import { MatButton } from "@angular/material/button";
 
 @Component({
     selector: "cirras-claims-calculation-detail-grapes",
@@ -20,19 +31,24 @@ import { setFormStateUnsaved } from "src/app/store/application/application.actio
     styleUrls: ["../../common/base/base.component.scss",
         "./grapes.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [BaseWrapperComponent, NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, 
+        MatSelect, MatOption, NgFor, MatError, MatIcon, NgStyle, MatInput, MatButton, CalculationPrintoutComponent, 
+        DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";
-    @Input() claimCalculationGuid?: string;
-    @Input() claimNumber?: string;
     @Input() calculationDetail: vmCalculation;
-    @Input() updatedCalculation: any;
     @Input() isUnsaved: boolean;
+    @Input() loadState: LoadState;
+    @Input() errorState: ErrorState[];
 
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];
     cropVarietyCodes: (CodeData|Option)[];
+
+    claimCalculationGuid: string;
+    claimNumber: string;
+    policyNumber: string;
 
     isClaimTotalHigh: boolean = false;
 
@@ -42,7 +58,21 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
         this.viewModel = new CalculationDetailGrapesComponentModel(this.sanitizer, this.fb, this.calculationDetail);
     }
 
+    loadCalculation() {
+        this.route.paramMap.subscribe(
+            (params: ParamMap) => {
+                this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+                this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+                this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+  
+                this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+            }
+        );
+    }
+
+
     loadPage() {
+        this.loadCalculation()
         this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
         this.perilCodeOptions = getCodeOptions("PERIL_CODE");
         this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -65,7 +95,7 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
 
       if (changes.calculationDetail) {
           this.calculationDetail = changes.calculationDetail.currentValue;
-          this.calculationComment = this.calculationDetail.calculationComment
+          this.calculationComment = (this.calculationDetail ? this.calculationDetail.calculationComment : "")
 
           setTimeout(() => {
               this.cdr.detectChanges();
@@ -89,23 +119,24 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
 
             this.viewModel.formGroup.controls.primaryPerilCode.setValue( this.calculationDetail.primaryPerilCode )
             this.viewModel.formGroup.controls.secondaryPerilCode.setValue( this.calculationDetail.secondaryPerilCode )
-            this.viewModel.formGroup.controls.coverageAssessedReason.setValue( this.calculationDetail.claimCalculationGrapes.coverageAssessedReason )
-            this.viewModel.formGroup.controls.coverageAmount.setValue( this.calculationDetail.claimCalculationGrapes.coverageAmount )            
-            this.viewModel.formGroup.controls.coverageAmountAssessed.setValue( dollars(this.calculationDetail.claimCalculationGrapes.coverageAmountAssessed) )
-            this.viewModel.formGroup.controls.coverageAmountAdjusted.setValue( dollars(this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted) )
+            this.viewModel.formGroup.controls.coverageAssessedReason.setValue( this.calculationDetail.claimCalculationGrapes?.coverageAssessedReason )
+            this.viewModel.formGroup.controls.coverageAmount.setValue( this.calculationDetail.claimCalculationGrapes?.coverageAmount )            
+            this.viewModel.formGroup.controls.coverageAmountAssessed.setValue( dollars(this.calculationDetail.claimCalculationGrapes?.coverageAmountAssessed) )
+            this.viewModel.formGroup.controls.coverageAmountAdjusted.setValue( dollars(this.calculationDetail.claimCalculationGrapes?.coverageAmountAdjusted) )
             this.viewModel.formGroup.controls.calculationComment.setValue( this.calculationDetail.calculationComment )            
-            this.viewModel.formGroup.controls.totalProductionValue.setValue( dollars(this.calculationDetail.claimCalculationGrapes.totalProductionValue ))
+            this.viewModel.formGroup.controls.totalProductionValue.setValue( dollars(this.calculationDetail.claimCalculationGrapes?.totalProductionValue ))
             this.viewModel.formGroup.controls.totalClaimAmount.setValue( dollars(this.calculationDetail.totalClaimAmount ))
 
 
             let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
             vla.clear()
-            this.calculationDetail.varieties.forEach( v => this.addVariety( v ) )
+            this.calculationDetail.varieties?.forEach( v => this.addVariety( v ) )
 
             this.enableDisableFormControls();
 
             this.isClaimTotalHigh = false
-            if (this.calculationDetail.totalClaimAmount > this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted ) {
+            if (this.calculationDetail.claimCalculationGrapes && this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted &&
+                 this.calculationDetail.totalClaimAmount > this.calculationDetail.claimCalculationGrapes.coverageAmountAdjusted ) {
                 this.isClaimTotalHigh = true
             }
         }
@@ -183,16 +214,6 @@ export class CalculationDetailGrapesComponent extends BaseComponent implements O
     getVarietyCodes() {
         let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
         return vla.controls.map( ( c: UntypedFormGroup ) => c.value.cropVarietyId )
-    }
-
-    updateVarietyField( claimIndex, updateIndex, fieldName ) {
-        let vla: UntypedFormArray = this.viewModel.formGroup.controls.varieties as UntypedFormArray
-
-        if ( this.updatedCalculation.varieties[ updateIndex][ fieldName ] == vla.controls[ claimIndex ].value[ fieldName ] ) return
-
-        console.log( 'updating variety', claimIndex, fieldName, 'to', this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
-        let fg = vla.controls[ claimIndex ] as UntypedFormGroup
-        fg.controls[ fieldName ].setValue( this.updatedCalculation.varieties[ updateIndex][ fieldName ] )
     }
 
     updatingCalculated = false
