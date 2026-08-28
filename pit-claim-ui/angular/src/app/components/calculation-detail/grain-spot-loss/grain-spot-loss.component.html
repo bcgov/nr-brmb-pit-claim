@@ -1,4 +1,5 @@
-<div class="cirras-claims-base-container page-width-container desktop">
+<base-wrapper [errorState]="errorState">
+<div id="div-calculation-detail-grain-spot-loss" class="cirras-claims-base-container page-width-container desktop">
     <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
   
   
@@ -227,4 +228,12 @@
       </form>
     </div>
   </div>
+
+
+  <calculation-printout-grain-spot-loss
+      *ngIf=" calculationDetail && 
+            calculationDetail.claimCalculationGrainSpotLoss "
+    [calculationDetail]="calculationDetail">
+  </calculation-printout-grain-spot-loss> 
   
+</base-wrapper>

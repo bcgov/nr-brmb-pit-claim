@@ -1,1 +1,18 @@
 @use '../../../../styles/variables';
+
+
+@media screen {
+  cirras-calculation-printout {
+    display: none !important;
+  }
+}
+
+@media print {
+    /* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
+    cirras-calculation-printout {
+        display: block !important;
+    }
+    #div-cirras-claims-calculation-detail-grapes {
+        display: none !important;
+    }
+}

@@ -63,16 +63,18 @@
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Version</th>
                         <td mat-cell *matCellDef="let item">
 
-                            <span #el [matTooltip]="getElementInnerText(el)" *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.CREATE_CALCULATION) && item.calculationVersion == 'NEW'">
-                                <a [routerLink]="[ '/calculation-detail', item.policyNumber, item.claimNumber, '' ]">
-                                    New
+                            <span #el [matTooltip]="getElementInnerText(el)" 
+                                *ngIf="securityUtilService.doesUserHaveScope(SCOPES_UI.CREATE_CALCULATION) && item.calculationVersion == 'NEW'">
+                                <a routerLink="" (click)="redirectToVersion(item, true);">
+                                   New
                                 </a>
                             </span>
                             <span #el [matTooltip]="getElementInnerText(el)" *ngIf="item.calculationVersion.substr(0,1) == 'V'">
-                                <a [routerLink]="[ '/calculation-detail', item.policyNumber, item.claimNumber, item.claimCalculationGuid]">
+                                <a routerLink="" (click)="redirectToVersion(item, false);">
                                     {{item.calculationVersion}}
                                 </a>
                             </span>
+
                             <span #el [matTooltip]="getElementInnerText(el)" *ngIf="item.calculationVersion == 'Not Supported'">
                                 {{item.calculationVersion}}
                             </span>

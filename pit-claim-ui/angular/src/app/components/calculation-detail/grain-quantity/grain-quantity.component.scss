@@ -2,5 +2,19 @@
     padding-right:6px;
 }
 
+@media screen {
+  calculation-printout-grain-quantity {
+    display: none !important;
+  }
+}
 
+@media print {
+/* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
+  calculation-printout-grain-quantity {
+    display: block !important;
+  }
 
+ #grain-quantity  {
+    display: none !important;
+  }
+}

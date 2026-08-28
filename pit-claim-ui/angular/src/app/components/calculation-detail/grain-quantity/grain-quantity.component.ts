@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BaseComponent } from '../../common/base/base.component';
 import { vmCalculation } from 'src/app/conversion/models';
-import { CodeData, Option } from 'src/app/store/application/application.state';
+import { CodeData, ErrorState, LoadState, Option } from 'src/app/store/application/application.state';
 import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { CalculationDetailGrainQuantityComponentModel } from './grain-quantity.component.model';
@@ -20,15 +20,17 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { CalculationPrintoutGrainQuantityComponent } from '../../calculation-printout/grain-quantity/grain-quantity.component';
+import { BaseWrapperComponent } from '../../common/base-wrapper/base-wrapper.component';
+import { ParamMap } from '@angular/router';
 
 @Component({
     selector: 'calculation-detail-grain-quantity',
     templateUrl: './grain-quantity.component.html',
     styleUrl: './grain-quantity.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
-      NgFor, MatError, NgStyle, MatTooltip, MatIcon, MatInput, MatLabel, MatButton, 
-      CalculationPrintoutGrainQuantityComponent, DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainQuantityComponent,
+      ReactiveFormsModule, MatFormField, MatSelect, MatOption, NgIf, NgFor, MatError, NgStyle, MatTooltip, 
+      MatIcon, MatInput, MatLabel, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrainQuantityComponent extends BaseComponent implements OnChanges, AfterViewInit{
 
@@ -36,6 +38,12 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
 
   @Input() calculationDetail: vmCalculation;
   @Input() isUnsaved: boolean;
+  @Input() loadState: LoadState;
+  @Input() errorState: ErrorState[];
+
+  claimCalculationGuid: string;
+  claimNumber: string;
+  policyNumber: string;
   
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -79,8 +87,20 @@ export class CalculationDetailGrainQuantityComponent extends BaseComponent imple
     this.viewModel = new CalculationDetailGrainQuantityComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
-  loadPage() {
+  loadCalculation() {
+    this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+            this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+            this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+            this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+ 
+            this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+        }
+    );
+  }
 
+  loadPage() {
+    this.loadCalculation()
     this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
     this.perilCodeOptions = getCodeOptions("PERIL_CODE");
     this.componentId = CALCULATION_DETAIL_COMPONENT_ID;

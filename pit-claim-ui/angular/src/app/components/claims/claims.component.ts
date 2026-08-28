@@ -17,6 +17,11 @@ import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, Ma
 import { MatSort, MatSortHeader } from "@angular/material/sort";
 import { RouterLink } from "@angular/router";
 import { NgxPaginationModule } from "ngx-pagination";
+import { vmClaim } from "src/app/conversion/models";
+import { navigateToCalculation, setHttpHeaders } from "src/app/utils";
+import { lastValueFrom } from "rxjs";
+import { ClaimCalculationRsrc } from "@cirras/cirras-claims-api";
+import { convertToCalculation } from "src/app/conversion/conversion-from-rest";
 
 @Component({
     selector: "cirras-claims-desktop",
@@ -107,4 +112,37 @@ export class ClaimsComponent extends CollectionComponent implements OnChanges, A
       this.selectedCalculationStatusCode = undefined;
       this.store.dispatch(clearClaimSearch());
     }    
+
+  getCalulationUrl(isNew: boolean, claimNumber: number, claimCalculationGuid: string, ) {
+    let url = this.appConfigService.getConfig().rest["cirras_claims"]
+
+    if (isNew) {
+      url = url +"/claims/" + claimNumber 
+    } else {
+      url = url +"/calculations/" + claimCalculationGuid + "?doRefreshManualClaimData=false" 
+    }
+
+    return url
+  }
+
+  redirectToVersion(item:vmClaim, isNew: boolean) {
+
+      if (!item.claimNumber) {
+       return 
+      }
+
+      let url = this.getCalulationUrl(isNew, item.claimNumber, item.claimCalculationGuid)
+
+      const httpOptions = setHttpHeaders(this.tokenService.getOauthToken())
+
+      return lastValueFrom(this.http.get(url,httpOptions)).then((data: ClaimCalculationRsrc) => {
+        const calculation = convertToCalculation(data)
+
+        navigateToCalculation(calculation, this.router)
+
+      })
+    }
+
+
+
 }

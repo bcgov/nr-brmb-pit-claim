@@ -31,8 +31,15 @@ export enum ResourcesRoutes {
     LANDING = "",
     CLAIM_LIST = "claim-list",
     CALCULATION_LIST = "calculation-list",    
-    CALCULATION_DETAIL = "calculation-detail",
+    // CALCULATION_DETAIL = "calculation-detail", // deprecate
     CALCULATION_DETAIL_GRAPES = "calculation-detail/grapes",
+    CALCULATION_DETAIL_BERRIES_QTY = "calculation-detail/berries/quantity",
+    CALCULATION_DETAIL_BERRIES_PLANT_UNITS = "calculation-detail/berries/plant/units",
+    CALCULATION_DETAIL_BERRIES_PLANT_ACRES = "calculation-detail/berries/plant/acres",
+    CALCULATION_DETAIL_GRAIN_BASKET = "calculation-detail/grain/basket",
+    CALCULATION_DETAIL_GRAIN_QTY = "calculation-detail/grain/quantity",
+    CALCULATION_DETAIL_GRAIN_SPOT_LOSS = "calculation-detail/grain/spot-loss",
+    CALCULATION_DETAIL_GRAIN_UNSEEDED = "calculation-detail/grain/unseeded",
     UNAUTHORIZED = "unauthorized",
     ERROR_PAGE = "error",
     SIGN_UP = "sign-up",
@@ -59,6 +66,20 @@ export const INSURANCE_NAME = {
     "FLOWERS"       : "FLOWERS"
 }
 
+export const COVERAGE_TYPE = {
+    "BERRIES_QUANTITY"  : "CQNT",  
+    "BERRIES_PLANT"     : "CPLANT",  
+    "GRAIN_SPOT_LOSS"   : "CSL",   
+    "GRAIN_QUANTITY"    : "CQG",  
+    "GRAIN_BASKET"      : "GB", 
+    "GRAIN_UNSEEDED"    : "CUNS"
+}
+
+// insuredByMeasurementType
+export const MEASUREMENT_TYPE = {
+    "ACRES"      : "ACRES",  
+    "UNITS"      : "UNITS"
+}
 
 export const DATE_FORMATS = {
     fullPickerInput: "Y-MM-DD HH:mm",
@@ -287,22 +308,70 @@ export function requiredIfValidator(predicate) {
     });
 }
 
-export function navigateToCalculation(item: vmCalculation, router: Router) {
-  navigateToCalculationHelper(item.insurancePlanId, item.policyNumber, item.claimNumber.toString(), item.claimCalculationGuid, router);
-}
-
-export function navigateToCalculationHelper(insurancePlanId: number, policyNumber:string, claimNumber:string, claimCalculationGuid: string, router: Router) {
+export function getRouterLink(item: vmCalculation) {
     let res = ""
 
-    switch (insurancePlanId){
+    switch (item.insurancePlanId){
         case INSURANCE_PLAN.GRAPES:
             res = ResourcesRoutes.CALCULATION_DETAIL_GRAPES;
             break;
+        case INSURANCE_PLAN.BERRIES:
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.BERRIES_QUANTITY) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_QTY;
+                break;
+            }
+            
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.BERRIES_PLANT && 
+                item.insuredByMeasurementType && item.insuredByMeasurementType.toUpperCase() === MEASUREMENT_TYPE.UNITS) {
+
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_UNITS;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.BERRIES_PLANT && 
+                item.insuredByMeasurementType && item.insuredByMeasurementType.toUpperCase() === MEASUREMENT_TYPE.ACRES ) {
+
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_ACRES;
+                break;
+            }
+        case INSURANCE_PLAN.GRAIN:
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_BASKET) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_BASKET;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_QUANTITY) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_QTY;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_SPOT_LOSS) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_SPOT_LOSS;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_UNSEEDED) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_UNSEEDED;
+                break;
+            }
+
         default:
-            res = ResourcesRoutes.CALCULATION_DETAIL;
+            res = "/" 
     }
 
-    router.navigate([res, policyNumber, claimNumber, claimCalculationGuid]);
+    return res;
+}
+
+export function navigateToCalculation(item: vmCalculation, router: Router) {
+    
+    let routerLink = getRouterLink(item)
+
+    if (item.claimCalculationGuid) {
+        router.navigate([routerLink, item.policyNumber, item.claimNumber, item.claimCalculationGuid]);
+    } else {
+        router.navigate([routerLink, item.policyNumber, item.claimNumber]);
+    }
+    
 }
 
 export function dollars( val ) {

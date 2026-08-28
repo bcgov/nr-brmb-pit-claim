@@ -1,1 +1,17 @@
 @use '../../../../styles/variables';
+
+@media screen {
+  cirras-calculation-printout-berries-plant {
+    display: none !important;
+  }
+}
+
+@media print {
+/* only Printout is printed in the print preview, and other unnecessary content is hided(e.g left nav menu, top bar etc. */
+  cirras-calculation-printout-berries-plant {
+    display: block !important;
+  }
+  #div-cirras-calculation-detail-berries-plant {
+    display: none !important;
+  }
+}

@@ -1,13 +1,14 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, AfterViewInit} from "@angular/core";
 import {CalculationDetailBerriesComponentModel} from "./berries.component.model";
 import {
+  clearCalculationDetail,
   loadCalculationDetail,
   updateCalculationDetailMetadata
 } from "../../../store/calculation-detail/calculation-detail.actions";
 import {CALCULATION_DETAIL_COMPONENT_ID} from "../../../store/calculation-detail/calculation-detail.state";
 import {BaseComponent} from "../../common/base/base.component";
 import {vmCalculation} from "../../../conversion/models";
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculation-detail.actions";
 import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
@@ -22,6 +23,9 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
+import { ParamMap } from "@angular/router";
+import { BaseWrapperComponent } from "../../common/base-wrapper/base-wrapper.component";
+import { CalculationPrintoutBerriesComponent } from "../../calculation-printout/berries/berries.component";
 
 @Component({
     selector: "cirras-claims-calculation-detail-berries",
@@ -29,15 +33,20 @@ import { MatButton } from "@angular/material/button";
     styleUrls: ["../../common/base/base.component.scss",
         "./berries.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
-      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, NgIf, CalculationDetailHeaderComponent, CalculationPrintoutBerriesComponent,
+      ReactiveFormsModule, MatFormField, MatSelect, MatOption, NgFor, MatError, MatTooltip, MatIcon, NgStyle, 
+      MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailBerriesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";
-    @Input() claimCalculationGuid?: string;
-    @Input() claimNumber?: string;
     @Input() calculationDetail: vmCalculation;
     @Input() isUnsaved: boolean;
+    @Input() loadState: LoadState;
+    @Input() errorState: ErrorState[];
+
+    claimCalculationGuid: string;
+    claimNumber: string;
+    policyNumber: string;
 
     calculationStatusOptions: (CodeData|Option)[];
     perilCodeOptions: (CodeData|Option)[];
@@ -61,7 +70,20 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
         this.viewModel = new CalculationDetailBerriesComponentModel(this.sanitizer, this.fb, this.calculationDetail);
     }
 
+    loadCalculation() {
+        this.route.paramMap.subscribe(
+            (params: ParamMap) => {
+                this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+                this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+                this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+  
+                this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+            }
+        );
+    }
+
     loadPage() {
+        this.loadCalculation()
         this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
         this.perilCodeOptions = getCodeOptions("PERIL_CODE");
         this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -84,7 +106,7 @@ export class CalculationDetailBerriesComponent extends BaseComponent implements 
 
       if (changes.calculationDetail) {
           this.calculationDetail = changes.calculationDetail.currentValue;
-          this.calculationComment = this.calculationDetail.calculationComment
+          this.calculationComment = this.calculationDetail?.calculationComment
 
           setTimeout(() => {
               this.cdr.detectChanges();
