@@ -9,9 +9,11 @@ import {
     selectSearchState
 } from "../../store/application/application.selectors";
 import {SEARCH_CALCULATIONS_COMPONENT_ID} from "../../store/calculations/calculations.state";
-import {SearchState} from "@wf1/wfcc-core-lib";
+// import {SearchState} from "@wf1/wfcc-core-lib";
 import {Component} from "@angular/core";
-import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common";
+import { Location, LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
+import { SearchState } from "src/app/search/store/state";
+import { CalculationsComponent } from "../../components/calculations/calculations.component";
 
 @Component({
     selector: "cirras-claims-calculations-container",
@@ -23,7 +25,7 @@ import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common"
                 [errorState]="errorState$ | async"
         ></cirras-claims-calculations>`,
     providers: [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
-    standalone: false
+    imports: [CalculationsComponent, AsyncPipe]
 })
 export class CalculationsContainer extends BaseContainer {
     collection$: Observable<any> = this.store.pipe(select(selectCalculations()));

@@ -1,22 +1,35 @@
 import { Component, ChangeDetectionStrategy, Input, OnChanges, AfterViewInit, SimpleChanges } from '@angular/core';
 import { vmCalculation } from 'src/app/conversion/models';
-import {CodeData, Option} from "../../../store/application/application.state";
+import {CodeData, ErrorState, LoadState, Option} from "../../../store/application/application.state";
 import { BaseComponent } from '../../common/base/base.component';
 import {getCodeOptions} from "../../../utils/code-table-utils";
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
 import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMetadata } from 'src/app/store/calculation-detail/calculation-detail.actions';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
-import { UntypedFormGroup } from '@angular/forms';
+import { UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CalculationDetailGrainBasketComponentModel } from './grain-basket.component.model';
 import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeTitleCase } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { CalculationDetailHeaderComponent } from '../calculation-detail-header/calculation-detail-header.component';
+import { MatFormField, MatError } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { BaseWrapperComponent } from '../../common/base-wrapper/base-wrapper.component';
+import { CalculationPrintoutGrainBasketComponent } from '../../calculation-printout/grain-basket/grain-basket.component';
+import { ParamMap } from '@angular/router';
 
 @Component({
     selector: 'calculation-detail-grain-basket',
     templateUrl: './grain-basket.component.html',
     styleUrl: './grain-basket.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [BaseWrapperComponent, CalculationPrintoutGrainBasketComponent,
+      NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
+      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 
 export class CalculationDetailGrainBasketComponent extends BaseComponent implements OnChanges, AfterViewInit{
@@ -24,6 +37,12 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
 
   @Input() calculationDetail: vmCalculation;
   @Input() isUnsaved: boolean;
+  @Input() loadState: LoadState;
+  @Input() errorState: ErrorState[];
+
+  claimCalculationGuid: string;
+  claimNumber: string;
+  policyNumber: string;
 
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -44,7 +63,20 @@ export class CalculationDetailGrainBasketComponent extends BaseComponent impleme
     this.viewModel = new CalculationDetailGrainBasketComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
+  loadCalculation() {
+    this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+            this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+            this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+            this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+ 
+            this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber,this.policyNumber, "false"));                   
+        }
+    );
+  }
+
   loadPage() {
+    this.loadCalculation()
     this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
     this.perilCodeOptions = getCodeOptions("PERIL_CODE");
     this.componentId = CALCULATION_DETAIL_COMPONENT_ID;

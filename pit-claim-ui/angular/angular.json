@@ -20,10 +20,8 @@
             "allowedCommonJsDependencies": [
               "lodash",
               "deep-equal",
-              "moment-timezone",
               "moment",
-              "angular2-uuid",
-              "vanilla-text-mask"
+              "angular2-uuid"
            ],
             "outputPath": "dist/pit-claim",
             "index": "src/index.html",
@@ -46,7 +44,6 @@
             ],
             "styles": [
               "src/styles/main.scss",
-              "node_modules/@busacca/ng-pick-datetime/assets/style/picker.scss",
               "node_modules/multiple-select/dist/multiple-select.css"
             ],
             "scripts": [
@@ -122,6 +119,6 @@
     }
   },
   "cli": {
-    "analytics": "aaf8cc4c-1e16-4ec7-97ef-08ee82b5af61"
+    "analytics": false
   }
 }

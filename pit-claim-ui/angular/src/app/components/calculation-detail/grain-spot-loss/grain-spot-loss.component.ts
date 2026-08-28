@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { vmCalculation } from 'src/app/conversion/models';
 import { BaseComponent } from '../../common/base/base.component';
-import { CodeData, Option } from 'src/app/store/application/application.state';
+import { CodeData, ErrorState, LoadState, Option } from 'src/app/store/application/application.state';
 import { CalculationDetailGrainSpotLossComponentModel } from './grain-spot-loss.component.model';
 import { getCodeOptions } from 'src/app/utils/code-table-utils';
 import { CALCULATION_DETAIL_COMPONENT_ID } from 'src/app/store/calculation-detail/calculation-detail.state';
@@ -9,22 +9,39 @@ import { loadCalculationDetail, syncClaimsCodeTables, updateCalculationDetailMet
 import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeNumberOnly } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
-import { UntypedFormGroup } from '@angular/forms';
+import { UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { CalculationDetailHeaderComponent } from '../calculation-detail-header/calculation-detail-header.component';
+import { MatFormField, MatError } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { BaseWrapperComponent } from '../../common/base-wrapper/base-wrapper.component';
+import { ParamMap } from '@angular/router';
+import { CalculationPrintoutGrainSpotLossComponent } from '../../calculation-printout/grain-spot-loss/grain-spot-loss.component';
 
 @Component({
     selector: 'calculation-detail-grain-spot-loss',
     templateUrl: './grain-spot-loss.component.html',
     styleUrl: './grain-spot-loss.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainSpotLossComponent, 
+      ReactiveFormsModule, MatFormField, NgIf, MatSelect, MatOption, 
+      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 
 export class CalculationDetailGrainSpotLossComponent extends BaseComponent implements OnChanges, AfterViewInit {
   displayLabel = "Calculation Detail";
-  @Input() claimCalculationGuid?: string;
-  @Input() claimNumber?: string;
   @Input() calculationDetail: vmCalculation;
   @Input() isUnsaved: boolean;
+  @Input() loadState: LoadState;
+  @Input() errorState: ErrorState[];
+
+  claimCalculationGuid: string;
+  claimNumber: string;
+  policyNumber: string;
 
   calculationStatusOptions: (CodeData|Option)[];
   perilCodeOptions: (CodeData|Option)[];
@@ -39,7 +56,20 @@ export class CalculationDetailGrainSpotLossComponent extends BaseComponent imple
       this.viewModel = new CalculationDetailGrainSpotLossComponentModel(this.sanitizer, this.fb, this.calculationDetail);
   }
 
+  loadCalculation() {
+    this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+            this.claimCalculationGuid = params.get("claimCalculationGuid") ? params.get("claimCalculationGuid") : null;
+            this.claimNumber = params.get("claimNumber") ? params.get("claimNumber") : null;
+            this.policyNumber = params.get("policyNumber") ? params.get("policyNumber") : null;
+ 
+            this.store.dispatch(loadCalculationDetail(this.claimCalculationGuid, this.displayLabel, this.claimNumber, this.policyNumber, "false"));                   
+        }
+    );
+  }
+
   loadPage() {
+      this.loadCalculation()
       this.calculationStatusOptions = getCodeOptions("CALCULATION_STATUS_CODE");
       this.perilCodeOptions = getCodeOptions("PERIL_CODE");
       this.componentId = CALCULATION_DETAIL_COMPONENT_ID;
@@ -73,7 +103,7 @@ export class CalculationDetailGrainSpotLossComponent extends BaseComponent imple
   }
 
   ngOnInit() {
-    super.ngOnInit()
+    this.loadPage()
 
     this.viewModel.formGroup.controls.adjustedAcres.valueChanges.subscribe(value => this.updateCalculated() )
     this.viewModel.formGroup.controls.percentYieldReduction.valueChanges.subscribe(value => this.updateCalculated() )

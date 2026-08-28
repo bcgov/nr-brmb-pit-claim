@@ -2,12 +2,13 @@ import { vmCalculation } from './../conversion/models';
 import {APP_BOOTSTRAP_LISTENER, Inject, InjectionToken, Renderer2, Type} from "@angular/core";
 import {EffectSources} from "@ngrx/effects";
 import {PagingInfoRequest} from "../store/application/application.state";
-import {SortDirection} from "@wf1/wfcc-core-lib";
+// import {SortDirection} from "@wf1/wfcc-core-lib";
 import moment, { Moment } from "moment";
 import {Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import { UUID } from 'angular2-uuid';
 import { HttpHeaders } from '@angular/common/http';
+import { SortDirection } from '../search/models/sort/sort-direction';
 
 export const CODE_TABLE_CACHE = {};
 
@@ -30,11 +31,54 @@ export enum ResourcesRoutes {
     LANDING = "",
     CLAIM_LIST = "claim-list",
     CALCULATION_LIST = "calculation-list",    
-    CALCULATION_DETAIL = "calculation-detail",
+    // CALCULATION_DETAIL = "calculation-detail", // deprecate
+    CALCULATION_DETAIL_GRAPES = "calculation-detail/grapes",
+    CALCULATION_DETAIL_BERRIES_QTY = "calculation-detail/berries/quantity",
+    CALCULATION_DETAIL_BERRIES_PLANT_UNITS = "calculation-detail/berries/plant/units",
+    CALCULATION_DETAIL_BERRIES_PLANT_ACRES = "calculation-detail/berries/plant/acres",
+    CALCULATION_DETAIL_GRAIN_BASKET = "calculation-detail/grain/basket",
+    CALCULATION_DETAIL_GRAIN_QTY = "calculation-detail/grain/quantity",
+    CALCULATION_DETAIL_GRAIN_SPOT_LOSS = "calculation-detail/grain/spot-loss",
+    CALCULATION_DETAIL_GRAIN_UNSEEDED = "calculation-detail/grain/unseeded",
     UNAUTHORIZED = "unauthorized",
     ERROR_PAGE = "error",
     SIGN_UP = "sign-up",
     SIGN_OUT = "sign-out-page"
+}
+
+export const INSURANCE_PLAN = {
+    "GRAPES"        : 1,  
+    "TREEFRUITS"    : 2,  
+    "BERRIES"       : 3,   
+    "GRAIN"         : 4, 
+    "FORAGE"        : 5,
+    "VEGETABLES"    : 6,
+    "FLOWERS"       : 8
+}
+
+export const INSURANCE_NAME = {
+    "GRAPES"        : "GRAPES",  
+    "TREEFRUITS"    : "TREEFRUITS",  
+    "BERRIES"       : "BERRIES",   
+    "GRAIN"         : "GRAIN", 
+    "FORAGE"        : "FORAGE",
+    "VEGETABLES"    : "VEGETABLES",
+    "FLOWERS"       : "FLOWERS"
+}
+
+export const COVERAGE_TYPE = {
+    "BERRIES_QUANTITY"  : "CQNT",  
+    "BERRIES_PLANT"     : "CPLANT",  
+    "GRAIN_SPOT_LOSS"   : "CSL",   
+    "GRAIN_QUANTITY"    : "CQG",  
+    "GRAIN_BASKET"      : "GB", 
+    "GRAIN_UNSEEDED"    : "CUNS"
+}
+
+// insuredByMeasurementType
+export const MEASUREMENT_TYPE = {
+    "ACRES"      : "ACRES",  
+    "UNITS"      : "UNITS"
 }
 
 export const DATE_FORMATS = {
@@ -264,12 +308,70 @@ export function requiredIfValidator(predicate) {
     });
 }
 
-export function navigateToCalculation(item: vmCalculation, router: Router) {
-  navigateToCalculationHelper(item.policyNumber, item.claimNumber.toString(), item.claimCalculationGuid, router);
+export function getRouterLink(item: vmCalculation) {
+    let res = ""
+
+    switch (item.insurancePlanId){
+        case INSURANCE_PLAN.GRAPES:
+            res = ResourcesRoutes.CALCULATION_DETAIL_GRAPES;
+            break;
+        case INSURANCE_PLAN.BERRIES:
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.BERRIES_QUANTITY) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_QTY;
+                break;
+            }
+            
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.BERRIES_PLANT && 
+                item.insuredByMeasurementType && item.insuredByMeasurementType.toUpperCase() === MEASUREMENT_TYPE.UNITS) {
+
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_UNITS;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.BERRIES_PLANT && 
+                item.insuredByMeasurementType && item.insuredByMeasurementType.toUpperCase() === MEASUREMENT_TYPE.ACRES ) {
+
+                res = ResourcesRoutes.CALCULATION_DETAIL_BERRIES_PLANT_ACRES;
+                break;
+            }
+        case INSURANCE_PLAN.GRAIN:
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_BASKET) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_BASKET;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_QUANTITY) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_QTY;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_SPOT_LOSS) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_SPOT_LOSS;
+                break;
+            }
+
+            if (item.commodityCoverageCode.toUpperCase() === COVERAGE_TYPE.GRAIN_UNSEEDED) {
+                res = ResourcesRoutes.CALCULATION_DETAIL_GRAIN_UNSEEDED;
+                break;
+            }
+
+        default:
+            res = "/" 
+    }
+
+    return res;
 }
 
-export function navigateToCalculationHelper(policyNumber:string, claimNumber:string, claimCalculationGuid: string, router: Router) {
-  router.navigate([ResourcesRoutes.CALCULATION_DETAIL, policyNumber, claimNumber, claimCalculationGuid]);
+export function navigateToCalculation(item: vmCalculation, router: Router) {
+    
+    let routerLink = getRouterLink(item)
+
+    if (item.claimCalculationGuid) {
+        router.navigate([routerLink, item.policyNumber, item.claimNumber, item.claimCalculationGuid]);
+    } else {
+        router.navigate([routerLink, item.policyNumber, item.claimNumber]);
+    }
+    
 }
 
 export function dollars( val ) {

@@ -1,4 +1,5 @@
-        <div class="cirras-claims-base-container page-width-container desktop">
+<base-wrapper [errorState]="errorState">
+  <div id="div-cirras-claims-calculation-detail-grapes" class="cirras-claims-base-container page-width-container desktop">
           <div class="cirras-claims-base-container personnel flex-y" *ngIf="calculationDetail">
 
             <cirras-calculation-detail-header 
@@ -73,7 +74,7 @@
                   <div class="ccc-border-right">
                   </div>
                   <div class="ccc-right">
-                     {{ calculationDetail.claimCalculationGrapes.coverageAmount | currency }}
+                     {{ calculationDetail.claimCalculationGrapes?.coverageAmount | currency }}
                      <span #el matTooltip="Coverage Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncCoverageAmount" style="margin-left: 10px;">
                       <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                     </span>
@@ -111,7 +112,7 @@
                     Selected Insurable Value:
                   </div>
                   <div class="ccc-right">
-                    {{ calculationDetail.claimCalculationGrapes.insurableValueSelected | number:'1.4-4' }}
+                    {{ calculationDetail.claimCalculationGrapes?.insurableValueSelected | number:'1.4-4' }}
                     <span #el matTooltip="Selected Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncInsurableValueSelected" style="margin-left: 10px;">
                       <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                     </span>
@@ -121,7 +122,7 @@
                     100% Insurable Value:
                   </div>
                   <div class="ccc-right">
-                    {{ calculationDetail.claimCalculationGrapes.insurableValueHundredPercent | number:'1.4-4' }}
+                    {{ calculationDetail.claimCalculationGrapes?.insurableValueHundredPercent | number:'1.4-4' }}
                     <span #el matTooltip="100% Insurable Value doesn't match with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncInsurableValueHundredPct" style="margin-left: 10px;">
                       <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                     </span>                    
@@ -131,7 +132,7 @@
                     Total Coverage Dollars:
                   </div>
                   <div class="ccc-right">
-                    {{ calculationDetail.claimCalculationGrapes.coverageAmount | currency }}
+                    {{ calculationDetail.claimCalculationGrapes?.coverageAmount | currency }}
                     <span #el matTooltip="Total Coverage Dollars don't math  with CIRRAS" *ngIf="calculationDetail.claimCalculationGrapes.isOutOfSyncCoverageAmount" style="margin-left: 10px;">
                       <mat-icon [ngStyle]="{'color':'orange'}">warning</mat-icon>
                     </span>                                        
@@ -353,3 +354,13 @@
             </form>
           </div>
         </div>
+
+  <!-- printout -->
+  <cirras-calculation-printout 
+    *ngIf=" calculationDetail && calculationDetail.claimCalculationGuid &&
+            (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' "
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout>
+
+
+</base-wrapper>

@@ -1,0 +1,20 @@
+import {SortDirection} from "../models/sort/sort-direction";
+
+export interface SearchState {
+  query?: string;
+  sortParam?: string;
+  sortDirection?: SortDirection;
+  sortModalVisible: boolean;
+  filters: { [param: string]: any[] };
+  hiddenFilters: { [param: string]: any[] };
+  componentId?: string;
+}
+
+export const initialState: SearchState = {
+//   query: null,
+//   sortParam: null,
+//   sortDirection: null,
+  sortModalVisible: false,
+  filters: {},
+  hiddenFilters: {}
+};
