@@ -1,0 +1,6 @@
+import {SortDirection} from "./sort-direction";
+
+export interface DefaultSort {
+  param: string;
+  direction: SortDirection;
+}

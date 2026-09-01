@@ -1,19 +1,18 @@
-export interface PagingConfig {
-    [prop: string]: number;
-}
+// export interface PagingConfig {
+//     [prop: string]: number;
+// }
 
 export interface Application {
     acronym: string;
     version: string;
     baseUrl: string;
     environment: string;
-    buildNumber?: string;
-    maxListPageSize: PagingConfig;
-    lazyAuthenticate?: boolean;
-    enableLocalStorageToken?: boolean;
-    allowLocalExpiredToken?: boolean;
-    localStorageTokenKey?: string;
-
+    // buildNumber?: string;
+    // maxListPageSize: PagingConfig;
+    // lazyAuthenticate?: boolean;
+    // enableLocalStorageToken?: boolean;
+    // allowLocalExpiredToken?: boolean;
+    // localStorageTokenKey?: string;
 }
 
 export interface RestConfig {

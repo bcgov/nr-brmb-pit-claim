@@ -25,6 +25,8 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        console.log("ResourcesInterceptor.intercept")
+
         let processedRequest = req;
         if (this.isUrlSecured(req.url)) {
           if (!this.tokenService) {
@@ -34,6 +36,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
           let requestId = headers.get("RequestId");
           if (this.tokenService.getTokenDetails()) {
               if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
+                console.log("ResourcesInterceptor.isTokenExpired")
                   return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
                       this.tokenService.updateToken(tokenResponse);
                       processedRequest = req.clone({headers});
@@ -190,6 +193,8 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
 
     refreshWindow() {
         // console.log("refresh window");
+        console.log("ResourcesInterceptor.refreshWindow")
+        
         if (this.asyncTokenRefresh) {
             return this.asyncTokenRefresh;
         }

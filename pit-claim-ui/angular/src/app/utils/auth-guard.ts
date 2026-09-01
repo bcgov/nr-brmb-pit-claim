@@ -12,6 +12,8 @@ export class AuthGuard implements CanActivate {
 
     constructor(protected tokenService: TokenService, protected router: Router) {
         // console.log("using auth guard");
+        console.log("AuthGuard.constructor");
+
         this.tokenService.credentialsEmitter.subscribe(credentials => {
             this.credentials = credentials;
         });
@@ -26,6 +28,8 @@ export class AuthGuard implements CanActivate {
     }
 
     checkLogin(url: string, scopes: string[]): boolean {
+        console.log("AuthGuard.checkLogin");
+        
         let isAuthorized = (this.credentials) ? this.tokenService.doesUserHaveApplicationPermissions(scopes) : false;
 
         if (!isAuthorized) {

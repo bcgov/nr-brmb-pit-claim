@@ -3,8 +3,7 @@
     "acronym": "PIT-CLAIM",
     "version": "2.5.3-SNAPSHOT",
     "baseUrl": "http://localhost:11200/",
-    "environment": "LOCAL",
-    "buildNumber": "0000"
+    "environment": "LOCAL"
   },
   "rest": {
     "cirras_claims": "https://cirras-claims-api-route-dev-b3e64d-dev.apps.silver.devops.gov.bc.ca/cirras-claims-api/v1",

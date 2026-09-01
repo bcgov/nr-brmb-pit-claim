@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpBackend, HttpClient} from "@angular/common/http";
-import {AsyncSubject, Observable} from "rxjs";
+import {AsyncSubject, lastValueFrom, Observable} from "rxjs";
 import {LibraryConfig} from "../config/library-config";
 import {ApplicationConfig} from "../interfaces/application-config";
 
@@ -17,19 +17,14 @@ export class AppConfigService {
   }
 
   loadAppConfig() {
-   // console.log("loading app config");
     let http = new HttpClient(this.httpHandler);
     if ( !this.libConfig.configurationPath ) return
-    return http.get(this.libConfig.configurationPath).toPromise().then(data => {
+    return lastValueFrom( http.get(this.libConfig.configurationPath)).then(data => {
         this.appConfig = data as ApplicationConfig; 
         this.config.next(this.appConfig);
         this.config.complete();
     });
   }
-
-//   getConfig(): ApplicationConfig|undefined {
-//     return this.appConfig;
-//   }
 
   getConfig(): ApplicationConfig {
     if (!this.appConfig) {
