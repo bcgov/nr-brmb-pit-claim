@@ -38,6 +38,8 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
               if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
                 console.log("ResourcesInterceptor.isTokenExpired")
                   return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
+
+                    debugger
                       this.tokenService.updateToken(tokenResponse);
                       processedRequest = req.clone({headers});
                       if (this.asyncTokenRefresh.isComplete) {
@@ -194,7 +196,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
     refreshWindow() {
         // console.log("refresh window");
         console.log("ResourcesInterceptor.refreshWindow")
-        
+        debugger
         if (this.asyncTokenRefresh) {
             return this.asyncTokenRefresh;
         }
@@ -211,6 +213,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(`${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
             , "cirras-claims-token",
             (errorMessage) => {
+                debugger
                 this.displayRefreshErrorMessage(errorMessage);
             });
         return this.asyncTokenRefresh;

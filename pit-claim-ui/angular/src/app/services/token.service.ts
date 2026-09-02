@@ -126,14 +126,14 @@ export class TokenService {
     }
 
     public isTokenExpired(token: any): boolean {
-        let expiryDate;
-        let now = moment()
-        if (token && token.exp) {
-            expiryDate = moment.unix(token.exp);
-            if (now.isBefore(expiryDate)) {
-                return false;
-            }
-        }
+        // let expiryDate;
+        // let now = moment()
+        // if (token && token.exp) {
+        //     expiryDate = moment.unix(token.exp);
+        //     if (now.isBefore(expiryDate)) {
+        //         return false;
+        //     }
+        // }
         return true;
     }
 
@@ -182,11 +182,13 @@ export class TokenService {
      * Set authentication configuration and initiate refresh token implicit flow
      */
     public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
+        debugger
         const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
         let refreshWindow = window.open(authorizeURL, undefined, options);
         let refreshAsync = new AsyncSubject();
 
         let refreshInterval = setInterval(() => {
+            debugger
             if (!refreshWindow) {
                 errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
                 refreshWindow = window.open(authorizeURL, undefined, options);
@@ -201,7 +203,7 @@ export class TokenService {
                 refreshAsync.next(newToken);
                 refreshAsync.complete();
             }
-        }, 500);
+        }, 500); //500
 
         return refreshAsync.asObservable();
     }
