@@ -38,7 +38,8 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
               if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
                 console.log("ResourcesInterceptor.isTokenExpired")
                   return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
-
+                    console.log("return this.refreshWindow().pipe(mergeMap((tokenResponse) => ")
+                    console.log("tokenResponse: " + tokenResponse)
                     debugger
                       this.tokenService.updateToken(tokenResponse);
                       processedRequest = req.clone({headers});
@@ -214,8 +215,10 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
             , "cirras-claims-token",
             (errorMessage) => {
                 debugger
+                console.log("(errorMessage) => " + errorMessage)
                 this.displayRefreshErrorMessage(errorMessage);
             });
+        console.log("refreshWindow >> return this.asyncTokenRefresh;")
         return this.asyncTokenRefresh;
     }
 

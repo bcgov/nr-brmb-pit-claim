@@ -183,18 +183,24 @@ export class TokenService {
      */
     public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
         debugger
+        console.log("TokenService.initRefreshTokenImplicitFlow")
         const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
         let refreshWindow = window.open(authorizeURL, undefined, options);
         let refreshAsync = new AsyncSubject();
 
         let refreshInterval = setInterval(() => {
             debugger
+            console.log("let refreshInterval = setInterval(() =>")
             if (!refreshWindow) {
+                console.log("if (!refreshWindow)")
+
                 errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
                 refreshWindow = window.open(authorizeURL, undefined, options);
+                console.log("refreshWindow = window.open(authorizeURL, undefined, options);")
             }
 
             if (refreshWindow && refreshWindow.closed) {
+                console.log("if (refreshWindow && refreshWindow.closed)")
                 clearInterval(refreshInterval);
                 let newToken = window.localStorage.getItem(`${storageKey}`);
                 newToken = JSON.parse(newToken ?? '""');
@@ -202,6 +208,7 @@ export class TokenService {
                 this.updateToken(newToken);
                 refreshAsync.next(newToken);
                 refreshAsync.complete();
+                console.log("refreshAsync.complete();")
             }
         }, 500); //500
 
