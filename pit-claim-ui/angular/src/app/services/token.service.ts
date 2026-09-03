@@ -126,14 +126,14 @@ export class TokenService {
     }
 
     public isTokenExpired(token: any): boolean {
-        // let expiryDate;
-        // let now = moment()
-        // if (token && token.exp) {
-        //     expiryDate = moment.unix(token.exp);
-        //     if (now.isBefore(expiryDate)) {
-        //         return false;
-        //     }
-        // }
+        let expiryDate;
+        let now = moment()
+        if (token && token.exp) {
+            expiryDate = moment.unix(token.exp);
+            if (now.isBefore(expiryDate)) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -205,12 +205,14 @@ export class TokenService {
                 let newToken = window.localStorage.getItem(`${storageKey}`);
                 newToken = JSON.parse(newToken ?? '""');
                 window.localStorage.removeItem(`${storageKey}`);
+
+                console.log("newToken: " + newToken)
                 this.updateToken(newToken);
                 refreshAsync.next(newToken);
                 refreshAsync.complete();
                 console.log("refreshAsync.complete();")
             }
-        }, 500); //500
+        }, 500);
 
         return refreshAsync.asObservable();
     }
@@ -261,7 +263,8 @@ export class TokenService {
      */
 
     private initAndEmit() {
-        // console.log('init and emit', this.appConfigService.getConfig());
+        console.log('init and emit', this.appConfigService.getConfig());
+
         if (this.appConfigService.getConfig()?.webade.enableCheckToken) {
             let baseUrl = this.appConfigService.getConfig()?.application.baseUrl;
             if (baseUrl && !baseUrl.endsWith('/')) {
@@ -282,10 +285,10 @@ export class TokenService {
                     .then(
                         (response: any) => {
                             this.tokenDetails = response;
-                            // console.log('access_token', this.oauth.access_token);
+                            console.log('initAndEmit >> access_token', this.oauth.access_token);
                             this.authToken.next(this.oauth.access_token);
                             this.authToken.complete();
-                            // console.log('tokenDetails', this.tokenDetails);
+                            console.log('initAndEmit >> tokenDetails', this.tokenDetails);
                             this.credentials.next(this.tokenDetails);
                             this.credentials.complete();
                         })
