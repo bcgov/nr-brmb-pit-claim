@@ -11,10 +11,13 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     private authToken: any;
 
     constructor(protected injector: Injector) {
+        console.log("AuthenticationInterceptor.constructor")
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // console.log(this.appConfig.getConfig());
+        console.log("AuthenticationInterceptor.intercept")
+        
         let processedRequest = req;
         if (this.isUrlSecured(req.url)) {
             this.token = this.injector.get(TokenService);

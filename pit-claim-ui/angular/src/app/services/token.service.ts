@@ -23,22 +23,28 @@ export class TokenService {
     public credentialsEmitter: Observable<any> = this.credentials.asObservable();
     public authTokenEmitter: Observable<string> = this.authToken.asObservable();
     constructor(private injector: Injector, protected appConfigService: AppConfigService) {
+
+        
         //console.log("initing token service", appConfigService.getConfig());
+        console.log("TokenService.constructor")
+        
+        // const lazyAuthenticate = appConfigService.getConfig()?.application.lazyAuthenticate;
+        // const enableLocalStorageToken = appConfigService.getConfig()?.application.enableLocalStorageToken;
+        // const localStorageTokenKey = appConfigService.getConfig()?.application.localStorageTokenKey;
+        // const allowLocalExpiredToken = appConfigService.getConfig()?.application.allowLocalExpiredToken;
 
-        const lazyAuthenticate = appConfigService.getConfig()?.application.lazyAuthenticate;
-        const enableLocalStorageToken = appConfigService.getConfig()?.application.enableLocalStorageToken;
-        const localStorageTokenKey = appConfigService.getConfig()?.application.localStorageTokenKey;
-        const allowLocalExpiredToken = appConfigService.getConfig()?.application.allowLocalExpiredToken;
+        // console.log("From appConfig -> lazyAuthenticate: " + lazyAuthenticate + "; enableLocalStorageToken: " + enableLocalStorageToken 
+        //     + "; localStorageTokenKey: " + localStorageTokenKey + "; allowLocalExpiredToken: " + allowLocalExpiredToken)
 
-        if (localStorageTokenKey) {
-            this.LOCAL_STORAGE_KEY = localStorageTokenKey;
-        }
+        // if (localStorageTokenKey) {
+        //     this.LOCAL_STORAGE_KEY = localStorageTokenKey;
+        // }
 
-        if (enableLocalStorageToken) {
-            this.useLocalStore = true;
-        }
+        // if (enableLocalStorageToken) {
+        //     this.useLocalStore = true;
+        // }
 
-        this.checkForToken(undefined, lazyAuthenticate, allowLocalExpiredToken);
+        this.checkForToken(undefined);
     }
 
     /*
@@ -50,17 +56,20 @@ export class TokenService {
      * @param {boolean} lazyAuth When true, allows application to handle when to login ( by default: false which will require login as soon as the application initializes)
      * @param {boolean} allowLocalExpiredToken When true, expired tokens are not removed and does not invoke login (allows token to be used even when expired for offline mode and service workers).
      */
-    public checkForToken(redirectUri?: string, lazyAuth?: boolean, allowLocalExpiredToken?: boolean) {
-        // console.log('redirect uri', redirectUri);
+    public checkForToken(redirectUri?: string) {
+        // console.log('checkForToken>>> redirect uri', redirectUri);
+        console.log("TokenService.checkForToken")
+
         let hash = window.location.hash;
 
         // Check if URL has token (redirected back from oauth)
-        if (hash && hash.indexOf('access_token') > -1) {
-
+        if (hash && hash.indexOf('access_token') > -1) { // ok
+            console.log("TokenService.checkForToken >>> if (hash && hash.indexOf(access_token) > -1)")
             // We have a token in the URL, parse it
             this.parseToken(hash);
 
         } else if (this.useLocalStore && !navigator.onLine) {
+            console.log("TokenService.checkForToken >>> else if (this.useLocalStore && !navigator.onLine)")
             // Only use local storage if application is offline
             // this is to refresh expired tokens before check token is enabled, when there is connectivity
 
@@ -69,8 +78,9 @@ export class TokenService {
 
             // Parse the token
             if (tokenStore) {
-
+                console.log("TokenService.checkForToken >>> if (tokenStore) ")
                 try {
+                    console.log('use local storage if application is offline');
                     tokenStore = JSON.parse(tokenStore);
                     this.initAuthFromSession();
                 } catch (err) {
@@ -83,18 +93,23 @@ export class TokenService {
                 }
 
             } else {
+                console.log("TokenService.checkForToken >>> else -- no tokenStore ")
                 // no token was found initiate login
                 this.initImplicitFlow(redirectUri)
             }
 
             // Check if token is expired if it is not allowed
-            if (!allowLocalExpiredToken && this.isTokenExpired(this.tokenDetails)) {
+            //if (!allowLocalExpiredToken && this.isTokenExpired(this.tokenDetails)) {
+            if (this.isTokenExpired(this.tokenDetails)) {
+                console.log("TokenService.checkForToken >>> if (this.isTokenExpired(this.tokenDetails))")
+
                 localStorage.removeItem(this.LOCAL_STORAGE_KEY);
 
                 this.initImplicitFlow(redirectUri);
             }
 
-        } else if (hash && hash.indexOf('error') > -1) {
+        } else if (hash && hash.indexOf('error') > -1) { // ok
+            console.log("else if (hash && hash.indexOf('error') > -1) ")
 
             alert('Error occurred during authentication.');
             return;
@@ -102,9 +117,10 @@ export class TokenService {
         } else {
 
             // login if lazy auth not enabled as we need a token
-            if (!lazyAuth) {
-                this.initImplicitFlow(redirectUri);
-            }
+            // if (!lazyAuth) {
+                console.log("TokenService.checkForToken >>> final else ")
+                this.initImplicitFlow(redirectUri); // this.initLogin(redirectUri);
+            //}
 
         }
     }
@@ -166,24 +182,35 @@ export class TokenService {
      * Set authentication configuration and initiate refresh token implicit flow
      */
     public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
+        debugger
+        console.log("TokenService.initRefreshTokenImplicitFlow")
         const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
         let refreshWindow = window.open(authorizeURL, undefined, options);
         let refreshAsync = new AsyncSubject();
 
         let refreshInterval = setInterval(() => {
+            debugger
+            console.log("let refreshInterval = setInterval(() =>")
             if (!refreshWindow) {
+                console.log("if (!refreshWindow)")
+
                 errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
                 refreshWindow = window.open(authorizeURL, undefined, options);
+                console.log("refreshWindow = window.open(authorizeURL, undefined, options);")
             }
 
             if (refreshWindow && refreshWindow.closed) {
+                console.log("if (refreshWindow && refreshWindow.closed)")
                 clearInterval(refreshInterval);
                 let newToken = window.localStorage.getItem(`${storageKey}`);
                 newToken = JSON.parse(newToken ?? '""');
                 window.localStorage.removeItem(`${storageKey}`);
+
+                console.log("newToken: " + newToken)
                 this.updateToken(newToken);
                 refreshAsync.next(newToken);
                 refreshAsync.complete();
+                console.log("refreshAsync.complete();")
             }
         }, 500);
 
@@ -236,7 +263,8 @@ export class TokenService {
      */
 
     private initAndEmit() {
-        // console.log('init and emit', this.appConfigService.getConfig());
+        console.log('init and emit', this.appConfigService.getConfig());
+
         if (this.appConfigService.getConfig()?.webade.enableCheckToken) {
             let baseUrl = this.appConfigService.getConfig()?.application.baseUrl;
             if (baseUrl && !baseUrl.endsWith('/')) {
@@ -257,10 +285,10 @@ export class TokenService {
                     .then(
                         (response: any) => {
                             this.tokenDetails = response;
-                            // console.log('access_token', this.oauth.access_token);
+                            console.log('initAndEmit >> access_token', this.oauth.access_token);
                             this.authToken.next(this.oauth.access_token);
                             this.authToken.complete();
-                            // console.log('tokenDetails', this.tokenDetails);
+                            console.log('initAndEmit >> tokenDetails', this.tokenDetails);
                             this.credentials.next(this.tokenDetails);
                             this.credentials.complete();
                         })
@@ -317,9 +345,9 @@ export class TokenService {
         return false;
     }
 
-    public clearLocalStorageToken() {
-        localStorage.removeItem(this.LOCAL_STORAGE_KEY);
-    }
+    // public clearLocalStorageToken() {
+    //     localStorage.removeItem(this.LOCAL_STORAGE_KEY);
+    // }
 
     private handleError(err: any, message?: any) {
         console.error('Unexpected error', err);

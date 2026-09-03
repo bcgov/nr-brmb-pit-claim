@@ -25,6 +25,8 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        console.log("ResourcesInterceptor.intercept")
+
         let processedRequest = req;
         if (this.isUrlSecured(req.url)) {
           if (!this.tokenService) {
@@ -32,12 +34,24 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
           }
           let headers = this.getProcessedRequestHeaders(req);
           let requestId = headers.get("RequestId");
+
           if (this.tokenService.getTokenDetails()) {
+
               if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
+                
+                console.log("ResourcesInterceptor.isTokenExpired")
+                  
                   return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
+
+                    console.log("return this.refreshWindow().pipe(mergeMap((tokenResponse) => ")
+                    console.log("tokenResponse: " + tokenResponse)
+                    debugger
+
                       this.tokenService.updateToken(tokenResponse);
                       processedRequest = req.clone({headers});
+
                       if (this.asyncTokenRefresh.isComplete) {
+                        console.log("this.asyncTokenRefresh.isComplete ")
                           this.asyncTokenRefresh = undefined;
                       }
                       if (this.refreshSnackbar) {
@@ -190,7 +204,10 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
 
     refreshWindow() {
         // console.log("refresh window");
+        console.log("ResourcesInterceptor.refreshWindow")
+        debugger
         if (this.asyncTokenRefresh) {
+            console.log("ResourcesInterceptor.refreshWindow >> asyncTokenRefresh: " + this.asyncTokenRefresh )
             return this.asyncTokenRefresh;
         }
         let baseUrl = this.appConfig.getConfig().application.baseUrl;
@@ -206,8 +223,11 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(`${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
             , "cirras-claims-token",
             (errorMessage) => {
+                debugger
+                console.log("(errorMessage) => " + errorMessage)
                 this.displayRefreshErrorMessage(errorMessage);
             });
+        console.log("refreshWindow >> return this.asyncTokenRefresh;")
         return this.asyncTokenRefresh;
     }
 

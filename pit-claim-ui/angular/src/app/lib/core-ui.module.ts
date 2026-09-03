@@ -1,5 +1,5 @@
 import { HttpHandler } from "@angular/common/http";
-import { APP_INITIALIZER, Injector, ModuleWithProviders, NgModule } from "@angular/core";
+import { APP_INITIALIZER,  Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { OAuthModule } from "angular-oauth2-oidc";
 import { LibraryConfig } from "../config/library-config";
 import { AppConfigService } from "../services/app-config.service";
