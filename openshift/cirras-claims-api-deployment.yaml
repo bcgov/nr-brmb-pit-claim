@@ -132,6 +132,16 @@ spec:
                 configMapKeyRef:
                   name: cirras-claims-api-config-#{ENV}#
                   key: LOG_LEVEL
+            - name: CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-api-config-#{ENV}#
+                  key: CLIENT_ID
+            - name: TENANT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-api-config-#{ENV}#
+                  key: TENANT_ID
           livenessProbe:
             httpGet:
               path: /cirras-claims-api/v1/checkHealth?callstack=test
