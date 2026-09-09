@@ -1,8 +1,8 @@
 import {Injectable, Injector} from "@angular/core";
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import {Observable} from "rxjs";
+import {EMPTY, Observable} from "rxjs";
 import {UUID} from "angular2-uuid";
-import {catchError, mergeMap} from "rxjs/operators";
+import {catchError} from "rxjs/operators";
 import {Router} from "@angular/router";
 import {RouterExtService} from "../services/router-ext.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -26,35 +26,55 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let processedRequest = req;
+
         if (this.isUrlSecured(req.url)) {
           if (!this.tokenService) {
               this.tokenService = this.injector.get(TokenService);
           }
+
           let headers = this.getProcessedRequestHeaders(req);
           let requestId = headers.get("RequestId");
-          if (this.tokenService.getTokenDetails()) {
-              if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
-                  return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
-                      this.tokenService.updateToken(tokenResponse);
-                      processedRequest = req.clone({headers});
-                      if (this.asyncTokenRefresh.isComplete) {
-                          this.asyncTokenRefresh = undefined;
-                      }
-                      if (this.refreshSnackbar) {
-                          this.refreshSnackbar.dismiss();
-                          this.refreshSnackbar = undefined;
-                      }
-                      return this.handleRequest(requestId, next, processedRequest);
-                  }));
+
+          //if (this.tokenService.getTokenDetails()) {
+              if ( this.tokenService.isTokenExpired() ) {
+                console.log("intercept > token expired > going to checkForToken")
+                this.tokenService.checkForToken(window.location.href);
+                console.log("intercept > returning empty request")
+                return EMPTY;
+                //   return from ( this.refreshWindow().then((tokenResponse) => {
+                //       this.tokenService.updateToken(tokenResponse);
+
+                //       let authToken = this.tokenService.getOauthToken()
+                //       headers = headers.set('Authorization', 'Bearer ' + authToken)
+            
+                //       processedRequest = req.clone({headers})
+
+                //     if (this.refreshSnackbar) {
+                //         this.refreshSnackbar.dismiss()
+                //         this.refreshSnackbar = null
+                //     }
+
+                //     return this.handleRequest(requestId, next, processedRequest).toPromise()
+
+                //     //   processedRequest = req.clone({headers});
+                //     //   if (this.asyncTokenRefresh.isComplete) {
+                //     //       this.asyncTokenRefresh = undefined;
+                //     //   }
+                //     //   if (this.refreshSnackbar) {
+                //     //       this.refreshSnackbar.dismiss();
+                //     //       this.refreshSnackbar = undefined;
+                //     //   }
+                //     //   return this.handleRequest(requestId, next, processedRequest);
+                //   }));
               } else {
                   processedRequest = req.clone({
                       headers: headers
                   });
                   return this.handleRequest(requestId, next, processedRequest);
               }
-          } else {
-              return this.handleRequest(requestId, next, processedRequest);
-          }
+        //   } else {
+        //       return this.handleRequest(requestId, next, processedRequest);
+        //   }
         } else {
             let requestId = `CIRRAS-CLAIMS${UUID.UUID().toUpperCase()}`.replace(/-/g, "");
             return this.handleRequest(requestId, next, processedRequest);
