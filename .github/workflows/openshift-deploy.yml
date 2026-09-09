@@ -129,6 +129,7 @@ jobs:
           WEBADE_MAXACTIVE: ${{ vars.WEBADE_MAXACTIVE }}
 
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           TENANT_ID: ${{ secrets.TENANT_ID }}
 
 

@@ -198,6 +198,16 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.microsoft.graph</groupId>
+			<artifactId>microsoft-graph</artifactId>
+		</dependency>
+		<dependency>
+	        <groupId>com.azure</groupId>
+	        <artifactId>azure-identity</artifactId>
+		</dependency>			
+		
     </dependencies>
 	<build>
 		<!-- Configure the resources to be filtered for property replacement -->

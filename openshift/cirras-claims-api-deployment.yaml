@@ -137,6 +137,11 @@ spec:
                 configMapKeyRef:
                   name: cirras-claims-api-config-#{ENV}#
                   key: CLIENT_ID
+            - name: CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-api-config-#{ENV}#
+                  key: CLIENT_SECRET
             - name: TENANT_ID
               valueFrom:
                 configMapKeyRef:

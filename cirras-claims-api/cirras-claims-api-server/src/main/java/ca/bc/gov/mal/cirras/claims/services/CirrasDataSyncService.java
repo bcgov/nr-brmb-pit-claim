@@ -1358,7 +1358,7 @@ public class CirrasDataSyncService {
 
 		try {
 
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = AuthenticationUtil.getAuditUser(authentication);
 
 			cirrasDataSyncRsrcFactory.updateCoveragePeril(dto, resource);
 			coveragePerilDao.update(dto, userId);
@@ -1379,7 +1379,7 @@ public class CirrasDataSyncService {
 
 		try {
 
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = AuthenticationUtil.getAuditUser(authentication);
 
 			CoveragePerilDto dto = cirrasDataSyncRsrcFactory.createCoveragePeril(resource);
 			coveragePerilDao.insert(dto, userId);
@@ -1398,7 +1398,7 @@ public class CirrasDataSyncService {
 
 		logger.debug("<inactivateCoveragePeril");
 
-		String userId = AuthenticationUtil.getUserId(authentication);
+		String userId = AuthenticationUtil.getAuditUser(authentication);
 
 		CoveragePerilDto dto = coveragePerilDao.fetch(resource.getCoveragePerilId());
 

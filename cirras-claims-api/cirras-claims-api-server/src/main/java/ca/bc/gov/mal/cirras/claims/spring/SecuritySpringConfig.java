@@ -25,6 +25,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
 
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 
@@ -45,8 +47,17 @@ public class SecuritySpringConfig  {
 
 	@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
 	private String issuerUri;
+	
+	@Value("${azure.activedirectory.tenant-id}")
+    private String tenantId;
 
-	public SecuritySpringConfig() {
+    @Value("${azure.activedirectory.client-id}")
+    private String clientId;
+
+    @Value("${azure.activedirectory.client-secret}")
+    private String clientSecret;
+
+   	public SecuritySpringConfig() {
 		super();
 		logger.info("<SecuritySpringConfig");
 		
@@ -114,5 +125,19 @@ public class SecuritySpringConfig  {
 	      ).exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()) );		
 		return http.build();
 	  }	
+	  
+	@Bean
+	public GraphServiceClient graphServiceClient() {
+	    var credential = new ClientSecretCredentialBuilder()
+	            .tenantId(tenantId)
+	            .clientId(clientId)
+	            .clientSecret(clientSecret)
+	            .build();
+	
+	    // The default scope for Microsoft Graph application permissions
+	    String[] scopes = new String[]{"https://graph.microsoft.com/.default"};
+	
+	    return new GraphServiceClient(credential, scopes);
+	}
 
 }
