@@ -16,7 +16,7 @@ import { TokenService } from "../services/token.service";
 @Injectable()
 export class ResourcesInterceptor extends AuthenticationInterceptor implements HttpInterceptor {
     private tokenService;
-    private asyncTokenRefresh;
+    // private asyncTokenRefresh;
     private refreshSnackbar;
 
     constructor(protected appConfig: AppConfigService, private snackbarService: MatSnackBar, protected injector: Injector,
@@ -208,28 +208,28 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         }
     }
 
-    refreshWindow() {
-        // console.log("refresh window");
-        if (this.asyncTokenRefresh) {
-            return this.asyncTokenRefresh;
-        }
-        let baseUrl = this.appConfig.getConfig().application.baseUrl;
-        let refreshPage = "refresh-token.html";
-        if (baseUrl && !baseUrl.endsWith("/")) {
-            refreshPage = `/${refreshPage}`;
-        }
-        let clientId = this.appConfig.getConfig().webade.clientId;
-        let authorizeUrl = this.appConfig.getConfig().webade.oauth2Url;
-        let authScopes = this.appConfig.getConfig().webade.authScopes;
+    // refreshWindow() {
+    //     // console.log("refresh window");
+    //     if (this.asyncTokenRefresh) {
+    //         return this.asyncTokenRefresh;
+    //     }
+    //     let baseUrl = this.appConfig.getConfig().application.baseUrl;
+    //     let refreshPage = "refresh-token.html";
+    //     if (baseUrl && !baseUrl.endsWith("/")) {
+    //         refreshPage = `/${refreshPage}`;
+    //     }
+    //     let clientId = this.appConfig.getConfig().webade.clientId;
+    //     let authorizeUrl = this.appConfig.getConfig().webade.oauth2Url;
+    //     let authScopes = this.appConfig.getConfig().webade.authScopes;
 
-        let redirectUrl = `${baseUrl}${refreshPage}`;
-        this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(`${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
-            , "cirras-claims-token",
-            (errorMessage) => {
-                this.displayRefreshErrorMessage(errorMessage);
-            });
-        return this.asyncTokenRefresh;
-    }
+    //     let redirectUrl = `${baseUrl}${refreshPage}`;
+    //     this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(`${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
+    //         , "cirras-claims-token",
+    //         (errorMessage) => {
+    //             this.displayRefreshErrorMessage(errorMessage);
+    //         });
+    //     return this.asyncTokenRefresh;
+    // }
 
     getAllErrorMessages(responseError: any) {
 

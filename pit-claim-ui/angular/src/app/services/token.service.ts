@@ -193,30 +193,30 @@ export class TokenService {
     /*
      * Set authentication configuration and initiate refresh token implicit flow
      */
-    public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
-        const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
-        let refreshWindow = window.open(authorizeURL, undefined, options);
-        let refreshAsync = new AsyncSubject();
+    // public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
+    //     const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
+    //     let refreshWindow = window.open(authorizeURL, undefined, options);
+    //     let refreshAsync = new AsyncSubject();
 
-        let refreshInterval = setInterval(() => {
-            if (!refreshWindow) {
-                errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
-                refreshWindow = window.open(authorizeURL, undefined, options);
-            }
+    //     let refreshInterval = setInterval(() => {
+    //         if (!refreshWindow) {
+    //             errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
+    //             refreshWindow = window.open(authorizeURL, undefined, options);
+    //         }
 
-            if (refreshWindow && refreshWindow.closed) {
-                clearInterval(refreshInterval);
-                let newToken = window.localStorage.getItem(`${storageKey}`);
-                newToken = JSON.parse(newToken ?? '""');
-                window.localStorage.removeItem(`${storageKey}`);
-                this.updateToken(newToken);
-                refreshAsync.next(newToken);
-                refreshAsync.complete();
-            }
-        }, 500);
+    //         if (refreshWindow && refreshWindow.closed) {
+    //             clearInterval(refreshInterval);
+    //             let newToken = window.localStorage.getItem(`${storageKey}`);
+    //             newToken = JSON.parse(newToken ?? '""');
+    //             window.localStorage.removeItem(`${storageKey}`);
+    //             this.updateToken(newToken);
+    //             refreshAsync.next(newToken);
+    //             refreshAsync.complete();
+    //         }
+    //     }, 500);
 
-        return refreshAsync.asObservable();
-    }
+    //     return refreshAsync.asObservable();
+    // }
 
     /*
      * initialize authentication from session in application, emit to subscribers
@@ -318,10 +318,10 @@ export class TokenService {
         }
     }
 
-    updateToken(oauthToken: any) {
-        this.oauth = oauthToken;
-        this.initAndEmit();
-    }
+    // updateToken(oauthToken: any) {
+    //     this.oauth = oauthToken;
+    //     this.initAndEmit();
+    // }
 
     public getOauthToken() {
         return (this.oauth) ? this.oauth.access_token : null;
