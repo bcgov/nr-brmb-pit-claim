@@ -35,7 +35,6 @@
               "src/assets",
               "src/dev-config",
               "src/manifest.json",
-              "src/refresh-token.html",
               {
                 "glob": "bc-sans/**/*",
                 "input": "node_modules/@wf1/wfcc-application-ui",
@@ -75,7 +74,6 @@
                 "src/favicon.ico",
                 "src/assets",
                 "src/manifest.json",
-                "src/refresh-token.html",
                 {
                   "glob": "bc-sans/**/*",
                   "input": "node_modules/@wf1/wfcc-application-ui",
