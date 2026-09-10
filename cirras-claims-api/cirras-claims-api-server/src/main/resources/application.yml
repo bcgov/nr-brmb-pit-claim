@@ -13,11 +13,6 @@ spring:
         credential:
           client-id: ${CLIENT_ID}
         app-id-uri: api://${CLIENT_ID}
-azure:
-  activedirectory:
-    tenant-id: ${TENANT_ID}
-    client-id: ${CLIENT_ID}
-    client-secret: ${CLIENT_SECRET}
 app:
   security:
     role-scope-mappings: >

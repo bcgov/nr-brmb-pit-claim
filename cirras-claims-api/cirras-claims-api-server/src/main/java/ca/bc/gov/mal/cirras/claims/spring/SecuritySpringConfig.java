@@ -48,13 +48,13 @@ public class SecuritySpringConfig  {
 	@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
 	private String issuerUri;
 	
-	@Value("${azure.activedirectory.tenant-id}")
+	@Value("${TENANT_ID}")
     private String tenantId;
 
-    @Value("${azure.activedirectory.client-id}")
+    @Value("${CLIENT_ID}")
     private String clientId;
 
-    @Value("${azure.activedirectory.client-secret}")
+    @Value("${CLIENT_SECRET}")
     private String clientSecret;
 
    	public SecuritySpringConfig() {
