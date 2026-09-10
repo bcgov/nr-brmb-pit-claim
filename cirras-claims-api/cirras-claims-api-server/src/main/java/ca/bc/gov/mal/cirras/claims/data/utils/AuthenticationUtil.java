@@ -90,21 +90,23 @@ public class AuthenticationUtil {
         	if(appid == null) {
         		auditUser = "No appid found"; //Todo
         	} else {
-            	Application app = graphServiceClient.applications()
-                        .byApplicationId(appid)
-                        .get(requestConfiguration -> {
-                            requestConfiguration.queryParameters.select = new String[]{
-                                "id", 
-                                "appId", 
-                                "displayName", 
-                                "requiredResourceAccess"
-                            };
-                        });
-            	if(app != null && app.getDisplayName() != null) {
-            		auditUser = app.getDisplayName();
-            	} else {
-            		auditUser = appid;
-            	}
+        		auditUser = "Service Account";
+//TODO: Wait for permission approval in Entra
+//            	Application app = graphServiceClient.applications()
+//                        .byApplicationId(appid)
+//                        .get(requestConfiguration -> {
+//                            requestConfiguration.queryParameters.select = new String[]{
+//                                "id", 
+//                                "appId", 
+//                                "displayName", 
+//                                "requiredResourceAccess"
+//                            };
+//                        });
+//            	if(app != null && app.getDisplayName() != null) {
+//            		auditUser = app.getDisplayName();
+//            	} else {
+//            		auditUser = appid;
+//            	}
         	}
         } else {
         	User user = graphServiceClient.users()
