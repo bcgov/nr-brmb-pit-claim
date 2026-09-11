@@ -250,7 +250,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         console.log("ResourcesInterceptor.refreshWindow >> initRefreshTokenImplicitFlow ")
         this.refreshWindowPromise = this.tokenService.initRefreshTokenImplicitFlow(
             `${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`, 
-            "cirras-claims-token",
+            "pit-claim-token",
             (errorMessage) => {
                 this.displayRefreshErrorMessage(errorMessage);
             }

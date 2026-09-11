@@ -226,19 +226,21 @@ export class TokenService {
 
     public initRefreshTokenImplicitFlow( url: string, storageKey: string, errorCallback: any): Promise<any> {
         return new Promise( ( res, rej ) => {
-
+        
+            console.log("tokenService.initRefreshTokenImplicitFlow >> return new Promise")
             const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
 
             let windowObj,
                 retries = 0
 
             let refreshInterval = setInterval( () => {
-
+                console.log("tokenService.initRefreshTokenImplicitFlow >> setInterval")
                 if ( !windowObj )
                     windowObj =  window.open( url, 'authorize', options )
     
                 if ( windowObj ) {   
                     let newToken = window.localStorage.getItem( storageKey )
+                    console.log("tokenService.initRefreshTokenImplicitFlow >> newToken: " + newToken)
                     if ( !newToken ) {                        
                         retries += 1
                         return
