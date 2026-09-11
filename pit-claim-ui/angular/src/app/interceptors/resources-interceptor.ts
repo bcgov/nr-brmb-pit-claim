@@ -1,6 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import {Observable} from "rxjs";
+import {EMPTY, from, Observable} from "rxjs";
 import {UUID} from "angular2-uuid";
 import {catchError, mergeMap} from "rxjs/operators";
 import {Router} from "@angular/router";
@@ -18,6 +18,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
     private tokenService;
     private asyncTokenRefresh;
     private refreshSnackbar;
+    private refreshWindowPromise: Promise<string>
 
     constructor(protected appConfig: AppConfigService, private snackbarService: MatSnackBar, protected injector: Injector,
                 private router: Router, private routerExtService: RouterExtService) {
@@ -33,19 +34,39 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
           let headers = this.getProcessedRequestHeaders(req);
           let requestId = headers.get("RequestId");
           if (this.tokenService.getTokenDetails()) {
-              if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
-                  return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
-                      this.tokenService.updateToken(tokenResponse);
-                      processedRequest = req.clone({headers});
-                      if (this.asyncTokenRefresh.isComplete) {
-                          this.asyncTokenRefresh = undefined;
-                      }
-                      if (this.refreshSnackbar) {
-                          this.refreshSnackbar.dismiss();
-                          this.refreshSnackbar = undefined;
-                      }
-                      return this.handleRequest(requestId, next, processedRequest);
-                  }));
+            //   if (this.tokenService.isTokenExpired(this.tokenService.getTokenDetails()) || processedRequest.url.includes("/redeem")) {
+            //       return this.refreshWindow().pipe(mergeMap((tokenResponse) => {
+            //           this.tokenService.updateToken(tokenResponse);
+            //           processedRequest = req.clone({headers});
+            //           if (this.asyncTokenRefresh.isComplete) {
+            //               this.asyncTokenRefresh = undefined;
+            //           }
+            //           if (this.refreshSnackbar) {
+            //               this.refreshSnackbar.dismiss();
+            //               this.refreshSnackbar = undefined;
+            //           }
+            //           return this.handleRequest(requestId, next, processedRequest);
+            //       }));
+
+              if ( this.tokenService.isTokenExpired() ) {
+                    console.log("ResourcesInterceptor.intercept >> token expired, going to refreshWindow")
+
+                    return from( this.refreshWindow().then( ( token ) => {
+
+                        this.tokenService.updateToken( token )
+
+                        let authToken = this.tokenService.getOauthToken()
+                        headers = headers.set('Authorization', 'Bearer ' + authToken)
+            
+                        processedRequest = req.clone({headers})
+
+                        if (this.refreshSnackbar) {
+                            this.refreshSnackbar.dismiss()
+                            this.refreshSnackbar = null
+                        }
+
+                        return this.handleRequest(requestId, next, processedRequest).toPromise()
+                    } ) )
               } else {
                   processedRequest = req.clone({
                       headers: headers
@@ -188,11 +209,33 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         }
     }
 
-    refreshWindow() {
-        // console.log("refresh window");
-        if (this.asyncTokenRefresh) {
-            return this.asyncTokenRefresh;
-        }
+    // refreshWindow() {
+    //     // console.log("refresh window");
+    //     if (this.asyncTokenRefresh) {
+    //         return this.asyncTokenRefresh;
+    //     }
+    //     let baseUrl = this.appConfig.getConfig().application.baseUrl;
+    //     let refreshPage = "refresh-token.html";
+    //     if (baseUrl && !baseUrl.endsWith("/")) {
+    //         refreshPage = `/${refreshPage}`;
+    //     }
+    //     let clientId = this.appConfig.getConfig().webade.clientId;
+    //     let authorizeUrl = this.appConfig.getConfig().webade.oauth2Url;
+    //     let authScopes = this.appConfig.getConfig().webade.authScopes;
+
+    //     let redirectUrl = `${baseUrl}${refreshPage}`;
+    //     this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(
+    //          `${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
+    //         , "cirras-claims-token",
+    //         (errorMessage) => {
+    //             this.displayRefreshErrorMessage(errorMessage);
+    //         });
+    //     return this.asyncTokenRefresh;
+    // }
+
+    refreshWindow(): Promise<string> {
+        if ( this.refreshWindowPromise ) return this.refreshWindowPromise
+
         let baseUrl = this.appConfig.getConfig().application.baseUrl;
         let refreshPage = "refresh-token.html";
         if (baseUrl && !baseUrl.endsWith("/")) {
@@ -203,13 +246,27 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         let authScopes = this.appConfig.getConfig().webade.authScopes;
 
         let redirectUrl = `${baseUrl}${refreshPage}`;
-        this.asyncTokenRefresh = this.tokenService.initRefreshTokenImplicitFlow(`${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`
-            , "cirras-claims-token",
+        
+        console.log("ResourcesInterceptor.refreshWindow >> initRefreshTokenImplicitFlow ")
+        this.refreshWindowPromise = this.tokenService.initRefreshTokenImplicitFlow(
+            `${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`, 
+            "cirras-claims-token",
             (errorMessage) => {
                 this.displayRefreshErrorMessage(errorMessage);
-            });
-        return this.asyncTokenRefresh;
+            }
+        )
+            .then( ( token ) => {
+                this.refreshWindowPromise = null
+                return token
+            } )
+            .catch( err => {
+                this.refreshWindowPromise = null
+                throw err
+            } )
+
+        return this.refreshWindowPromise
     }
+
 
     getAllErrorMessages(responseError: any) {
 

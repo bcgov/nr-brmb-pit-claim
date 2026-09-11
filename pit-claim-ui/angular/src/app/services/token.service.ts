@@ -51,12 +51,13 @@ export class TokenService {
      * @param {boolean} allowLocalExpiredToken When true, expired tokens are not removed and does not invoke login (allows token to be used even when expired for offline mode and service workers).
      */
     public checkForToken(redirectUri?: string, lazyAuth?: boolean, allowLocalExpiredToken?: boolean) {
-        // console.log('redirect uri', redirectUri);
+        console.log('checkForToken >> redirect uri: ', redirectUri);
         let hash = window.location.hash;
 
         // Check if URL has token (redirected back from oauth)
         if (hash && hash.indexOf('access_token') > -1) {
 
+            console.log('checkForToken >> parse token');
             // We have a token in the URL, parse it
             this.parseToken(hash);
 
@@ -64,14 +65,18 @@ export class TokenService {
             // Only use local storage if application is offline
             // this is to refresh expired tokens before check token is enabled, when there is connectivity
 
+            console.log('checkForToken >> (this.useLocalStore && !navigator.onLine)');
+
             // Check if local storage has a token
             let tokenStore: any = localStorage.getItem(this.LOCAL_STORAGE_KEY);
 
             // Parse the token
             if (tokenStore) {
-
+                console.log('checkForToken >> if (tokenStore)');
                 try {
                     tokenStore = JSON.parse(tokenStore);
+
+                    console.log('checkForToken >> initAuthFromSession()');
                     this.initAuthFromSession();
                 } catch (err) {
 
@@ -84,18 +89,20 @@ export class TokenService {
 
             } else {
                 // no token was found initiate login
+                console.log('checkForToken >> no token was found - initiate login');
                 this.initImplicitFlow(redirectUri)
             }
 
             // Check if token is expired if it is not allowed
-            if (!allowLocalExpiredToken && this.isTokenExpired(this.tokenDetails)) {
+            if (!allowLocalExpiredToken && this.isTokenExpired()) {
+                console.log('checkForToken >>  if (!allowLocalExpiredToken && this.isTokenExpired())');
                 localStorage.removeItem(this.LOCAL_STORAGE_KEY);
 
                 this.initImplicitFlow(redirectUri);
             }
 
         } else if (hash && hash.indexOf('error') > -1) {
-
+            console.log('checkForToken >> there is an error in the url');
             alert('Error occurred during authentication.');
             return;
 
@@ -103,23 +110,49 @@ export class TokenService {
 
             // login if lazy auth not enabled as we need a token
             if (!lazyAuth) {
+                console.log("checkForToken >> if (!lazyAuth) -> going to initImplicitFlow()");
                 this.initImplicitFlow(redirectUri);
             }
 
         }
     }
 
-    public isTokenExpired(token: any): boolean {
-        let expiryDate;
-        let now = moment()
-        if (token && token.exp) {
-            expiryDate = moment.unix(token.exp);
-            if (now.isBefore(expiryDate)) {
-                return false;
-            }
+    // public isTokenExpired(token: any): boolean {
+    //     let expiryDate;
+    //     let now = moment()
+    //     if (token && token.exp) {
+    //         expiryDate = moment.unix(token.exp);
+    //         if (now.isBefore(expiryDate)) {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
+
+    isTokenExpired() {
+        let now = new Date()
+        console.log("isTokenExpired >> this.oauth?.expires_in: " + this.oauth?.expires_in)
+
+        if ( !this.oauth?.expires_in ) 
+            return false
+
+        console.log("isTokenExpired >> this.oauth.expireTime: " + (this.oauth.expireTime ? new Date(this.oauth.expireTime) : 'undefned'))
+        if ( !this.oauth.expireTime ) {
+            
+            const now = new Date();
+            this.oauth.expireTime = now.getTime() + (this.oauth.expires_in * 1000)
+
+            console.log('isTokenExpired >> token expires',new Date(this.oauth.expireTime))
+            return false
         }
-        return true;
+
+        if ( now.getTime() < this.oauth.expireTime ) 
+            return false
+
+        console.log('isTokenExpired >> expired')
+        return true
     }
+
 
     /*
      * Parse token from a hash fragment
@@ -165,30 +198,75 @@ export class TokenService {
     /*
      * Set authentication configuration and initiate refresh token implicit flow
      */
-    public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
-        const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
-        let refreshWindow = window.open(authorizeURL, undefined, options);
-        let refreshAsync = new AsyncSubject();
+    // public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
+    //     const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
+    //     let refreshWindow = window.open(authorizeURL, undefined, options);
+    //     let refreshAsync = new AsyncSubject();
 
-        let refreshInterval = setInterval(() => {
-            if (!refreshWindow) {
-                errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
-                refreshWindow = window.open(authorizeURL, undefined, options);
-            }
+    //     let refreshInterval = setInterval(() => {
+    //         if (!refreshWindow) {
+    //             errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
+    //             refreshWindow = window.open(authorizeURL, undefined, options);
+    //         }
 
-            if (refreshWindow && refreshWindow.closed) {
-                clearInterval(refreshInterval);
-                let newToken = window.localStorage.getItem(`${storageKey}`);
-                newToken = JSON.parse(newToken ?? '""');
-                window.localStorage.removeItem(`${storageKey}`);
-                this.updateToken(newToken);
-                refreshAsync.next(newToken);
-                refreshAsync.complete();
-            }
-        }, 500);
+    //         if (refreshWindow && refreshWindow.closed) {
+    //             clearInterval(refreshInterval);
+    //             let newToken = window.localStorage.getItem(`${storageKey}`);
+    //             newToken = JSON.parse(newToken ?? '""');
+    //             window.localStorage.removeItem(`${storageKey}`);
+    //             this.updateToken(newToken);
+    //             refreshAsync.next(newToken);
+    //             refreshAsync.complete();
+    //         }
+    //     }, 500);
 
-        return refreshAsync.asObservable();
+    //     return refreshAsync.asObservable();
+    // }
+
+
+    public initRefreshTokenImplicitFlow( url: string, storageKey: string, errorCallback: any): Promise<any> {
+        return new Promise( ( res, rej ) => {
+
+            const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
+
+            let windowObj,
+                retries = 0
+
+            let refreshInterval = setInterval( () => {
+
+                if ( !windowObj )
+                    windowObj =  window.open( url, 'authorize', options )
+    
+                if ( windowObj ) {   
+                    let newToken = window.localStorage.getItem( storageKey )
+                    if ( !newToken ) {                        
+                        retries += 1
+                        return
+                    }
+
+                    clearInterval(refreshInterval)
+
+                    window.localStorage.removeItem( storageKey )
+    
+                    try {
+                        let parsedToken = JSON.parse( newToken )
+                        this.updateToken( parsedToken )
+                        res( parsedToken )
+                    }
+                    catch ( e ) {
+                        console.warn( 'failed to parse', newToken, e )
+                        rej()
+                    }
+                }
+                else {
+                    errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.')
+                    retries += 1
+                }
+            }, 500 )    
+        } )
     }
+
+
 
     /*
      * initialize authentication from session in application, emit to subscribers
