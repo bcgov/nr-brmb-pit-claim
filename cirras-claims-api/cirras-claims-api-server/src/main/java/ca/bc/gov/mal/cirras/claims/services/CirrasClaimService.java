@@ -447,7 +447,7 @@ public class CirrasClaimService {
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
 			
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = AuthenticationUtil.getAuditUser(authentication);
 			
 			//Insert or update shared grain quantity record
 			if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
@@ -1314,7 +1314,7 @@ public class CirrasClaimService {
 				}
 			}
 
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = AuthenticationUtil.getAuditUser(authentication);
 			saveUpdateClaimCalculation(claimCalculation, dto, authentication, claimCalculationGuid, userId);
 			
 			//Update sub table records
