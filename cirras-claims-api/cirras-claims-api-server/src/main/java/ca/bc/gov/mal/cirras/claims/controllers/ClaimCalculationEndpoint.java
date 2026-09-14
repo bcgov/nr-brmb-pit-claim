@@ -53,7 +53,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 	private CirrasClaimService cirrasClaimService;
 	
 	
-	@Operation(operationId = "Get the calculation.", summary = "Get the calculation", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.GET_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get the calculation.", summary = "Get the calculation", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.GET_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -100,7 +100,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Update calculation", summary = "Update claim", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_CALCULATION}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Update calculation", summary = "Update claim", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.UPDATE_CALCULATION}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -184,7 +184,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Delete claim", summary = "Delete claim", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Delete claim", summary = "Delete claim", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.DELETE_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
