@@ -48,7 +48,7 @@ export class TokenService {
         }
     }
 
-    isTokenExpired() {
+    public isTokenExpired() {
         let now = new Date()
         
         if ( !this.oauth?.expires_in ) 
