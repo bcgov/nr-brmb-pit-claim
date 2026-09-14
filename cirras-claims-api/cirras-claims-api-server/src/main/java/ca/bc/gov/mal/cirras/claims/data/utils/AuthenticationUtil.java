@@ -9,8 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.microsoft.graph.models.Application;
-import com.microsoft.graph.models.User;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
 
 public class AuthenticationUtil {
@@ -51,7 +49,7 @@ public class AuthenticationUtil {
         return Instant.now().isAfter(expInstant);
     }
 
-    private static Jwt toJwt(Authentication authentication) {
+    public static Jwt toJwt(Authentication authentication) {
         return (Jwt) authentication.getPrincipal();
     }
 
@@ -80,47 +78,6 @@ public class AuthenticationUtil {
         return toJwt(authentication).getClaimAsString("upn");
     }
     
-    //Returns IDIR for Users and Display Name for Applications
-    public static String getAuditUser(Authentication authentication) {
-    	String auditUser = "Not Set";
-        String upn = toJwt(authentication).getClaimAsString("upn");
-        if (upn == null) {
-        	//upn is null if an application is calling the api
-        	String appid = toJwt(authentication).getClaimAsString("appid");
-        	if(appid == null) {
-        		auditUser = "No appid found"; //Todo
-        	} else {
-        		auditUser = "Service Account";
-//TODO: Wait for permission approval in Entra
-//            	Application app = graphServiceClient.applications()
-//                        .byApplicationId(appid)
-//                        .get(requestConfiguration -> {
-//                            requestConfiguration.queryParameters.select = new String[]{
-//                                "id", 
-//                                "appId", 
-//                                "displayName", 
-//                                "requiredResourceAccess"
-//                            };
-//                        });
-//            	if(app != null && app.getDisplayName() != null) {
-//            		auditUser = app.getDisplayName();
-//            	} else {
-//            		auditUser = appid;
-//            	}
-        	}
-        } else {
-        	User user = graphServiceClient.users()
-                    .byUserId(upn)
-                    .get(requestConfiguration -> {
-                        requestConfiguration.queryParameters.select = new String[]{"onPremisesSamAccountName"};
-                    });
-        	if (user != null && user.getOnPremisesSamAccountName() != null) {
-        		auditUser = user.getOnPremisesSamAccountName();
-        	}
-        }
-        return auditUser;
-    }
-
     public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
