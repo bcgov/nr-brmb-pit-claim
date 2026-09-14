@@ -1,20 +1,15 @@
 import { HttpClient, HttpHandler, HttpHeaders } from "@angular/common/http";
 import { Injectable, Injector } from "@angular/core";
 import { OAuthService } from "angular-oauth2-oidc";
-import moment from "moment";
 import { AsyncSubject, Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { AppConfigService } from "./app-config.service";
-
-const OAUTH_LOCAL_STORAGE_KEY = 'oauth';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TokenService {
 
-    private LOCAL_STORAGE_KEY = OAUTH_LOCAL_STORAGE_KEY;
-    private useLocalStore: boolean = false;
     private oauth: any;
     private tokenDetails: any;
 
@@ -22,134 +17,53 @@ export class TokenService {
     private authToken = new AsyncSubject<string>();
     public credentialsEmitter: Observable<any> = this.credentials.asObservable();
     public authTokenEmitter: Observable<string> = this.authToken.asObservable();
+
     constructor(private injector: Injector, protected appConfigService: AppConfigService) {
-        //console.log("initing token service", appConfigService.getConfig());
 
-        const lazyAuthenticate = appConfigService.getConfig()?.application.lazyAuthenticate;
-        const enableLocalStorageToken = appConfigService.getConfig()?.application.enableLocalStorageToken;
-        const localStorageTokenKey = appConfigService.getConfig()?.application.localStorageTokenKey;
-        const allowLocalExpiredToken = appConfigService.getConfig()?.application.allowLocalExpiredToken;
+        this.checkForToken(undefined);
 
-        if (localStorageTokenKey) {
-            this.LOCAL_STORAGE_KEY = localStorageTokenKey;
-        }
-
-        if (enableLocalStorageToken) {
-            this.useLocalStore = true;
-        }
-
-        this.checkForToken(undefined, lazyAuthenticate, allowLocalExpiredToken);
     }
 
     /*
      * Check window location hash fragment or local storage session for access token.
      * Parse and set the token if the access token is present,
      * otherwise initiate implicit flow.
-     *
-     * @param {string} redirectUri The redirect URI after login is complete
-     * @param {boolean} lazyAuth When true, allows application to handle when to login ( by default: false which will require login as soon as the application initializes)
-     * @param {boolean} allowLocalExpiredToken When true, expired tokens are not removed and does not invoke login (allows token to be used even when expired for offline mode and service workers).
      */
     public checkForToken(redirectUri?: string, lazyAuth?: boolean, allowLocalExpiredToken?: boolean) {
-        console.log('checkForToken >> redirect uri: ', redirectUri);
+        // console.log('checkForToken >> redirect uri: ', redirectUri);
         let hash = window.location.hash;
 
         // Check if URL has token (redirected back from oauth)
         if (hash && hash.indexOf('access_token') > -1) {
 
-            console.log('checkForToken >> parse token');
             // We have a token in the URL, parse it
             this.parseToken(hash);
 
-        } else if (this.useLocalStore && !navigator.onLine) {
-            // Only use local storage if application is offline
-            // this is to refresh expired tokens before check token is enabled, when there is connectivity
-
-            console.log('checkForToken >> (this.useLocalStore && !navigator.onLine)');
-
-            // Check if local storage has a token
-            let tokenStore: any = localStorage.getItem(this.LOCAL_STORAGE_KEY);
-
-            // Parse the token
-            if (tokenStore) {
-                console.log('checkForToken >> if (tokenStore)');
-                try {
-                    tokenStore = JSON.parse(tokenStore);
-
-                    console.log('checkForToken >> initAuthFromSession()');
-                    this.initAuthFromSession();
-                } catch (err) {
-
-                    // Failed to parse the token, remove the old token and get a new token by logging in again
-                    console.log('Failed to read session token - reinitializing');
-                    this.tokenDetails = undefined;
-                    localStorage.removeItem(this.LOCAL_STORAGE_KEY);
-                    this.initImplicitFlow(redirectUri);
-                }
-
-            } else {
-                // no token was found initiate login
-                console.log('checkForToken >> no token was found - initiate login');
-                this.initImplicitFlow(redirectUri)
-            }
-
-            // Check if token is expired if it is not allowed
-            if (!allowLocalExpiredToken && this.isTokenExpired()) {
-                console.log('checkForToken >>  if (!allowLocalExpiredToken && this.isTokenExpired())');
-                localStorage.removeItem(this.LOCAL_STORAGE_KEY);
-
-                this.initImplicitFlow(redirectUri);
-            }
-
         } else if (hash && hash.indexOf('error') > -1) {
-            console.log('checkForToken >> there is an error in the url');
             alert('Error occurred during authentication.');
             return;
 
         } else {
-
-            // login if lazy auth not enabled as we need a token
-            if (!lazyAuth) {
-                console.log("checkForToken >> if (!lazyAuth) -> going to initImplicitFlow()");
-                this.initImplicitFlow(redirectUri);
-            }
-
+            this.initImplicitFlow(redirectUri);
         }
     }
 
-    // public isTokenExpired(token: any): boolean {
-    //     let expiryDate;
-    //     let now = moment()
-    //     if (token && token.exp) {
-    //         expiryDate = moment.unix(token.exp);
-    //         if (now.isBefore(expiryDate)) {
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
-
     isTokenExpired() {
         let now = new Date()
-        console.log("isTokenExpired >> this.oauth?.expires_in: " + this.oauth?.expires_in)
-
+        
         if ( !this.oauth?.expires_in ) 
             return false
 
-        console.log("isTokenExpired >> this.oauth.expireTime: " + (this.oauth.expireTime ? new Date(this.oauth.expireTime) : 'undefned'))
         if ( !this.oauth.expireTime ) {
             
             const now = new Date();
             this.oauth.expireTime = now.getTime() + (this.oauth.expires_in * 1000)
-
-            console.log('isTokenExpired >> token expires',new Date(this.oauth.expireTime))
             return false
         }
 
         if ( now.getTime() < this.oauth.expireTime ) 
             return false
 
-        console.log('isTokenExpired >> expired')
         return true
     }
 
@@ -198,49 +112,23 @@ export class TokenService {
     /*
      * Set authentication configuration and initiate refresh token implicit flow
      */
-    // public initRefreshTokenImplicitFlow(authorizeURL: string, storageKey: string, errorCallback: any): Observable<any> {
-    //     const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
-    //     let refreshWindow = window.open(authorizeURL, undefined, options);
-    //     let refreshAsync = new AsyncSubject();
-
-    //     let refreshInterval = setInterval(() => {
-    //         if (!refreshWindow) {
-    //             errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.');
-    //             refreshWindow = window.open(authorizeURL, undefined, options);
-    //         }
-
-    //         if (refreshWindow && refreshWindow.closed) {
-    //             clearInterval(refreshInterval);
-    //             let newToken = window.localStorage.getItem(`${storageKey}`);
-    //             newToken = JSON.parse(newToken ?? '""');
-    //             window.localStorage.removeItem(`${storageKey}`);
-    //             this.updateToken(newToken);
-    //             refreshAsync.next(newToken);
-    //             refreshAsync.complete();
-    //         }
-    //     }, 500);
-
-    //     return refreshAsync.asObservable();
-    // }
-
-
     public initRefreshTokenImplicitFlow( url: string, storageKey: string, errorCallback: any): Promise<any> {
         return new Promise( ( res, rej ) => {
         
-            console.log("tokenService.initRefreshTokenImplicitFlow >> return new Promise")
             const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
 
             let windowObj,
                 retries = 0
 
             let refreshInterval = setInterval( () => {
-                console.log("tokenService.initRefreshTokenImplicitFlow >> setInterval")
+                
                 if ( !windowObj )
                     windowObj =  window.open( url, 'authorize', options )
     
                 if ( windowObj ) {   
+
                     let newToken = window.localStorage.getItem( storageKey )
-                    console.log("tokenService.initRefreshTokenImplicitFlow >> newToken: " + newToken)
+
                     if ( !newToken ) {                        
                         retries += 1
                         return
@@ -268,43 +156,15 @@ export class TokenService {
         } )
     }
 
-
-
-    /*
-     * initialize authentication from session in application, emit to subscribers
-     */
-    private initAuthFromSession() {
-        try {
-            let localOauth = localStorage.getItem(this.LOCAL_STORAGE_KEY);
-            localOauth = JSON.parse(localOauth ?? '""');
-            this.oauth = localOauth;
-            this.initAndEmit();
-        } catch (err) {
-            localStorage.removeItem(this.LOCAL_STORAGE_KEY);
-            console.log('Failed to handle token payload', this.oauth);
-            this.handleError(err, 'Failed to handle token');
-        }
-    }
-
     /*
      * initialize authentication response in application, emit to subscribers
      */
     public initAuth(response: any) {
         if (response) {
             try {
-                if (this.useLocalStore) {
-                    let tokenStore = {
-                        access_token: response.access_token,
-                        expires_in: response.expires_in
-                    };
-                    localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(tokenStore));
-                }
                 this.oauth = response;
                 this.initAndEmit();
             } catch (err) {
-                if (this.useLocalStore) {
-                    localStorage.removeItem(this.LOCAL_STORAGE_KEY);
-                }
                 console.log('Failed to handle token payload', this.oauth);
                 this.handleError(err, 'Failed to handle token');
             }
@@ -395,10 +255,6 @@ export class TokenService {
             }
         }
         return false;
-    }
-
-    public clearLocalStorageToken() {
-        localStorage.removeItem(this.LOCAL_STORAGE_KEY);
     }
 
     private handleError(err: any, message?: any) {
