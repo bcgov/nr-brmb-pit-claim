@@ -210,7 +210,13 @@
 		<dependency>
 	        <groupId>com.azure</groupId>
 	        <artifactId>azure-identity</artifactId>
-		</dependency>			
+			<exclusions>
+	            <exclusion>
+	                <groupId>com.azure</groupId>
+	                <artifactId>azure-core-http-netty</artifactId>
+	            </exclusion>
+	        </exclusions>
+        </dependency>
     </dependencies>
 	<build>
 		<!-- Configure the resources to be filtered for property replacement -->
