@@ -41,14 +41,16 @@ public class UserDataUtil {
 //            	}
         	}
         } else {
-        	User user = graphServiceClient.users()
-                    .byUserId(upn)
-                    .get(requestConfiguration -> {
-                        requestConfiguration.queryParameters.select = new String[]{"onPremisesSamAccountName"};
-                    });
-        	if (user != null && user.getOnPremisesSamAccountName() != null) {
-        		auditUser = user.getOnPremisesSamAccountName();
-        	}
+    		auditUser = "User Account";
+
+//        	User user = graphServiceClient.users()
+//                    .byUserId(upn)
+//                    .get(requestConfiguration -> {
+//                        requestConfiguration.queryParameters.select = new String[]{"onPremisesSamAccountName"};
+//                    });
+//        	if (user != null && user.getOnPremisesSamAccountName() != null) {
+//        		auditUser = user.getOnPremisesSamAccountName();
+//        	}
         }
         return auditUser;
     }
