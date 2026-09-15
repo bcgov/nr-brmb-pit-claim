@@ -204,10 +204,13 @@
 			<artifactId>microsoft-graph</artifactId>
 		</dependency>
 		<dependency>
+		    <groupId>com.azure</groupId>
+		    <artifactId>azure-core-http-okhttp</artifactId>
+		</dependency>
+		<dependency>
 	        <groupId>com.azure</groupId>
 	        <artifactId>azure-identity</artifactId>
 		</dependency>			
-		
     </dependencies>
 	<build>
 		<!-- Configure the resources to be filtered for property replacement -->
