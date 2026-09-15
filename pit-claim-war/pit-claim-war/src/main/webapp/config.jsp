@@ -18,17 +18,17 @@
     json = json.append("\"application\":{");
     json = json.append("\"acronym\":\"").append(properties.getProperty("project.acronym", "")).append("\"").append(",");
     json = json.append("\"version\":\"").append(properties.getProperty("application.version", "")).append("\"").append(",");
-    json = json.append("\"environment\":\"").append("LOCAL".toUpperCase()).append("\"").append(",");
+    json = json.append("\"environment\":\"").append(EnvironmentVariable.getVariable("APPLICATION_ENVIRONMENT_NAME").toUpperCase()).append("\"").append(",");
 	  json = json.append("\"baseUrl\":\"").append(baseUrl).append("\"");
     json = json.append("},");
 
     // REST API Section
-    String pitClaimRestUri = "http://localhost:8080/cirras-claims-api-server-2.5.3-SNAPSHOT";	
+    String pitClaimRestUri = EnvironmentVariable.getVariable("CIRRAS_CLAIMS_REST_URI");
     if (pitClaimRestUri.endsWith("/")) {
       pitClaimRestUri = pitClaimRestUri.substring(0, pitClaimRestUri.length() - 1); //Strip off trailing slash, if it exists.
     }
 
-    String pitUnderwritingUiUrl = "https://cirras-underwriting-ui-route-dev-a12541-dev.apps.silver.devops.gov.bc.ca/pub/cirras-underwriting";
+    String pitUnderwritingUiUrl = EnvironmentVariable.getVariable("PIT_UNDERWRITING_UI_URL");
     if (pitUnderwritingUiUrl.endsWith("/")) {
       pitUnderwritingUiUrl = pitUnderwritingUiUrl.substring(0, pitUnderwritingUiUrl.length() - 1); //Strip off trailing slash, if it exists.
     }
@@ -41,8 +41,8 @@
     String TENANT_ID = EnvironmentVariable.getVariable("TENANT_ID");
     String CLIENT_ID = EnvironmentVariable.getVariable("CLIENT_ID");
     String WEBADE_OAUTH2_AUTHORIZE_URL = "https://login.microsoftonline.com/" + TENANT_ID + "/oauth2/v2.0/authorize";
-    String WEBADE_OAUTH2_ENABLE_CHECKTOKEN = "true";
-    String UI_CHECKTOKEN_ENDPOINT = "http://localhost:8080/cirras-claims-api-server-2.5.3-SNAPSHOT/checkToken";
+    String WEBADE_OAUTH2_ENABLE_CHECKTOKEN = EnvironmentVariable.getVariable("WEBADE_OAUTH2_ENABLE_CHECKTOKEN");
+    String UI_CHECKTOKEN_ENDPOINT = EnvironmentVariable.getVariable("UI_CHECKTOKEN_ENDPOINT");
     String WEBADE_CHECK_TOKEN_URL = EnvironmentVariable.getVariable("WEBADE_CHECK_TOKEN_URL");
     String WEBADE_OAUTH2_SITEMINDER_URL = EnvironmentVariable.getVariable("WEBADE_OAUTH2_SITEMINDER_URL");
     String WEBADE_OAUTH2_SCOPES = CLIENT_ID + "/.default";

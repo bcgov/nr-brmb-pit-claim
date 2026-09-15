@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.bc.gov.mal.cirras.claims.data.models.Claim;
@@ -44,7 +43,7 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationVarietyDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.CropCommodityDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
-import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
+import ca.bc.gov.mal.cirras.claims.data.utils.UserDataUtil;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationBerriesDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrainBasketDto;
@@ -133,8 +132,8 @@ public class CirrasClaimService {
 	private CirrasDataSyncService cirrasDataSyncService;
 	
 	//utils
-	//@Autowired
 	private CirrasServiceHelper cirrasServiceHelper;
+	private UserDataUtil userDataUtil;
 	
 	public static final String MaximumResultsProperty = "maximum.results";
 
@@ -154,6 +153,10 @@ public class CirrasClaimService {
 
 	public void setCirrasServiceHelper(CirrasServiceHelper cirrasServiceHelper) {
 		this.cirrasServiceHelper = cirrasServiceHelper;
+	}
+
+	public void setUserDataUtil(UserDataUtil userDataUtil) {
+		this.userDataUtil = userDataUtil;
 	}
 	
 	public void setApplicationProperties(Properties applicationProperties) {
@@ -447,7 +450,7 @@ public class CirrasClaimService {
 			calculateVarietyInsurableValues(claimCalculation);
 			calculateTotals(claimCalculation);
 			
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = userDataUtil.getAuditUser(authentication);
 			
 			//Insert or update shared grain quantity record
 			if (claimCalculation.getInsurancePlanName().equalsIgnoreCase(ClaimsServiceEnums.InsurancePlans.GRAIN.toString())
@@ -1314,7 +1317,7 @@ public class CirrasClaimService {
 				}
 			}
 
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = userDataUtil.getAuditUser(authentication);
 			saveUpdateClaimCalculation(claimCalculation, dto, authentication, claimCalculationGuid, userId);
 			
 			//Update sub table records

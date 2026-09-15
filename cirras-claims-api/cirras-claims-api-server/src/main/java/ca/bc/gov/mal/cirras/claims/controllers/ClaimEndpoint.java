@@ -41,7 +41,7 @@ public class ClaimEndpoint extends BaseEndpointsImpl {
 	@Autowired
 	private CirrasClaimService cirrasClaimService;
 	
-	@Operation(operationId = "Get the claim.", summary = "Get the claim", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.CREATE_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get the claim.", summary = "Get the claim", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.CREATE_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),

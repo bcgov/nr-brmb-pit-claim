@@ -16,6 +16,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncDopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.UnderwritingSyncEventTypes;
 import ca.bc.gov.mal.cirras.claims.data.utils.AuthenticationUtil;
+import ca.bc.gov.mal.cirras.claims.data.utils.UserDataUtil;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculation;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncClaim;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCode;
@@ -85,6 +86,7 @@ public class CirrasDataSyncService {
 
 	// utils
 	private CirrasServiceHelper cirrasServiceHelper;
+	private UserDataUtil userDataUtil;
 
 	public static final String MaximumResultsProperty = "maximum.results";
 
@@ -104,6 +106,10 @@ public class CirrasDataSyncService {
 
 	public void setCirrasServiceHelper(CirrasServiceHelper cirrasServiceHelper) {
 		this.cirrasServiceHelper = cirrasServiceHelper;
+	}
+	
+	public void setUserDataUtil(UserDataUtil userDataUtil) {
+		this.userDataUtil = userDataUtil;
 	}
 
 	public void setClaimDao(ClaimDao claimDao) {
@@ -1358,7 +1364,7 @@ public class CirrasDataSyncService {
 
 		try {
 
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = userDataUtil.getAuditUser(authentication);
 
 			cirrasDataSyncRsrcFactory.updateCoveragePeril(dto, resource);
 			coveragePerilDao.update(dto, userId);
@@ -1379,7 +1385,7 @@ public class CirrasDataSyncService {
 
 		try {
 
-			String userId = AuthenticationUtil.getUserId(authentication);
+			String userId = userDataUtil.getAuditUser(authentication);
 
 			CoveragePerilDto dto = cirrasDataSyncRsrcFactory.createCoveragePeril(resource);
 			coveragePerilDao.insert(dto, userId);
@@ -1398,7 +1404,7 @@ public class CirrasDataSyncService {
 
 		logger.debug("<inactivateCoveragePeril");
 
-		String userId = AuthenticationUtil.getUserId(authentication);
+		String userId = userDataUtil.getAuditUser(authentication);
 
 		CoveragePerilDto dto = coveragePerilDao.fetch(resource.getCoveragePerilId());
 

@@ -42,7 +42,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 	@Autowired
 	private CirrasDataSyncService cirrasDataSyncService; 
 
-	@Operation(operationId = "Insert or Update a coverage peril table record", summary = "Insert or Update a coverage peril table record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Insert or Update a coverage peril table record", summary = "Insert or Update a coverage peril table record", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -90,7 +90,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Delete coverage peril table record", summary = "Delete coverage peril table record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Delete coverage peril table record", summary = "Delete coverage peril table record", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
