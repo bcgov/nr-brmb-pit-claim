@@ -3,8 +3,7 @@
     "acronym": "PIT-CLAIM",
     "version": "2.5.3-SNAPSHOT",
     "baseUrl": "#{BASE_URL}#",
-    "environment": "#{APPLICATION_ENVIRONMENT_NAME}#",
-    "buildNumber": "0000"
+    "environment": "#{APPLICATION_ENVIRONMENT_NAME}#"
   },
   "rest": {
     "cirras_claims": "#{CIRRAS_CLAIMS_REST_URI}#",
