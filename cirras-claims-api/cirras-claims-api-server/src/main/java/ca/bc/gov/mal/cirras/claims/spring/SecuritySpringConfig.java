@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -127,6 +128,7 @@ public class SecuritySpringConfig  {
 	  }	
 	  
 	@Bean
+	@Primary // Ensures Spring selects THIS client over any auto-configured/imported wfone clients
 	public GraphServiceClient graphServiceClient() {
 	    var credential = new ClientSecretCredentialBuilder()
 	            .tenantId(tenantId)
