@@ -81,6 +81,7 @@ public class ServiceApiSpringConfig {
 	}
 
 	
+	@Bean
 	public UserDataUtil userDataUtil(GraphServiceClient graphServiceClient) { // Spring injects the @Bean here
 	    UserDataUtil result = new UserDataUtil();
 	    
