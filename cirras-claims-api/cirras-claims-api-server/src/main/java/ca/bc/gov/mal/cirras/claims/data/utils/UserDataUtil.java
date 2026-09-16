@@ -1,6 +1,8 @@
 package ca.bc.gov.mal.cirras.claims.data.utils;
 
 import org.springframework.security.core.Authentication;
+
+import com.microsoft.graph.models.ServicePrincipal;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
 
@@ -22,7 +24,34 @@ public class UserDataUtil {
         	if(appid == null) {
         		auditUser = "No appid found"; //Todo
         	} else {
-        		auditUser = "Service Account";
+        		//auditUser = "Service Account";
+        		ServicePrincipal app = graphServiceClient.servicePrincipals()
+        		        .byServicePrincipalId(appid)
+        		        .get(requestConfiguration -> {
+        		            requestConfiguration.queryParameters.select = new String[]{
+        		                "displayName"
+        		            };
+        		        });
+        		
+        		
+        		
+//        		AppRoleAssignmentCollectionResponse app = 
+//        				graphServiceClient.servicePrincipals()
+//        					.byServicePrincipalId(appid)
+//        					.appRoleAssignedTo()
+//        					.get(requestConfiguration -> {
+//		                          requestConfiguration.queryParameters.select = new String[]{
+//		                              "appId", 
+//		                              "displayName"
+//		                          };
+//		                      });
+            
+        	
+        	if(app != null && app.getDisplayName() != null ) {
+        		auditUser = app.getDisplayName();
+        	} else {
+        		auditUser = appid;
+        	}
 //TODO: Wait for permission approval in Entra
 //            	Application app = graphServiceClient.applications()
 //                        .byApplicationId(appid)
