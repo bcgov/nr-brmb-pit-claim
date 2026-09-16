@@ -1,13 +1,19 @@
 package ca.bc.gov.mal.cirras.claims.data.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 
 import com.microsoft.graph.models.ServicePrincipal;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
 
+import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
+
 public class UserDataUtil {
 	
+	private static final Logger logger = LoggerFactory.getLogger(UserDataUtil.class);
+
     private GraphServiceClient graphServiceClient;
 
 	public void setGraphServiceClient(GraphServiceClient graphServiceClient) {
@@ -16,11 +22,17 @@ public class UserDataUtil {
     
     //Returns IDIR for Users and Display Name for Applications
     public String getAuditUser(Authentication authentication) {
+    	
+    	logger.debug("<getAuditUser");
+    	
     	String auditUser = "Not Set";
-        String upn = AuthenticationUtil.toJwt(authentication).getClaimAsString("upn");
+        String upn = AuthenticationUtil.getUserId(authentication);
         if (upn == null) {
         	//upn is null if an application is calling the api
         	String appid = AuthenticationUtil.toJwt(authentication).getClaimAsString("appid");
+        	logger.debug("appid: " + appid);
+        	logger.debug("aud: " + AuthenticationUtil.toJwt(authentication).getClaimAsString("aud"));
+        	
         	if(appid == null) {
         		auditUser = "No appid found"; //Todo
         	} else {
@@ -34,6 +46,7 @@ public class UserDataUtil {
         		        });
         		
         		
+        		logger.debug("app: " + app);
         		
 //        		AppRoleAssignmentCollectionResponse app = 
 //        				graphServiceClient.servicePrincipals()
@@ -81,6 +94,9 @@ public class UserDataUtil {
 //        		auditUser = user.getOnPremisesSamAccountName();
 //        	}
         }
+        
+    	logger.debug(">getAuditUser");
+
         return auditUser;
     }
 
