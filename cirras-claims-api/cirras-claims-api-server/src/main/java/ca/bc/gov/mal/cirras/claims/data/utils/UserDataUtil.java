@@ -7,6 +7,10 @@ import org.springframework.security.core.Authentication;
 import com.microsoft.graph.models.ServicePrincipal;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
+import com.microsoft.kiota.http.OkHttpRequestAdapter;
+import java.lang.reflect.Field;
+import com.microsoft.kiota.RequestAdapter;
+import com.microsoft.kiota.authentication.AuthenticationProvider;
 
 import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
 
@@ -19,6 +23,7 @@ public class UserDataUtil {
 	public void setGraphServiceClient(GraphServiceClient graphServiceClient) {
 		this.graphServiceClient = graphServiceClient;
 	}
+
     
     //Returns IDIR for Users and Display Name for Applications
     public String getAuditUser(Authentication authentication) {
@@ -36,6 +41,33 @@ public class UserDataUtil {
         	if(appid == null) {
         		auditUser = "No appid found"; //Todo
         	} else {
+        		
+        		logger.debug("--- REFLECTION DIAGNOSTIC LOG START ---");
+                try {
+                    RequestAdapter adapter = graphServiceClient.getRequestAdapter();
+                    logger.info("RequestAdapter Class: {}", adapter.getClass().getName());
+
+                    // Extract private authenticationProvider field from OkHttpRequestAdapter
+                    Field authProviderField = adapter.getClass().getDeclaredField("authenticationProvider");
+                    authProviderField.setAccessible(true);
+                    AuthenticationProvider authProvider = (AuthenticationProvider) authProviderField.get(adapter);
+
+                    logger.info("AuthenticationProvider Class: {}", authProvider.getClass().getName());
+
+                    // Extract private credential or scopes if using AzureIdentityAuthenticationProvider
+                    Field[] fields = authProvider.getClass().getDeclaredFields();
+                    for (Field field : fields) {
+                        field.setAccessible(true);
+                        Object val = field.get(authProvider);
+                        if (val != null) {
+                            logger.info("AuthProvider Field [{}] = {}", field.getName(), val);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to reflect graphServiceClient authentication state", e);
+                }
+                logger.debug("--- REFLECTION DIAGNOSTIC LOG END ---");
+        		
         		//auditUser = "Service Account";
         		ServicePrincipal app = graphServiceClient.servicePrincipals()
         		        .byServicePrincipalId(appid)
@@ -44,7 +76,6 @@ public class UserDataUtil {
         		                "displayName"
         		            };
         		        });
-        		
         		
         		logger.debug("app: " + app);
         		
