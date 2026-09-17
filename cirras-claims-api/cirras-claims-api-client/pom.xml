@@ -22,6 +22,16 @@
 		</dependency>
 
 		<dependency>
+			<groupId>ca.bc.gov.mal.pit.common</groupId>
+			<artifactId>pit-common-rest-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ca.bc.gov.mal.pit.common</groupId>
+			<artifactId>pit-common-webade-oauth2</artifactId>
+		</dependency>
+
+<!-- TODO: Remove -->
+		<dependency>
 			<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 			<artifactId>wfone-common-rest-client</artifactId>
 		</dependency>
@@ -29,6 +39,7 @@
 			<groupId>ca.bc.gov.nrs.wfone.common</groupId>
 			<artifactId>wfone-common-webade-oauth2</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
