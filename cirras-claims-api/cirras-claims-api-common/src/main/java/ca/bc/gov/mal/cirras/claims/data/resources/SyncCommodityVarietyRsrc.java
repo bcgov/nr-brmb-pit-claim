@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncCommodityVariety;
-import ca.bc.gov.nrs.common.wfone.rest.resource.BaseResource;
+import ca.bc.gov.mal.pit.common.rest.resource.BaseResource;
 
 @XmlRootElement(namespace = ResourceTypes.NAMESPACE, name = ResourceTypes.SYNC_COMMODITY_VARIETY_NAME)
 @XmlSeeAlso({ SyncCommodityVarietyRsrc.class })

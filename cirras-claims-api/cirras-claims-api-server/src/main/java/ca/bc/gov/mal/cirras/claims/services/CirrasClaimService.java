@@ -69,19 +69,19 @@ import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.ValidationException;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductListRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
-import ca.bc.gov.nrs.wfone.common.model.Message;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.TooManyRecordsException;
-import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
-import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
-import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
-import ca.bc.gov.nrs.wfone.common.service.api.MaxResultsExceededException;
-import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.model.Message;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.TooManyRecordsException;
+import ca.bc.gov.mal.pit.common.persistence.dto.PagedDtos;
+import ca.bc.gov.mal.pit.common.service.api.ConflictException;
+import ca.bc.gov.mal.pit.common.service.api.ForbiddenException;
+import ca.bc.gov.mal.pit.common.service.api.MaxResultsExceededException;
+import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.service.api.ValidationFailureException;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ClaimCalculationSubmitRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
@@ -1453,7 +1453,9 @@ public class CirrasClaimService {
 
 			cirrasPolicyService.claimCalculationSubmit(resource);
 		} catch (ValidationException e) {
-			throw new ValidationFailureException(e.getMessages());
+			// TODO: Fails because Policies API is still using wfone.
+			//throw new ValidationFailureException(e.getMessages());
+			throw new ValidationFailureException(null);
 		}
 
 		logger.debug(">cirrasPolicyService call");

@@ -14,7 +14,7 @@ import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationPlantAcresDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationPlantUnitsDto;
 import ca.bc.gov.mal.cirras.claims.spring.PersistenceSpringConfig;
-import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
+import ca.bc.gov.mal.pit.common.persistence.dto.PagedDtos;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

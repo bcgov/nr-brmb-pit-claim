@@ -20,11 +20,11 @@ import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import ca.bc.gov.nrs.wfone.common.model.Message;
-import ca.bc.gov.nrs.wfone.common.utils.ApplicationContextProvider;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.AccessToken;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.stub.TokenServiceStub;
+import ca.bc.gov.mal.pit.common.model.Message;
+import ca.bc.gov.mal.pit.common.utils.ApplicationContextProvider;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.Oauth2ClientException;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.resource.AccessToken;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.stub.TokenServiceStub;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.ValidationException;
