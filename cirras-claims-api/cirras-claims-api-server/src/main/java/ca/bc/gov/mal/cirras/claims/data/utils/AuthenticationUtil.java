@@ -9,8 +9,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-public class AuthenticationUtil {
+import com.microsoft.graph.serviceclient.GraphServiceClient;
 
+public class AuthenticationUtil {
+	
+    private static GraphServiceClient graphServiceClient;
+
+	public AuthenticationUtil(GraphServiceClient graphServiceClient) {
+        AuthenticationUtil.graphServiceClient = graphServiceClient;
+    }
+    
     public static boolean hasAuthority(String... authorityName) {
         Authentication authentication = getAuthentication();
 
@@ -41,7 +49,7 @@ public class AuthenticationUtil {
         return Instant.now().isAfter(expInstant);
     }
 
-    private static Jwt toJwt(Authentication authentication) {
+    public static Jwt toJwt(Authentication authentication) {
         return (Jwt) authentication.getPrincipal();
     }
 
@@ -69,7 +77,7 @@ public class AuthenticationUtil {
     public static String getUserId(Authentication authentication) {
         return toJwt(authentication).getClaimAsString("upn");
     }
-
+    
     public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }

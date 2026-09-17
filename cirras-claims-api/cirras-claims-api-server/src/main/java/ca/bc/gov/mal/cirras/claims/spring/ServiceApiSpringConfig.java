@@ -10,12 +10,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import com.microsoft.graph.serviceclient.GraphServiceClient;
+
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 import ca.bc.gov.mal.cirras.policies.api.rest.client.v1.CirrasPolicyService;
 import ca.bc.gov.mal.cirras.underwriting.clients.CirrasUnderwritingService;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimRsrcFactory;
-import ca.bc.gov.mal.cirras.claims.data.repositories.DeclaredYieldContractCommodityBerriesSyncDao;
+import ca.bc.gov.mal.cirras.claims.data.utils.UserDataUtil;
 import ca.bc.gov.mal.cirras.claims.data.assemblers.CirrasDataSyncRsrcFactory;
 import ca.bc.gov.mal.cirras.claims.services.utils.CirrasServiceHelper;
 import ca.bc.gov.mal.cirras.claims.services.utils.OutOfSync;
@@ -26,7 +28,8 @@ import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationRsrcFactory;
 @Import({
 	CodeHierarchySpringConfig.class,  // can't remove this because some wfone stuff depends on it
 	CodeTableSpringConfig.class, 
-	PersistenceSpringConfig.class
+	PersistenceSpringConfig.class,
+	SecuritySpringConfig.class
 })
 public class ServiceApiSpringConfig {
 
@@ -54,6 +57,7 @@ public class ServiceApiSpringConfig {
 	@Autowired CodeTableSpringConfig codeTableSpringConfig;
 	@Autowired CodeHierarchySpringConfig codeHierarchySpringConfig;
 	@Autowired PersistenceSpringConfig persistenceSpringConfig;
+	@Autowired SecuritySpringConfig securitySpringConfig;
 	
 	@Bean
 	public CirrasServiceHelper cirrasServiceHelper() {
@@ -75,6 +79,25 @@ public class ServiceApiSpringConfig {
 		
 		return result;
 	}
+
+	
+	@Bean
+	public UserDataUtil userDataUtil(GraphServiceClient graphServiceClient) { // Spring injects the @Bean here
+	    UserDataUtil result = new UserDataUtil();
+	    
+	    result.setGraphServiceClient(graphServiceClient);
+	    
+	    return result;
+	}
+
+//	@Bean
+//	public UserDataUtil userDataUtil() {
+//		UserDataUtil result = new UserDataUtil();
+//		
+//		result.setGraphServiceClient(securitySpringConfig.graphServiceClient());
+//		
+//		return result;
+//	}
 	
 	@Bean
 	public OutOfSync outOfSync() {
@@ -83,7 +106,7 @@ public class ServiceApiSpringConfig {
 	}
 
 	@Bean()
-	public CirrasClaimService cirrasClaimService() {
+	public CirrasClaimService cirrasClaimService(UserDataUtil userDataUtil) {
 		CirrasClaimService result;
 		
 		result = new CirrasClaimService();
@@ -111,8 +134,9 @@ public class ServiceApiSpringConfig {
 		result.setCirrasPolicyService(cirrasPolicyService);
 		result.setCirrasUnderwritingService(cirrasUnderwritingService);
 
-		result.setCirrasDataSyncService(cirrasDataSyncService());
+		result.setCirrasDataSyncService(cirrasDataSyncService(userDataUtil));
 		result.setCirrasServiceHelper(cirrasServiceHelper());
+		result.setUserDataUtil(userDataUtil);
 		
 		result.setOutOfSync(outOfSync());
 		
@@ -120,7 +144,7 @@ public class ServiceApiSpringConfig {
 	}
 	
 	@Bean()
-	public CirrasDataSyncService cirrasDataSyncService() {
+	public CirrasDataSyncService cirrasDataSyncService(UserDataUtil userDataUtil) {
 		CirrasDataSyncService result;
 		
 		result = new CirrasDataSyncService();
@@ -142,7 +166,8 @@ public class ServiceApiSpringConfig {
 		result.setDeclaredYieldContractCommodityBerriesSyncDao(persistenceSpringConfig.declaredYieldContractCommodityBerriesSyncDao());
 		
 		result.setCirrasServiceHelper(cirrasServiceHelper());
-		
+		result.setUserDataUtil(userDataUtil);
+
 		return result;
 	}
 	

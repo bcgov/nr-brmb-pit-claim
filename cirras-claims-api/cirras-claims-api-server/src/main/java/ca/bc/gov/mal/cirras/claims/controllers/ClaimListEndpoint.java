@@ -60,7 +60,7 @@ public class ClaimListEndpoint extends BaseEndpointsImpl {
 	}
 	
 
-	@Operation(operationId = "Get list of claims.", summary = "Get list of claims.", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.SEARCH_CLAIMS}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get list of claims.", summary = "Get list of claims.", security = @SecurityRequirement(name = "Bearer-JWT", scopes = {Scopes.SEARCH_CLAIMS}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),

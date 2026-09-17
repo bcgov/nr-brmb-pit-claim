@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,6 +26,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
 
 import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.TokenService;
 
@@ -45,8 +48,17 @@ public class SecuritySpringConfig  {
 
 	@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
 	private String issuerUri;
+	
+	@Value("${TENANT_ID}")
+    private String tenantId;
 
-	public SecuritySpringConfig() {
+    @Value("${CLIENT_ID}")
+    private String clientId;
+
+    @Value("${CLIENT_SECRET}")
+    private String clientSecret;
+
+   	public SecuritySpringConfig() {
 		super();
 		logger.info("<SecuritySpringConfig");
 		
@@ -114,5 +126,20 @@ public class SecuritySpringConfig  {
 	      ).exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()) );		
 		return http.build();
 	  }	
+	  
+	@Bean
+	@Primary // Ensures Spring selects THIS client over any auto-configured/imported wfone clients
+	public GraphServiceClient graphServiceClient() {
+	    var credential = new ClientSecretCredentialBuilder()
+	            .tenantId(tenantId)
+	            .clientId(clientId)
+	            .clientSecret(clientSecret)
+	            .build();
+	
+	    // The default scope for Microsoft Graph application permissions
+	    String[] scopes = new String[]{"https://graph.microsoft.com/.default"};
+	
+	    return new GraphServiceClient(credential, scopes);
+	}
 
 }
