@@ -42,33 +42,7 @@ public class UserDataUtil {
         		auditUser = "No appid found"; //Todo
         	} else {
         		
-        		logger.debug("--- REFLECTION DIAGNOSTIC LOG START ---");
-                try {
-                    RequestAdapter adapter = graphServiceClient.getRequestAdapter();
-                    logger.info("RequestAdapter Class: {}", adapter.getClass().getName());
-
-                    // Extract private authenticationProvider field from OkHttpRequestAdapter
-                    Field authProviderField = adapter.getClass().getDeclaredField("authenticationProvider");
-                    authProviderField.setAccessible(true);
-                    AuthenticationProvider authProvider = (AuthenticationProvider) authProviderField.get(adapter);
-
-                    logger.info("AuthenticationProvider Class: {}", authProvider.getClass().getName());
-
-                    // Extract private credential or scopes if using AzureIdentityAuthenticationProvider
-                    Field[] fields = authProvider.getClass().getDeclaredFields();
-                    for (Field field : fields) {
-                        field.setAccessible(true);
-                        Object val = field.get(authProvider);
-                        if (val != null) {
-                            logger.info("AuthProvider Field [{}] = {}", field.getName(), val);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.error("Failed to reflect graphServiceClient authentication state", e);
-                }
-                logger.debug("--- REFLECTION DIAGNOSTIC LOG END ---");
-        		
-        		//auditUser = "Service Account";
+         		//auditUser = "Service Account";
         		ServicePrincipal app = graphServiceClient.servicePrincipals()
         		        .byServicePrincipalId(appid)
         		        .get(requestConfiguration -> {
