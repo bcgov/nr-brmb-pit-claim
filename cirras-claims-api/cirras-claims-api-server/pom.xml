@@ -48,12 +48,6 @@
 		    <artifactId>jnats</artifactId>
 		</dependency>
 
-<!-- TODO: Remove? -->
-		<dependency>
-			<groupId>ca.bc.gov.webade</groupId>
-			<artifactId>webade-spring-bootstrap-support</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>ca.bc.gov.mal.pit.common</groupId>
 			<artifactId>pit-common-rest-endpoints</artifactId>

@@ -70,6 +70,7 @@ import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductListRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ProductRsrc;
 import ca.bc.gov.mal.pit.common.model.Message;
+import ca.bc.gov.mal.pit.common.model.MessageImpl;
 import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
 import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
 import ca.bc.gov.mal.pit.common.persistence.dao.TooManyRecordsException;
@@ -1453,9 +1454,13 @@ public class CirrasClaimService {
 
 			cirrasPolicyService.claimCalculationSubmit(resource);
 		} catch (ValidationException e) {
-			// TODO: Fails because Policies API is still using wfone.
+			// TODO: Orig code Fails because Policies API is still using wfone.
+			//       For now, just return a generic error message instead.
 			//throw new ValidationFailureException(e.getMessages());
-			throw new ValidationFailureException(null);
+
+			List<Message> validationErrorsList = new ArrayList<Message>(1);
+			validationErrorsList.add(new MessageImpl("Policies API return validation error on Claim Calculation Submit"));
+			throw new ValidationFailureException(validationErrorsList);			
 		}
 
 		logger.debug(">cirrasPolicyService call");
