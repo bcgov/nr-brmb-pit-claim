@@ -26,15 +26,15 @@ import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrainQuantityDetailDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationGrainQuantityDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationUserDto;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.IntegrityConstraintViolatedDaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.OptimisticLockingFailureDaoException;
-import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
-import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
-import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.IntegrityConstraintViolatedDaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.OptimisticLockingFailureDaoException;
+import ca.bc.gov.mal.pit.common.service.api.ConflictException;
+import ca.bc.gov.mal.pit.common.service.api.ForbiddenException;
+import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
 
 public class CirrasServiceHelper {
 

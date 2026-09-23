@@ -28,7 +28,7 @@ import ca.bc.gov.mal.cirras.claims.data.assemblers.ClaimCalculationSimpleRsrcFac
 
 @Configuration
 @Import({
-	CodeHierarchySpringConfig.class,  // can't remove this because some wfone stuff depends on it
+	CodeHierarchySpringConfig.class,  // can't remove this because some pit common stuff depends on it
 	CodeTableSpringConfig.class, 
 	PersistenceSpringConfig.class
 })

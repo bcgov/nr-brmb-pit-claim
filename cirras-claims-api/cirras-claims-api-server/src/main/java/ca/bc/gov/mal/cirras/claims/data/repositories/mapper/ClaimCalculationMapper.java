@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
 
 public interface ClaimCalculationMapper {
 	ClaimCalculationDto fetch(Map<String, Object> parameters);

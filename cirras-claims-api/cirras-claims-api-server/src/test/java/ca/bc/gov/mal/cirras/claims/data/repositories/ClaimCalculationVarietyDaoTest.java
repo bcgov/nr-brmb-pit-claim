@@ -17,8 +17,8 @@ import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationVarietyDto;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationDao;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.spring.PersistenceSpringConfig;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {TestConfig.class, PersistenceSpringConfig.class})
