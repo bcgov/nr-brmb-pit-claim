@@ -1,13 +1,10 @@
 import { enableProdMode, provideAppInitializer, inject, Injector, Type, ModuleWithProviders, importProvidersFrom } from "@angular/core";
-
 import { cirrasClaimsRestInitializerFn } from "./app/app.module";
 import {environment} from "./environments/environment";
-import { provideBootstrapEffects, DATE_FORMATS } from "./app/utils";
+import { provideBootstrapEffects } from "./app/utils";
 import { rootEffects, rootReducers, initialRootState } from "./app/store";
 import { UpdateService } from "./app/services/update.service";
-import { AppConfigService } from "./app/services/app-config.service";
 import { Configuration as CirrasClaimsAPIServiceConfiguration, ApiModule as CirrasClaimsAPIServiceModule } from "@cirras/cirras-claims-api";
-import { TokenService } from "./app/services/token.service";
 import { Title, BrowserModule, bootstrapApplication } from "@angular/platform-browser";
 import { appInitFn } from "./app/utils/app-initializer";
 import { HttpHandler, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
@@ -43,7 +40,6 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MomentModule } from "ngx-moment";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { CoreUIModule } from "./app/lib/core-ui.module";
 import { StoreModule } from "@ngrx/store";
 import { AppRoutingModule } from "./app/app-routing.module";
 import { NgxPaginationModule } from "ngx-pagination";
@@ -52,6 +48,7 @@ import { ServiceWorkerModule } from "@angular/service-worker";
 import { A11yModule } from "@angular/cdk/a11y";
 import { WildfireApplicationModule, WildfireResourceManagerModule } from "@wf1/wfcc-application-ui";
 import { AppComponent } from "./app/containers/application-root/app.component";
+import { AppConfigService, CoreUIModule, TokenService } from "@bcgov/pit-common-core-lib";
 
 const apiConfiguration = new CirrasClaimsAPIServiceConfiguration();
 let devOnlyImports: Array<Type<any> | ModuleWithProviders<any>> = [];

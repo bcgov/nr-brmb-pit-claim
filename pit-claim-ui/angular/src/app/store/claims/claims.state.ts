@@ -1,5 +1,4 @@
-// import {SearchState} from "@wf1/wfcc-core-lib";
-import { SearchState } from "src/app/search/store/state";
+import { SearchState } from "@bcgov/pit-common-core-lib";
 import {vmClaimList} from "../../conversion/models";
 import {getDefaultPagingInfoRequest} from "../application/application.state";
 

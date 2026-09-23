@@ -13,9 +13,8 @@ import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice, W
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "src/app/services/security-util.service";
-import { TokenService } from "src/app/services/token.service";
-import { AppConfigService } from "src/app/services/app-config.service";
 import { NgTemplateOutlet } from "@angular/common";
+import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
 
 const DEVICE: WfDevice = 'desktop';
 
