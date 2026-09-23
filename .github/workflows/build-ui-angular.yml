@@ -56,6 +56,8 @@ jobs:
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
           npm clean-install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build angular app
         run: |
