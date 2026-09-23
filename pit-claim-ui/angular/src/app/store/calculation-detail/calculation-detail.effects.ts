@@ -1,4 +1,4 @@
-import {inject, Injectable, Injector} from "@angular/core";
+import {Injectable, Injector} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Action, Store} from "@ngrx/store";
 import {Observable, of, forkJoin} from "rxjs";
@@ -52,9 +52,7 @@ import {
 import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "src/app/utils";
 import { setFormStateUnsaved } from "../application/application.actions";
 import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
-import { HttpErrorResponse } from "@angular/common/http";
-import { TokenService } from "src/app/services/token.service";
-import { AppConfigService } from "src/app/services/app-config.service";
+import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
 
 @Injectable()
 export class CalculationDetailEffects {

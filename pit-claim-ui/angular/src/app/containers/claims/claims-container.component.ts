@@ -9,11 +9,10 @@ import {
   selectSearchState
 } from "../../store/application/application.selectors";
 import {SEARCH_CLAIMS_COMPONENT_ID} from "../../store/claims/claims.state";
-// import {SearchState} from "@wf1/wfcc-core-lib";
 import {Component} from "@angular/core";
 import { LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
-import { SearchState } from "src/app/search/store/state";
 import { ClaimsComponent } from "../../components/claims/claims.component";
+import { SearchState } from "@bcgov/pit-common-core-lib";
 
 
 @Component({
