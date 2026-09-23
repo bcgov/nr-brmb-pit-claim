@@ -55,7 +55,7 @@ jobs:
       - name: Install dependencies for Angular project
         run: |
           cd ${{ inputs.MICROSERVICE_NAME }}/angular
-          npm clean-install --registry=${{ vars.REGISTRY }} --force
+          npm clean-install
 
       - name: Build angular app
         run: |
