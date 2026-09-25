@@ -18,32 +18,6 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="assets/bc-sans/css/BCSans.css" rel="stylesheet">
-    <script type="text/javascript">
-        function browserCheck() {
-            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-
-            var isIEOrEdge = /msie\s|trident\//i.test(window.navigator.userAgent);
-            var isIEOrEdge = false;
-
-            var cirras_claims = document.getElementById('cirrasClaimsMain');
-            var browserAlert = document.getElementById('browserIEAlert');
-            if (isIEOrEdge) {
-                cirras_claims.style.display = 'none';
-                browserAlert.style.display = 'block';
-                var urlInput = document.getElementById('currentUrl');
-                urlInput.value = window.location.href;
-            } else {
-                cirras_claims.style.display = 'block';
-                browserAlert.style.display = 'none';
-            }
-        }
-
-        function copyToClipboard() {
-            var copyText = document.getElementById('currentUrl');
-            copyText.select();
-            document.execCommand("copy");
-        }
-    </script>
     <style>
         iframe#login-iframe {
             position: absolute !important;
@@ -63,7 +37,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap-grid.min.css">
     <meta name="theme-color" content="#1976d2">
 </head>
-<body onload="browserCheck()">
+<body>
 <noscript>
     <h1>You don’t have javascript enabled.</h1>
     <p>Please enable it to get the full experience.</p>
@@ -331,15 +305,6 @@
             </div>
         </div>
     </cirras-claims-root>
-</div>
-<div class="error-page" id="browserIEAlert" style="display: none">
-    <div class="error-page">
-        <h1>CIRRAS - Error</h1>
-        <h2>IE browser detected. Please use Chrome.</h2>
-        <p><input id="currentUrl" disabled style="font-size: 14px"/>
-            <button style="font-size: 14px" onclick="copyToClipboard()">Copy URL to Clipboard</button>
-        </p>
-    </div>
 </div>
 </body>
 </html>
