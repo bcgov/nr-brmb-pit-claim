@@ -1,0 +1,63 @@
+<div class="bc-logo" (click)="onBCLogoClick()" [class.can-click]="bcLogoClickEnable">
+    <span class="bcwfservice-logo" alt="BC Gov"></span>
+</div>
+
+<div class="app-logo-and-title" *ngIf="useAppLogo">
+    <span class="wildfire1-logo" alt="Wildfire ONE"></span>
+    <span class="separator"></span>
+    <span class="title">{{ title }}</span>
+    <span class="environment">{{ environment }}</span>
+</div>
+
+<div class="system-and-user-info" *ngIf="useSystemAndUser">
+    <div class="row">
+        <ng-container *ngIf="useSupportLink">
+            <ng-container *ngIf="!useSupportMenu">
+                <span (click)="onSupportLinkClick()" class="training can-click">Training and Support</span>
+            </ng-container>
+            <ng-container *ngIf="useSupportMenu">
+                <span class="support-menu can-click" [matMenuTriggerFor]="supportMenu">
+                    <span class="training">Training and Support</span>
+                    <wf-icon iconName="keyboard_arrow_down" iconSize="small"></wf-icon>
+                </span>
+            </ng-container>
+            <span class="separator"></span>
+        </ng-container>
+
+        <mat-menu #supportMenu="matMenu">
+            <ng-container *ngFor="let item of supportMenuItems">
+                <ng-container *ngIf="item.type == 'action-trigger'">
+                    <button mat-menu-item (click)="item.onClick()">{{ item.title }}</button>
+                </ng-container>
+            </ng-container>    
+        </mat-menu>
+
+        <span class="userLogout" *ngIf="!useLogoutButton">
+            <wf-icon iconName="account_circle" iconSize="small"></wf-icon>
+            <span class="userName">{{ userName }}</span>
+        </span>
+        <span class="userLogout can-click" *ngIf="useLogoutButton" [matMenuTriggerFor]="logoutMenu" >
+            <wf-icon iconName="account_circle" iconSize="small"></wf-icon>
+            <span class="userName">{{ userName }}</span>
+            <wf-icon iconName="keyboard_arrow_down" iconSize="small"></wf-icon>
+        </span>
+
+        <mat-menu #logoutMenu="matMenu">
+            <button mat-menu-item (click)="onLogoutClick()">Logout</button>
+        </mat-menu>
+    </div>
+    <div class="row">
+        <span *ngIf="actingOnBehalfOf" class="actingOnBehalfOf">Acting on behalf of: {{ actingOnBehalfOf }}</span>
+    </div>
+</div>
+
+<div class="menu"
+    (click)="onMenuClick()"
+    *ngIf="useMenu"
+>
+    <wf-icon
+        iconName="menu"
+        iconSize="medium"
+    ></wf-icon>
+</div>
+

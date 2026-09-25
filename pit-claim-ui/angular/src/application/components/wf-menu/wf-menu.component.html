@@ -1,0 +1,65 @@
+<div class="header">
+    <div class="application-title">
+        <span class="title">{{ title }}</span>
+        <span class="environment">{{ environment }}</span>
+    </div>
+</div>
+
+<div class="body">
+    <div class="nav-items">
+        <ng-container *ngFor="let item of menuItems">
+            <ng-container *ngIf="item.type == 'router-link'">
+                <a class="nav-item"
+                    [routerLink]="item.route"
+                    [class.active]="item.isActive"
+                    [class.indented]="item.indented"
+                    [matTooltip]="item.title"
+                    [matTooltipDisabled]="isExpanded"
+                    [matTooltipShowDelay]="tooltipShowDelay"
+                    matTooltipClass="wf-menu-tooltip"
+                    matTooltipPosition="right"
+                    (click)="onItemClick( item )"
+                >
+                    <wf-icon
+                        [iconName]="item.iconName"
+                        iconSize="small"
+                    ></wf-icon>
+                    <span class="label">{{ item.title }}</span>
+                </a>
+            </ng-container>
+        </ng-container>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="toggle-button" (click)="onToggleClick()">
+        <wf-icon
+            iconName="double_arrow"
+            [title]="toggleTitle"
+            iconSize="small"
+        ></wf-icon>
+    </div>
+
+    <div class="system-and-user-info">
+        <div class="userNameWrapper">
+            <wf-icon
+                iconName="account_circle"
+                iconSize="small"
+            ></wf-icon>
+            <span class="userName">{{ userName }}</span>
+        </div>
+        <div *ngIf="actingOnBehalfOf" class="actingOnBehalfOfWrapper">
+            <span class="actingOnBehalfOf">Acting on behalf of:</span>
+            <span>{{ actingOnBehalfOf }}</span>
+        </div>
+    </div>
+
+    <div class="version">
+        <div class="short" [title]="'Version ' + version.long">v{{ version.short }}</div>
+        <div class="long">Version {{ version.long }}</div>
+    </div>
+
+    <ng-container>
+        <ng-content select=[menu-footer]></ng-content>
+    </ng-container>
+</div>

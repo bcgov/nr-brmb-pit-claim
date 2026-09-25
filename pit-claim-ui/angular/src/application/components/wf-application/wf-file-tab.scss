@@ -1,0 +1,86 @@
+:host,
+::ng-deep .wf-dialog {
+
+    ::ng-deep mat-tab-group.wf-file-tab {
+        margin-top: 10px;
+        font-family: var(--wf-font-family-main);
+        /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+        /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+        /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+        >.mat-tab-body-wrapper {
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            mat-tab-body {
+                font-family: var(--wf-font-family-main);
+                border-bottom: 1px solid var(--wf-colour-light-grey);
+                border-left: 1px solid var(--wf-colour-light-grey);
+                border-right: 1px solid var(--wf-colour-light-grey);
+                border-radius: 0 0 var(--wf-border-radius) var(--wf-border-radius);
+
+                .tab-top-header {
+                    display: flex;
+                    justify-content: flex-end;
+                    padding: 5px;
+                }
+
+                .mat-mdc-card:not(.error-panel) {
+                    padding: 0;
+                    border-radius: 0;
+                    box-shadow: none;
+
+                    &:not(:last-child) {
+                        border-bottom: 1px solid var(--wf-colour-light-grey);
+                    }
+                }
+            }
+        }
+
+        >.mat-mdc-tab-header {
+            border-bottom: none;
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            .mat-tab-labels {
+                border-bottom: 1px solid var(--wf-colour-light-grey);
+                /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+                .mat-tab-label {
+                    border-top-left-radius: var(--wf-border-radius);
+                    border-top-right-radius: var(--wf-border-radius);
+                    font-size: var(--wf-font-size-emphasis);
+                    font-family: var(--wf-font-family-main);
+                    opacity: 1;
+                    border-width: 1px;
+                    border-style: solid;
+                    border-color: var(--wf-colour-light-grey) var(--wf-colour-light-grey) #fff;
+                    border-bottom: 0;
+                    background-color: var(--wf-colour-inactive-tab);
+                    font-weight: var(--wf-font-weight-emphasis);
+
+                    .header {
+                        display: flex;
+
+                        .mat-icon {
+                            margin-left: var(--wf-gutter);
+                            margin-right: calc(-1 * var(--wf-gutter));
+                            line-height: 22px;
+                        }
+                    }
+                }
+                /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+                .mat-tab-label-active {
+                    font-family: var(--wf-font-family-main);
+                    background-color: var(--wf-colour-active-tab);
+                    font-weight: var(--wf-font-weight-emphasis-more);
+                }
+            }
+
+            .mat-ink-bar {
+                background-color: var(--wf-colour-white);
+                box-sizing: border-box;
+                border-bottom: 2px solid var(--wf-colour-white);
+                border-left: 1px solid var(--wf-colour-light-grey);
+                border-right: 1px solid var(--wf-colour-light-grey);
+                height: 2px;
+            }
+        }
+    }
+}

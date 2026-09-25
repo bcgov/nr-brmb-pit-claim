@@ -1,0 +1,43 @@
+:host,
+::ng-deep .wf-dialog {
+
+    ::ng-deep mat-tab-group.wf-basic-tab {
+        margin-top: 10px;
+        font-family: var(--wf-font-family-main);
+        /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+        /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+        >.mat-tab-body-wrapper {
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            mat-tab-body {
+                font-family: var(--wf-font-family-main);
+            }
+        }
+
+        >.mat-mdc-tab-header {
+            margin-left: var(--wf-gutter);
+            margin-right: var(--wf-gutter);
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+            .mat-tab-labels {
+                /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+                .mat-tab-label {
+                    font-size: var(--wf-font-size-emphasis);
+                    font-family: var(--wf-font-family-main);
+                    font-weight: var(--wf-font-weight-emphasis);
+                    opacity: 1;
+                }
+                /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+                .mat-tab-label-active {
+                    font-family: var(--wf-font-family-main);
+                    background-color: var(--wf-colour-active-tab);
+                    color: var(--wf-colour-blue);
+                    font-weight: var(--wf-font-weight-emphasis-more);
+                }
+            }
+
+            .mat-ink-bar {
+                background-color: var(--wf-colour-blue);
+            }
+        }
+    }
+}

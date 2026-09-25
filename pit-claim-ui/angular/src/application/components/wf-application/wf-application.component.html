@@ -1,0 +1,25 @@
+<div class="header">
+    <ng-content select="wf-header"></ng-content>
+</div>
+
+<div class="menu-bar">
+    <ng-content select="wf-menu-bar"></ng-content>
+</div>
+
+<div class="body">
+    <ng-container *ngIf="!isInitializing">
+        <div class="content" cdkScrollable>
+            <ng-content></ng-content>
+        </div>
+
+        <div class="backdrop" (click)="onBackdropClick()"></div>
+
+        <div class="menu" [@menu-collapsed-expanded]="menuState">
+            <ng-content select="wf-menu"></ng-content>
+        </div>
+    </ng-container>
+</div>
+
+<div class="footer">
+    <ng-content select="wf-footer"></ng-content>
+</div>

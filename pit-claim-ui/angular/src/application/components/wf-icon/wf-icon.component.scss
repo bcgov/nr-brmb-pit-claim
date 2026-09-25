@@ -1,0 +1,31 @@
+:host {
+    .size-small {
+        width: var( --wf-icon-size-small );
+        height: var( --wf-icon-size-small );
+
+        .font-icon, .svg-icon {
+            width: var( --wf-icon-size-small );
+            height: var( --wf-icon-size-small );
+            mat-icon {
+                font-size: var( --wf-icon-size-small );
+                width: var( --wf-icon-size-small );
+                height: var( --wf-icon-size-small );
+            }
+        }
+    }
+
+    .size-medium {
+        width: var( --wf-icon-size-medium );
+        height: var( --wf-icon-size-medium );
+
+        .font-icon, .svg-icon {
+            width: var( --wf-icon-size-medium );
+            height: var( --wf-icon-size-medium );
+            mat-icon {
+                font-size: var( --wf-icon-size-medium );
+                width: var( --wf-icon-size-medium );
+                height: var( --wf-icon-size-medium );
+            }
+        }
+    }
+}

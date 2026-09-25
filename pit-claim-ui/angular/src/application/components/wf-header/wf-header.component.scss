@@ -1,0 +1,150 @@
+:host {
+    color: var( --wf-header-color );
+    background-color: var( --wf-header-background-color );
+    border-bottom: var( --wf-header-border-color );
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    height: var( --wf-header-height );
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: default;
+
+    .can-click {
+        cursor: pointer;
+    }
+
+    .bc-logo {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        width: 50%;
+        padding-left: var(--wf-gutter);
+        overflow-x: visible;
+
+        .bcwfservice-logo {
+            display: inline-block;
+            background-image: url( './images/bcwfservice-logo.png' );
+            background-size: auto var( --wf-header-bcwfservice-logo-height );
+            background-position: left center;
+            background-repeat: no-repeat;
+            height: var( --wf-header-bcwfservice-logo-height );
+            width: calc( var( --wf-header-bcwfservice-logo-height ) * 3.75 );
+        }
+    }
+
+    .app-logo-and-title {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        .wildfire1-logo {
+            display: inline-block;
+            background-image: url( './images/wildfire-one-logo-text-horizontal-light.png' );
+            background-size: auto var( --wf-header-wildfire1-logo-height );
+            background-position: center;
+            background-repeat: no-repeat;
+            height: var( --wf-header-wildfire1-logo-height );
+            width: calc( var( --wf-header-wildfire1-logo-height ) * 4 );
+        }
+
+        .separator {
+            border-left: 1px solid white;
+            width: 0;
+            height: 20px;
+            margin: 0 15px;
+        }
+
+        .title {
+            font-size: 18px;
+            white-space: nowrap;
+        }
+
+        .environment {
+            font-size: 15px;
+            color: var( --wf-header-environment-color );
+            margin-bottom: 10px;
+            margin-left: 5px;
+        }
+    }
+
+    .system-and-user-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+
+        width: 50%;
+        padding-right: var(--wf-gutter);
+
+        .row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 2px 0;
+        }
+
+        .userLogout, .support-menu {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .userName {
+            white-space: nowrap;
+            margin-left: 6px;
+        }
+
+        .training {
+            white-space: nowrap;
+
+            &.can-click:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .separator {
+            border-left: 1px solid white;
+            width: 0;
+            height: 20px;
+            margin: 0 15px;
+        }
+    }
+
+    .menu {
+        display: none;
+    }
+}
+
+:host-context( .device-mobile ) {
+    .app-logo-and-title {
+        justify-content: flex-end;
+
+        .separator {
+            display: none;
+        }
+
+        .title {
+            display: none;
+        }
+
+        .environment {
+            display: none;
+        }
+    }
+
+    .system-and-user-info {
+        display: none;
+    }
+
+    .menu {
+        display: flex;
+        z-index: 1;
+        padding-right: var(--wf-gutter);
+        width: 50%;
+        justify-content: flex-end;
+    }
+}

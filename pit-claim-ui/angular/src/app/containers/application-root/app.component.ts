@@ -9,12 +9,15 @@ import {ApplicationStateService} from "../../services/application-state.service"
 import {addRemoveCdkOverlayClass, ResourcesRoutes} from "../../utils";
 
 import {Subscription} from "rxjs";
-import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
+// import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "src/app/services/security-util.service";
 import { NgTemplateOutlet } from "@angular/common";
 import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { WildfireApplicationModule } from "src/application/application.module";
+import { WfApplicationConfiguration, WfApplicationState, WfDevice } from "src/application/application.config";
+import { RouterLink } from "src/application/components/wf-menu/wf-menu.component";
 
 const DEVICE: WfDevice = 'desktop';
 

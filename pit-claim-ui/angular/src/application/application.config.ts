@@ -1,0 +1,21 @@
+export type WfDevice = 'desktop'|'mobile'
+
+export interface WfApplicationConfiguration {
+    title: string
+    device: WfDevice
+    userName: string
+    actingOnBehalfOf?: string
+    version: {
+        long: string
+        short: string
+    }
+    environment: string
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+export type WfMenuState = 'hidden'|'collapsed'|'expanded'
+
+export interface WfApplicationState {
+    menu: WfMenuState
+}
