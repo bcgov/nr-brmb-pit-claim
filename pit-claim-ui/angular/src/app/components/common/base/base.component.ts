@@ -28,8 +28,6 @@ import {ConnectionService} from "ngx-connection-service";
 import {ActionItem} from "../base-wrapper/base-wrapper.component";
 import {Overlay} from "@angular/cdk/overlay";
 import {ApplicationStateService} from "../../../services/application-state.service";
-import { AppConfigService } from "src/app/services/app-config.service";
-import { TokenService } from "src/app/services/token.service";
 import {PaginationInstance} from "ngx-pagination";
 import { HttpClient } from "@angular/common/http";
 import {MatDialog} from "@angular/material/dialog";
@@ -38,6 +36,7 @@ import {SCOPES_UI} from "../../../utils/scopes";
 import {ErrorDialogComponent} from "../../dialogs/error-dialog/error-dialog.component";
 import {setFormStateUnsaved} from "../../../store/application/application.actions";
 import {SecurityUtilService} from "../../../services/security-util.service";
+import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
 
 const originFormControlNgOnChanges = FormControlDirective.prototype.ngOnChanges;
 FormControlDirective.prototype.ngOnChanges = function () {

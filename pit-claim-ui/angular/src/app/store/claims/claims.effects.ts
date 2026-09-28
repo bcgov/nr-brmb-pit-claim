@@ -1,22 +1,19 @@
-import {Injectable, inject} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Action, Store} from "@ngrx/store";
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
-// import {SortDirection} from "@wf1/wfcc-core-lib";
 import {UUID} from "angular2-uuid";
 import {Observable, of} from 'rxjs';
-import {catchError, debounceTime, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {catchError, debounceTime, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {convertToErrorState, convertToClaimList} from "../../conversion/conversion-from-rest";
 import {SEARCH_CLAIMS, SearchClaimsAction, searchClaimsSuccess, searchClaimsError} from "./claims.actions";
-import {formatSort, getPageInfoRequestForSearchState} from "../../utils";
+import {getPageInfoRequestForSearchState} from "../../utils";
 import {initClaimsPaging} from "./claims.state";
 import {RootState} from "../index";
-import { TokenService } from "src/app/services/token.service";
-import { SortDirection } from "src/app/search/models/sort/sort-direction";
+import { SortDirection, TokenService } from "@bcgov/pit-common-core-lib";
 
 @Injectable()
 export class ClaimsEffects {
-  //private actions$ = inject(Actions);
 
   constructor(
     private actions: Actions,
@@ -32,7 +29,6 @@ export class ClaimsEffects {
     switchMap( ([action, store]) => {
       let typedAction = <SearchClaimsAction>action;
       let pagingInfoRequest = typedAction.payload.pageInfoRequest ? typedAction.payload.pageInfoRequest : getPageInfoRequestForSearchState(store.searchClaims);
-      let savedFilters = store.searchClaims? store.searchClaims.filters: null;
       let pageNumber = pagingInfoRequest.pageNumber ? pagingInfoRequest.pageNumber : initClaimsPaging.pageNumber;
       let pageSize = pagingInfoRequest.pageRowCount ? pagingInfoRequest.pageRowCount : initClaimsPaging.pageRowCount;
 

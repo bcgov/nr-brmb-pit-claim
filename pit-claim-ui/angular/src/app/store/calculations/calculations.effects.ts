@@ -2,17 +2,15 @@ import {inject, Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Action, Store} from "@ngrx/store";
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
-// import {SortDirection} from "@wf1/wfcc-core-lib";
 import {UUID} from "angular2-uuid";
 import {Observable, of} from 'rxjs';
 import {catchError, debounceTime, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
 import {convertToErrorState, convertToCalculationList} from "../../conversion/conversion-from-rest";
 import {SEARCH_CALCULATIONS, SearchCalculationsAction, searchCalculationsSuccess, searchCalculationsError} from "./calculations.actions";
-import {formatSort, getPageInfoRequestForSearchState} from "../../utils";
+import { getPageInfoRequestForSearchState} from "../../utils";
 import {initCalculationsPaging} from "./calculations.state";
 import {RootState} from "../index";
-import { TokenService } from "src/app/services/token.service";
-import { SortDirection } from "src/app/search/models/sort/sort-direction";
+import { TokenService, SortDirection } from "@bcgov/pit-common-core-lib";
 
 @Injectable()
 export class CalculationsEffects {

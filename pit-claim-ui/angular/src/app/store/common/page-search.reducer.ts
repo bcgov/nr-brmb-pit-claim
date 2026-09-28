@@ -4,9 +4,8 @@ import {Action} from "@ngrx/store";
 import {SEARCH_CLAIMS, SearchClaimsAction} from "../claims/claims.actions";
 import {SEARCH_CALCULATIONS, SearchCalculationsAction} from "../calculations/calculations.actions";
 import deepEqual from "deep-equal";
-import { SearchState } from "src/app/search/store/state";
-import { searchReducer } from "src/app/search/store/reducers";
-import { SearchActions } from "src/app/search/store/actions";
+import { searchReducer, SearchState } from "@bcgov/pit-common-core-lib";
+import { SearchActions } from "@bcgov/pit-common-core-lib/lib/search/store/actions";
 
 export function pageSearchReducer(state, action: Action): SearchState {
     if (action.type == SEARCH_CLAIMS) {

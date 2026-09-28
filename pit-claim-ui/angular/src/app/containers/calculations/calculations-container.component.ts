@@ -9,11 +9,10 @@ import {
     selectSearchState
 } from "../../store/application/application.selectors";
 import {SEARCH_CALCULATIONS_COMPONENT_ID} from "../../store/calculations/calculations.state";
-// import {SearchState} from "@wf1/wfcc-core-lib";
 import {Component} from "@angular/core";
 import { Location, LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
-import { SearchState } from "src/app/search/store/state";
 import { CalculationsComponent } from "../../components/calculations/calculations.component";
+import { SearchState } from "@bcgov/pit-common-core-lib";
 
 @Component({
     selector: "cirras-claims-calculations-container",
