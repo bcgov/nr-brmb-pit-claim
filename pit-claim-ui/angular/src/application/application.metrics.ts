@@ -5,8 +5,6 @@ export const applicationMetrics = [
             '--wf-colour-blue': '#003366',
             '--wf-colour-white': '#ffffff',
             '--wf-colour-light-grey': '#c6c8cb',
-            '--wf-colour-lighter-grey': '#f2f2f2',
-            '--wf-colour-disabled-background': 'rgba(0, 0, 0, 0.06)',
 
             '--wf-header-background-color': '#003366',
             '--wf-header-color': 'white',
@@ -15,7 +13,6 @@ export const applicationMetrics = [
 
             '--wf-menu-expanded-width': '250px',
             '--wf-menu-collapsed-width': '50px',
-            '--wf-menu-icon-size': '24px',
             '--wf-menu-icon-color': 'rgba(0, 0, 0, 0.9)',
             '--wf-menu-item-row-height': '48px',
 
@@ -25,7 +22,7 @@ export const applicationMetrics = [
             '--wf-menu-highlight-background-color': '#ddd',
 
             '--wf-menu-active-color': '#003366',
-            '--wf-menu-active-font-weight': '600',
+            '--wf-menu-active-font-weight': '200',
             '--wf-menu-active-background-color': '#ddd',
 
             '--wf-icon-size-small': '24px',
@@ -42,14 +39,7 @@ export const applicationMetrics = [
 
             '--wf-colour-active-tab': '#ffffff',
             '--wf-colour-inactive-tab': '#f2f2f2',
-
-            '--wf-menu-bar-background-color': '#355992',
-            '--wf-menu-bar-font-weight': '16',
-            '--wf-menu-bar-item-row-height': '20px',
-            '--wf-menu-bar-divider-color': '#9b9b9b',
-
-            '--wf-footer-background-color': '#003366',
-            '--wf-footer-item-row-width': '150px',           
+      
         },
     },
     {
@@ -57,7 +47,6 @@ export const applicationMetrics = [
         variables: {
             '--wf-header-height': '72px',
             '--wf-header-bcwfservice-logo-height': '40px',
-            '--wf-header-wildfire1-logo-height': '40px',
         }
     },
     {
@@ -65,7 +54,6 @@ export const applicationMetrics = [
         variables: {
             '--wf-header-height': '48px',
             '--wf-header-bcwfservice-logo-height': '30px',
-            '--wf-header-wildfire1-logo-height': '30px',
             '--wf-menu-expanded-width': '220px',
             '--wf-gutter': '8px',
         },

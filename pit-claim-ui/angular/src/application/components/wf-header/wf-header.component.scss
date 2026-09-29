@@ -25,12 +25,12 @@
 
         .bcwfservice-logo {
             display: inline-block;
-            background-image: url( './images/bcwfservice-logo.png' );
-            background-size: auto var( --wf-header-bcwfservice-logo-height );
+            background-image: url( './images/bcgov-logo.png' );
+            background-size: auto auto;
             background-position: left center;
             background-repeat: no-repeat;
             height: var( --wf-header-bcwfservice-logo-height );
-            width: calc( var( --wf-header-bcwfservice-logo-height ) * 3.75 );
+            width: calc(var(--wf-header-bcwfservice-logo-height) * 5);
         }
     }
 
@@ -40,16 +40,6 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-
-        .wildfire1-logo {
-            display: inline-block;
-            background-image: url( './images/wildfire-one-logo-text-horizontal-light.png' );
-            background-size: auto var( --wf-header-wildfire1-logo-height );
-            background-position: center;
-            background-repeat: no-repeat;
-            height: var( --wf-header-wildfire1-logo-height );
-            width: calc( var( --wf-header-wildfire1-logo-height ) * 4 );
-        }
 
         .separator {
             border-left: 1px solid white;

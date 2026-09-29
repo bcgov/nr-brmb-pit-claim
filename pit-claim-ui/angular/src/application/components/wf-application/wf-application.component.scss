@@ -56,8 +56,12 @@
 
 :host-context( .device-desktop ) {
     .body {
+        max-height: calc(100vh - var(--wf-header-height) - 2px);
+        overflow: hidden;
+
         .menu {
             order: 1;
+            min-height: calc(100vh - var(--wf-header-height) - 2px);
         }
         .content {
             order: 2;

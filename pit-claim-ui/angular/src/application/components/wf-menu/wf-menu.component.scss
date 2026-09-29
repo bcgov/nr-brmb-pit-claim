@@ -59,7 +59,7 @@
                 flex-direction: row;
                 justify-content: flex-start;
                 align-items: center;
-                font-size: 16px;
+                font-size: 15px;
                 padding-left: 12px;
                 text-decoration: none;
                 cursor: pointer;
@@ -71,8 +71,11 @@
 
                 .label {
                     margin-left: 10px;
+                    margin-top: 14px;
+                    margin-bottom: 14px;
                     color: var( --wf-menu-color );
                     min-width: 200px;
+                    white-space: pre-line;
                 }
 
                 &:hover {
@@ -119,6 +122,9 @@
             justify-content: center;
             align-items: center;
             font-size: 13px;
+            .short {
+                margin-bottom: 35px;
+            }
         }
 
     }

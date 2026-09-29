@@ -165,6 +165,7 @@
 
 .summary-buttons{
   margin: 0 var(--cirras-claims-gutter-space);
+  padding-right: 20px;
   flex: 0;
   display: flex;
   align-items: flex-start;
@@ -185,36 +186,8 @@
   justify-content: space-between;
 }
 
-.top-filter{
-  margin: 0 var(--cirras-claims-gutter-space);
-  .search-and-filters {
-    //.field{
-    //  width: 312px !important;
-    //  flex-basis: 312px !important;
-    //}
-  }
-}
-
-.top-filter,
 .cirras-claims-header-bar,
 .table-search-header {
-  ::ng-deep .ms-drop{
-    ul > li.hide-radio label {
-      text-overflow: ellipsis;
-      overflow-x: hidden;
-    }
-    &.bottom {
-      width: unset !important;
-      max-width: 400px;
-    }
-  }
-
-  .main-header-button{
-    margin-right: var(--cirras-claims-gutter-space);
-    mat-icon{
-      margin-right: 10px;
-    }
-  }
 
   .search-and-filters{
     flex: 1;
@@ -256,9 +229,6 @@
         }
       }
 
-      input.search-input{
-        //width: 297px;
-      }
     }
 
     &>*{
