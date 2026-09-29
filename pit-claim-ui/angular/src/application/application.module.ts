@@ -6,10 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { applicationMetrics } from './application.metrics';
-import { WfApplicationComponent } from './components/wf-application/wf-application.component';
-import { WfHeaderComponent } from './components/wf-header/wf-header.component';
-import { WfIconComponent } from './components/wf-icon/wf-icon.component';
-import { WfMenuComponent } from './components/wf-menu/wf-menu.component';
+import { WfApplicationComponent } from './components/pit-application/pit-application.component';
+import { WfHeaderComponent } from './components/pit-header/pit-header.component';
+import { WfIconComponent } from './components/pit-icon/pit-icon.component';
+import { WfMenuComponent } from './components/pit-menu/pit-menu.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({

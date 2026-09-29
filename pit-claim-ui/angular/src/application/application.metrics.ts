@@ -1,6 +1,6 @@
 export const applicationMetrics = [
     {
-        selector: 'wf-application, .wf-dialog',
+        selector: 'pit-application, .wf-dialog',
         variables: {
             '--wf-colour-blue': '#003366',
             '--wf-colour-white': '#ffffff',
@@ -11,19 +11,19 @@ export const applicationMetrics = [
             '--wf-header-border-color': '#FCBA19',
             '--wf-header-environment-color': '#fcba19',
 
-            '--wf-menu-expanded-width': '250px',
-            '--wf-menu-collapsed-width': '50px',
-            '--wf-menu-icon-color': 'rgba(0, 0, 0, 0.9)',
-            '--wf-menu-item-row-height': '48px',
+            '--pit-menu-expanded-width': '250px',
+            '--pit-menu-collapsed-width': '50px',
+            '--pit-menu-icon-color': 'rgba(0, 0, 0, 0.9)',
+            '--pit-menu-item-row-height': '48px',
 
-            '--wf-menu-color': '#454545',
-            '--wf-menu-background-color': '#f2f2f2',
+            '--pit-menu-color': '#454545',
+            '--pit-menu-background-color': '#f2f2f2',
 
-            '--wf-menu-highlight-background-color': '#ddd',
+            '--pit-menu-highlight-background-color': '#ddd',
 
-            '--wf-menu-active-color': '#003366',
-            '--wf-menu-active-font-weight': '200',
-            '--wf-menu-active-background-color': '#ddd',
+            '--pit-menu-active-color': '#003366',
+            '--pit-menu-active-font-weight': '200',
+            '--pit-menu-active-background-color': '#ddd',
 
             '--wf-icon-size-small': '24px',
             '--wf-icon-size-medium': '32px',
@@ -43,18 +43,18 @@ export const applicationMetrics = [
         },
     },
     {
-        selector: 'wf-application.device-desktop, .wf-dialog .desktop',
+        selector: 'pit-application.device-desktop, .wf-dialog .desktop',
         variables: {
             '--wf-header-height': '72px',
             '--wf-header-bcwfservice-logo-height': '40px',
         }
     },
     {
-        selector: 'wf-application.device-mobile, .wf-dialog .mobile',
+        selector: 'pit-application.device-mobile, .wf-dialog .mobile',
         variables: {
             '--wf-header-height': '48px',
             '--wf-header-bcwfservice-logo-height': '30px',
-            '--wf-menu-expanded-width': '220px',
+            '--pit-menu-expanded-width': '220px',
             '--wf-gutter': '8px',
         },
     }

@@ -11,7 +11,7 @@
             <ng-container *ngIf="useSupportMenu">
                 <span class="support-menu can-click" [matMenuTriggerFor]="supportMenu">
                     <span class="training">Training and Support</span>
-                    <wf-icon iconName="keyboard_arrow_down" iconSize="small"></wf-icon>
+                    <pit-icon iconName="keyboard_arrow_down" iconSize="small"></pit-icon>
                 </span>
             </ng-container>
             <span class="separator"></span>
@@ -26,13 +26,13 @@
         </mat-menu>
 
         <span class="userLogout" *ngIf="!useLogoutButton">
-            <wf-icon iconName="account_circle" iconSize="small"></wf-icon>
+            <pit-icon iconName="account_circle" iconSize="small"></pit-icon>
             <span class="userName">{{ userName }}</span>
         </span>
         <span class="userLogout can-click" *ngIf="useLogoutButton" [matMenuTriggerFor]="logoutMenu" >
-            <wf-icon iconName="account_circle" iconSize="small"></wf-icon>
+            <pit-icon iconName="account_circle" iconSize="small"></pit-icon>
             <span class="userName">{{ userName }}</span>
-            <wf-icon iconName="keyboard_arrow_down" iconSize="small"></wf-icon>
+            <pit-icon iconName="keyboard_arrow_down" iconSize="small"></pit-icon>
         </span>
 
         <mat-menu #logoutMenu="matMenu">
@@ -48,9 +48,9 @@
     (click)="onMenuClick()"
     *ngIf="useMenu"
 >
-    <wf-icon
+    <pit-icon
         iconName="menu"
         iconSize="medium"
-    ></wf-icon>
+    ></pit-icon>
 </div>
 

@@ -17,7 +17,7 @@ import { NgTemplateOutlet } from "@angular/common";
 import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
 import { WildfireApplicationModule } from "src/application/application.module";
 import { WfApplicationConfiguration, WfApplicationState, WfDevice } from "src/application/application.config";
-import { RouterLink } from "src/application/components/wf-menu/wf-menu.component";
+import { RouterLink } from "src/application/components/pit-menu/pit-menu.component";
 
 const DEVICE: WfDevice = 'desktop';
 

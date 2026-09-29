@@ -5,18 +5,18 @@ import { BaseComponent } from '../base.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'wf-application',
-    templateUrl: './wf-application.component.html',
-    styleUrls: ['./wf-application.component.scss',
-        './wf-basic-tab.scss',
-        './wf-file-tab.scss'],
+    selector: 'pit-application',
+    templateUrl: './pit-application.component.html',
+    styleUrls: ['./pit-application.component.scss',
+        './pit-basic-tab.scss',
+        './pit-file-tab.scss'],
     animations: [
         trigger('menu-collapsed-expanded', [
             state('collapsed', style({
-                'width': applicationMetrics[0].variables['--wf-menu-collapsed-width']
+                'width': applicationMetrics[0].variables['--pit-menu-collapsed-width']
             })),
             state('expanded', style({
-                'width': applicationMetrics[0].variables['--wf-menu-expanded-width']
+                'width': applicationMetrics[0].variables['--pit-menu-expanded-width']
             })),
             transition('collapsed => expanded', [
                 animate('0.25s')

@@ -4,22 +4,22 @@ import { WfMenuState } from "../../application.config";
 import { BaseComponent } from "../base.component";
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { applicationMetrics } from '../../application.metrics';
-import { WfIconComponent } from "../wf-icon/wf-icon.component";
+import { WfIconComponent } from "../pit-icon/pit-icon.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { NgFor, NgForOf, NgIf } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
-    selector: 'wf-menu',
-    templateUrl: './wf-menu.component.html',
-    styleUrls: ['./wf-menu.component.scss'],
+    selector: 'pit-menu',
+    templateUrl: './pit-menu.component.html',
+    styleUrls: ['./pit-menu.component.scss'],
     animations: [
         trigger( 'menu-collapsed-expanded', [
             state( 'collapsed', style( {
-                'width': applicationMetrics[ 0 ].variables[ '--wf-menu-collapsed-width' ]
+                'width': applicationMetrics[ 0 ].variables[ '--pit-menu-collapsed-width' ]
             } ) ),
             state( 'expanded', style( {
-                'width': applicationMetrics[ 0 ].variables[ '--wf-menu-expanded-width' ]
+                'width': applicationMetrics[ 0 ].variables[ '--pit-menu-expanded-width' ]
             } ) ),
             transition( 'collapsed => expanded', [
                 animate( '0.25s' )
