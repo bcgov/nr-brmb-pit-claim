@@ -1,8 +1,8 @@
-export type WfDevice = 'desktop'|'mobile'
+export type PitDevice = 'desktop'|'mobile'
 
-export interface WfApplicationConfiguration {
+export interface PitApplicationConfiguration {
     title: string
-    device: WfDevice
+    device: PitDevice
     userName: string
     actingOnBehalfOf?: string
     version: {
@@ -14,8 +14,8 @@ export interface WfApplicationConfiguration {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export type WfMenuState = 'hidden'|'collapsed'|'expanded'
+export type PitMenuState = 'hidden'|'collapsed'|'expanded'
 
-export interface WfApplicationState {
-    menu: WfMenuState
+export interface PitApplicationState {
+    menu: PitMenuState
 }

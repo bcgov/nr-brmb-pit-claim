@@ -1,10 +1,10 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { NavigationEnd, Router, RouterModule, UrlTree } from "@angular/router";
-import { WfMenuState } from "../../application.config";
+import { PitMenuState } from "../../application.config";
 import { BaseComponent } from "../base.component";
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { applicationMetrics } from '../../application.metrics';
-import { WfIconComponent } from "../pit-icon/pit-icon.component";
+import { PitIconComponent } from "../pit-icon/pit-icon.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { NgFor, NgForOf, NgIf } from "@angular/common";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -45,12 +45,12 @@ import { MatTooltip } from "@angular/material/tooltip";
 
     ],
     imports: [
-        WfIconComponent, MatMenuModule, NgForOf, NgIf, RouterModule, MatTooltip
+        PitIconComponent, MatMenuModule, NgForOf, NgIf, RouterModule, MatTooltip
     ]
 })
-export class WfMenuComponent extends BaseComponent {
-    _menu: WfMenuItems
-    @Input() set menuItems( m: WfMenuItems ) {
+export class PitMenuComponent extends BaseComponent {
+    _menu: PitMenuItems
+    @Input() set menuItems( m: PitMenuItems ) {
         this._menu = m
         this._menu.forEach( i => i.OnActiveChanged( () => {
             this.activeItemChanged.emit( i )
@@ -58,7 +58,7 @@ export class WfMenuComponent extends BaseComponent {
     }
     get menuItems() { return this._menu }
 
-    @Output() activeItemChanged = new EventEmitter<WfMenuItem>();
+    @Output() activeItemChanged = new EventEmitter<PitMenuItem>();
 
     @HostBinding( '@menu-collapsed-expanded' ) get animation() {
         return this.menuState
@@ -98,15 +98,15 @@ export class WfMenuComponent extends BaseComponent {
         }
     }
 
-    onItemClick( item: WfMenuItem ) {
+    onItemClick( item: PitMenuItem ) {
         this.activeItemChanged.emit( item )
     }
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export type WfMenuItem = RouterLink|ActionTrigger
-export type WfMenuItems = Array<WfMenuItem>
+export type PitMenuItem = RouterLink|ActionTrigger
+export type PitMenuItems = Array<PitMenuItem>
 
 export class RouterLink{
     readonly type = 'router-link'
@@ -118,7 +118,7 @@ export class RouterLink{
         public title: string,
         public route: string|UrlTree,
         public iconName: string,
-        public menuStateAfterActive: WfMenuState = 'collapsed',
+        public menuStateAfterActive: PitMenuState = 'collapsed',
         private router: Router,
         public routerLinkExactMatch:boolean =  true,
         public indented = false
@@ -156,7 +156,7 @@ export class ActionTrigger {
     constructor(
         public title: string,
         public iconName: string = null,
-        public menuStateAfterActive: WfMenuState = 'collapsed',
+        public menuStateAfterActive: PitMenuState = 'collapsed',
         public indented = false
     ) {
     }

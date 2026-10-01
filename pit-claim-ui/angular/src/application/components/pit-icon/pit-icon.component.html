@@ -1,9 +1,5 @@
 <div [class.size-small]="sizeSmall" [class.size-medium]="sizeMedium" [class.size-large]="sizeLarge">
-    <div *ngIf="isWfApplicationIcon" class="svg-icon">
-        <mat-icon [svgIcon]="actualIconName" color="primary"></mat-icon>
-    </div>
-
-    <div *ngIf="isMatIcon" class="font-icon">
+    <div class="font-icon"> <!-- *ngIf="isMatIcon" -->
         <mat-icon>{{ actualIconName }}</mat-icon>
     </div>
 </div>

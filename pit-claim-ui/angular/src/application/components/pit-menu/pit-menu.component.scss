@@ -23,7 +23,7 @@
                 padding-left: 50px;
             }
 
-            padding-right: var(--wf-gutter);
+            padding-right: var(--pit-gutter);
         }
     }
 }
@@ -87,7 +87,7 @@
                     color: var( --pit-menu-active-color );
                     background: var( --pit-menu-active-background-color );
                     .label{
-                        color: var(--wf-header-background-color);
+                        color: var(--pit-header-background-color);
                     }
                 }
             }
@@ -194,7 +194,7 @@
                 top: -23px;
                 right: 0;
                 font-size: 12px;
-                color: var( --wf-header-environment-color );
+                color: var( --pit-header-environment-color );
             }
         }
     }
@@ -213,8 +213,8 @@
             border-bottom: 1px solid #ddd;
             min-height: 32px;
             height: unset;
-            padding: 0 var(--wf-gutter);
-            width: calc(100% - var(--wf-gutter)*2);
+            padding: 0 var(--pit-gutter);
+            width: calc(100% - var(--pit-gutter)*2);
 
             .userNameWrapper{
                 display: flex;

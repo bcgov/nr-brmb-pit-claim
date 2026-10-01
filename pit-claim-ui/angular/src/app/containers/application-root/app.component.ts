@@ -9,17 +9,17 @@ import {ApplicationStateService} from "../../services/application-state.service"
 import {addRemoveCdkOverlayClass, ResourcesRoutes} from "../../utils";
 
 import {Subscription} from "rxjs";
-// import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
+// import { RouterLink, PitApplicationConfiguration, PitApplicationState, PitDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "src/app/services/security-util.service";
 import { NgTemplateOutlet } from "@angular/common";
 import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
 import { WildfireApplicationModule } from "src/application/application.module";
-import { WfApplicationConfiguration, WfApplicationState, WfDevice } from "src/application/application.config";
+import { PitApplicationConfiguration, PitApplicationState, PitDevice } from "src/application/application.config";
 import { RouterLink } from "src/application/components/pit-menu/pit-menu.component";
 
-const DEVICE: WfDevice = 'desktop';
+const DEVICE: PitDevice = 'desktop';
 
 @Component({
     selector: "cirras-claims-root",
@@ -30,13 +30,13 @@ const DEVICE: WfDevice = 'desktop';
 })
 export class AppComponent implements OnInit {
 
-    applicationState: WfApplicationState = {
+    applicationState: PitApplicationState = {
         menu: 'expanded'
     };
 
     appMenu: RouterLink[] = [];
 
-    applicationConfig: WfApplicationConfiguration = {
+    applicationConfig: PitApplicationConfiguration = {
         title: "CLAIMS CALCULATOR",
         device: DEVICE,
         userName: "",

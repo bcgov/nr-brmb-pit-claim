@@ -30,7 +30,7 @@ import { CommonModule } from '@angular/common';
         CommonModule
     ]
 })
-export class WfApplicationComponent extends BaseComponent {
+export class PitApplicationComponent extends BaseComponent {
     @Input() isInitializing: boolean = false
 
     @HostBinding('class') get deviceClass() {

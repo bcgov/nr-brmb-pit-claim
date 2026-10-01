@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    font-family: var(--wf-font-family-main);
+    font-family: var(--pit-font-family-main);
 
     .header {
         flex-shrink: 0;
@@ -56,12 +56,12 @@
 
 :host-context( .device-desktop ) {
     .body {
-        max-height: calc(100vh - var(--wf-header-height) - 2px);
+        max-height: calc(100vh - var(--pit-header-height) - 2px);
         overflow: hidden;
 
         .menu {
             order: 1;
-            min-height: calc(100vh - var(--wf-header-height) - 2px);
+            min-height: calc(100vh - var(--pit-header-height) - 2px);
         }
         .content {
             order: 2;

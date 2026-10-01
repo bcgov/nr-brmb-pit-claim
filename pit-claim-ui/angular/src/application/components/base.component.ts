@@ -1,10 +1,10 @@
 import { Directive, EventEmitter, Input, Output } from "@angular/core";
-import { WfApplicationConfiguration, WfApplicationState, WfMenuState } from "../application.config";
+import { PitApplicationConfiguration, PitApplicationState, PitMenuState } from "../application.config";
 
 @Directive()
 export abstract class BaseComponent {
 
-    @Input() config: WfApplicationConfiguration
+    @Input() config: PitApplicationConfiguration
     
     get title() { return this.config.title }
     get environment() { return this.config.environment }
@@ -12,17 +12,17 @@ export abstract class BaseComponent {
     get actingOnBehalfOf() { return this.config.actingOnBehalfOf }
     get version() { return this.config.version }
 
-    @Input() set state(s: WfApplicationState) {
+    @Input() set state(s: PitApplicationState) {
         this._state = s;
         this.menuState = s.menu
     }
-    @Output() stateChange = new EventEmitter<WfApplicationState>()
+    @Output() stateChange = new EventEmitter<PitApplicationState>()
 
-    _state: WfApplicationState = {
+    _state: PitApplicationState = {
         menu: null
     }
     get menuState() { return this._state.menu }
-    set menuState(m: WfMenuState) {
+    set menuState(m: PitMenuState) {
         if (m == this.menuState) return
         this._state.menu = m
 

@@ -1,27 +1,27 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BaseComponent } from '../base.component';
-import { WfMenuItems } from '../pit-menu/pit-menu.component';
+import { PitMenuItems } from '../pit-menu/pit-menu.component';
 import { CommonModule, NgIf } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
-import { WfIconComponent } from '../pit-icon/pit-icon.component';
+import { PitIconComponent } from '../pit-icon/pit-icon.component';
 
 @Component({
     selector: 'pit-header',
     templateUrl: './pit-header.component.html',
     styleUrls: ['./pit-header.component.scss'],
     imports: [
-        CommonModule, MatMenuModule, WfIconComponent, NgIf
+        CommonModule, MatMenuModule, PitIconComponent, NgIf
     ]
 })
-export class WfHeaderComponent extends BaseComponent {
+export class PitHeaderComponent extends BaseComponent {
     @Input() useAppLogo: boolean = true
     @Input() useSystemAndUser: boolean = true
     @Input() useMenu: boolean = true
     @Input() useSupportLink: boolean = false
     @Input() useLogoutButton: boolean = false
 
-    _supportMenu: WfMenuItems
-    @Input() set supportMenuItems(m: WfMenuItems) {
+    _supportMenu: PitMenuItems
+    @Input() set supportMenuItems(m: PitMenuItems) {
         this._supportMenu = m
     }
     get supportMenuItems() { return this._supportMenu }
@@ -48,6 +48,6 @@ export class WfHeaderComponent extends BaseComponent {
     }
 
     get bcLogoClickEnable() {
-        return this.bcLogoClick.observers.length > 0
+        return this.bcLogoClick.observed // True if the parent binds to (bcLogoClick)="someMethod($event)"
     }
 }

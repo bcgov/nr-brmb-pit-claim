@@ -129,7 +129,7 @@
             }
 
             div.cirras-claims-application-header,
-            div.wf1-public-application-header {
+            div.pit-public-application-header {
                 height: 96px;
                 padding-left: 16px;
                 padding-right: 16px;
@@ -144,58 +144,49 @@
                 height: auto;
             }
 
-            div.wf1-public-application-header .bc-logo-div,
-            div.wf1-public-application-header .app-logo-and-title-div,
-            div.wf1-public-application-header .action-items,
-            div.wf1-application-header .bc-logo-div,
-            div.wf1-application-header .app-logo-and-title-div,
-            div.wf1-application-header .system-and-user-info {
+            div.pit-public-application-header .bc-logo-div,
+            div.pit-public-application-header .app-logo-and-title-div,
+            div.pit-public-application-header .action-items,
+            div.pit-application-header .bc-logo-div,
+            div.pit-application-header .app-logo-and-title-div,
+            div.pit-application-header .system-and-user-info {
                 flex: 0 0 auto;
                 font-family: 'Helvetica-Light', 'Helvetica Light', 'Helvetica';
                 height: 70px;
                 padding: 0;
-                left: -20px;
+                
                 position: relative;
-            }
-
-            .bc-logo-div img {
-                height: 70px;
-            }
-
-            .app-logo-and-title-div img {
-                height: 70px;
             }
 
             .mat-h1 {
                 font: 400 24px/32px Roboto, sans-serif;
             }
 
-            div.wf1-public-application-header .app-logo-and-title-div,
+            div.pit-public-application-header .app-logo-and-title-div,
             div.cirras-claims-application-header .app-logo-and-title-div {
                 display: flex;
                 justify-content: center;
                 align-items: flex-end;
             }
 
-            div.wf1-public-application-header img,
+            div.pit-public-application-header img,
             div.cirras-claims-application-header img {
                 flex: 0 0 auto;
-                height: 70px;
             }
 
-            div.wf1-public-application-header span,
+            div.pit-public-application-header span,
             div.cirras-claims-application-header span {
                 flex: 1 1 auto;
             }
 
-            div.wf1-public-application-header .action-items > div,
+            div.pit-public-application-header .action-items > div,
             div.cirras-claims-application-header .system-and-user-info > div {
                 display: flex;
                 justify-content: flex-start;
                 align-items: center;
             }
 
-            div.wf1-public-application-header #header-title,
+            div.pit-public-application-header #header-title,
             div.cirras-claims-application-header #header-title {
                 font-size: 22px;
                 color: #ffffff;
@@ -206,31 +197,31 @@
             }
 
             @media screen and (max-width: 768px) {
-                div.wf1-public-application-header,
+                div.pit-public-application-header,
                 div.cirras-claims-application-header {
                     height: 64px;
                 }
 
-                div.wf1-public-application-header .app-logo-and-title-div img,
+                div.pit-public-application-header .app-logo-and-title-div img,
                 div.cirras-claims-application-header .app-logo-and-title-div img {
                     width: 136px;
                     height: auto;
                     padding-bottom: 3px;
                 }
 
-                div.wf1-public-application-header #header-title,
+                div.pit-public-application-header #header-title,
                 div.cirras-claims-application-header #header-title {
                     font-size: 15px;
                     margin-left: 6px;
                     margin-bottom: 3px;
                 }
 
-                div.wf1-public-application-header .bc-logo-div, .action-items,
+                div.pit-public-application-header .bc-logo-div, .action-items,
                 div.cirras-claims-application-header .bc-logo-div, .system-and-user-info {
                     display: none;
                 }
 
-                div.wf1-public-application-header .app-logo-and-title-div,
+                div.pit-public-application-header .app-logo-and-title-div,
                 div.cirras-claims-application-header .app-logo-and-title-div {
                     display: flex;
                     margin: auto;
@@ -284,12 +275,12 @@
 
         </style>
         <div id="core-interface-container">
-            <div class="mat-typography wf1-public-application-header" color="primary">
+            <div class="mat-typography pit-public-application-header" color="primary">
                 <div class="bc-logo-div">
-                    <img src="assets/images/logo/bcgov-logo.png" class="img-fluid center-block logo" alt="BC Gov">
+                    <img src="assets/images/logo/bcgov-logo.png" alt="BC Gov">
                 </div>
                 <div class="app-logo-and-title-div">
-                    <h1>CIRRAS Claims Calculator</h1>
+                    <h1>Claims Calculator</h1>
                 </div>
                 <div class="action-items mat-caption">
                 </div>

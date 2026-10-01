@@ -1,15 +1,15 @@
 export const applicationMetrics = [
     {
-        selector: 'pit-application, .wf-dialog',
+        selector: 'pit-application, .pit-dialog',
         variables: {
-            '--wf-colour-blue': '#003366',
-            '--wf-colour-white': '#ffffff',
-            '--wf-colour-light-grey': '#c6c8cb',
+            '--pit-colour-blue': '#003366',
+            '--pit-colour-white': '#ffffff',
+            '--pit-colour-light-grey': '#c6c8cb',
 
-            '--wf-header-background-color': '#003366',
-            '--wf-header-color': 'white',
-            '--wf-header-border-color': '#FCBA19',
-            '--wf-header-environment-color': '#fcba19',
+            '--pit-header-background-color': '#003366',
+            '--pit-header-color': 'white',
+            '--pit-header-border-color': '#FCBA19',
+            '--pit-header-environment-color': '#fcba19',
 
             '--pit-menu-expanded-width': '250px',
             '--pit-menu-collapsed-width': '50px',
@@ -25,37 +25,37 @@ export const applicationMetrics = [
             '--pit-menu-active-font-weight': '200',
             '--pit-menu-active-background-color': '#ddd',
 
-            '--wf-icon-size-small': '24px',
-            '--wf-icon-size-medium': '32px',
-            '--wf-gutter': '16px',
+            '--pit-icon-size-small': '24px',
+            '--pit-icon-size-medium': '32px',
+            '--pit-gutter': '16px',
 
-            '--wf-font-family-main': '"BCSans", "Noto Sans", Verdana, Arial, sans-serif',
+            '--pit-font-family-main': '"BCSans", "Noto Sans", Verdana, Arial, sans-serif',
 
-            '--wf-font-size': '15px',          
-            '--wf-font-size-emphasis': '17px',
-            '--wf-font-weight-emphasis': '400',
-            '--wf-font-weight-emphasis-more': '600',
-            '--wf-border-radius': '5px',
+            '--pit-font-size': '15px',          
+            '--pit-font-size-emphasis': '17px',
+            '--pit-font-weight-emphasis': '400',
+            '--pit-font-weight-emphasis-more': '600',
+            '--pit-border-radius': '5px',
 
-            '--wf-colour-active-tab': '#ffffff',
-            '--wf-colour-inactive-tab': '#f2f2f2',
+            '--pit-colour-active-tab': '#ffffff',
+            '--pit-colour-inactive-tab': '#f2f2f2',
       
         },
     },
     {
-        selector: 'pit-application.device-desktop, .wf-dialog .desktop',
+        selector: 'pit-application.device-desktop, .pit-dialog .desktop',
         variables: {
-            '--wf-header-height': '72px',
-            '--wf-header-bcwfservice-logo-height': '40px',
+            '--pit-header-height': '72px',
+            '--pit-header-bc-service-logo-height': '40px',
         }
     },
     {
-        selector: 'pit-application.device-mobile, .wf-dialog .mobile',
+        selector: 'pit-application.device-mobile, .pit-dialog .mobile',
         variables: {
-            '--wf-header-height': '48px',
-            '--wf-header-bcwfservice-logo-height': '30px',
+            '--pit-header-height': '48px',
+            '--pit-header-bc-service-logo-height': '30px',
             '--pit-menu-expanded-width': '220px',
-            '--wf-gutter': '8px',
+            '--pit-gutter': '8px',
         },
     }
 ]
