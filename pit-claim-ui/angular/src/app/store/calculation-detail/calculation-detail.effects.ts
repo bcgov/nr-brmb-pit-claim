@@ -153,7 +153,7 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
       mergeMap(
           ([action, store]) => {
               let typedAction = <UpdateCalculationDetailMetadataAction>action;
-              let requestId = `WFDME${UUID.UUID().toUpperCase()}`.replace(/-/g, "");
+              let requestId = `CIRRAS-CLAIMS${UUID.UUID().toUpperCase()}`.replace(/-/g, "");
               let authToken = this.tokenService.getOauthToken();
               let payload = <vmCalculation>typedAction.payload.value;
               let updateType = typedAction.payload.updateType;

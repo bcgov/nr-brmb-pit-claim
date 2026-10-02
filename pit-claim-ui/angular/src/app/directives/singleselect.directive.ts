@@ -12,9 +12,9 @@ import {arrayEquals} from "../utils";
 
 declare var $: any;
 
-@Directive({ selector: '[appWFSingleSelect]' })
+@Directive({ selector: '[appPitSingleSelect]' })
 export class SingleSelectDirective implements AfterViewInit, OnChanges {
-    @Input() appWFPlaceholder?: string;
+    @Input() appPitPlaceholder?: string;
     @Output() updated: EventEmitter<any> = new EventEmitter();
     @Input() options: any[];
     @Input() selected: any;
@@ -33,7 +33,7 @@ export class SingleSelectDirective implements AfterViewInit, OnChanges {
             self.onClick();
         });
         this.multiselect = $(this.selectHtmlElement).multipleSelect({
-            placeholder: this.appWFPlaceholder ? this.appWFPlaceholder : "Select...",
+            placeholder: this.appPitPlaceholder ? this.appPitPlaceholder : "Select...",
             filter: true,
             onClick: this.onClick.bind(this),
         });
