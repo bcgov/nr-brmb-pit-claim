@@ -22,9 +22,9 @@ instances:
   # Note: using New York time zone to match existing deployment - otherwise, would use either local time or PST
   env:
     - name: PGTZ
-      value: America/New_York
+      value: America/Vancouver
     - name: TZ
-      value: America/New_York
+      value: America/Vancouver
   requests:
     cpu: 1m
     memory: 19Mi
