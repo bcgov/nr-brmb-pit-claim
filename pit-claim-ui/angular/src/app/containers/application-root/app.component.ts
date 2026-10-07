@@ -7,17 +7,13 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {MatIconRegistry} from "@angular/material/icon";
 import {ApplicationStateService} from "../../services/application-state.service";
 import {addRemoveCdkOverlayClass, ResourcesRoutes} from "../../utils";
-
 import {Subscription} from "rxjs";
-// import { RouterLink, PitApplicationConfiguration, PitApplicationState, PitDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "src/app/services/security-util.service";
 import { NgTemplateOutlet } from "@angular/common";
 import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
-import { WildfireApplicationModule } from "src/application/application.module";
-import { PitApplicationConfiguration, PitApplicationState, PitDevice } from "src/application/application.config";
-import { RouterLink } from "src/application/components/pit-menu/pit-menu.component";
+import { PitApplicationConfiguration, PitApplicationModule, PitApplicationState, PitDevice, RouterLink } from "@bcgov/pit-common-application-lib"; 
 
 const DEVICE: PitDevice = 'desktop';
 
@@ -26,7 +22,7 @@ const DEVICE: PitDevice = 'desktop';
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [WildfireApplicationModule, RouterOutlet, NgTemplateOutlet]
+    imports: [PitApplicationModule, RouterOutlet, NgTemplateOutlet]
 })
 export class AppComponent implements OnInit {
 

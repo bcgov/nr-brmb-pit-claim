@@ -47,7 +47,6 @@
               "node_modules/multiple-select/dist/multiple-select.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.slim.js",
               "node_modules/multiple-select/dist/multiple-select.js"
             ],
             "aot": false,
@@ -78,7 +77,7 @@
                 "src/refresh-token.html",
                 {
                   "glob": "bc-sans/**/*",
-                  "input": "node_modules/@wf1/wfcc-application-ui",
+                  "input": "node_modules/@bcgov/pit-common-application-lib",
                   "output": "assets"
                 }
               ],

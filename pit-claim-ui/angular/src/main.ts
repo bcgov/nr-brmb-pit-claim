@@ -46,10 +46,9 @@ import { NgxPaginationModule } from "ngx-pagination";
 import { EffectsModule } from "@ngrx/effects";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { A11yModule } from "@angular/cdk/a11y";
-// import { WildfireApplicationModule, WildfireResourceManagerModule } from "@wf1/wfcc-application-ui";
 import { AppComponent } from "./app/containers/application-root/app.component";
 import { AppConfigService, CoreUIModule, TokenService } from "@bcgov/pit-common-core-lib";
-import { WildfireApplicationModule } from "./application/application.module";
+import { PitApplicationModule } from "@bcgov/pit-common-application-lib";
 
 const apiConfiguration = new CirrasClaimsAPIServiceConfiguration();
 let devOnlyImports: Array<Type<any> | ModuleWithProviders<any>> = [];
@@ -100,7 +99,7 @@ providers: [
         ServiceWorkerModule.register("ngsw-worker.js", { enabled: environment.production, scope: "./" }),
         ...devOnlyImports, 
         A11yModule, 
-        WildfireApplicationModule.forRoot()
+        PitApplicationModule.forRoot()
     ),
     // Added provideBootstrapEffects function to handle the ngrx issue that loads effects before APP_INITIALIZER
     // providers have finished initializing.
