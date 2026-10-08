@@ -7,33 +7,32 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {MatIconRegistry} from "@angular/material/icon";
 import {ApplicationStateService} from "../../services/application-state.service";
 import {addRemoveCdkOverlayClass, ResourcesRoutes} from "../../utils";
-
 import {Subscription} from "rxjs";
-import { RouterLink, WfApplicationConfiguration, WfApplicationState, WfDevice, WildfireApplicationModule } from "@wf1/wfcc-application-ui";
 import { ROUTE_SCOPES } from "src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "src/app/services/security-util.service";
 import { NgTemplateOutlet } from "@angular/common";
 import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { PitApplicationConfiguration, PitApplicationModule, PitApplicationState, PitDevice, RouterLink } from "@bcgov/pit-common-application-lib"; 
 
-const DEVICE: WfDevice = 'desktop';
+const DEVICE: PitDevice = 'desktop';
 
 @Component({
     selector: "cirras-claims-root",
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [WildfireApplicationModule, RouterOutlet, NgTemplateOutlet]
+    imports: [PitApplicationModule, RouterOutlet, NgTemplateOutlet]
 })
 export class AppComponent implements OnInit {
 
-    applicationState: WfApplicationState = {
+    applicationState: PitApplicationState = {
         menu: 'expanded'
     };
 
     appMenu: RouterLink[] = [];
 
-    applicationConfig: WfApplicationConfiguration = {
+    applicationConfig: PitApplicationConfiguration = {
         title: "CLAIMS CALCULATOR",
         device: DEVICE,
         userName: "",

@@ -34,7 +34,7 @@
                   </div>   
                   <div class="field">
                     <mat-label class="label">Plan</mat-label>
-                    <select appWFSingleSelect appWFPlaceholder="All"
+                    <select appPitSingleSelect appPitPlaceholder="All"
                             class="select-selectedPlan"
                             aria-label="Plan"
                             [options]="insurancePlans"
@@ -50,7 +50,7 @@
                   </div>               
                   <div class="field">
                       <mat-label class="label">Calculation Status</mat-label>
-                      <select appWFSingleSelect appWFPlaceholder="All"
+                      <select appPitSingleSelect appPitPlaceholder="All"
                               class="select-selectedCalculationStatusCode"
                               aria-label="Calculation Status"
                               [options]="calculationStatusOptions"
@@ -66,7 +66,7 @@
                   </div>
                   <div class="field">
                       <mat-label class="label">Crop Year</mat-label>
-                      <select appWFSingleSelect appWFPlaceholder="All"
+                      <select appPitSingleSelect appPitPlaceholder="All"
                               class="select-selectedCropYear"
                               aria-label="Crop Year"
                               [options]="cropYearOptions"
@@ -83,7 +83,7 @@
 
                   <div class="field">
                       <mat-label class="label">Created By User</mat-label>
-                      <select appWFSingleSelect appWFPlaceholder="All"
+                      <select appPitSingleSelect appPitPlaceholder="All"
                               class="select-selectedCreatedByUser"
                               aria-label="Created By User"
                               [options]="createdByUserOptions"
@@ -99,9 +99,9 @@
                   </div>
                   <div class="field">
                       <mat-label class="label">Last Updated By</mat-label>
-                      <select appWFSingleSelect
+                      <select appPitSingleSelect
                               class="select-selectedLastUpdatedBy"
-                              appWFPlaceholder="All"
+                              appPitPlaceholder="All"
                               aria-label="Last Updated By"
                               [selected]="selectedLastUpdatedBy"
                               [options]="lastUpdatedByOptions"
@@ -218,7 +218,7 @@
                                 <span>
                                     Show
                                 </span>
-                    <select appWFSingleSelect appWFPlaceholder="Select..."
+                    <select appPitSingleSelect appPitPlaceholder="Select..."
                             aria-label="Show entries"
                             [selected]="showEntriesSelection"
                             [options]="showEntriesOptions"
