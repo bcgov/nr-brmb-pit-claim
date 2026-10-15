@@ -51,32 +51,6 @@
     }
   }
 
-  .comments-card {
-    display: flex;
-    flex-direction: column;
-    padding: var(--cirras-claims-gutter-space);
-
-    div.text-wrapper {
-      flex: auto;
-      display: flex;
-
-      textarea {
-        flex: auto;
-      }
-    }
-
-    div.button-wrapper {
-      flex: auto;
-      padding-top: 10px;
-
-      button {
-        float: right;
-        margin-left: 10px;
-      }
-    }
-
-  }
-
     .table-search-header .search-and-filters {
       .search-input {
           position: relative;
@@ -88,6 +62,4 @@
           }
       }
     }
-
-  // }
 }

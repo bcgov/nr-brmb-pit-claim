@@ -48,13 +48,13 @@ export function comparisonValidator(field: string, predicate: (fieldVal, fieldTo
  * @param startDate Moment object containing the start date
  * @param endDate Moment object containing the end date
  */
-export function validateDateRange(startDate, endDate) {
-    return startDate === null
-        || startDate === ""
-        || endDate === null
-        || endDate === ""
-        || moment(startDate).isBefore(moment(endDate));
-}
+// export function validateDateRange(startDate, endDate) {
+//     return startDate === null
+//         || startDate === ""
+//         || endDate === null
+//         || endDate === ""
+//         || moment(startDate).isBefore(moment(endDate));
+// }
 
 export function requireMatch() {
     return (c: AbstractControl): { [key: string]: any } => {

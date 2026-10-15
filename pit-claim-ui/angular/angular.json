@@ -38,7 +38,7 @@
               "src/refresh-token.html",
               {
                 "glob": "bc-sans/**/*",
-                "input": "node_modules/@wf1/wfcc-application-ui",
+                "input": "node_modules/@bcgov/pit-common-application-lib",
                 "output": "assets"
               }
             ],
@@ -78,7 +78,7 @@
                 "src/refresh-token.html",
                 {
                   "glob": "bc-sans/**/*",
-                  "input": "node_modules/@wf1/wfcc-application-ui",
+                  "input": "node_modules/@bcgov/pit-common-application-lib",
                   "output": "assets"
                 }
               ],

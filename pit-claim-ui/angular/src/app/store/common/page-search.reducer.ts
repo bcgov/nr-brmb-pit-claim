@@ -1,6 +1,4 @@
-// import {searchReducer, SearchState} from "@wf1/wfcc-core-lib";
 import {Action} from "@ngrx/store";
-// import {SearchActions} from "@wf1/wfcc-core-lib/lib/search/store/actions";
 import {SEARCH_CLAIMS, SearchClaimsAction} from "../claims/claims.actions";
 import {SEARCH_CALCULATIONS, SearchCalculationsAction} from "../calculations/calculations.actions";
 import deepEqual from "deep-equal";
