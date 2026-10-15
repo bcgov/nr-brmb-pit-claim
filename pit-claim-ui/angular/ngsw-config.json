@@ -1,42 +1,47 @@
 {
   "index": "index.html",
-  "assetGroups": [{
-    "name": "app",
-    "installMode": "prefetch",
-    "updateMode": "prefetch",
-    "resources": {
-      "files": [
-        "/favicon.ico",
-        "/index.html",
-        "/*.css",
-        "/*.js"
-      ]
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "!/assets/data/appConfig.json"
+        ]
+      }
     }
-  }, {
-    "name": "assets",
-    "installMode": "prefetch",
-    "updateMode": "prefetch",
-    "resources": {
-      "files": [
-        "/assets/**"
-      ]
-    }
-  }],
-  "dataGroups": [{
-    "name": "code-tables",
-    "urls": [
-      "/cirras-claims-api/codeTables"
-    ],
-    "cacheConfig": {
-      "strategy": "freshness",
-      "maxSize": 1,
-      "maxAge": "1d"
-    }
-  },
+  ],
+  "dataGroups": [
+    {
+      "name": "code-tables",
+      "urls": [
+        "/cirras-claims-api/codeTables"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 1,
+        "maxAge": "1d"
+      }
+    },
     {
       "name": "config",
       "urls": [
-        "/config.jsp"
+        "/assets/data/appConfig.json"
       ],
       "cacheConfig": {
         "strategy": "freshness",
