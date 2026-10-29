@@ -15,7 +15,7 @@ import { displayErrorMessage  } from "../../../utils/user-feedback-utils";
 import {areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, dollars, getPrintTitle, makeNumberOnly, roundedDollars} from "../../../utils"
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
 import { UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
-import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
 import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
 import { MatFormField, MatError } from "@angular/material/form-field";
 import { MatSelect, MatOption } from "@angular/material/select";
@@ -33,9 +33,7 @@ import { CalculationPrintoutBerriesComponent } from "../../calculation-printout/
     styleUrls: ["../../common/base/base.component.scss",
         "./berries.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BaseWrapperComponent, NgIf, CalculationDetailHeaderComponent, CalculationPrintoutBerriesComponent,
-      ReactiveFormsModule, MatFormField, MatSelect, MatOption, NgFor, MatError, MatTooltip, MatIcon, NgStyle, 
-      MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutBerriesComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailBerriesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";

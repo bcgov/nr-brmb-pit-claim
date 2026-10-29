@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges} from '
 import { roundedDollars } from 'src/app/utils';
 import {vmCalculation} from "../../../conversion/models";
 import { CalculationPrintoutLogoComponent } from '../calculation-printout-logo/calculation-printout-logo.component';
-import { NgIf, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { CalculationPrintoutHeaderComponent } from '../calculation-printout-header/calculation-printout-header.component';
 import { CalculationPrintoutFooterComponent } from '../calculation-printout-footer/calculation-printout-footer.component';
 
@@ -11,8 +11,7 @@ import { CalculationPrintoutFooterComponent } from '../calculation-printout-foot
     templateUrl: './berries.component.html',
     styleUrls: ['./berries.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CalculationPrintoutLogoComponent, NgIf, CalculationPrintoutHeaderComponent, 
-      CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
+    imports: [CalculationPrintoutLogoComponent, CalculationPrintoutHeaderComponent, CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
 })
 
 export class CalculationPrintoutBerriesComponent {

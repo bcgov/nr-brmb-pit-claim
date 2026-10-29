@@ -10,7 +10,7 @@ import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_ST
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
 import { UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
-import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { CalculationDetailHeaderComponent } from '../calculation-detail-header/calculation-detail-header.component';
 import { MatFormField, MatError } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -27,9 +27,7 @@ import { CalculationPrintoutGrainUnseededComponent } from '../../calculation-pri
     templateUrl: './grain-unseeded.component.html',
     styleUrl: './grain-unseeded.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainUnseededComponent,
-      NgIf, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
-      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainUnseededComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrainUnseededComponent extends BaseComponent implements OnInit, OnChanges, AfterViewInit {
 

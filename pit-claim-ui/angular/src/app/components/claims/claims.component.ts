@@ -5,7 +5,7 @@ import {CollectionComponent} from "../common/base-collection/collection.componen
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnChanges, SimpleChanges} from "@angular/core";
 import {getCodeOptions} from "../../utils/code-table-utils";
 import { BaseWrapperComponent } from "../common/base-wrapper/base-wrapper.component";
-import { NgIf, NgFor, NgStyle } from "@angular/common";
+import { NgStyle } from "@angular/common";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatLabel, MatSuffix } from "@angular/material/form-field";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
@@ -30,10 +30,7 @@ import { convertToCalculation } from "src/app/conversion/conversion-from-rest";
         "../common/base-collection/collection.component.scss",
         "claims.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BaseWrapperComponent, NgIf, MatProgressSpinner, MatLabel, ReactiveFormsModule, FormsModule, MatIconButton, 
-      MatSuffix, MatTooltip, MatIcon, SingleSelectDirective, NgFor, MatButton, MatTable, MatSort, MatColumnDef, 
-      MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, RouterLink, NgStyle, MatHeaderRowDef, 
-      MatHeaderRow, MatRowDef, MatRow, NgxPaginationModule]
+    imports: [BaseWrapperComponent, MatProgressSpinner, MatLabel, ReactiveFormsModule, FormsModule, MatIconButton, MatSuffix, MatTooltip, MatIcon, SingleSelectDirective, MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, RouterLink, NgStyle, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgxPaginationModule]
 })
 export class ClaimsComponent extends CollectionComponent implements OnChanges, AfterViewInit {
   columnsToDisplay = ["version", "calculationStatus", "claimNumber", "policyNumber", "planName", "commodityName", "coverageName", "growerName", "claimStatusCode"];

@@ -1,4 +1,4 @@
-import { enableProdMode, provideAppInitializer, inject, Injector, Type, ModuleWithProviders, importProvidersFrom } from "@angular/core";
+import { enableProdMode, provideAppInitializer, inject, Injector, Type, ModuleWithProviders, importProvidersFrom, provideZoneChangeDetection } from "@angular/core";
 import { cirrasClaimsRestInitializerFn } from "./app/app.module";
 import {environment} from "./environments/environment";
 import { provideBootstrapEffects } from "./app/utils";
@@ -60,7 +60,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
 providers: [
-    importProvidersFrom(
+    provideZoneChangeDetection(),importProvidersFrom(
         CirrasClaimsAPIServiceModule, 
         DragDropModule, 
         CdkTableModule, 
