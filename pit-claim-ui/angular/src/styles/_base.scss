@@ -16,7 +16,7 @@ body {
 mat-dialog-container.mat-mdc-dialog-container {
   font-family: var.$font-family-main;
   font-size: var.$font-size;
-  --mdc-dialog-supporting-text-color: rgba(0, 0, 0, 0.87);
+  --mat-dialog-supporting-text-color: rgba(0, 0, 0, 0.87);
   min-width: 450px;
 }
 

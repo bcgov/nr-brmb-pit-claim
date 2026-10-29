@@ -28,7 +28,8 @@
             },
             "index": "src/index.html",
             "polyfills": [
-              "src/polyfills.ts"
+              "src/polyfills.ts",
+               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
