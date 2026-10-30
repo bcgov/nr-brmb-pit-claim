@@ -34,9 +34,9 @@
     "@bcgov/pit-common-application-lib": "^1.0.0-SNAPSHOT",
     "@bcgov/pit-common-core-lib": "^1.0.0-SNAPSHOT",
     "@cirras/cirras-claims-api": "^2.5.3-SNAPSHOT",
-    "@ngrx/effects": "20.1.0",
-    "@ngrx/store": "20.1.0",
-    "@ngrx/store-devtools": "20.1.0",
+    "@ngrx/effects": "21.1.1",
+    "@ngrx/store": "21.1.1",
+    "@ngrx/store-devtools": "21.1.1",
     "angular-oauth2-oidc": "19.0.0",
     "angular2-uuid": "1.1.1",
     "deep-equal": "2.2.3",
@@ -74,5 +74,4 @@
     "msgpackr-extract": true,
     "@parcel/watcher": true
   }
-  
 }
