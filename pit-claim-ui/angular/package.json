@@ -42,7 +42,7 @@
     "deep-equal": "2.2.3",
     "moment": "2.30.1",
     "multiple-select": "1.7.0",
-    "ngx-connection-service": "18.0.0",
+    "ngx-connection-service": "21.0.0",
     "ngx-mask": "19.0.7",
     "ngx-moment": "6.0.2",
     "ngx-pagination": "6.0.3",
