@@ -37,7 +37,7 @@
     "@ngrx/effects": "21.1.1",
     "@ngrx/store": "21.1.1",
     "@ngrx/store-devtools": "21.1.1",
-    "angular-oauth2-oidc": "19.0.0",
+    "angular-oauth2-oidc": "21.0.3",
     "angular2-uuid": "1.1.1",
     "deep-equal": "2.2.3",
     "moment": "2.30.1",
