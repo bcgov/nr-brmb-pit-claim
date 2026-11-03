@@ -1,4 +1,4 @@
-FROM tomcat:10.1.44-jre21
+FROM tomcat:10.1.61-jre21
 
 COPY ./pit-claim-war/target/pit-claim-war-2.5.1.war .
 COPY ./deploy-tools/log4j2.xml .
