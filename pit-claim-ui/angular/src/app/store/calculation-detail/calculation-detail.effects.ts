@@ -49,7 +49,7 @@ import {
   getClaimsCodeTables,
   populateClaimsCodeTableCache
 } from "../../utils/app-initializer";
-import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "src/app/utils";
+import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "../../../../src/app/utils";
 import { setFormStateUnsaved } from "../application/application.actions";
 import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
 import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
