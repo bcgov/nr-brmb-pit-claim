@@ -4,5 +4,11 @@
   "peerDependencies": {
     "@angular/common": "^20.0.0 || ^21.0.0",
     "@angular/core": "^20.0.0 || ^21.0.0"
+  },
+  "exports": {
+    "./model/models": {
+      "types": "./types/cirras-cirras-claims-api.d.ts",
+      "default": "./fesm2022/cirras-cirras-claims-api.mjs"
+    }
   }
 }
