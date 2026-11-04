@@ -50,7 +50,7 @@
     "zone.js": "^0.15.1"
   },
   "devDependencies": {
-    "@angular-eslint/eslint-plugin": "19.8.1",
+    "@angular-eslint/eslint-plugin": "21.4.0",
     "@angular-eslint/eslint-plugin-template": "19.8.1",
     "@angular/build": "^21.2.29",
     "@angular/cli": "21.2.29",
