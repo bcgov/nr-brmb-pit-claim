@@ -21,6 +21,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "21.2.25",
     "@angular/cdk": "21.2.14",
     "@angular/common": "21.2.25",
     "@angular/core": "21.2.25",
@@ -47,23 +48,23 @@
     "rxjs": "7.8.2",
     "sass": "1.105.1",
     "scroll-into-view-if-needed": "3.1.0",
-    "zone.js": "^0.15.1"
+    "zone.js": "0.15.1"
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "21.4.0",
     "@angular-eslint/eslint-plugin-template": "21.4.0",
     "@angular-eslint/template-parser": "21.4.0",
-    "@angular/build": "^21.2.29",
+    "@angular/build": "21.2.29",
     "@angular/cli": "21.2.29",
     "@angular/compiler": "21.2.25",
     "@angular/compiler-cli": "21.2.25",
     "@angular/language-service": "21.2.25",
-    "@types/node": "26.1.2",
-    "@typescript-eslint/eslint-plugin": "8.66.0",
-    "@typescript-eslint/parser": "8.66.0",
+    "@types/node": "26.6.6",
+    "@typescript-eslint/eslint-plugin": "8.72.1",
+    "@typescript-eslint/parser": "8.72.1",
     "@typescript-eslint/types": "8.72.1",
     "@typescript-eslint/utils": "8.72.1",
-    "eslint": "9.39.5",
+    "eslint": "10.14.0",
     "replace-in-file": "8.4.0",
     "typescript": "5.9.3"
   },
