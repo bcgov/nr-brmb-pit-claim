@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.TOMCAT_PORT || 8080;
 const hostname = "0.0.0.0";
 
-const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
+const angularPath = path.join(__dirname, '../angular/dist/pit-claim/browser');
 
 function startServer() {
 	try {
