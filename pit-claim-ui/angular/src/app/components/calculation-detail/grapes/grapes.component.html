@@ -356,46 +356,46 @@
                   <button mat-raised-button color="primary"
                     (click)="onSubmit()"
                     ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
-                  }
+                }
+                @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() ) {
                   &nbsp;
-                  @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() ) {
-                    <button mat-raised-button color="primary"
-                      (click)="onReopen()"
-                      ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
-                    }
-                    &nbsp;
-                    @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT') {
-                      <button mat-raised-button color="primary"
-                        (click)="onSave(false)"
-                        ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
-                      }
-                      &nbsp;
-                      @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT') {
-                        <button mat-raised-button color="primary"
-                          (click)="onSave(true)"
-                          ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
-                        }
-                        &nbsp;
-                        @if (securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid) {
-                          <button mat-raised-button color="primary"
-                            (click)="onPrint()"
-                            ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
-                          }
-                        </span>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              }
+                  <button mat-raised-button color="primary"
+                    (click)="onReopen()"
+                    ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
+                }
+                @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT') {
+                  &nbsp;
+                  <button mat-raised-button color="primary"
+                    (click)="onSave(false)"
+                    ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
+                }
+                @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT') {
+                  &nbsp;
+                  <button mat-raised-button color="primary"
+                    (click)="onSave(true)"
+                    ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
+                }
+                @if (securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid) {
+                  &nbsp;
+                  <button mat-raised-button color="primary"
+                    (click)="onPrint()"
+                    ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
+                }
+              </span>
             </div>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
 
-            <!-- printout -->
-            @if ( calculationDetail && calculationDetail.claimCalculationGuid &&
-              (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' ) {
-              <cirras-calculation-printout
-                [calculationDetail]="calculationDetail">
-              </cirras-calculation-printout>
-            }
+  <!-- printout -->
+  @if ( calculationDetail && calculationDetail.claimCalculationGuid &&
+    (calculationDetail.insurancePlanName).toUpperCase() === 'GRAPES' ) {
+    <cirras-calculation-printout
+      [calculationDetail]="calculationDetail">
+    </cirras-calculation-printout>
+  }
 
 
-          </base-wrapper>
+</base-wrapper>

@@ -238,58 +238,58 @@
         <div class="ccc-row-group">
           <div class="ccc-row">
             <span class="ccc-col-left">
-              <button mat-raised-button color="primary"
-                (click)="onCancel()"
-                ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload</button>
-              </span>
-              <span class="ccc-col-right">
-                @if (isUnsaved) {
-                  <span style="color:orange;">
-                    <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
-                    Unsaved Changes
-                  </span>
-                }
-                &nbsp;
-                @if (securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() ) {
-                  <button mat-raised-button color="primary"
-                    (click)="onSubmit()"
-                    ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
-                  }
-                  &nbsp;
-                  @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() ) {
-                    <button mat-raised-button color="primary"
-                      (click)="onReopen()"
-                      ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
-                    }
-                    &nbsp;
-                    @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT') {
-                      <button mat-raised-button color="primary"
-                        (click)="onSave(false)"
-                        ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
-                      }
-                      &nbsp;
-                      @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT') {
-                        <button mat-raised-button color="primary"
-                          (click)="onSave(true)"
-                          ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
-                        }
-                        &nbsp;
-                        @if (securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid) {
-                          <button mat-raised-button color="primary"
-                            (click)="onPrint()"
-                            ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
-                          }
-                        </span>
-                      </div>
-                    </div>
-                  </form>
-                </div>
+            <button mat-raised-button color="primary"
+              (click)="onCancel()"
+              ><mat-icon style="padding-right: 4px;">cancel_presentation</mat-icon>Discard Changes / Reload</button>
+            </span>
+            <span class="ccc-col-right">
+              @if (isUnsaved) {
+                <span style="color:orange;">
+                  <mat-icon [ngStyle]="{'color':'orange', 'width':'24px'}">warning</mat-icon>
+                  Unsaved Changes
+                </span>
               }
-            </div>
+              @if (securityUtilService.doesUserHaveScope(SCOPES_UI.FINALIZE_CALCULATION) && showSubmitButton() ) {
+                 &nbsp;
+                <button mat-raised-button color="primary"
+                  (click)="onSubmit()"
+                  ><mat-icon style="padding-right: 4px;">save_alt</mat-icon>Submit</button>
+              }
+              @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && showReopenButton() ) {
+                &nbsp;
+                <button mat-raised-button color="primary"
+                  (click)="onReopen()"
+                  ><mat-icon style="padding-right: 4px;">edit</mat-icon>Re-Open Calculation</button>
+              }
+              @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode === 'DRAFT') {
+                &nbsp;
+                <button mat-raised-button color="primary"
+                  (click)="onSave(false)"
+                  ><mat-icon style="padding-right: 4px;">save</mat-icon>Save</button>
+              }
+              @if (securityUtilService.doesUserHaveScope(SCOPES_UI.UPDATE_CALCULATION) && calculationDetail.calculationStatusCode !== 'DRAFT') {
+                &nbsp;
+                <button mat-raised-button color="primary"
+                  (click)="onSave(true)"
+                  ><mat-icon style="padding-right: 4px;">save</mat-icon>Save Comments</button>
+              }
+              @if (securityUtilService.doesUserHaveScope(SCOPES_UI.PRINT_CALCULATION) && calculationDetail.claimCalculationGuid) {
+                &nbsp;
+                <button mat-raised-button color="primary"
+                  (click)="onPrint()"
+                  ><mat-icon style="padding-right: 4px;">print</mat-icon>Print</button>
+              }
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+    }
+  </div>
 
-            @if ( calculationDetail && calculationDetail.claimCalculationGuid) {
-              <cirras-calculation-printout-berries-plant
-                [calculationDetail]="calculationDetail">
-              </cirras-calculation-printout-berries-plant>
-            }
-          </base-wrapper>
+@if ( calculationDetail && calculationDetail.claimCalculationGuid) {
+  <cirras-calculation-printout-berries-plant
+    [calculationDetail]="calculationDetail">
+  </cirras-calculation-printout-berries-plant>
+}
+</base-wrapper>

@@ -119,7 +119,7 @@ export class CalculationDetailBlueberriesPlantComponent extends BaseComponent im
 
   ngOnChanges2(changes: SimpleChanges) {
       var self = this
-      if ( changes.calculationDetail && this.calculationDetail ) {
+      if ( changes.calculationDetail && this.calculationDetail && this.calculationDetail.claimCalculationPlantUnits ) {
 
 
         let adjustedUnits = 0

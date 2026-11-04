@@ -30,8 +30,7 @@ import { CalculationPrintoutBerriesComponent } from "../../calculation-printout/
 @Component({
     selector: "cirras-claims-calculation-detail-berries",
     templateUrl: "./berries.component.html",
-    styleUrls: ["../../common/base/base.component.scss",
-        "./berries.component.scss"],
+    styleUrl: './berries.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutBerriesComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
