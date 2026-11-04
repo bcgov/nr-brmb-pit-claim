@@ -47,7 +47,7 @@ function startServer() {
 		app.use('/pub/pit-claim', express.static(angularPath));
 
 		// Send all requests to Angular app
-		app.get('/pub/pit-claim/*', (req, res) => {
+		app.get('/pub/pit-claim{/{*path}}', (req, res) => {
 			res.sendFile(path.join(angularPath, 'index.html'));
 		});
 
@@ -66,5 +66,4 @@ function startServer() {
 };
 
 startServer();
-
 
