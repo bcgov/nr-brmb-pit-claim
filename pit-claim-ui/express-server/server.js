@@ -17,7 +17,7 @@ function startServer() {
 
 		console.log(`Updating appConfig.json`);
 
-		const configPath = path.join(angularPath, '/browser/assets/data/appConfig.json');
+		const configPath = path.join(angularPath, '/assets/data/appConfig.json');
 
 		// Read the template and perform replacement in memory safely at startup
 		let configTemplate = fs.readFileSync(configPath, 'utf8');
