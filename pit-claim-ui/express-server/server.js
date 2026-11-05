@@ -48,7 +48,7 @@ function startServer() {
 
 		// Send all requests to Angular app
 		// app.get('/pub/pit-claim{/{*path}}', (req, res) => {
-		app.get('/pub/pit-claim/*', (req, res) => {
+		app.get('/pub/pit-claim/{*splat}', (req, res) => {
 			res.sendFile(path.join(angularPath, 'index.html'));
 		});
 
