@@ -10,14 +10,14 @@ const app = express();
 const port = process.env.TOMCAT_PORT || 8080;
 const hostname = "0.0.0.0";
 
-const angularPath = path.join(__dirname, '../angular/dist/pit-claim/browser');
+const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
 
 function startServer() {
 	try {
 
 		console.log(`Updating appConfig.json`);
 
-		const configPath = path.join(angularPath, '/assets/data/appConfig.json');
+		const configPath = path.join(angularPath, '/browser/assets/data/appConfig.json');
 
 		// Read the template and perform replacement in memory safely at startup
 		let configTemplate = fs.readFileSync(configPath, 'utf8');
