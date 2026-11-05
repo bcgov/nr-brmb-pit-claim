@@ -39,7 +39,7 @@ function startServer() {
 
 		// Serve the modified config dynamically when requested
 		console.log(`Serve the modified config dynamically`);
-		app.get('/pub/pit-claim/browser/assets/data/appConfig.json', (req, res) => {
+		app.get('/pub/pit-claim/assets/data/appConfig.json', (req, res) => {
 			res.setHeader('Content-Type', 'application/json');
 			res.send(processedConfig);
 		});
