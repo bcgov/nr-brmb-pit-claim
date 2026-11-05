@@ -17,7 +17,7 @@ function startServer() {
 
 		console.log(`Updating appConfig.json`);
 
-		const configPath = path.join(angularPath, '/assets/data/appConfig.json');
+		const configPath = path.join(angularPath, '/browser/assets/data/appConfig.json');
 
 		// Read the template and perform replacement in memory safely at startup
 		let configTemplate = fs.readFileSync(configPath, 'utf8');
@@ -47,7 +47,8 @@ function startServer() {
 		app.use('/pub/pit-claim', express.static(angularPath));
 
 		// Send all requests to Angular app
-		app.get('/pub/pit-claim{/{*path}}', (req, res) => {
+		// app.get('/pub/pit-claim{/{*path}}', (req, res) => {
+		app.get('/pub/pit-claim/*', (req, res) => {
 			res.sendFile(path.join(angularPath, 'index.html'));
 		});
 
