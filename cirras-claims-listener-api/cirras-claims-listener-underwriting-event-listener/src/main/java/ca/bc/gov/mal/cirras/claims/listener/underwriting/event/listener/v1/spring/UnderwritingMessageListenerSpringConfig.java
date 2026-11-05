@@ -101,7 +101,7 @@ public class UnderwritingMessageListenerSpringConfig {
 	private String emailSubject() {
 		String result;
 		
-		result = emailSubjectTemplate.replace(ENVIRONMENT_PLACE_HOLDER, environment);
+		result = emailSubjectTemplate.replace(ENVIRONMENT_PLACE_HOLDER, environment.toUpperCase());
 		
 		return result;
 	}
