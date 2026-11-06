@@ -80,10 +80,10 @@ public abstract class EndpointsTest {
 		testApplicationContext = new ClassPathXmlApplicationContext(new String[] { "classpath:/test-spring-config.xml" });
 		
 		Map<String, DataSource> dataSources = new HashMap<>();
-		{
-			DataSource dataSource = testApplicationContext.getBean("bootstrapDataSource", DataSource.class);
-			dataSources.put("jdbc/webade_bootstrap", dataSource);
-		}
+//		{
+//			DataSource dataSource = testApplicationContext.getBean("bootstrapDataSource", DataSource.class);
+//			dataSources.put("jdbc/webade_bootstrap", dataSource);
+//		}
 		{
 			DataSource dataSource = testApplicationContext.getBean("failoverDataSource", DataSource.class);
 			dataSources.put("jdbc/failover", dataSource);
@@ -107,7 +107,7 @@ public abstract class EndpointsTest {
 			swappableTokenService.swap(tokenService);
 		}
 
-		logger.warn("Automatic scheduling of event listener is disabled.");
+		logger.warn("Automatic scheduling of policies event listener is disabled.");
 		{
 			HotSwappableTargetSource swappableFailOverService = webApplicationContext.getBean("swappableFailOverService", HotSwappableTargetSource.class);
 			Assert.assertNotNull(swappableFailOverService);
@@ -124,6 +124,23 @@ public abstract class EndpointsTest {
 				swappableFailOverService.swap(failoverService);
 		}
 
+		logger.warn("Automatic scheduling of UW event listener is disabled.");
+		{
+			HotSwappableTargetSource swappableUnderwritingFailOverService = webApplicationContext.getBean("swappableUnderwritingFailOverService", HotSwappableTargetSource.class);
+			Assert.assertNotNull(swappableUnderwritingFailOverService);
+	
+			FailOverService failoverService = new FailOverService() {
+
+				@Override
+				public boolean asyncCheckForMaster(String arg0, String arg1, Integer arg2, String arg3)
+						throws ServiceException {
+					// Disable automatic running of event listener.
+					return false;
+				}};
+	
+				swappableUnderwritingFailOverService.swap(failoverService);
+		}
+		
 		logger.debug(">startServer");
 	}
 

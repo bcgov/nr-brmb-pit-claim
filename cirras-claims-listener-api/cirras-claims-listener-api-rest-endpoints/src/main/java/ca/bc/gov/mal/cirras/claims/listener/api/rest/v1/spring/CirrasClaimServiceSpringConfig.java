@@ -21,16 +21,16 @@ public class CirrasClaimServiceSpringConfig  {
 		logger.info(">CirrasClaimServiceSpringConfig");
 	}
 
-	@Value("${webade-oauth2.cirras-claims-rest.client.id}")
+	@Value("${CIRRAS_CLAIMS_REST_CLIENT_ID}")
 	private String webadeOauth2ClientId;
 
-	@Value("${webade-oauth2.cirras-claims-rest.client.secret}")
+	@Value("${CIRRAS_CLAIMS_REST_SECRET}")
 	private String webadeOauth2ClientSecret;
 
-	@Value("${webade-oauth2.token.url}")
+	@Value("${WEBADE_GET_TOKEN_URL}")
 	private String webadeOauth2TokenUrl;
 	
-	@Value("${cirras-claims-rest.url}")
+	@Value("${CIRRAS_CLAIMS_API_URL}")
 	private String cirrasClaimServiceTopLevelRestURL;
 	
 	// I don't know if this should be a preference or not

@@ -25,6 +25,18 @@
 		<module>cirras-claims-listener-api-rest-client</module>
 		<module>cirras-claims-listener-failover-service</module>
 	</modules>
+
+	<distributionManagement>
+	    <repository>
+	        <id>openshift-releases</id>
+	        <url>${RELEASE_URL}</url>
+	    </repository>
+	    <snapshotRepository>
+	        <id>openshift-snapshots</id>
+	        <url>${SNAPSHOT_URL}</url>
+	    </snapshotRepository>
+	</distributionManagement>
+
 	<dependencyManagement>
 		<dependencies>
 
@@ -206,7 +218,7 @@
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>42.3.9</version>
+				<version>42.7.10</version>
 			</dependency>
 			
 			<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->

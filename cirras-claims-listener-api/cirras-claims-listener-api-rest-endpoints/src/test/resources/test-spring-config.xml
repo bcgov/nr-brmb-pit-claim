@@ -7,6 +7,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:test.properties</value>
+				<value>classpath:static.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -15,11 +16,13 @@
 		<property name="properties" ref="applicationProperties" />
 	</bean>
 
+<!-- 	
 	<bean id="bootstrapDataSource" class="oracle.jdbc.pool.OracleDataSource" destroy-method="close">
 		<property name="URL" value="${webade.datasource.url}" />
 		<property name="user" value="${webade.datasource.username}" />
 		<property name="password" value="${webade.datasource.password}" />
 	</bean>
+ -->
 
 	<bean id="failoverDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
