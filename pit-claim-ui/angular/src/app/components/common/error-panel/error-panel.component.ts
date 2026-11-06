@@ -13,7 +13,7 @@ import {
 import {ERROR_TYPE, ErrorState} from "../../../store/application/application.state";
 import {getDisplayErrorMessage} from "../../../utils/error-messages";
 import scrollIntoView from "scroll-into-view-if-needed";
-import { NgIf, NgClass, NgFor } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
 
 @Component({
@@ -21,7 +21,7 @@ import { ReactiveFormsModule } from "@angular/forms";
     templateUrl: "./error-panel.component.html",
     styleUrls: ["../base/base.component.scss", "./error-panel.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgIf, NgClass, NgFor, ReactiveFormsModule]
+    imports: [NgClass, ReactiveFormsModule]
 })
 export class ErrorPanelComponent implements OnChanges {
     @ViewChild("errorContainer") errorContainer: ElementRef;

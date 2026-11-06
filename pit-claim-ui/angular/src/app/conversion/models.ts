@@ -1,9 +1,16 @@
-import {ClaimCalculationGrainSpotLoss, ClaimCalculationGrainUnseeded, ClaimCalculationGrapes, ClaimCalculationPlantAcres, ClaimCalculationPlantUnits, ClaimCalculationVariety} from "@cirras/cirras-claims-api";
-import { ClaimCalculationBerries } from '@cirras/cirras-claims-api';
-import { ClaimCalculationGrainBasket } from "@cirras/cirras-claims-api/model/claimCalculationGrainBasket";
-import { ClaimCalculationGrainBasketProduct } from "@cirras/cirras-claims-api/model/claimCalculationGrainBasketProduct";
-import { ClaimCalculationGrainQuantity } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantity";
-import { ClaimCalculationGrainQuantityDetail } from "@cirras/cirras-claims-api/model/claimCalculationGrainQuantityDetail";
+import {
+  ClaimCalculationBerries,
+  ClaimCalculationGrainBasket,
+  ClaimCalculationGrainBasketProduct,
+  ClaimCalculationGrainQuantity,
+  ClaimCalculationGrainQuantityDetail,
+  ClaimCalculationGrainSpotLoss,
+  ClaimCalculationGrainUnseeded,
+  ClaimCalculationGrapes,
+  ClaimCalculationPlantAcres,
+  ClaimCalculationPlantUnits,
+  ClaimCalculationVariety,
+} from "@cirras/cirras-claims-api/model/models";
 
 export interface PagedCollection {
     pageNumber?: number;
