@@ -59,7 +59,7 @@ public class EndpointsSpringConfig {
 		
 		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
 	    dsLookup.setResourceRef(true);
-	    result = dsLookup.getDataSource("java:comp/env/jdbc/failover");
+	    result = dsLookup.getDataSource("java:comp/env/jdbc/cirras_claims_rest");
 	    
 	    return result;
 	}
