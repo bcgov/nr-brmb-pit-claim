@@ -41,5 +41,6 @@ pit-claim-ui/angular/dist/
 pit-claim-ui/angular/node_modules/
 pit-claim-ui/express-server/node_modules/
 pit-claim-ui/angular/pit-claim-2.5.3-SNAPSHOT.tgz
+cirras-claims-ngclient-lib/cirras-claims-ngclient-lib/src/main/angular/projects/cirras-claims-api/generated/
 cirras-claims-listener-api/cirras-claims-listener-api-rest-endpoints/src/test/resources/static.properties
 cirras-claims-listener-api/cirras-claims-listener-failover-service/src/test/resources/static.properties

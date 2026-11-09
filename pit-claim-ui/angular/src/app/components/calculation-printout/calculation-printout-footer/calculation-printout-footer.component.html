@@ -11,14 +11,31 @@
   <div class="ccc-row-group ccc-row-group-bordered" style="padding-left: 0px;margin-bottom: 0px;padding-bottom: 3px; border: none; border-bottom: 1px solid black; margin-top: 10px; border-radius: 0px;">
     <div class="ccc-row">
       <span class="ccc-col-left print-page-break-inside">
-          Prepared by: <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">
-            {{ calculationDetail.submittedByName }}
-          </span>
+        Prepared by: @if (calculationDetail.claimStatusCode !== 'OPEN') {
+        <span>
+          {{ calculationDetail.submittedByName }}
+        </span>
+      }
+    </span>
+    <span class="ccc-col-right print-page-break-inside" style="padding-right: 200px;">
+      Date: @if (calculationDetail.claimStatusCode !== 'OPEN') {
+      <span>
+        {{ calculationDetail.submittedByDate | date:'yyyy-MM-dd' }}
       </span>
-      <span class="ccc-col-right print-page-break-inside" style="padding-right: 200px;">
-          Date: <span *ngIf="calculationDetail.claimStatusCode !== 'OPEN'">                       
-            {{ calculationDetail.submittedByDate | date:'yyyy-MM-dd' }}  
-           </span>
+    }
+  </span>
+</div>
+</div>
+</div>
+
+<div class="print-page-break-inside">
+  <div class="ccc-row-group ccc-row-group-bordered" style="padding-left: 0px;margin-bottom: 0px;padding-bottom: 3px; border: none; border-bottom: 1px solid black; margin-top: 10px; border-radius: 0px;">
+    <div class="ccc-row">
+      <span class="ccc-col-left">
+        Recommended by: {{ calculationDetail.recommendedByName }}
+      </span>
+      <span class="ccc-col-right" style="padding-right: 200px;">
+        Date: {{ calculationDetail.recommendedByDate | date:'yyyy-MM-dd' }}
       </span>
     </div>
   </div>
@@ -28,24 +45,11 @@
   <div class="ccc-row-group ccc-row-group-bordered" style="padding-left: 0px;margin-bottom: 0px;padding-bottom: 3px; border: none; border-bottom: 1px solid black; margin-top: 10px; border-radius: 0px;">
     <div class="ccc-row">
       <span class="ccc-col-left">
-          Recommended by: {{ calculationDetail.recommendedByName }}
+        Approved by: {{ calculationDetail.approvedByName }}
       </span>
       <span class="ccc-col-right" style="padding-right: 200px;">
-          Date: {{ calculationDetail.recommendedByDate | date:'yyyy-MM-dd' }}
+        Date: {{ calculationDetail.approvedByDate | date:'yyyy-MM-dd' }}
       </span>
     </div>
   </div>
 </div>
-
-<div class="print-page-break-inside">
-  <div class="ccc-row-group ccc-row-group-bordered" style="padding-left: 0px;margin-bottom: 0px;padding-bottom: 3px; border: none; border-bottom: 1px solid black; margin-top: 10px; border-radius: 0px;">
-    <div class="ccc-row">
-      <span class="ccc-col-left">
-          Approved by: {{ calculationDetail.approvedByName }}
-      </span>
-      <span class="ccc-col-right" style="padding-right: 200px;">
-          Date: {{ calculationDetail.approvedByDate | date:'yyyy-MM-dd' }}
-      </span>
-    </div>
-  </div>                
-</div>   
