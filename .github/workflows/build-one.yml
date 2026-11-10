@@ -16,6 +16,7 @@ on:
           - cirras-claims-api
           - cirras-claims-ngclient-lib
           - pit-claim-ui
+          - cirras-claims-listener-api
 
 
 jobs:
@@ -50,3 +51,13 @@ jobs:
       MICROSERVICE_NAME: pit-claim-ui 
       UI_TARGET: pit-claim-ui
       NPM_ARTIFACT_PATH: \@pit/pit-claim-ui/-/@pit
+
+  build-claims-listener-api: 
+    uses: ./.github/workflows/build-package.yml
+    if: ${{ inputs.COMPONENT == 'cirras-claims-listener-api' }}
+    secrets: inherit
+    with:
+      ENVIRONMENT: DEV
+      MICROSERVICE_NAME: cirras-claims-listener-api
+      JAVA_VERSION: 21
+      TAG: ${{ inputs.TAG }}
