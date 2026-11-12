@@ -16,9 +16,9 @@ import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.Oauth2ClientException;
 import ca.bc.gov.mal.cirras.policies.model.v1.PoliciesEventTypes;
 
 

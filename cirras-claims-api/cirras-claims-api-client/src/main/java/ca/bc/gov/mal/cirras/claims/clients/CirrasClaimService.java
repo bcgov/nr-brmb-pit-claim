@@ -22,16 +22,16 @@ import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
 
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
-import ca.bc.gov.nrs.common.wfone.rest.resource.BaseResource;
-import ca.bc.gov.nrs.common.wfone.rest.resource.CodeTableListRsrc;
-import ca.bc.gov.nrs.common.wfone.rest.resource.CodeTableRsrc;
-import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
-import ca.bc.gov.nrs.wfone.common.rest.client.BadRequestException;
-import ca.bc.gov.nrs.wfone.common.rest.client.BaseRestServiceClient;
-import ca.bc.gov.nrs.wfone.common.rest.client.GenericRestDAO;
-import ca.bc.gov.nrs.wfone.common.rest.client.Response;
-import ca.bc.gov.nrs.wfone.common.rest.client.RestDAOException;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.CheckedToken;
+import ca.bc.gov.mal.pit.common.rest.resource.BaseResource;
+import ca.bc.gov.mal.pit.common.rest.resource.CodeTableListRsrc;
+import ca.bc.gov.mal.pit.common.rest.resource.CodeTableRsrc;
+import ca.bc.gov.mal.pit.common.rest.resource.RelLink;
+import ca.bc.gov.mal.pit.common.rest.client.BadRequestException;
+import ca.bc.gov.mal.pit.common.rest.client.BaseRestServiceClient;
+import ca.bc.gov.mal.pit.common.rest.client.GenericRestDAO;
+import ca.bc.gov.mal.pit.common.rest.client.Response;
+import ca.bc.gov.mal.pit.common.rest.client.RestDAOException;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.resource.CheckedToken;
 
 
 public class CirrasClaimService extends BaseRestServiceClient {

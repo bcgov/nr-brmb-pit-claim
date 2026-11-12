@@ -16,10 +16,10 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationDao;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationDto;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimDto;
 import ca.bc.gov.mal.cirras.claims.spring.PersistenceSpringConfig;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.TooManyRecordsException;
-import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.TooManyRecordsException;
+import ca.bc.gov.mal.pit.common.persistence.dto.PagedDtos;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

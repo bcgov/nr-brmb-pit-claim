@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.PagedResource;
+import ca.bc.gov.mal.pit.common.rest.resource.PagedResource;
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationList;
 

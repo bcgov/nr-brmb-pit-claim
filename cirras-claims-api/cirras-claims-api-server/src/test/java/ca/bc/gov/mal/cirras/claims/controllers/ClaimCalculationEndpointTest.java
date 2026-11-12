@@ -34,8 +34,8 @@ import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationVariety;
 import ca.bc.gov.mal.cirras.claims.data.models.SyncDopYieldContractCommodityBerries;
 import ca.bc.gov.mal.cirras.claims.services.utils.ClaimsServiceEnums;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.Oauth2ClientException;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.Oauth2ClientException;
 
 public class ClaimCalculationEndpointTest extends EndpointsTest {
 	private static final Logger logger = LoggerFactory.getLogger(ClaimCalculationEndpointTest.class);
