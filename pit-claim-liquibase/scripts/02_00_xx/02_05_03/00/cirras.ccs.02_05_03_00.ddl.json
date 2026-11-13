@@ -1,0 +1,8 @@
+
+{
+    "databaseChangeLog": [
+        { "changeSet": {"author":"mhostettler","id":"11","changes": [
+            {"sqlFile": {"relativeToChangelogFile": "true", "path": "ddl/tables/ccs.alter.process_failovr_ownership.sql"}}
+        ] } }
+    ]
+}
