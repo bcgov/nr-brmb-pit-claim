@@ -167,6 +167,8 @@ jobs:
       #Explicit install of oc cli tool
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v3
+        with:
+          oc: '4'
       
       - name: Authenticate and set context
         uses: redhat-actions/oc-login@v2
