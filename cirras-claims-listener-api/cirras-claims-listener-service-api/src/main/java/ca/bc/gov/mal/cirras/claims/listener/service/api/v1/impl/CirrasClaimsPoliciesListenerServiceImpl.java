@@ -29,7 +29,7 @@ import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsurancePolicyRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuredGrowerRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.PoliciesEventTypes;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
 
 public class CirrasClaimsPoliciesListenerServiceImpl implements CirrasClaimsPoliciesListenerService {
 

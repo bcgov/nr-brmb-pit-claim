@@ -1,6 +1,6 @@
 package ca.bc.gov.mal.cirras.claims.listener.api.rest.v1.resource.types;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.types.BaseResourceTypes;
+import ca.bc.gov.mal.pit.common.rest.resource.types.BaseResourceTypes;
 
 public class ResourceTypes extends BaseResourceTypes {
 	
