@@ -16,7 +16,7 @@ import {syncClaimsCodeTables} from "../../../store/calculation-detail/calculatio
 import {dollars, dollarsToNumber, makeTitleCase, makeNumberOnly, CALCULATION_UPDATE_TYPE, CALCULATION_STATUS_CODE, getPrintTitle, CLAIM_STATUS_CODE, areNotEqual} from "../../../utils"
 import { setFormStateUnsaved } from "src/app/store/application/application.actions";
 import { BaseWrapperComponent } from "../../common/base-wrapper/base-wrapper.component";
-import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from "@angular/common";
 import { CalculationDetailHeaderComponent } from "../calculation-detail-header/calculation-detail-header.component";
 import { MatFormField, MatError } from "@angular/material/form-field";
 import { MatSelect, MatOption } from "@angular/material/select";
@@ -31,9 +31,7 @@ import { MatButton } from "@angular/material/button";
     styleUrls: ["../../common/base/base.component.scss",
         "./grapes.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BaseWrapperComponent, NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, 
-        MatSelect, MatOption, NgFor, MatError, MatIcon, NgStyle, MatInput, MatButton, CalculationPrintoutComponent, 
-        DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatError, MatIcon, NgStyle, MatInput, MatButton, CalculationPrintoutComponent, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrapesComponent extends BaseComponent implements OnChanges, AfterViewInit {
     displayLabel = "Calculation Detail";

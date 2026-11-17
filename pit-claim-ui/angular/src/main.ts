@@ -1,13 +1,10 @@
-import { enableProdMode, provideAppInitializer, inject, Injector, Type, ModuleWithProviders, importProvidersFrom } from "@angular/core";
-
+import { enableProdMode, provideAppInitializer, inject, Injector, Type, ModuleWithProviders, importProvidersFrom, provideZoneChangeDetection } from "@angular/core";
 import { cirrasClaimsRestInitializerFn } from "./app/app.module";
 import {environment} from "./environments/environment";
-import { provideBootstrapEffects, DATE_FORMATS } from "./app/utils";
+import { provideBootstrapEffects } from "./app/utils";
 import { rootEffects, rootReducers, initialRootState } from "./app/store";
 import { UpdateService } from "./app/services/update.service";
-import { AppConfigService } from "./app/services/app-config.service";
 import { Configuration as CirrasClaimsAPIServiceConfiguration, ApiModule as CirrasClaimsAPIServiceModule } from "@cirras/cirras-claims-api";
-import { TokenService } from "./app/services/token.service";
 import { Title, BrowserModule, bootstrapApplication } from "@angular/platform-browser";
 import { appInitFn } from "./app/utils/app-initializer";
 import { HttpHandler, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
@@ -43,15 +40,15 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MomentModule } from "ngx-moment";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { CoreUIModule } from "./app/lib/core-ui.module";
 import { StoreModule } from "@ngrx/store";
 import { AppRoutingModule } from "./app/app-routing.module";
 import { NgxPaginationModule } from "ngx-pagination";
 import { EffectsModule } from "@ngrx/effects";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { A11yModule } from "@angular/cdk/a11y";
-import { WildfireApplicationModule, WildfireResourceManagerModule } from "@wf1/wfcc-application-ui";
 import { AppComponent } from "./app/containers/application-root/app.component";
+import { AppConfigService, CoreUIModule, TokenService } from "@bcgov/pit-common-core-lib";
+import { PitApplicationModule } from "@bcgov/pit-common-application-lib";
 
 const apiConfiguration = new CirrasClaimsAPIServiceConfiguration();
 let devOnlyImports: Array<Type<any> | ModuleWithProviders<any>> = [];
@@ -63,7 +60,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
 providers: [
-    importProvidersFrom(
+    provideZoneChangeDetection(),importProvidersFrom(
         CirrasClaimsAPIServiceModule, 
         DragDropModule, 
         CdkTableModule, 
@@ -102,8 +99,7 @@ providers: [
         ServiceWorkerModule.register("ngsw-worker.js", { enabled: environment.production, scope: "./" }),
         ...devOnlyImports, 
         A11yModule, 
-        WildfireApplicationModule.forRoot(), 
-        WildfireResourceManagerModule.forRoot()
+        PitApplicationModule.forRoot()
     ),
     // Added provideBootstrapEffects function to handle the ngrx issue that loads effects before APP_INITIALIZER
     // providers have finished initializing.

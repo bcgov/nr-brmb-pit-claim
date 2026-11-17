@@ -10,7 +10,7 @@ import { UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CalculationDetailGrainBasketComponentModel } from './grain-basket.component.model';
 import { areNotEqual, CALCULATION_STATUS_CODE, CALCULATION_UPDATE_TYPE, CLAIM_STATUS_CODE, getPrintTitle, makeTitleCase } from 'src/app/utils';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
-import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { CalculationDetailHeaderComponent } from '../calculation-detail-header/calculation-detail-header.component';
 import { MatFormField, MatError } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -27,9 +27,7 @@ import { ParamMap } from '@angular/router';
     templateUrl: './grain-basket.component.html',
     styleUrl: './grain-basket.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BaseWrapperComponent, CalculationPrintoutGrainBasketComponent,
-      NgIf, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, 
-      NgFor, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, CalculationPrintoutGrainBasketComponent, CalculationDetailHeaderComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatError, MatTooltip, MatIcon, NgStyle, MatInput, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 
 export class CalculationDetailGrainBasketComponent extends BaseComponent implements OnChanges, AfterViewInit{

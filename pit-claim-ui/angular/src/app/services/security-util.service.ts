@@ -3,7 +3,7 @@ import {ROLES_UI} from "../utils/scopes";
 import {
   vmCalculation
 } from "../conversion/models";
-import { TokenService } from "./token.service";
+import { TokenService } from "@bcgov/pit-common-core-lib";
 
 @Injectable({
     providedIn: "root"

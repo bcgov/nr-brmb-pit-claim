@@ -1,4 +1,4 @@
-import {inject, Injectable, Injector} from "@angular/core";
+import {Injectable, Injector} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Action, Store} from "@ngrx/store";
 import {Observable, of, forkJoin} from "rxjs";
@@ -49,12 +49,10 @@ import {
   getClaimsCodeTables,
   populateClaimsCodeTableCache
 } from "../../utils/app-initializer";
-import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "src/app/utils";
+import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "../../../../src/app/utils";
 import { setFormStateUnsaved } from "../application/application.actions";
 import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
-import { HttpErrorResponse } from "@angular/common/http";
-import { TokenService } from "src/app/services/token.service";
-import { AppConfigService } from "src/app/services/app-config.service";
+import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
 
 @Injectable()
 export class CalculationDetailEffects {
@@ -155,7 +153,7 @@ loadCalculationDetail: Observable<Action> = createEffect(() => this.actions
       mergeMap(
           ([action, store]) => {
               let typedAction = <UpdateCalculationDetailMetadataAction>action;
-              let requestId = `WFDME${UUID.UUID().toUpperCase()}`.replace(/-/g, "");
+              let requestId = `CIRRAS-CLAIMS${UUID.UUID().toUpperCase()}`.replace(/-/g, "");
               let authToken = this.tokenService.getOauthToken();
               let payload = <vmCalculation>typedAction.payload.value;
               let updateType = typedAction.payload.updateType;

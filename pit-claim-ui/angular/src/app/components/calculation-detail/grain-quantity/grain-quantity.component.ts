@@ -11,7 +11,7 @@ import { lastValueFrom } from 'rxjs';
 import { FormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { displayErrorMessage } from 'src/app/utils/user-feedback-utils';
 import { setFormStateUnsaved } from 'src/app/store/application/application.actions';
-import { NgIf, NgFor, NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgStyle, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { CalculationDetailHeaderComponent } from '../calculation-detail-header/calculation-detail-header.component';
 import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -28,9 +28,7 @@ import { ParamMap } from '@angular/router';
     templateUrl: './grain-quantity.component.html',
     styleUrl: './grain-quantity.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainQuantityComponent,
-      ReactiveFormsModule, MatFormField, MatSelect, MatOption, NgIf, NgFor, MatError, NgStyle, MatTooltip, 
-      MatIcon, MatInput, MatLabel, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
+    imports: [BaseWrapperComponent, CalculationDetailHeaderComponent, CalculationPrintoutGrainQuantityComponent, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatError, NgStyle, MatTooltip, MatIcon, MatInput, MatLabel, MatButton, DecimalPipe, CurrencyPipe, DatePipe]
 })
 export class CalculationDetailGrainQuantityComponent extends BaseComponent implements OnChanges, AfterViewInit{
 

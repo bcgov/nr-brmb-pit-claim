@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.TOMCAT_PORT || 8080;
 const hostname = "0.0.0.0";
 
-const angularPath = path.join(__dirname, '../angular/dist/pit-claim');
+const angularPath = path.join(__dirname, '../angular/dist/pit-claim/browser');
 
 function startServer() {
 	try {
@@ -47,7 +47,7 @@ function startServer() {
 		app.use('/pub/pit-claim', express.static(angularPath));
 
 		// Send all requests to Angular app
-		app.get('/pub/pit-claim/*', (req, res) => {
+		app.get('/pub/pit-claim/{*splat}', (req, res) => {
 			res.sendFile(path.join(angularPath, 'index.html'));
 		});
 
@@ -66,5 +66,4 @@ function startServer() {
 };
 
 startServer();
-
 

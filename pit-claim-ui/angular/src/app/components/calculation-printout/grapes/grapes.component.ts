@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {vmCalculation} from "../../../conversion/models";
 import { makeTitleCase } from 'src/app/utils';
 import { CalculationPrintoutLogoComponent } from '../calculation-printout-logo/calculation-printout-logo.component';
-import { NgIf, NgFor, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { CalculationPrintoutHeaderComponent } from '../calculation-printout-header/calculation-printout-header.component';
 import { CalculationPrintoutFooterComponent } from '../calculation-printout-footer/calculation-printout-footer.component';
 
@@ -11,8 +11,7 @@ import { CalculationPrintoutFooterComponent } from '../calculation-printout-foot
     templateUrl: './grapes.component.html',
     styleUrls: ['./grapes.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CalculationPrintoutLogoComponent, NgIf, CalculationPrintoutHeaderComponent, NgFor, 
-      CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
+    imports: [CalculationPrintoutLogoComponent, CalculationPrintoutHeaderComponent, CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
 })
 export class CalculationPrintoutComponent {
   @Input() calculationDetail: vmCalculation;

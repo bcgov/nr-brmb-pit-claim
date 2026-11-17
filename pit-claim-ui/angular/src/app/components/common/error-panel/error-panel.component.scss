@@ -32,7 +32,7 @@ mat-card.error-panel {
     mat-card-header {
         background-color: var.$colour-errors;
         color: var.$colour-white;
-        padding: 0.16px var(--wf1-gutter-space);
+        padding: 0.16px var(--pit-gutter-space);
         text-transform: uppercase;
         cursor: pointer;
         display: block;
@@ -58,7 +58,7 @@ mat-card.error-panel {
 
     .footer {
         text-align: right;
-        padding: var(--wf1-gutter-space);
+        padding: var(--pit-gutter-space);
     }
 
     .validation-messages {

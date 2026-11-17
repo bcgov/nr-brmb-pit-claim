@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { vmCalculation } from 'src/app/conversion/models';
 import { BaseComponent } from '../../common/base/base.component';
 import { CalculationPrintoutLogoComponent } from '../calculation-printout-logo/calculation-printout-logo.component';
-import { NgIf, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { CalculationPrintoutHeaderComponent } from '../calculation-printout-header/calculation-printout-header.component';
 import { CalculationPrintoutFooterComponent } from '../calculation-printout-footer/calculation-printout-footer.component';
 
@@ -10,8 +10,7 @@ import { CalculationPrintoutFooterComponent } from '../calculation-printout-foot
     selector: 'calculation-printout-grain-quantity',
     templateUrl: './grain-quantity.component.html',
     styleUrl: './grain-quantity.component.scss',
-    imports: [CalculationPrintoutLogoComponent, NgIf, CalculationPrintoutHeaderComponent, 
-      CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
+    imports: [CalculationPrintoutLogoComponent, CalculationPrintoutHeaderComponent, CalculationPrintoutFooterComponent, DecimalPipe, CurrencyPipe]
 })
 
 export class CalculationPrintoutGrainQuantityComponent implements OnChanges {

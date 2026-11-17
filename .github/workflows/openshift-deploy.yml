@@ -10,6 +10,7 @@ on:
         options: 
           - cirras-claims-api
           - pit-claim-ui
+          - cirras-claims-listener-api
       ENVIRONMENT_NAME:
         required: true
         type: choice
@@ -70,14 +71,14 @@ jobs:
 
       - name: update IMAGE NAME variable if needed
         id: updateImageName
-        if: ${{ inputs.MICROSERVICE_NAME == 'cirras-claims-api' || inputs.MICROSERVICE_NAME == 'pit-claim-ui' }}
+        if: ${{ inputs.MICROSERVICE_NAME == 'cirras-claims-api' || inputs.MICROSERVICE_NAME == 'pit-claim-ui' || inputs.MICROSERVICE_NAME == 'cirras-claims-listener-api' }}
         run: |
           export IMAGE_NAME=${{ inputs.MICROSERVICE_NAME }}
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
 
       - name: Get digest of docker image
         id: getDigest
-        if: ${{ inputs.MICROSERVICE_NAME == 'cirras-claims-api' || inputs.MICROSERVICE_NAME == 'pit-claim-ui' }}
+        if: ${{ inputs.MICROSERVICE_NAME == 'cirras-claims-api' || inputs.MICROSERVICE_NAME == 'pit-claim-ui' || inputs.MICROSERVICE_NAME == 'cirras-claims-listener-api' }}
         run: |
           export IMAGE='ghcr.io/${{github.repository_owner}}/${{ steps.updateImageName.outputs.IMAGE_NAME}}:${{ inputs.TAG }}'
           docker pull $IMAGE
@@ -107,11 +108,17 @@ jobs:
           POSTGRES_USERNAME: ${{ vars.POSTGRES_USERNAME}}
 
 
-          #API variables
+          #API and listener variables
           API_CPU_REQUEST: ${{ vars.API_CPU_REQUEST }}
           API_CPU_LIMIT: ${{ vars.API_CPU_LIMIT }}
           API_MEMORY_REQUEST: ${{ vars.API_MEMORY_REQUEST }}
           API_MEMORY_LIMIT: ${{ vars.API_MEMORY_LIMIT }}
+
+          CLAIMS_LISTENER_API_CPU_REQUEST: ${{ vars.CLAIMS_LISTENER_API_CPU_REQUEST }}
+          CLAIMS_LISTENER_API_CPU_LIMIT: ${{ vars.CLAIMS_LISTENER_API_CPU_LIMIT }}
+          CLAIMS_LISTENER_API_MEMORY_REQUEST: ${{ vars.CLAIMS_LISTENER_API_MEMORY_REQUEST }}
+          CLAIMS_LISTENER_API_MEMORY_LIMIT: ${{ vars.CLAIMS_LISTENER_API_MEMORY_LIMIT }}
+
           MIN_API_COUNT: ${{ vars.MIN_API_COUNT }}
           MAX_API_COUNT: ${{ vars.MAX_API_COUNT }}
 
@@ -123,7 +130,10 @@ jobs:
 
           CIRRAS_POLICIES_API_URL: ${{ vars.CIRRAS_POLICIES_API_URL}}
           CIRRAS_UNDERWRITING_API_URL: ${{ vars.CIRRAS_UNDERWRITING_API_URL}}
+          CIRRAS_CLAIMS_API_URL: ${{ vars.CIRRAS_CLAIMS_API_URL}}
+
           CIRRAS_CLAIMS_REST_CLIENT_ID: ${{ vars.CIRRAS_CLAIMS_REST_CLIENT_ID }}
+          CIRRAS_CLAIMS_SYNC_REST_CLIENT_ID: ${{ vars.CIRRAS_CLAIMS_SYNC_REST_CLIENT_ID }}
 
           WEBADE_USERNAME: ${{ vars.WEBADE_USERNAME }}
           WEBADE_MAXACTIVE: ${{ vars.WEBADE_MAXACTIVE }}
@@ -134,6 +144,7 @@ jobs:
           MESSAGE_QUEUE_URL: ${{ vars.MESSAGE_QUEUE_URL }}
           EMAIL_MASTER_TASK_SYNCH_ERROR_SUBJECT: ${{ vars.EMAIL_MASTER_TASK_SYNCH_ERROR_SUBJECT }}
           EMAIL_OUTBOX_SYNCH_ERROR_SUBJECT: ${{ vars.EMAIL_OUTBOX_SYNCH_ERROR_SUBJECT }}
+          EMAIL_CLAIMS_LISTENER_SYNCH_ERROR_SUBJECT: ${{ vars.EMAIL_CLAIMS_LISTENER_SYNCH_ERROR_SUBJECT }}
           EMAIL_ADMIN_ADDRESS: ${{ secrets.EMAIL_ADMIN_ADDRESS }}
           EMAIL_ERROR_SEND_FREQUENCY: ${{ vars.EMAIL_ERROR_SEND_FREQUENCY }}
           POLLING_OUTBOX_ENABLED: ${{ vars.POLLING_OUTBOX_ENABLED }}

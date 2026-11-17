@@ -5,8 +5,8 @@ import {Store} from "@ngrx/store";
 import {RootState} from "../index";
 import {ApplicationStateService} from "../../services/application-state.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import { TokenService } from 'src/app/services/token.service';
-import { AppConfigService } from 'src/app/services/app-config.service';
+import { AppConfigService, TokenService } from '@bcgov/pit-common-core-lib';
+
 @Injectable()
 export class ApplicationEffects {
   constructor(

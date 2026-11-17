@@ -8,8 +8,6 @@ import {
   vmCalculationList  
 } from "./models";
 import {
-  ClaimRsrc as ClaimRsrc,
-  ClaimListRsrc as ClaimListRsrc,
   ClaimCalculationRsrc as CalculationRsrc,
   ClaimCalculationListRsrc as CalculationListRsrc
 } from "@cirras/cirras-claims-api/model/models";

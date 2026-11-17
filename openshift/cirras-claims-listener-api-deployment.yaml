@@ -1,0 +1,204 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: '#{NAMESPACE}#'
+  name: cirras-claims-listener-api-deployment-#{ENV}#
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: cirras-claims-listener-api-#{ENV}#
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cirras-claims-listener-api-#{ENV}#
+        project: brmb-pit-claim-#{ENV}#
+      annotations:
+        # 1. Vault injector configuration goes here, inside the template.
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-token: 'false' # set to 'true' if you are going to connect and query vault from your application
+        vault.hashicorp.com/agent-pre-populate-only: 'true' # this makes sure the secret vault will only change during pod restart
+        vault.hashicorp.com/auth-path: auth/k8s-silver  # Must match cluster. Use one of: k8s-silver, k8s-gold, k8s-golddr, k8s-emerald
+        vault.hashicorp.com/namespace: platform-services
+        vault.hashicorp.com/role: #{LICENSE_PLATE}#-#{VAULT_RESOURCE}#  # licenseplate-nonprod or licenseplate-prod are your options
+        # Configure how to retrieve and populate the secrets from Vault:
+        # - The name of the secret is any unique string after vault.hashicorp.com/agent-inject-secret-<name>
+        # - The value is the path in Vault where the secret is located.
+        vault.hashicorp.com/agent-inject-secret-env: #{LICENSE_PLATE}#-#{VAULT_RESOURCE}#/data/#{ENV}#/secrets
+        # - The template Vault Agent should use for rendering a secret:
+        vault.hashicorp.com/agent-inject-template-env: |
+          {{- with secret "#{LICENSE_PLATE}#-#{VAULT_RESOURCE}#/data/#{ENV}#/secrets" }}
+            export POSTGRES_PASSWORD="{{ .Data.data.POSTGRES_PASSWORD }}"
+            export CIRRAS_CLAIMS_REST_SECRET="{{ .Data.data.CIRRAS_CLAIMS_REST_SECRET }}"
+            export CIRRAS_CLAIMS_SYNC_REST_SECRET="{{ .Data.data.CIRRAS_CLAIMS_SYNC_REST_SECRET }}"
+            export MESSAGE_QUEUE_CLAIMS_SYNC_REST_NKEY_SEED="{{ .Data.data.MESSAGE_QUEUE_CLAIMS_SYNC_REST_NKEY_SEED }}"
+          {{- end }}          
+    spec:
+      serviceAccountName: #{LICENSE_PLATE}#-vault
+      containers:
+        - name: container
+          image: '#{IMAGE_BY_DIGEST}#'
+          command:
+            ['sh', '-c']
+          args:
+            ['. /vault/secrets/env && catalina.sh run']
+          imagePullPolicy: Always
+          ports:
+            - containerPort: #{TOMCAT_PORT}#
+              protocol: TCP
+          env:
+            - name: TOMCAT_PORT
+              valueFrom: 
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: TOMCAT_PORT
+            - name: TOMCAT_MAX_THREADS
+              valueFrom: 
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: TOMCAT_MAX_THREADS
+            - name: CONNECTION_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: CONNECTION_TIMEOUT
+
+            - name: WEBADE_GET_TOKEN_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: WEBADE_GET_TOKEN_URL
+            - name: WEBADE_CHECK_TOKEN_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: WEBADE_CHECK_TOKEN_URL
+            - name: WEBADE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: WEBADE_USERNAME
+            - name: WEBADE_MAXACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: WEBADE_MAXACTIVE
+            - name: WEBADE_OAUTH2_AUTHORIZE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: WEBADE_OAUTH2_AUTHORIZE_URL
+            - name: POSTGRES_RESOURCE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: POSTGRES_RESOURCE_NAME
+            - name: POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: POSTGRES_URL
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: POSTGRES_USERNAME
+            - name: POSTGRES_MAXACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: POSTGRES_MAXACTIVE
+            - name: CIRRAS_CLAIMS_REST_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: CIRRAS_CLAIMS_REST_CLIENT_ID
+            - name: CIRRAS_CLAIMS_SYNC_REST_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: CIRRAS_CLAIMS_SYNC_REST_CLIENT_ID
+            - name: CIRRAS_POLICIES_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: CIRRAS_POLICIES_API_URL
+            - name: CIRRAS_CLAIMS_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: CIRRAS_CLAIMS_API_URL
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: TIME_ZONE
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: LOG_LEVEL
+            - name: EMAIL_HOST_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: EMAIL_HOST_NAME
+            - name: EMAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: EMAIL_PORT
+            - name: EMAIL_FROM_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: EMAIL_FROM_ADDRESS
+            - name: MESSAGE_QUEUE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: MESSAGE_QUEUE_URL
+            - name: EMAIL_CLAIMS_LISTENER_SYNCH_ERROR_SUBJECT
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: EMAIL_CLAIMS_LISTENER_SYNCH_ERROR_SUBJECT
+            - name: EMAIL_ADMIN_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: EMAIL_ADMIN_ADDRESS
+            - name: EMAIL_ERROR_SEND_FREQUENCY
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: EMAIL_ERROR_SEND_FREQUENCY
+            - name: APPLICATION_ENVIRONMENT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: APPLICATION_ENVIRONMENT_NAME
+          livenessProbe:
+            httpGet:
+              path: /cirras-claims-listener-api/v1/checkHealth?callstack=test
+              port: #{TOMCAT_PORT}#
+              scheme: HTTP
+            initialDelaySeconds: 200
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 2
+          resources:
+            requests:
+              cpu: #{CLAIMS_LISTENER_API_CPU_REQUEST}#
+              memory: #{CLAIMS_LISTENER_API_MEMORY_REQUEST}#
+            limits:
+              cpu: #{CLAIMS_LISTENER_API_CPU_LIMIT}#
+              memory: #{CLAIMS_LISTENER_API_MEMORY_LIMIT}#
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false

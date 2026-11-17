@@ -2,11 +2,10 @@ import {
   Configuration as CirrasClaimsAPIServiceConfiguration
 } from "@cirras/cirras-claims-api";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
-import { AppConfigService } from "./services/app-config.service";
 import {environment} from "../environments/environment";
 import { Type } from '@angular/core';
 import { ModuleWithProviders } from '@angular/core';
-
+import { AppConfigService } from "@bcgov/pit-common-core-lib";
 
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.
