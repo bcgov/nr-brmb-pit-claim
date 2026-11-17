@@ -26,7 +26,7 @@ import ca.bc.gov.mal.cirras.policies.model.v1.Variety;
 import ca.bc.gov.mal.cirras.underwriting.data.resources.VerifiedYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldGrainBasket;
 import ca.bc.gov.mal.cirras.underwriting.data.models.VerifiedYieldSummary;
-import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
+import ca.bc.gov.mal.pit.common.persistence.utils.DtoUtils;
 
 public class OutOfSync {
 	

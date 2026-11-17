@@ -3,8 +3,8 @@ package ca.bc.gov.mal.cirras.claims.data.entities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.bc.gov.nrs.wfone.common.persistence.dto.BaseDto;
-import ca.bc.gov.nrs.wfone.common.persistence.utils.DtoUtils;
+import ca.bc.gov.mal.pit.common.persistence.dto.BaseDto;
+import ca.bc.gov.mal.pit.common.persistence.utils.DtoUtils;
 
 
 public class CalculationStatusCodeDto extends BaseDto<CalculationStatusCodeDto> {

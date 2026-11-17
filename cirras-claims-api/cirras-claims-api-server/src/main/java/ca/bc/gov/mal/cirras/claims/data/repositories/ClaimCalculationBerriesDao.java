@@ -13,9 +13,9 @@ import org.springframework.stereotype.Repository;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.mapper.ClaimCalculationBerriesMapper;
 import ca.bc.gov.mal.cirras.claims.data.entities.ClaimCalculationBerriesDto;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.mybatis.BaseDao;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.mybatis.BaseDao;
 
 
 @Repository

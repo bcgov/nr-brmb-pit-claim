@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import ca.bc.gov.mal.cirras.claims.data.models.BaseOutbox;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimsOutboxService;
 import ca.bc.gov.mal.cirras.claims.services.utils.PropertyUtils;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
 
 public abstract class OutboxProcessor {
 	
