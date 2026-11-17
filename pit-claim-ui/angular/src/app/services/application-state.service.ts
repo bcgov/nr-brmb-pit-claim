@@ -1,5 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
-import { TokenService } from "@bcgov/pit-common-core-lib";
+// import { TokenService } from "@bcgov/pit-common-core-lib";
+import { TokenService } from "src/lib/services/token.service";
 
 @Injectable({
     providedIn: "root"

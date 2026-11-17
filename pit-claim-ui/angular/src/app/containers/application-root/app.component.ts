@@ -12,7 +12,9 @@ import { ROUTE_SCOPES } from "../../../../src/app/utils/scopes";
 import { MatDialog } from "@angular/material/dialog";
 import { SecurityUtilService } from "../../../../src/app/services/security-util.service";
 import { NgTemplateOutlet } from "@angular/common";
-import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
 import { PitApplicationConfiguration, PitApplicationModule, PitApplicationState, PitDevice, RouterLink } from "@bcgov/pit-common-application-lib"; 
 
 const DEVICE: PitDevice = 'desktop';

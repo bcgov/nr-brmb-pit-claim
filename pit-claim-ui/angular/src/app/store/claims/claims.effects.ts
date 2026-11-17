@@ -10,7 +10,10 @@ import {SEARCH_CLAIMS, SearchClaimsAction, searchClaimsSuccess, searchClaimsErro
 import {getPageInfoRequestForSearchState} from "../../utils";
 import {initClaimsPaging} from "./claims.state";
 import {RootState} from "../index";
-import { SortDirection, TokenService } from "@bcgov/pit-common-core-lib";
+// import { SortDirection, TokenService } from "@bcgov/pit-common-core-lib";
+import { TokenService } from "src/lib/services/token.service";
+import { SortDirection } from "src/lib/search/models/sort/sort-direction";
+
 
 @Injectable()
 export class ClaimsEffects {

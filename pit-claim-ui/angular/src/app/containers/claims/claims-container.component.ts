@@ -12,8 +12,8 @@ import {SEARCH_CLAIMS_COMPONENT_ID} from "../../store/claims/claims.state";
 import {Component} from "@angular/core";
 import { LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
 import { ClaimsComponent } from "../../components/claims/claims.component";
-import { SearchState } from "@bcgov/pit-common-core-lib";
-
+// import { SearchState } from "@bcgov/pit-common-core-lib";
+import { SearchState } from "src/lib/search/store/state";
 
 @Component({
     selector: "cirras-claims-container",

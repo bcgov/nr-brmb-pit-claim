@@ -36,7 +36,9 @@ import {SCOPES_UI} from "../../../utils/scopes";
 import {ErrorDialogComponent} from "../../dialogs/error-dialog/error-dialog.component";
 import {setFormStateUnsaved} from "../../../store/application/application.actions";
 import {SecurityUtilService} from "../../../services/security-util.service";
-import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+//import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
 
 const originFormControlNgOnChanges = FormControlDirective.prototype.ngOnChanges;
 FormControlDirective.prototype.ngOnChanges = function () {

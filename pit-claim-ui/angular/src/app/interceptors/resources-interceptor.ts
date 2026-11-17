@@ -9,7 +9,10 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {PitSnackbarComponent} from "../components/common/snackbars/pit-snackbar.component";
 import {displayErrorMessage, ErrorHandlingInstructions, getSnackbarConfig} from "../utils/user-feedback-utils";
 import {PIT_SNACKBAR_TYPES} from "../utils";
-import { AppConfigService, AuthenticationInterceptor, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, AuthenticationInterceptor, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
+import { AuthenticationInterceptor } from "src/lib/interceptors/authentication-interceptor";
 
 @Injectable()
 export class ResourcesInterceptor extends AuthenticationInterceptor implements HttpInterceptor {
