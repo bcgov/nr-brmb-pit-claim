@@ -63,7 +63,7 @@ jobs:
         run: mkdir staging && cp openshift/${{ inputs.MICROSERVICE_NAME }}*.yaml staging/
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           registry: ${{ vars.REGISTRY }}
           username: ${{ github.actor }}
@@ -177,10 +177,12 @@ jobs:
 
       #Explicit install of oc cli tool
       - name: Install oc
-        uses: redhat-actions/oc-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v3
+        with:
+          oc: '4'
       
       - name: Authenticate and set context
-        uses: redhat-actions/oc-login@v1
+        uses: redhat-actions/oc-login@v2
         with:
           openshift_server_url: ${{secrets.OPENSHIFT_SERVER_URL}}
           openshift_token: ${{secrets.OPENSHIFT_TOKEN}}
