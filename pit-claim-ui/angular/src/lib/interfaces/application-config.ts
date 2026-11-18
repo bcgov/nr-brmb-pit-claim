@@ -9,8 +9,11 @@ export interface RestConfig {
     [prop: string]: string;
 }
 
-export interface WebADE {
-    oauth2Url: string;
+export interface Keycloak {
+    issuerUri: string;
+    authorizationEndpoint: string;
+    tokenEndpoint: string;
+    logoutUrl: string;
     clientId: string;
     authScopes: string;
     enableCheckToken?: boolean;
@@ -20,5 +23,5 @@ export interface WebADE {
 export interface ApplicationConfig {
     application: Application;
     rest: RestConfig;
-    webade: WebADE;
+    keycloak: Keycloak;
 }

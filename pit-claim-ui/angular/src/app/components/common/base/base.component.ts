@@ -250,9 +250,9 @@ export class BaseComponent implements OnInit, OnChanges, AfterViewInit {
 
     redirectWithOAuth(redirectRoutePath: string) {
       let baseUrl = this.appConfigService.getConfig().application.baseUrl;
-      let clientId = this.appConfigService.getConfig().webade.clientId;
-      let authorizeUrl = this.appConfigService.getConfig().webade.oauth2Url;
-      let authScopes = this.appConfigService.getConfig().webade.authScopes;
+      let clientId = this.appConfigService.getConfig().keycloak.clientId;
+      let authorizeUrl = this.appConfigService.getConfig().keycloak.authorizationEndpoint;
+      let authScopes = this.appConfigService.getConfig().keycloak.authScopes;
       let url = baseUrl;
       window.location.href = url;
     }
