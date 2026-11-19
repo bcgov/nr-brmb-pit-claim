@@ -52,7 +52,10 @@ import {
 import { CALCULATION_UPDATE_TYPE, navigateToCalculation } from "../../../../src/app/utils";
 import { setFormStateUnsaved } from "../application/application.actions";
 import { CALCULATION_DETAIL_COMPONENT_ID } from "./calculation-detail.state";
-import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
+
 
 @Injectable()
 export class CalculationDetailEffects {
