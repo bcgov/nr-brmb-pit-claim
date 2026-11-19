@@ -8,7 +8,9 @@ import {UUID} from "angular2-uuid";
 import {CODE_TABLE_CACHE, DATE_FORMATS} from "./index";
 import {ApplicationStateService} from "../services/application-state.service";
 import moment from "moment";
-import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
 
 export function appInitFn(httpHandler: HttpHandler, injector: Injector): () => Promise<any> {
   const appStateService = injector.get(ApplicationStateService);
