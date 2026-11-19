@@ -36,7 +36,9 @@ import {SCOPES_UI} from "../../../utils/scopes";
 import {ErrorDialogComponent} from "../../dialogs/error-dialog/error-dialog.component";
 import {setFormStateUnsaved} from "../../../store/application/application.actions";
 import {SecurityUtilService} from "../../../services/security-util.service";
-import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+//import { AppConfigService, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
 
 const originFormControlNgOnChanges = FormControlDirective.prototype.ngOnChanges;
 FormControlDirective.prototype.ngOnChanges = function () {
@@ -248,9 +250,9 @@ export class BaseComponent implements OnInit, OnChanges, AfterViewInit {
 
     redirectWithOAuth(redirectRoutePath: string) {
       let baseUrl = this.appConfigService.getConfig().application.baseUrl;
-      let clientId = this.appConfigService.getConfig().webade.clientId;
-      let authorizeUrl = this.appConfigService.getConfig().webade.oauth2Url;
-      let authScopes = this.appConfigService.getConfig().webade.authScopes;
+      let clientId = this.appConfigService.getConfig().keycloak.clientId;
+      let authorizeUrl = this.appConfigService.getConfig().keycloak.authorizationEndpoint;
+      let authScopes = this.appConfigService.getConfig().keycloak.authScopes;
       let url = baseUrl;
       window.location.href = url;
     }
