@@ -25,27 +25,10 @@ export class TokenService {
     }
 
     /*
-     * Check window location hash fragment or local storage session for access token.
-     * Parse and set the token if the access token is present,
-     * otherwise initiate implicit flow.
+     * Check the local OIDC session and initiate browser login when needed.
      */
     public checkForToken(redirectUri?: string, lazyAuth?: boolean, allowLocalExpiredToken?: boolean) {
-        // console.log('checkForToken >> redirect uri: ', redirectUri);
-        let hash = window.location.hash;
-
-        // Check if URL has token (redirected back from oauth)
-        if (hash && hash.indexOf('access_token') > -1) {
-
-            // We have a token in the URL, parse it
-            this.parseToken(hash);
-
-        } else if (hash && hash.indexOf('error') > -1) {
-            alert('Error occurred during authentication.');
-            return;
-
-        } else {
-            this.initImplicitFlow(redirectUri);
-        }
+        this.initAuthorizationCodeFlow(redirectUri);
     }
 
     public isTokenExpired() {
@@ -69,91 +52,69 @@ export class TokenService {
 
 
     /*
-     * Parse token from a hash fragment
-     * Example:
-     *    #access_token=ABC&token_type=bearer&state=&expires_in=43199&scope=WFIM.GET_WILDFIRE_INCIDENT%20WFORG.GET_ORG_UNITS%&jti=3a642b53-d90e-4ee3-a00c-5cd780155225
+     * Configure Keycloak OIDC and initiate the Authorization Code flow with PKCE.
      */
-    private parseToken(hash: any) {
-        if (hash.startsWith('#')) {
-            hash = hash.substr(1);
-        }
-
-        let responseParameters = (hash).split("&");
-        let parameterMap: { [key: string]: any } = {};
-        for (let i = 0; i < responseParameters.length; i++) {
-            parameterMap[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
-        }
-
-        if (parameterMap['access_token'] !== undefined && parameterMap['access_token'] !== null) {
-            location.hash = '';
-            this.initAuth(parameterMap);
-        }
-    }
-
-    /*
-     * Set authentication configuration and initiate implicit flow
-     */
-    private initImplicitFlow(redirectUri?: string) {
+    private initAuthorizationCodeFlow(redirectUri?: string) {
         const configuration = this.appConfigService.getConfig();
-        let authConfig = {
-            oidc: false,
-            issuer: configuration?.application.baseUrl,
-            loginUrl: configuration?.webade.oauth2Url,
+        const oauthService = this.injector.get(OAuthService);
+        const authConfig = {
+            oidc: true,
+            issuer: configuration?.keycloak.issuerUri,
+            loginUrl: configuration?.keycloak.authorizationEndpoint,
             redirectUri: redirectUri ? redirectUri : window.location.href,
-            clientId: configuration?.webade.clientId,
-            scope: configuration?.webade.authScopes
+            postLogoutRedirectUri: configuration?.application.baseUrl,
+            logoutUrl: configuration?.keycloak.logoutUrl,
+            tokenEndpoint: configuration?.keycloak.tokenEndpoint,
+            clientId: configuration?.keycloak.clientId,
+            scope: configuration?.keycloak.authScopes,
+            responseType: 'code',
+            disablePKCE: false,
+            strictDiscoveryDocumentValidation: false,
+            requireHttps: 'remoteOnly' as const,
+            sessionChecksEnabled: false
         };
 
-        const oauthService = this.injector.get(OAuthService);
         oauthService.configure(authConfig);
-        oauthService.initImplicitFlow();
+        oauthService.loadDiscoveryDocumentAndTryLogin().then(loginSucceeded => {
+            if (loginSucceeded && oauthService.getAccessToken()) {
+                this.initAuthFromOAuthService(oauthService);
+            } else if (!oauthService.hasValidAccessToken()) {
+                oauthService.initCodeFlow();
+            }
+        }).catch(error => {
+            console.error('Keycloak discovery or login failed', error);
+            oauthService.initCodeFlow();
+        });
+    }
+
+    private initAuthFromOAuthService(oauthService: OAuthService) {
+        this.oauth = {
+            access_token: oauthService.getAccessToken(),
+            expires_in: oauthService.getAccessTokenExpiration() > 0
+                ? Math.max(0, Math.floor((oauthService.getAccessTokenExpiration() - Date.now()) / 1000))
+                : undefined,
+            scope: oauthService.getGrantedScopes()
+        };
+        this.initAuth(this.oauth);
     }
 
     /*
      * Set authentication configuration and initiate refresh token implicit flow
      */
     public initRefreshTokenImplicitFlow( url: string, storageKey: string, errorCallback: any): Promise<any> {
-        return new Promise( ( res, rej ) => {
-        
-            const options = 'resizable=yes,scrollbars=yes,statusbar=yes,status=yes';
-
-            let windowObj : Window | null
-            let retries = 0
-
-            let refreshInterval = setInterval( () => {
-                
-                if ( !windowObj )
-                    windowObj =  window.open( url, 'authorize', options )
-    
-                if ( windowObj ) {   
-
-                    let newToken = window.localStorage.getItem( storageKey )
-
-                    if ( !newToken ) {                        
-                        retries += 1
-                        return
-                    }
-
-                    clearInterval(refreshInterval)
-
-                    window.localStorage.removeItem( storageKey )
-    
-                    try {
-                        let parsedToken = JSON.parse( newToken )
-                        this.updateToken( parsedToken )
-                        res( parsedToken )
-                    }
-                    catch ( e ) {
-                        console.warn( 'failed to parse', newToken, e )
-                        rej()
-                    }
-                }
-                else {
-                    errorCallback('Session Expired. Unable to open refresh window. Please allow pop-ups.')
-                    retries += 1
-                }
-            }, 500 )    
-        } )
+        const oauthService = this.injector.get(OAuthService);
+        return oauthService.refreshToken().then(response => {
+            const token = {
+                access_token: response.access_token,
+                expires_in: response.expires_in,
+                scope: response.scope
+            };
+            this.updateToken(token);
+            return token;
+        }).catch(error => {
+            errorCallback('Session Expired. Unable to refresh Keycloak session.');
+            throw error;
+        });
     }
 
     /*
@@ -177,14 +138,13 @@ export class TokenService {
 
     private initAndEmit() {
         // console.log('init and emit', this.appConfigService.getConfig());
-        if (this.appConfigService.getConfig()?.webade.enableCheckToken) {
+        if (this.appConfigService.getConfig()?.keycloak.enableCheckToken) {
             let baseUrl = this.appConfigService.getConfig()?.application.baseUrl;
             if (baseUrl && !baseUrl.endsWith('/')) {
                 baseUrl = baseUrl.concat('/');
             }
             
-            // let checkTokenUrl = `${baseUrl}${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
-            let checkTokenUrl = `${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
+            let checkTokenUrl = `${this.appConfigService.getConfig()?.keycloak.checkTokenUrl}`;
 
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${this.oauth.access_token}`,
@@ -218,8 +178,11 @@ export class TokenService {
             // console.log('oauthInfo', oauthInfo);
 
             if (oauthInfo.length > 1) {
-                this.tokenDetails = JSON.parse(atob(oauthInfo[1]));
+                const payload = oauthInfo[1].replace(/-/g, '+').replace(/_/g, '/');
+                this.tokenDetails = JSON.parse(atob(payload));
             }
+            this.tokenDetails = this.tokenDetails || {};
+            this.normalizePermissions();
 
             // console.log('access_token2', this.oauth.access_token);
             this.authToken.next(this.oauth.access_token);
@@ -255,6 +218,24 @@ export class TokenService {
             }
         }
         return false;
+    }
+
+    private normalizePermissions() {
+        const permissions = new Set<string>();
+
+        if (typeof this.tokenDetails.scope === 'string') {
+            this.tokenDetails.scope.split(/\s+/).forEach((scope: string) => scope && permissions.add(scope));
+        } else if (Array.isArray(this.tokenDetails.scope)) {
+            this.tokenDetails.scope.forEach((scope: string) => scope && permissions.add(scope));
+        }
+
+        (this.tokenDetails.realm_access?.roles || []).forEach((role: string) => permissions.add(role));
+        Object.values(this.tokenDetails.resource_access || {}).forEach((resource: any) => {
+            (resource?.roles || []).forEach((role: string) => permissions.add(role));
+        });
+        (this.tokenDetails.authorities || []).forEach((authority: string) => permissions.add(authority));
+
+        this.tokenDetails.scope = Array.from(permissions);
     }
 
     private handleError(err: any, message?: any) {

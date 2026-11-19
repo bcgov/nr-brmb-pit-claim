@@ -9,11 +9,10 @@ import {BaseComponent} from "../common/base/base.component";
 })
 export class SignOutPageComponent extends BaseComponent implements OnInit, OnDestroy {
     ngOnInit() {
-        localStorage.removeItem('oauth');
         const appConfig = (<any>this.appConfigService.getConfig()).application;
-        const webadeConfig = (<any>this.appConfigService.getConfig()).webade;
-        const siteminderUrlPrefix = webadeConfig.siteminderUrlPrefix
-        let url = siteminderUrlPrefix + appConfig.baseUrl + "&retnow=1";
+        const keycloakConfig = (<any>this.appConfigService.getConfig()).keycloak;
+        localStorage.clear();
+        const url = `${keycloakConfig.logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(appConfig.baseUrl)}`;
         window.location.href = url;
     }
 

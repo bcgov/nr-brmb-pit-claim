@@ -202,9 +202,9 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
         if (baseUrl && !baseUrl.endsWith("/")) {
             refreshPage = `/${refreshPage}`;
         }
-        let clientId = this.appConfig.getConfig().webade.clientId;
-        let authorizeUrl = this.appConfig.getConfig().webade.oauth2Url;
-        let authScopes = this.appConfig.getConfig().webade.authScopes;
+        let clientId = this.appConfig.getConfig().keycloak.clientId;
+        let authorizeUrl = this.appConfig.getConfig().keycloak.authorizationEndpoint;
+        let authScopes = this.appConfig.getConfig().keycloak.authScopes;
 
         let redirectUrl = `${baseUrl}${refreshPage}`;
         
