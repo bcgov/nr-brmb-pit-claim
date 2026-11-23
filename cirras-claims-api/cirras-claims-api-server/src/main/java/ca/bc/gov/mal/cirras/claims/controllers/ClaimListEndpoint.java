@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
 import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
 import ca.bc.gov.mal.pit.common.model.Message;
-import ca.bc.gov.mal.pit.common.rest.endpoints.BaseEndpointsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -39,7 +38,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.ClaimListRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/claims")
-public class ClaimListEndpoint extends BaseEndpointsImpl {
+public class ClaimListEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClaimListEndpoint.class);
 	
@@ -59,7 +58,7 @@ public class ClaimListEndpoint extends BaseEndpointsImpl {
 	}
 	
 
-	@Operation(operationId = "Get list of claims.", summary = "Get list of claims.", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.SEARCH_CLAIMS}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get list of claims.", summary = "Get list of claims.", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.SEARCH_CLAIMS}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -88,7 +87,7 @@ public class ClaimListEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.SEARCH_CLAIMS)) {
+		if(!hasClaimAuthority(Scopes.SEARCH_CLAIMS)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -116,7 +115,7 @@ public class ClaimListEndpoint extends BaseEndpointsImpl {
 						toInteger(pageNumber), 
 						toInteger(pageRowCount), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						getClaimsPrincipal());
 
 				GenericEntity<ClaimListRsrc> entity = new GenericEntity<ClaimListRsrc>(results) {
 					/* do nothing */

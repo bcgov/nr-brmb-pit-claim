@@ -26,11 +26,11 @@ function startServer() {
 			.replace(/#\{APPLICATION_ENVIRONMENT_NAME\}#/g, process.env.APPLICATION_ENVIRONMENT_NAME )
 			.replace(/#\{CIRRAS_CLAIMS_REST_URI\}#/g, process.env.CIRRAS_CLAIMS_REST_URI)
 			.replace(/#\{PIT_UNDERWRITING_UI_URL\}#/g, process.env.PIT_UNDERWRITING_UI_URL)
-			.replace(/#\{WEBADE_OAUTH2_AUTHORIZE_URL\}#/g, process.env.WEBADE_OAUTH2_AUTHORIZE_URL)
-			.replace(/#\{WEBADE_OAUTH2_SCOPES\}#/g, process.env.WEBADE_OAUTH2_SCOPES)
-			.replace(/#\{WEBADE_OAUTH2_ENABLE_CHECKTOKEN\}#/g, process.env.WEBADE_OAUTH2_ENABLE_CHECKTOKEN )
-			.replace(/#\{UI_CHECKTOKEN_ENDPOINT\}#/g, process.env.UI_CHECKTOKEN_ENDPOINT )
-			.replace(/#\{WEBADE_OAUTH2_SITEMINDER_URL\}#/g, process.env.WEBADE_OAUTH2_SITEMINDER_URL );
+			.replace(/#\{KEYCLOAK_ISSUER_URI\}#/g, process.env.KEYCLOAK_ISSUER_URI)
+			.replace(/#\{KEYCLOAK_AUTHORIZATION_ENDPOINT\}#/g, process.env.KEYCLOAK_AUTHORIZATION_ENDPOINT)
+			.replace(/#\{KEYCLOAK_TOKEN_ENDPOINT\}#/g, process.env.KEYCLOAK_TOKEN_ENDPOINT)
+			.replace(/#\{KEYCLOAK_LOGOUT_URL\}#/g, process.env.KEYCLOAK_LOGOUT_URL)
+			.replace(/#\{KEYCLOAK_CLIENT_ID\}#/g, process.env.KEYCLOAK_CLIENT_ID);
 
 
 		// Middleware

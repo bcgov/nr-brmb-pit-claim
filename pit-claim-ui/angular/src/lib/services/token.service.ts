@@ -1,8 +1,6 @@
-import { HttpClient, HttpHandler, HttpHeaders } from "@angular/common/http";
 import { Injectable, Injector } from "@angular/core";
 import { OAuthService } from "angular-oauth2-oidc";
 import { AsyncSubject, Observable } from "rxjs";
-import { catchError } from "rxjs/operators";
 import { AppConfigService } from "./app-config.service";
 
 @Injectable({
@@ -98,10 +96,7 @@ export class TokenService {
         this.initAuth(this.oauth);
     }
 
-    /*
-     * Set authentication configuration and initiate refresh token implicit flow
-     */
-    public initRefreshTokenImplicitFlow( url: string, storageKey: string, errorCallback: any): Promise<any> {
+    public refreshToken(errorCallback: (message: string) => void): Promise<any> {
         const oauthService = this.injector.get(OAuthService);
         return oauthService.refreshToken().then(response => {
             const token = {
@@ -138,59 +133,18 @@ export class TokenService {
 
     private initAndEmit() {
         // console.log('init and emit', this.appConfigService.getConfig());
-        if (this.appConfigService.getConfig()?.keycloak.enableCheckToken) {
-            let baseUrl = this.appConfigService.getConfig()?.application.baseUrl;
-            if (baseUrl && !baseUrl.endsWith('/')) {
-                baseUrl = baseUrl.concat('/');
-            }
-            
-            let checkTokenUrl = `${this.appConfigService.getConfig()?.keycloak.checkTokenUrl}`;
-
-            const headers = new HttpHeaders({
-                'Authorization': `Bearer ${this.oauth.access_token}`,
-            });
-
-            setTimeout(() => {
-                let http = new HttpClient(this.injector.get(HttpHandler));
-
-                http.get(checkTokenUrl, { headers }).toPromise()
-                    .then(
-                        (response: any) => {
-                            this.tokenDetails = response;
-                            // console.log('access_token', this.oauth.access_token);
-                            this.authToken.next(this.oauth.access_token);
-                            this.authToken.complete();
-                            // console.log('tokenDetails', this.tokenDetails);
-                            this.credentials.next(this.tokenDetails);
-                            this.credentials.complete();
-                        })
-                    , catchError(error => {
-                        console.log(error);
-                        alert(`App initialization Failed ${error.status}. Status(Check token failed)`);
-                        return error;
-                    }
-                    );
-            });
-        } else {
-
-            //Split for JWT
-            const oauthInfo: string[] = this.oauth.access_token.split('.');
-            // console.log('oauthInfo', oauthInfo);
-
-            if (oauthInfo.length > 1) {
-                const payload = oauthInfo[1].replace(/-/g, '+').replace(/_/g, '/');
-                this.tokenDetails = JSON.parse(atob(payload));
-            }
-            this.tokenDetails = this.tokenDetails || {};
-            this.normalizePermissions();
-
-            // console.log('access_token2', this.oauth.access_token);
-            this.authToken.next(this.oauth.access_token);
-            this.authToken.complete();
-            // console.log('tokenDetails2', this.tokenDetails);
-            this.credentials.next(this.tokenDetails);
-            this.credentials.complete();
+        const oauthInfo: string[] = this.oauth.access_token.split('.');
+        if (oauthInfo.length > 1) {
+            const payload = oauthInfo[1].replace(/-/g, '+').replace(/_/g, '/');
+            this.tokenDetails = JSON.parse(atob(payload));
         }
+        this.tokenDetails = this.tokenDetails || {};
+        this.normalizePermissions();
+
+        this.authToken.next(this.oauth.access_token);
+        this.authToken.complete();
+        this.credentials.next(this.tokenDetails);
+        this.credentials.complete();
     }
 
     updateToken(oauthToken: any) {

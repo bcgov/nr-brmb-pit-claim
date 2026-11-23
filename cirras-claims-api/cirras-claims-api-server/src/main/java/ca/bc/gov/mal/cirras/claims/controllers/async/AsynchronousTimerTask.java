@@ -19,14 +19,12 @@ import jakarta.mail.internet.MimeMessage.RecipientType;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import ca.bc.gov.mal.cirras.claims.services.utils.EmailUtils;
 import ca.bc.gov.mal.cirras.claims.services.utils.PropertyUtils;
 import ca.bc.gov.mal.pit.common.model.Message;
 import ca.bc.gov.mal.pit.common.service.api.ServiceException;
-import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public abstract class AsynchronousTimerTask extends TimerTask {
 	
@@ -46,8 +44,7 @@ public abstract class AsynchronousTimerTask extends TimerTask {
 	public static final String OUTBOX_POLLING_SECONDS_FREQUENCY_KEY = "POLLING_OUTBOX_SECONDS_FREQUENCY";
 	public static long outboxPoolingSecondsFrequency = 2*60*60;
 	
-	private AuthenticationProvider authenticationProvider;
-	private UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
+	private ClaimsPrincipal claimsPrincipal;
 
 	private Session emailSession;
 	private String emailFrom;
@@ -116,15 +113,8 @@ public abstract class AsynchronousTimerTask extends TimerTask {
 		
 	}
 
-	protected WebAdeAuthentication getWebAdeAuthentication() {
-		WebAdeAuthentication result = null;
-		
-		if(usernamePasswordAuthenticationToken!=null) {
-			
-			result = (WebAdeAuthentication) this.authenticationProvider.authenticate(usernamePasswordAuthenticationToken);
-		}
-		
-		return result;
+	protected ClaimsPrincipal getClaimsPrincipal() {
+		return claimsPrincipal;
 	}
 	
 	protected abstract Logger getLogger();
@@ -300,14 +290,8 @@ public abstract class AsynchronousTimerTask extends TimerTask {
 		ThreadContext.put(contextKey, requestId);
 	}
 	
-	public void setAuthenticationProvider(
-			AuthenticationProvider authenticationProvider) {
-		this.authenticationProvider = authenticationProvider;
-	}
-
-	public void setUsernamePasswordAuthenticationToken(
-			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
-		this.usernamePasswordAuthenticationToken = usernamePasswordAuthenticationToken;
+	public void setClaimsPrincipal(ClaimsPrincipal claimsPrincipal) {
+		this.claimsPrincipal = claimsPrincipal;
 	}
 
 }

@@ -31,7 +31,6 @@ import ca.bc.gov.mal.pit.common.rest.client.BaseRestServiceClient;
 import ca.bc.gov.mal.pit.common.rest.client.GenericRestDAO;
 import ca.bc.gov.mal.pit.common.rest.client.Response;
 import ca.bc.gov.mal.pit.common.rest.client.RestDAOException;
-import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.resource.CheckedToken;
 
 
 public class CirrasClaimService extends BaseRestServiceClient {
@@ -40,16 +39,16 @@ public class CirrasClaimService extends BaseRestServiceClient {
 	
 	public static final String CLIENT_VERSION = "1";
 
-	private static final String Scopes = "WEBADE-REST.*";
+	private static final String Scopes = "CIRRAS_CLAIMS.*";
 	
 	/**
 	 * Constructor used for making OAuth2 Client Credentials requests
-	 * @param webadeOauth2ClientId
-	 * @param webadeOauth2ClientSecret
-	 * @param webadeOauth2TokenUrl
+	 * @param keycloakClientId
+	 * @param keycloakClientSecret
+	 * @param keycloakTokenUrl
 	 */
-	public CirrasClaimService(String webadeOauth2ClientId, String webadeOauth2ClientSecret, String webadeOauth2TokenUrl, String scopes) {
-		super(webadeOauth2ClientId, webadeOauth2ClientSecret, webadeOauth2TokenUrl, scopes != null ? scopes : Scopes);
+	public CirrasClaimService(String keycloakClientId, String keycloakClientSecret, String keycloakTokenUrl, String scopes) {
+		super(keycloakClientId, keycloakClientSecret, keycloakTokenUrl, scopes != null ? scopes : Scopes);
 		logger.debug("<CirrasClaimServiceImpl");
 		
 		logger.debug(">CirrasClaimServiceImpl");
@@ -58,11 +57,11 @@ public class CirrasClaimService extends BaseRestServiceClient {
 	/**
 	 * Constructor used for making requests with basic credentials
 	 *
-	 * @param webadeOauth2ClientId
-	 * @param webadeOauth2ClientSecret
+	 * @param keycloakClientId
+	 * @param keycloakClientSecret
 	 */
-	public CirrasClaimService(String webadeOauth2ClientId, String webadeOauth2ClientSecret) {
-		super(webadeOauth2ClientId, webadeOauth2ClientSecret);
+	public CirrasClaimService(String keycloakClientId, String keycloakClientSecret) {
+		super(keycloakClientId, keycloakClientSecret);
 		logger.debug("<CirrasClaimServiceImpl");
 		
 		logger.debug(">CirrasClaimServiceImpl");
@@ -660,15 +659,15 @@ public class CirrasClaimService extends BaseRestServiceClient {
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	// test get token
+	// Check the authenticated token
 	/////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
-	public CheckedToken checkToken(EndpointsRsrc parent) throws CirrasClaimServiceException {
+	public Map<?, ?> checkToken(EndpointsRsrc parent) throws CirrasClaimServiceException {
 	
-		GenericRestDAO<CheckedToken> dao = this.getRestDAOFactory().getGenericRestDAO(CheckedToken.class);
+		GenericRestDAO<Map> dao = this.getRestDAOFactory().getGenericRestDAO(Map.class);
 	
 		try {
-			Response<CheckedToken> response = dao.Process(ResourceTypes.CHECK_TOKEN, this.getTransformer(), parent, getWebClient());
+			Response<Map> response = dao.Process(ResourceTypes.CHECK_TOKEN, this.getTransformer(), parent, getWebClient());
 			return response.getResource();
 		} catch (RestDAOException rde) {
 			throw new CirrasClaimServiceException(rde);

@@ -34,7 +34,7 @@ import ca.bc.gov.mal.pit.common.service.api.ConflictException;
 import ca.bc.gov.mal.pit.common.service.api.ForbiddenException;
 import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
 import ca.bc.gov.mal.pit.common.service.api.ServiceException;
-import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public class CirrasServiceHelper {
 
@@ -110,7 +110,7 @@ public class CirrasServiceHelper {
 	// Retrieves the ClaimCalculationUserDto corresponding to the given authentication.
 	// If it does not exist, it is created. If Given Name or Family Name has changed, it is updated.
 	// If it cannot be determined, then returns null.
-	public ClaimCalculationUserDto getClaimCalculationUserDto(WebAdeAuthentication authentication) throws ServiceException, NotFoundException {
+	public ClaimCalculationUserDto getClaimCalculationUserDto(ClaimsPrincipal authentication) throws ServiceException, NotFoundException {
 		logger.debug("<getClaimCalculationUserDto");
 			
 		ClaimCalculationUserDto dto = null;
@@ -125,7 +125,7 @@ public class CirrasServiceHelper {
 				//Service accounts don't have a family name set. To prevent showing unknown in the app the
 				//family name is set to System
 				String familyName = null;
-				if(authentication.getFamilyName() == null && authentication.getUserTypeCode().equalsIgnoreCase("SCL")) {
+				if(authentication.getFamilyName() == null && "SCL".equalsIgnoreCase(authentication.getUserTypeCode())) {
 					familyName = "System";
 				} else {
 					familyName = authentication.getFamilyName();

@@ -16,8 +16,6 @@ export interface Keycloak {
     logoutUrl: string;
     clientId: string;
     authScopes: string;
-    enableCheckToken?: boolean;
-    checkTokenUrl?: string;
 }
 
 export interface ApplicationConfig {

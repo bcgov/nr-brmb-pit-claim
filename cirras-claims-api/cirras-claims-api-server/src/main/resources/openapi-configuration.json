@@ -4,6 +4,15 @@
 		"info": {
 			"version": "${project.parent.version}",
 			"title": "CIRRAS Claims V1 API"
+		},
+		"components": {
+			"securitySchemes": {
+				"KeycloakBearer": {
+					"type": "http",
+					"scheme": "bearer",
+					"bearerFormat": "JWT"
+				}
+			}
 		}
 	}
 }

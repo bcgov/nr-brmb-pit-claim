@@ -24,13 +24,13 @@ public class CirrasPolicyServiceSpringConfig  {
 	}
 
 	@Value("${CIRRAS_CLAIMS_REST_CLIENT_ID}")
-	private String webadeOauth2ClientId;
+	private String keycloakClientId;
 
 	@Value("${CIRRAS_CLAIMS_REST_SECRET}")
-	private String webadeOauth2ClientSecret;
+	private String keycloakClientSecret;
 
-	@Value("${WEBADE_GET_TOKEN_URL}")
-	private String webadeOauth2TokenUrl;
+	@Value("${KEYCLOAK_TOKEN_ENDPOINT}")
+	private String keycloakTokenEndpoint;
 	
 	@Value("${CIRRAS_POLICIES_API_URL}")
 	private String cirrasPolicyServiceTopLevelRestURL;
@@ -41,7 +41,7 @@ public class CirrasPolicyServiceSpringConfig  {
 	
 	@Bean
 	public CirrasPolicyService cirrasPolicyServiceImpl() {
-		CirrasPolicyServiceImpl serviceImpl = new CirrasPolicyServiceImpl(webadeOauth2ClientId, webadeOauth2ClientSecret, webadeOauth2TokenUrl, scopes);
+		CirrasPolicyServiceImpl serviceImpl = new CirrasPolicyServiceImpl(keycloakClientId, keycloakClientSecret, keycloakTokenEndpoint, scopes);
 		
 		serviceImpl.setTopLevelRestURL(cirrasPolicyServiceTopLevelRestURL);
 

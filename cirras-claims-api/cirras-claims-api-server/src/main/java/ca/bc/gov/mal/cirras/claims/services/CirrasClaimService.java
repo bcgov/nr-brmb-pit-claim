@@ -82,7 +82,7 @@ import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
 import ca.bc.gov.mal.pit.common.service.api.ServiceException;
 import ca.bc.gov.mal.pit.common.service.api.ValidationFailureException;
 import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
-import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.ClaimCalculationSubmitRsrc;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.InsuranceClaim;
@@ -237,7 +237,7 @@ public class CirrasClaimService {
 	//
 	// The "proof of concept" REST service doesn't have any security
 	//
-	private String getUserId(WebAdeAuthentication authentication) {
+	private String getUserId(ClaimsPrincipal authentication) {
 		String userId = "DEFAULT_USERID";
 
 		if (authentication != null) {
@@ -251,7 +251,7 @@ public class CirrasClaimService {
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public ClaimList<? extends Claim> getClaimList(Integer claimNumber, String policyNumber,
 			String calculationStatusCode, String sortColumn, String sortDirection, Integer pageNumber,
-			Integer pageRowCount, FactoryContext context, WebAdeAuthentication authentication)
+			Integer pageRowCount, FactoryContext context, ClaimsPrincipal authentication)
 			throws ServiceException, MaxResultsExceededException, CirrasPolicyServiceException, TooManyRecordsException {
 
 		ClaimList<? extends Claim> results = null;
@@ -274,7 +274,7 @@ public class CirrasClaimService {
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public ClaimCalculation getClaim(String claimNumber, FactoryContext context, WebAdeAuthentication authentication)
+	public ClaimCalculation getClaim(String claimNumber, FactoryContext context, ClaimsPrincipal authentication)
 			throws ServiceException, NotFoundException, ValidationFailureException, CirrasPolicyServiceException {
 
 		logger.debug("<getClaim");
@@ -444,7 +444,7 @@ public class CirrasClaimService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public ClaimCalculation createClaimCalculation(ClaimCalculation claimCalculation, FactoryContext factoryContext,
-			WebAdeAuthentication authentication)
+			ClaimsPrincipal authentication)
 			throws ServiceException, NotFoundException, ValidationFailureException {
 		logger.debug("<createInsuranceClaim");
 
@@ -731,7 +731,7 @@ public class CirrasClaimService {
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public ClaimCalculation getClaimCalculation(String claimCalculationGuid, Boolean doRefreshManualClaimData,
-			FactoryContext factoryContext, WebAdeAuthentication authentication)
+			FactoryContext factoryContext, ClaimsPrincipal authentication)
 			throws ServiceException, NotFoundException {
 		logger.debug("<getClaimCalculation");
 
@@ -1291,7 +1291,7 @@ public class CirrasClaimService {
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public ClaimCalculation updateClaimCalculation(String claimCalculationGuid, String updateType,
 			String optimisticLock, ClaimCalculation claimCalculation, FactoryContext factoryContext,
-			WebAdeAuthentication authentication) throws ServiceException, NotFoundException, ForbiddenException,
+			ClaimsPrincipal authentication) throws ServiceException, NotFoundException, ForbiddenException,
 			ConflictException, ValidationFailureException {
 		logger.debug("<updateClaimCalculation");
 
@@ -1663,7 +1663,7 @@ public class CirrasClaimService {
 	}
 
 	private void saveUpdateClaimCalculation(ClaimCalculation claimCalculation, ClaimCalculationDto dto,
-			WebAdeAuthentication authentication, String claimCalculationGuid, String userId)
+			ClaimsPrincipal authentication, String claimCalculationGuid, String userId)
 			throws NotFoundException, DaoException, NotFoundDaoException {
 
 		claimCalculationRsrcFactory.updateDto(dto, claimCalculation);
@@ -1680,7 +1680,7 @@ public class CirrasClaimService {
 	}
 
 	private ClaimCalculation replaceClaimCalculation(ClaimCalculation claimCalculation, String updateType,
-			FactoryContext factoryContext, WebAdeAuthentication authentication)
+			FactoryContext factoryContext, ClaimsPrincipal authentication)
 			throws ServiceException, CirrasPolicyServiceException, NotFoundException, ValidationFailureException, DaoException {
 
 		logger.debug("<replaceClaimCalculation");
@@ -1946,7 +1946,7 @@ public class CirrasClaimService {
 	public void deleteClaimCalculation(
 			String claimCalculationGuid,
 			String optimisticLock,
-			WebAdeAuthentication authentication)
+			ClaimsPrincipal authentication)
 			throws ServiceException, NotFoundException, ForbiddenException, ConflictException {
 		logger.debug("<deleteClaimCalculation");
 		
@@ -1959,7 +1959,7 @@ public class CirrasClaimService {
 	public ClaimCalculationList<? extends ClaimCalculation> getClaimCalculationList(Integer claimNumber,
 			String policyNumber, Integer cropYear, String calculationStatusCode, String createClaimCalcUserGuid,
 			String updateClaimCalcUserGuid, Integer insurancePlanId, String sortColumn, String sortDirection,
-			Integer pageNumber, Integer pageRowCount, FactoryContext context, WebAdeAuthentication authentication)
+			Integer pageNumber, Integer pageRowCount, FactoryContext context, ClaimsPrincipal authentication)
 			throws ServiceException, MaxResultsExceededException {
 		ClaimCalculationList<? extends ClaimCalculation> results = null;
 

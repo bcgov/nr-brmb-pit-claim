@@ -63,31 +63,16 @@ spec:
                   name: cirras-claims-api-config-#{ENV}#
                   key: CONNECTION_TIMEOUT
 
-            - name: WEBADE_GET_TOKEN_URL
+            - name: KEYCLOAK_ISSUER_URI
               valueFrom:
                 configMapKeyRef:
                   name: cirras-claims-api-config-#{ENV}#
-                  key: WEBADE_GET_TOKEN_URL
-            - name: WEBADE_CHECK_TOKEN_URL
+                  key: KEYCLOAK_ISSUER_URI
+            - name: KEYCLOAK_TOKEN_ENDPOINT
               valueFrom:
                 configMapKeyRef:
                   name: cirras-claims-api-config-#{ENV}#
-                  key: WEBADE_CHECK_TOKEN_URL
-            - name: WEBADE_USERNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: cirras-claims-api-config-#{ENV}#
-                  key: WEBADE_USERNAME
-            - name: WEBADE_MAXACTIVE
-              valueFrom:
-                configMapKeyRef:
-                  name: cirras-claims-api-config-#{ENV}#
-                  key: WEBADE_MAXACTIVE
-            - name: WEBADE_OAUTH2_AUTHORIZE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: cirras-claims-api-config-#{ENV}#
-                  key: WEBADE_OAUTH2_AUTHORIZE_URL
+                  key: KEYCLOAK_TOKEN_ENDPOINT
             - name: POSTGRES_RESOURCE_NAME
               valueFrom:
                 configMapKeyRef:

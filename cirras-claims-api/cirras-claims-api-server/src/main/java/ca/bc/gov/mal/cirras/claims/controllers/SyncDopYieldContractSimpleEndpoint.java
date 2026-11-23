@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
 import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
-import ca.bc.gov.mal.pit.common.rest.endpoints.BaseEndpointsImpl;
 import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,14 +36,14 @@ import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 
 @Path("/syncDopYieldContractSimple")
-public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
+public class SyncDopYieldContractSimpleEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SyncDopYieldContractSimpleEndpoint.class);
 	
 	@Autowired
 	private CirrasDataSyncService cirrasDataSyncService; 
 
-	@Operation(operationId = "Insert or Update dop", summary = "Insert or Update dop", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Insert or Update dop", summary = "Insert or Update dop", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -71,7 +70,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		logRequest();
 		logResource(resource, "synchronizeDopYieldContractSimple");
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -80,7 +79,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 			cirrasDataSyncService.synchronizeDopYieldContractSimple(
 					resource, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			response = Response.status(204).build();
 		} catch (Throwable t) {
@@ -93,7 +92,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Get dop", summary = "Get dop", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.GET_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get dop", summary = "Get dop", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.GET_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -116,7 +115,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.GET_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.GET_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		
@@ -125,7 +124,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 			SyncDopYieldContractSimpleRsrc result = (SyncDopYieldContractSimpleRsrc) cirrasDataSyncService.getSyncDopYieldContractSimple(
 					declaredYieldContractCommodityBerriesGuid,
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 
@@ -142,7 +141,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 	
-	@Operation(operationId = "Delete dop record", summary = "Delete dop record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Delete dop record", summary = "Delete dop record", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -167,7 +166,7 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.DELETE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -175,10 +174,10 @@ public class SyncDopYieldContractSimpleEndpoint extends BaseEndpointsImpl {
 			SyncDopYieldContractSimpleRsrc resource = (SyncDopYieldContractSimpleRsrc) cirrasDataSyncService.getSyncDopYieldContractSimple(
 					declaredYieldContractCommodityBerriesGuid,
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 			
 			if(resource != null) {
-				cirrasDataSyncService.deleteSyncDopYieldContractSimple(declaredYieldContractCommodityBerriesGuid, getFactoryContext(), getWebAdeAuthentication());
+				cirrasDataSyncService.deleteSyncDopYieldContractSimple(declaredYieldContractCommodityBerriesGuid, getFactoryContext(), getClaimsPrincipal());
 			}
 			response = Response.status(204).build();
 		} catch (NotFoundException e) {

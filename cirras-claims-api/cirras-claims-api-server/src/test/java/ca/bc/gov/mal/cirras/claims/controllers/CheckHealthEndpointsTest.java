@@ -15,7 +15,7 @@ import ca.bc.gov.mal.pit.common.rest.client.RestClientServiceException;
 import ca.bc.gov.mal.pit.common.utils.HttpServletRequestHolder;
 import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.Oauth2ClientException;
 import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.resource.AccessToken;
-import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
+//import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
 

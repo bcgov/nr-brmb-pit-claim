@@ -23,7 +23,6 @@ import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
 import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
 import ca.bc.gov.mal.pit.common.rest.resource.RelLink;
 import ca.bc.gov.mal.pit.common.api.rest.code.resource.factory.CodeTableResourceFactory;
-import ca.bc.gov.mal.pit.common.rest.endpoints.BaseEndpointsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -38,7 +37,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.ws.rs.core.UriBuilder;
 
 @Path("/")
-public class TopLevelEndpoints extends BaseEndpointsImpl {
+public class TopLevelEndpoints extends ClaimsEndpointsImpl {
 	/** Logger. */
 	private static final Logger logger = LoggerFactory.getLogger(TopLevelEndpoints.class);
 	
@@ -77,35 +76,35 @@ public class TopLevelEndpoints extends BaseEndpointsImpl {
 			
 			result.getLinks().add(new RelLink(ResourceTypes.CHECK_TOKEN, selfURI, HttpMethod.GET));
 			
-			if (hasAuthority(Scopes.SEARCH_CLAIMS)) {
+			if (hasClaimAuthority(Scopes.SEARCH_CLAIMS)) {
 				selfURI = ClaimRsrcFactory.getClaimListSelfUri(null, null, null, null, null, null, null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CLAIM_LIST, selfURI, HttpMethod.GET));
 			}
 			
-			if (hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
+			if (hasClaimAuthority(Scopes.SEARCH_CALCULATIONS)) {
 				selfURI = ClaimCalculationRsrcFactory.getClaimCalculationListSelfUri(null, null, null, null, null, null, null, null, null, null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CLAIM_CALCULATION_LIST, selfURI, HttpMethod.GET));
 			}
 
-			if (hasAuthority(Scopes.CREATE_CALCULATION)) {
+			if (hasClaimAuthority(Scopes.CREATE_CALCULATION)) {
 				selfURI = ClaimCalculationRsrcFactory.getClaimCalculationListSelfUri(null, null, null, null, null, null, null, null, null, null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CREATE_CLAIM_CALCULATION, selfURI, HttpMethod.POST));
 			}
 			
 			//DATA SYNC ENDPOINTS
-			if (hasAuthority(Scopes.GET_SYNC_CLAIM)) {
+			if (hasClaimAuthority(Scopes.GET_SYNC_CLAIM)) {
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.SYNC_CLAIM, selfURI, HttpMethod.GET));
 
 				selfURI = CirrasDataSyncRsrcFactory.getSyncDopYieldContractSimpleSelfUri(baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.SYNC_DOP_YIELD_CONTRACT_SIMPLE, selfURI, HttpMethod.GET));
 			}
-			if (hasAuthority(Scopes.CREATE_SYNC_CLAIM)) {
+			if (hasClaimAuthority(Scopes.CREATE_SYNC_CLAIM)) {
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.CREATE_SYNC_CLAIM, selfURI, HttpMethod.POST));
 			}
 				
-			if (hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+			if (hasClaimAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 				//grower and policy updates
 				selfURI = CirrasDataSyncRsrcFactory.getSyncClaimRelatedDataSelfUri(null, baseUri);
 				result.getLinks().add(new RelLink(ResourceTypes.UPDATE_SYNC_CLAIM_RELATED_DATA, selfURI, HttpMethod.PUT));

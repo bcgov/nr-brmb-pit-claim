@@ -197,20 +197,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
     refreshWindow(): Promise<string> {
         if ( this.refreshWindowPromise ) return this.refreshWindowPromise
 
-        let baseUrl = this.appConfig.getConfig().application.baseUrl;
-        let refreshPage = "refresh-token.html";
-        if (baseUrl && !baseUrl.endsWith("/")) {
-            refreshPage = `/${refreshPage}`;
-        }
-        let clientId = this.appConfig.getConfig().keycloak.clientId;
-        let authorizeUrl = this.appConfig.getConfig().keycloak.authorizationEndpoint;
-        let authScopes = this.appConfig.getConfig().keycloak.authScopes;
-
-        let redirectUrl = `${baseUrl}${refreshPage}`;
-        
-        this.refreshWindowPromise = this.tokenService.initRefreshTokenImplicitFlow(
-            `${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`, 
-            "pit-claim-token",
+        this.refreshWindowPromise = this.tokenService.refreshToken(
             (errorMessage) => {
                 this.displayRefreshErrorMessage(errorMessage);
             }

@@ -12,7 +12,7 @@ export class SignOutPageComponent extends BaseComponent implements OnInit, OnDes
         const appConfig = (<any>this.appConfigService.getConfig()).application;
         const keycloakConfig = (<any>this.appConfigService.getConfig()).keycloak;
         localStorage.clear();
-        const url = `${keycloakConfig.logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(appConfig.baseUrl)}`;
+        const url = `${keycloakConfig.logoutUrl}?client_id=${encodeURIComponent(keycloakConfig.clientId)}&post_logout_redirect_uri=${encodeURIComponent(appConfig.baseUrl)}`;
         window.location.href = url;
     }
 

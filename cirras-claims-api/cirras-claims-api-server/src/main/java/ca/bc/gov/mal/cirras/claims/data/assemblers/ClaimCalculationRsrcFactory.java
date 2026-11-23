@@ -17,7 +17,7 @@ import ca.bc.gov.mal.pit.common.persistence.dto.PagedDtos;
 import ca.bc.gov.mal.pit.common.rest.endpoints.resource.factory.BaseResourceFactory;
 import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
 import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryException;
-import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationListEndpoint;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationListRsrc;
@@ -65,7 +65,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 
 	
 	public ClaimCalculation getClaimCalculation(ClaimCalculationDto dto, Map<Integer, ClaimDto> quantityClaimMap, FactoryContext context,
-			WebAdeAuthentication authentication) throws FactoryException {
+			ClaimsPrincipal authentication) throws FactoryException {
 
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
@@ -166,7 +166,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 			Map<Integer, CropCommodityDto> quantityLinkedCropMap,
 			DeclaredYieldContractCommodityBerriesSyncDto dyccbsDto,
 			FactoryContext context, 
-			WebAdeAuthentication authentication) throws FactoryException {
+			ClaimsPrincipal authentication) throws FactoryException {
 
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
@@ -952,7 +952,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	
 	
 	public ClaimCalculation getCalculationFromCalculation(ClaimCalculation claimCalculation, FactoryContext context,
-			WebAdeAuthentication authentication) throws FactoryException {
+			ClaimsPrincipal authentication) throws FactoryException {
 		ClaimCalculationRsrc resource = new ClaimCalculationRsrc();
 
 		// Copy from claimCalculation.
@@ -1337,7 +1337,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	public ClaimCalculationList<? extends ClaimCalculation> getClaimCalculationList(PagedDtos<ClaimCalculationDto> dtos,
 			Integer claimNumber, String policyNumber, Integer cropYear, String calculationStatusCode,
 			String createClaimCalcUserGuid, String updateClaimCalcUserGuid, Integer insurancePlanId, String sortColumn,
-			String sortDirection, Integer pageRowCount, FactoryContext context, WebAdeAuthentication authentication)
+			String sortDirection, Integer pageRowCount, FactoryContext context, ClaimsPrincipal authentication)
 			throws FactoryException, DaoException {
 		URI baseUri = getBaseURI(context);
 
@@ -2177,7 +2177,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	private static void setLinks(ClaimCalculationListRsrc resource, Integer claimNumber, String policyNumber,
 			Integer cropYear, String calculationStatusCode, String createClaimCalcUserGuid,
 			String updateClaimCalcUserGuid, String sortColumn, String sortDirection, int pageNumber, int pageRowCount,
-			int totalRowCount, URI baseUri, WebAdeAuthentication authentication) {
+			int totalRowCount, URI baseUri, ClaimsPrincipal authentication) {
 
 		// if (authentication.hasAuthority(Scopes.CREATE_CALCULATION)) {
 		String result = UriBuilder.fromUri(baseUri).path(ClaimCalculationListEndpoint.class).build().toString();
@@ -2200,7 +2200,7 @@ public class ClaimCalculationRsrcFactory extends BaseResourceFactory {
 	}
 
 	private static void setLinks(String claimCalculationGuid, ClaimCalculationRsrc resource, URI baseUri,
-			WebAdeAuthentication authentication) {
+			ClaimsPrincipal authentication) {
 
 		// if (authentication.hasAuthority(Scopes.UPDATE_CALCULATION)) {
 		String result = UriBuilder.fromUri(baseUri).path(ClaimCalculationEndpoint.class).build(claimCalculationGuid)

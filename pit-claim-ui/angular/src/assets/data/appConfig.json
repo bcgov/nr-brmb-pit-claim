@@ -15,8 +15,6 @@
     "tokenEndpoint": "#{KEYCLOAK_TOKEN_ENDPOINT}#",
     "logoutUrl": "#{KEYCLOAK_LOGOUT_URL}#",
     "clientId": "#{KEYCLOAK_CLIENT_ID}#",
-    "authScopes": "openid profile email",
-    "enableCheckToken": false,
-    "checkTokenUrl": ""
+    "authScopes": "openid profile email"
   }
 }

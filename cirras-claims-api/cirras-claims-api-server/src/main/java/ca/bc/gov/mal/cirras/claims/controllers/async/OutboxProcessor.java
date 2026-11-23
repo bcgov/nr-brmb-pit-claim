@@ -12,7 +12,7 @@ import ca.bc.gov.mal.cirras.claims.data.models.BaseOutbox;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimsOutboxService;
 import ca.bc.gov.mal.cirras.claims.services.utils.PropertyUtils;
 import ca.bc.gov.mal.pit.common.service.api.ServiceException;
-import ca.bc.gov.mal.pit.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public abstract class OutboxProcessor {
 	
@@ -44,7 +44,7 @@ public abstract class OutboxProcessor {
 	
 	}
 
-	public void process(WebAdeAuthentication authentication, CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException {
+	public void process(ClaimsPrincipal authentication, CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException {
 		getLogger().debug("<process");
 		
 		// Check whether to process outboxes.
@@ -130,9 +130,9 @@ public abstract class OutboxProcessor {
 		return OUTBOX_POLLING_MAX_ITERATIONS_KEY;
 	}
 	
-	abstract protected List<? extends BaseOutbox> getNextOutboxes(int maxRecords, WebAdeAuthentication authentication, CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException;
+	abstract protected List<? extends BaseOutbox> getNextOutboxes(int maxRecords, ClaimsPrincipal authentication, CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException;
 
-	abstract protected void processOutbox(BaseOutbox outbox, boolean doPublishEvent, WebAdeAuthentication authentication, CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException;
+	abstract protected void processOutbox(BaseOutbox outbox, boolean doPublishEvent, ClaimsPrincipal authentication, CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException;
 
 	abstract protected Logger getLogger();
 	

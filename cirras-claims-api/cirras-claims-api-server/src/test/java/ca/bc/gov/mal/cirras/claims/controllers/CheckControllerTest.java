@@ -20,7 +20,6 @@ import ca.bc.gov.mal.pit.common.rest.resource.BaseResource;
 import ca.bc.gov.mal.pit.common.rest.resource.RelLink;
 import ca.bc.gov.mal.pit.common.rest.client.GenericRestDAO;
 import ca.bc.gov.mal.pit.common.rest.client.Response;
-import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.resource.CheckedToken;
 
 
 public class CheckControllerTest extends EndpointsTest {
@@ -44,7 +43,7 @@ public class CheckControllerTest extends EndpointsTest {
 		EndpointsRsrc topLevelEndpoints = service.getTopLevelEndpoints();
 
 		// this should return some token as we logged in in getService(SCOPES);
-		CheckedToken results = service.checkToken( topLevelEndpoints);
+		Map<?, ?> results = service.checkToken( topLevelEndpoints);
 		Assert.assertNotNull("Result should not be null", results);
 		
 		logger.debug(">testCheckToken");
@@ -62,20 +61,20 @@ public class CheckControllerTest extends EndpointsTest {
 
 		CirrasClaimService service = new CirrasClaimService() {
 			@Override
-			public CheckedToken checkToken(EndpointsRsrc parent)
+			public Map<?, ?> checkToken(EndpointsRsrc parent)
 					throws CirrasClaimServiceException  {
 				logger.debug("<getCheckTokenNoAuth");
 
-				CheckedToken result = null;
+				Map<?, ?> result = null;
 
 				try {
 					
 					Map<String,String> queryParams = new HashMap<String,String>();
 
-					GenericRestDAO<CheckedToken> dao = this.getRestDAOFactory()
-							.getGenericRestDAO(CheckedToken.class);
+					GenericRestDAO<Map> dao = this.getRestDAOFactory()
+							.getGenericRestDAO(Map.class);
 					
-					Response<CheckedToken> response = dao.Process(
+					Response<Map> response = dao.Process(
 							ResourceTypes.CHECK_TOKEN, getTransformer(), new BaseResource() {
 
 								private static final long serialVersionUID = 1L;
@@ -103,7 +102,7 @@ public class CheckControllerTest extends EndpointsTest {
 		((CirrasClaimService) service).setTopLevelRestURL(topLevelRestURL);
 		
 		try {
-			CheckedToken checkToken = service.checkToken( null); // should throw an error
+			Map<?, ?> checkToken = service.checkToken( null); // should throw an error
 			Assert.fail();
 		} catch (Throwable t) {
 			logger.error(t.getMessage(), t);

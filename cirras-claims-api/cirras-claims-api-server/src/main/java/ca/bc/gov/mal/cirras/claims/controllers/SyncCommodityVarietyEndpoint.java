@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
 import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
-import ca.bc.gov.mal.pit.common.rest.endpoints.BaseEndpointsImpl;
 import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,14 +33,14 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncCommodityVarietyRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/synccommodityvariety")
-public class SyncCommodityVarietyEndpoint extends BaseEndpointsImpl {
+public class SyncCommodityVarietyEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SyncCommodityVarietyEndpoint.class);
 	
 	@Autowired
 	private CirrasDataSyncService cirrasDataSyncService; 
 
-	@Operation(operationId = "Insert or Update a commodity or variety", summary = "Insert or Update a commodity or variety", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Insert or Update a commodity or variety", summary = "Insert or Update a commodity or variety", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -67,7 +66,7 @@ public class SyncCommodityVarietyEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -76,7 +75,7 @@ public class SyncCommodityVarietyEndpoint extends BaseEndpointsImpl {
 			cirrasDataSyncService.synchronizeCommodityVariety(
 					resource, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			response = Response.status(200).build();
 		} catch (Throwable t) {
@@ -89,7 +88,7 @@ public class SyncCommodityVarietyEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Delete commodity or variety record", summary = "Delete commodity or variety record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Delete commodity or variety record", summary = "Delete commodity or variety record", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -114,7 +113,7 @@ public class SyncCommodityVarietyEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.DELETE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -122,10 +121,10 @@ public class SyncCommodityVarietyEndpoint extends BaseEndpointsImpl {
 			SyncCommodityVarietyRsrc resource = (SyncCommodityVarietyRsrc) cirrasDataSyncService.getSyncCommodityVariety(
 					toInteger(crptId),
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 			
 			if(resource != null) {
-				cirrasDataSyncService.deleteSyncCommodityVariety(toInteger(crptId), getFactoryContext(), getWebAdeAuthentication());
+				cirrasDataSyncService.deleteSyncCommodityVariety(toInteger(crptId), getFactoryContext(), getClaimsPrincipal());
 			}
 			response = Response.status(204).build();
 		} catch (NotFoundException e) {
