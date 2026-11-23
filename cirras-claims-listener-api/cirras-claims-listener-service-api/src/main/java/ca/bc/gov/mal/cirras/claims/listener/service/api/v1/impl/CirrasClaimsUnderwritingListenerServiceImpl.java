@@ -19,7 +19,7 @@ import ca.bc.gov.mal.cirras.claims.listener.service.api.v1.CirrasClaimsUnderwrit
 import ca.bc.gov.mal.cirras.claims.listener.service.api.v1.model.factory.SyncClaimsUnderwritingFactory;
 import ca.bc.gov.mal.cirras.underwriting.data.resources.DopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.underwriting.data.resources.UnderwritingEventTypes;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
 
 public class CirrasClaimsUnderwritingListenerServiceImpl implements CirrasClaimsUnderwritingListenerService {
 

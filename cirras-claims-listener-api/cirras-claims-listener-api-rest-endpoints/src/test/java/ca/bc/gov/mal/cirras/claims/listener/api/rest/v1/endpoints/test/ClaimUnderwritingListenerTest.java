@@ -30,8 +30,8 @@ import ca.bc.gov.mal.cirras.policies.model.v1.PoliciesEventTypes;
 import ca.bc.gov.mal.cirras.underwriting.data.models.DopYieldContractCommodityBerries;
 import ca.bc.gov.mal.cirras.underwriting.data.resources.DopYieldContractSimpleRsrc;
 import ca.bc.gov.mal.cirras.underwriting.data.resources.UnderwritingEventTypes;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
 
 public class ClaimUnderwritingListenerTest extends EndpointsTest {
 	
