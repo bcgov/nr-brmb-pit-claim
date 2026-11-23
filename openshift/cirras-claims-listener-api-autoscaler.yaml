@@ -6,8 +6,8 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
-    name: cirras-claims-listener-api-deployment-#{ENV}#
+    kind: StatefulSet
+    name: cirras-claims-listener-api-statefulset-#{ENV}#
   minReplicas: 1
   maxReplicas: 1
   metrics:
