@@ -16,11 +16,11 @@ import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
 import ca.bc.gov.mal.cirras.claims.data.resources.EndpointsRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.types.ResourceTypes;
 import ca.bc.gov.mal.cirras.claims.test.EndpointsTest;
-import ca.bc.gov.nrs.common.wfone.rest.resource.BaseResource;
-import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
-import ca.bc.gov.nrs.wfone.common.rest.client.GenericRestDAO;
-import ca.bc.gov.nrs.wfone.common.rest.client.Response;
-import ca.bc.gov.nrs.wfone.common.webade.oauth2.token.client.resource.CheckedToken;
+import ca.bc.gov.mal.pit.common.rest.resource.BaseResource;
+import ca.bc.gov.mal.pit.common.rest.resource.RelLink;
+import ca.bc.gov.mal.pit.common.rest.client.GenericRestDAO;
+import ca.bc.gov.mal.pit.common.rest.client.Response;
+import ca.bc.gov.mal.pit.common.webade.oauth2.token.client.resource.CheckedToken;
 
 
 public class CheckControllerTest extends EndpointsTest {

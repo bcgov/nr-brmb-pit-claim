@@ -22,7 +22,7 @@ import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationGrapes;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationPlantAcres;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationPlantUnits;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationVariety;
-import ca.bc.gov.nrs.common.wfone.rest.resource.BaseResource;
+import ca.bc.gov.mal.pit.common.rest.resource.BaseResource;
 
 @XmlRootElement(namespace = ResourceTypes.NAMESPACE, name = ResourceTypes.CLAIM_CALCULATION_NAME)
 @XmlSeeAlso({ ClaimCalculationRsrc.class })

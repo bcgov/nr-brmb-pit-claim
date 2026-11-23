@@ -12,8 +12,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
-import ca.bc.gov.nrs.wfone.common.rest.client.RestClientServiceException;
+import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
+import ca.bc.gov.mal.pit.common.rest.client.RestClientServiceException;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.clients.CirrasClaimService;
 import ca.bc.gov.mal.cirras.claims.controllers.scopes.Scopes;
