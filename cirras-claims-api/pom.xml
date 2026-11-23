@@ -43,27 +43,13 @@
 		    <dependency>
 				<groupId>ca.bc.gov.mal.cirras.underwriting</groupId>
 				<artifactId>cirras-underwriting-api-client</artifactId>
-				<version>4.1.1-SNAPSHOT</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			
 			<dependency>
 			    <groupId>io.nats</groupId>
 			    <artifactId>jnats</artifactId>
 			    <version>2.25.1</version>
-			</dependency>
-
-	
-			<!-- Wildfire OrgUnit -->
-			<dependency>
-				<groupId>ca.bc.gov.nrs.wforg</groupId>
-				<artifactId>wforg-org-unit-api-rest-common</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-	
-			<dependency>
-				<groupId>ca.bc.gov.webade</groupId>
-				<artifactId>webade-spring-bootstrap-support</artifactId>
-				<version>1.1.0.0</version>
 			</dependency>
 			
 			<dependency>
@@ -219,71 +205,71 @@
 			</dependency>
 
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-model</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-model</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-rest-common</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-rest-common</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-rest-client</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-rest-client</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-persistence</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-persistence</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-utils</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-utils</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-service-api</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-service-api</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-code-persistence</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-code-persistence</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-webade</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-webade</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-webade-oauth2</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-webade-oauth2</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-webade-oauth2-test</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-webade-oauth2-test</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-rest-endpoints</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-rest-endpoints</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-code-endpoints</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-code-endpoints</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>ca.bc.gov.nrs.wfone.common</groupId>
-				<artifactId>wfone-common-checkhealth</artifactId>
-				<version>1.5.0</version>
+				<groupId>ca.bc.gov.mal.pit.common</groupId>
+				<artifactId>pit-common-checkhealth</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
-	
+
 			<!-- Logging -->
 			<dependency>
 				<groupId>org.slf4j</groupId>

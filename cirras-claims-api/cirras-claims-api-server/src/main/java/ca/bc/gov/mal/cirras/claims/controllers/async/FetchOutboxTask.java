@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimsOutboxService;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public class FetchOutboxTask extends AsynchronousTimerTask {
 	
@@ -74,7 +74,7 @@ public class FetchOutboxTask extends AsynchronousTimerTask {
 		
 		try {
 
-			WebAdeAuthentication authentication = this.getWebAdeAuthentication();
+			ClaimsPrincipal authentication = this.getClaimsPrincipal();
 
 			for ( OutboxProcessor op : outboxProcessorList ) {
 				op.process(authentication, cirrasClaimsOutboxService);

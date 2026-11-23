@@ -11,24 +11,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import ca.bc.gov.mal.cirras.claims.controllers.async.AsyncMasterTask;
 import ca.bc.gov.mal.cirras.claims.controllers.async.AsynchronousProcessesService;
 import ca.bc.gov.mal.cirras.claims.controllers.async.AsynchronousTimerTask;
 import ca.bc.gov.mal.cirras.claims.controllers.async.FetchOutboxTask;
 import ca.bc.gov.mal.cirras.claims.controllers.async.OutboxProcessor;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimsOutboxService;
 import ca.bc.gov.mal.cirras.claims.services.FailOverService;
 import ca.bc.gov.mal.cirras.claims.services.utils.EmailUtils;
 
 
 @Configuration
-@Import({
-	SecuritySpringConfig.class
-})
 public class AsynchronousProcessesSpringConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(AsynchronousProcessesSpringConfig.class);
@@ -42,18 +38,12 @@ public class AsynchronousProcessesSpringConfig {
 	// Beans provided by EndpointsSpringConfig
 	@Autowired Properties applicationProperties;
 	
-	// Imported Spring Config
-	@Autowired SecuritySpringConfig securitySpringConfig;
-
 	// Beans provided by ServiceApiSpringConfig
 	@Autowired CirrasClaimsOutboxService cirrasClaimsOutboxService;
 	@Autowired FailOverService failOverService;
 
 	@Value("${CIRRAS_CLAIMS_REST_CLIENT_ID}")
-	private String webadeOauth2ClientId;
-
-	@Value("${CIRRAS_CLAIMS_REST_SECRET}")
-	private String webadeOauth2ClientSecret;
+	private String cirrasClaimsRestClientId;
 
 	@Value("${EMAIL_HOST_NAME}")
 	private String emailHostName;
@@ -91,16 +81,6 @@ public class AsynchronousProcessesSpringConfig {
 	@Value("${POLLING_OUTBOX_MAX_ITERATIONS}")
 	private String pollingOutboxMaxIterations;
 	
-	
-	@Bean
-	UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken() {
-		UsernamePasswordAuthenticationToken result;
-		
-		result = new UsernamePasswordAuthenticationToken(webadeOauth2ClientId, webadeOauth2ClientSecret);
-		
-		return result;
-	}
-
 	@Bean
 	Properties asyncProcessProperties() {
 
@@ -130,8 +110,7 @@ public class AsynchronousProcessesSpringConfig {
 		AsyncMasterTask result;
 		
 		result = new AsyncMasterTask(asyncProcessProperties());
-		result.setUsernamePasswordAuthenticationToken(usernamePasswordAuthenticationToken());
-		result.setAuthenticationProvider(securitySpringConfig.authenticationProvider());
+		result.setClaimsPrincipal(ClaimsPrincipal.serviceAccount(cirrasClaimsRestClientId));
 		result.setFailOverService(failOverService);
 
 		return result;
@@ -143,8 +122,7 @@ public class AsynchronousProcessesSpringConfig {
 		FetchOutboxTask result;
 		
 		result = new FetchOutboxTask(asyncProcessProperties());
-		result.setUsernamePasswordAuthenticationToken(usernamePasswordAuthenticationToken());
-		result.setAuthenticationProvider(securitySpringConfig.authenticationProvider());
+		result.setClaimsPrincipal(ClaimsPrincipal.serviceAccount(cirrasClaimsRestClientId));
 		result.setCirrasClaimsOutboxService(cirrasClaimsOutboxService);
 		
 		return result;

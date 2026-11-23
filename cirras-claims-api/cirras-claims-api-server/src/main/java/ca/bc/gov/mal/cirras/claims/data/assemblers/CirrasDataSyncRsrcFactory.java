@@ -9,11 +9,11 @@ import java.util.Date;
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.UriBuilder;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.resource.factory.BaseResourceFactory;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.rest.resource.RelLink;
+import ca.bc.gov.mal.pit.common.rest.endpoints.resource.factory.BaseResourceFactory;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryException;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncClaimRelatedDataEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.SyncCodeEndpoint;
@@ -49,7 +49,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 	public SyncClaim getSyncClaim(
 			ClaimDto dto, 
 			FactoryContext context, 
-			WebAdeAuthentication authentication
+			ClaimsPrincipal authentication
 		) throws FactoryException {
 		SyncClaimRsrc resource = new SyncClaimRsrc();
 		
@@ -582,7 +582,7 @@ public class CirrasDataSyncRsrcFactory extends BaseResourceFactory {
 	private static void setClaimDataLinks(
 			SyncClaimRsrc resource, 
 			URI baseUri, 
-			WebAdeAuthentication authentication) {
+			ClaimsPrincipal authentication) {
 			
 		if (authentication.hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			String result = UriBuilder

@@ -11,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
-import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
+import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
+import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -31,14 +30,14 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncClaimRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/syncclaimrelateddata")
-public class SyncClaimRelatedDataEndpoint extends BaseEndpointsImpl {
+public class SyncClaimRelatedDataEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SyncClaimRelatedDataEndpoint.class);
 	
 	@Autowired
 	private CirrasDataSyncService cirrasDataSyncService; 
 
-	@Operation(operationId = "Update claim sync record with related data", summary = "Update claim sync record with related data", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Update claim sync record with related data", summary = "Update claim sync record with related data", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -65,7 +64,7 @@ public class SyncClaimRelatedDataEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -74,7 +73,7 @@ public class SyncClaimRelatedDataEndpoint extends BaseEndpointsImpl {
 			cirrasDataSyncService.updateSyncClaimRelatedData(
 					claim, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			response = Response.status(200).build();
 		} catch (Throwable t) {

@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import ca.bc.gov.mal.cirras.claims.data.models.BaseOutbox;
 import ca.bc.gov.mal.cirras.claims.data.models.ClaimCalculationBerriesOutbox;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimsOutboxService;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public class ClaimCalculationBerriesOutboxProcessor extends OutboxProcessor{
 
@@ -26,13 +26,13 @@ public class ClaimCalculationBerriesOutboxProcessor extends OutboxProcessor{
 	}
 
 	@Override
-	protected List<? extends BaseOutbox> getNextOutboxes(int maxRecords, WebAdeAuthentication authentication,
+	protected List<? extends BaseOutbox> getNextOutboxes(int maxRecords, ClaimsPrincipal authentication,
 			CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException {
 		return cirrasClaimsOutboxService.getNextClaimCalculationBerriesOutboxes(maxRecords, authentication);
 	}
 
 	@Override
-	protected void processOutbox(BaseOutbox outbox, boolean doPublishEvent, WebAdeAuthentication authentication,
+	protected void processOutbox(BaseOutbox outbox, boolean doPublishEvent, ClaimsPrincipal authentication,
 			CirrasClaimsOutboxService cirrasClaimsOutboxService) throws ServiceException {
 		ClaimCalculationBerriesOutbox claimCalculationBerriesOutbox = (ClaimCalculationBerriesOutbox)outbox;
 		cirrasClaimsOutboxService.processClaimCalculationBerriesOutbox(claimCalculationBerriesOutbox, doPublishEvent, authentication);

@@ -7,7 +7,8 @@ import {Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import { UUID } from 'angular2-uuid';
 import { HttpHeaders } from '@angular/common/http';
-import { SortDirection } from '@bcgov/pit-common-core-lib';
+// import { SortDirection } from '@bcgov/pit-common-core-lib';
+import { SortDirection } from "src/lib/search/models/sort/sort-direction";
 
 export const CODE_TABLE_CACHE = {};
 

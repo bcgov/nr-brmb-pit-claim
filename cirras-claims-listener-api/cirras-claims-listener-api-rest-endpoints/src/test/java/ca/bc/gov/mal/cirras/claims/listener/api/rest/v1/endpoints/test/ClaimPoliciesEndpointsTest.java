@@ -18,8 +18,8 @@ import ca.bc.gov.mal.cirras.claims.listener.service.api.v1.CirrasClaimsPoliciesL
 import ca.bc.gov.mal.cirras.claims.listener.service.api.v1.impl.CirrasClaimsPoliciesListenerServiceImpl;
 import ca.bc.gov.mal.cirras.policies.api.rest.v1.resource.InsuranceClaimRsrc;
 import ca.bc.gov.mal.cirras.policies.model.v1.PoliciesEventTypes;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
 
 public class ClaimPoliciesEndpointsTest extends EndpointsTest {
 	

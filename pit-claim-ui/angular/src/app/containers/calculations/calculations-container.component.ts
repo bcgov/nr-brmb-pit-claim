@@ -12,7 +12,8 @@ import {SEARCH_CALCULATIONS_COMPONENT_ID} from "../../store/calculations/calcula
 import {Component} from "@angular/core";
 import { Location, LocationStrategy, PathLocationStrategy, AsyncPipe } from "@angular/common";
 import { CalculationsComponent } from "../../components/calculations/calculations.component";
-import { SearchState } from "@bcgov/pit-common-core-lib";
+import { SearchState } from "src/lib/search/store/state";
+// import { SearchState } from "@bcgov/pit-common-core-lib";
 
 @Component({
     selector: "cirras-claims-calculations-container",

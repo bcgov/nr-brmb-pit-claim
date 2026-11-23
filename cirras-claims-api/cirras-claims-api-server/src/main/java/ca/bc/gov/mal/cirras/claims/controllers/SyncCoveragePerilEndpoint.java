@@ -13,10 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
-import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
-import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
+import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
+import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
+import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -34,14 +33,14 @@ import ca.bc.gov.mal.cirras.claims.data.resources.SyncCoveragePerilRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasDataSyncService;
 
 @Path("/synccoverageperil")
-public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
+public class SyncCoveragePerilEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SyncCoveragePerilEndpoint.class);
 	
 	@Autowired
 	private CirrasDataSyncService cirrasDataSyncService; 
 
-	@Operation(operationId = "Insert or Update a coverage peril table record", summary = "Insert or Update a coverage peril table record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Insert or Update a coverage peril table record", summary = "Insert or Update a coverage peril table record", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.UPDATE_SYNC_CLAIM}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -67,7 +66,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.UPDATE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -76,7 +75,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 			cirrasDataSyncService.synchronizeCoveragePeril(
 					resource, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			response = Response.status(200).build();
 		} catch (Throwable t) {
@@ -89,7 +88,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Delete coverage peril table record", summary = "Delete coverage peril table record", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Delete coverage peril table record", summary = "Delete coverage peril table record", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.DELETE_SYNC_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -114,7 +113,7 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_SYNC_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.DELETE_SYNC_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -122,13 +121,13 @@ public class SyncCoveragePerilEndpoint extends BaseEndpointsImpl {
 			SyncCoveragePerilRsrc resource = (SyncCoveragePerilRsrc) cirrasDataSyncService.getSyncCoveragePeril(
 					toInteger(coveragePerilId), 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 			
 			if(resource != null) {
 				cirrasDataSyncService.deleteSyncCoveragePeril(
 						toInteger(coveragePerilId), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						getClaimsPrincipal());
 			}
 			response = Response.status(204).build();
 		} catch (NotFoundException e) {

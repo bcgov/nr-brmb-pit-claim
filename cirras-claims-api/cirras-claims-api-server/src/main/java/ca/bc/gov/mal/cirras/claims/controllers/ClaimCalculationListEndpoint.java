@@ -19,11 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
-import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.model.Message;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
-import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
+import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
+import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
+import ca.bc.gov.mal.pit.common.model.Message;
+import ca.bc.gov.mal.pit.common.service.api.ValidationFailureException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -44,7 +43,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/calculations")
-public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
+public class ClaimCalculationListEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClaimCalculationListEndpoint.class);
 	
@@ -64,7 +63,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 	}
 	
 
-	@Operation(operationId = "Get list of calculations", summary = "Get list of calculations", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.SEARCH_CALCULATIONS}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get list of calculations", summary = "Get list of calculations", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.SEARCH_CALCULATIONS}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -97,7 +96,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.SEARCH_CALCULATIONS)) {
+		if(!hasClaimAuthority(Scopes.SEARCH_CALCULATIONS)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -129,7 +128,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 						toInteger(pageNumber), 
 						toInteger(pageRowCount), 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						getClaimsPrincipal());
 
 				GenericEntity<ClaimCalculationListRsrc> entity = new GenericEntity<ClaimCalculationListRsrc>(results) {
 					/* do nothing */
@@ -147,7 +146,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Add a new calculation", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.CREATE_CALCULATION}), summary = "Add a new calculation", extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Add a new calculation", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.CREATE_CALCULATION}), summary = "Add a new calculation", extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -174,7 +173,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		//if(!hasAuthority(Scopes.CREATE_CALCULATION)) {
+		//if(!hasClaimAuthority(Scopes.CREATE_CALCULATION)) {
 		//	return Response.status(Status.FORBIDDEN).build();
 		//}
 
@@ -183,7 +182,7 @@ public class ClaimCalculationListEndpoint extends BaseEndpointsImpl {
 			ClaimCalculationRsrc result = (ClaimCalculationRsrc) cirrasClaimService.createClaimCalculation(
 					claim, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			URI createdUri = URI.create(result.getSelfLink());
 

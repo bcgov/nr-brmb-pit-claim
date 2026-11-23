@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.mal.cirras.claims.listener.api.rest.client.v1.CirrasClaimsListenerService;
-import ca.bc.gov.nrs.wfone.common.rest.client.BaseRestServiceClient;
+import ca.bc.gov.mal.pit.common.rest.client.BaseRestServiceClient;
 
 public class CirrasClaimsListenerServiceImpl extends BaseRestServiceClient implements CirrasClaimsListenerService {
 

@@ -47,8 +47,11 @@ import { EffectsModule } from "@ngrx/effects";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { A11yModule } from "@angular/cdk/a11y";
 import { AppComponent } from "./app/containers/application-root/app.component";
-import { AppConfigService, CoreUIModule, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, CoreUIModule, TokenService } from "@bcgov/pit-common-core-lib";
 import { PitApplicationModule } from "@bcgov/pit-common-application-lib";
+import { AppConfigService } from "./lib/services/app-config.service";
+import { TokenService } from "./lib/services/token.service";
+import { CoreUIModule } from "./lib/core-ui.module";
 
 const apiConfiguration = new CirrasClaimsAPIServiceConfiguration();
 let devOnlyImports: Array<Type<any> | ModuleWithProviders<any>> = [];

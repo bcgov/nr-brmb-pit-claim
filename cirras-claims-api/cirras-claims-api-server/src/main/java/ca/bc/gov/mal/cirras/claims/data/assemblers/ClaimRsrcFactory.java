@@ -6,13 +6,13 @@ import java.util.List;
 
 import jakarta.ws.rs.core.UriBuilder;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.RelLink;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dto.PagedDtos;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.resource.factory.BaseResourceFactory;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryContext;
-import ca.bc.gov.nrs.wfone.common.service.api.model.factory.FactoryException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.rest.resource.RelLink;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dto.PagedDtos;
+import ca.bc.gov.mal.pit.common.rest.endpoints.resource.factory.BaseResourceFactory;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryContext;
+import ca.bc.gov.mal.pit.common.service.api.model.factory.FactoryException;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimCalculationEndpoint;
 import ca.bc.gov.mal.cirras.claims.controllers.ClaimListEndpoint;
@@ -39,7 +39,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 			String sortDirection,
 			Integer pageRowCount,
 			FactoryContext context, 
-			WebAdeAuthentication authentication
+			ClaimsPrincipal authentication
 	) throws FactoryException, DaoException {
 		
 		URI baseUri = getBaseURI(context);
@@ -169,7 +169,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 		ClaimRsrc resource, 
 		boolean hasCalculation,
 		URI baseUri, 
-		WebAdeAuthentication authentication) {
+		ClaimsPrincipal authentication) {
 		
 		if(hasCalculation) {
 			if (authentication.hasAuthority(Scopes.GET_CALCULATION)) {
@@ -253,7 +253,7 @@ public class ClaimRsrcFactory extends BaseResourceFactory {
 		int pageRowCount, 
 		int totalRowCount,
 		URI baseUri, 
-		WebAdeAuthentication authentication) {
+		ClaimsPrincipal authentication) {
 		
 		if(pageNumber > 1) {
 			String previousUri = getClaimListSelfUri(

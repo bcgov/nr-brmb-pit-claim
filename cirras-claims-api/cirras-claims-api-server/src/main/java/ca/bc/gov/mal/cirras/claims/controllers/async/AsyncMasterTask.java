@@ -20,8 +20,8 @@ import org.springframework.context.ApplicationContext;
 
 import ca.bc.gov.mal.cirras.claims.services.FailOverService;
 import ca.bc.gov.mal.cirras.claims.services.utils.PropertyUtils;
-import ca.bc.gov.nrs.wfone.common.utils.ApplicationContextProvider;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.utils.ApplicationContextProvider;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public class AsyncMasterTask extends AsynchronousTimerTask {
 
@@ -70,7 +70,7 @@ public class AsyncMasterTask extends AsynchronousTimerTask {
 
 			setLoggingRequestId(LOGGING_ID_SOURCE);
 			
-			WebAdeAuthentication authentication = this.getWebAdeAuthentication();
+			ClaimsPrincipal authentication = this.getClaimsPrincipal();
 						
 			boolean masterNodeInd = this.failOverService.asyncCheckForMaster(PROCESS_NAME, NODE_NAME, Integer.valueOf(nodeExpiryMinutes), getUserId(authentication));
 			
@@ -153,7 +153,7 @@ public class AsyncMasterTask extends AsynchronousTimerTask {
 		return randomNum;
 	}
 
-	private String getUserId(WebAdeAuthentication authentication) {
+	private String getUserId(ClaimsPrincipal authentication) {
 		String userId = "DEFAULT_USERID";
 
 		if (authentication != null) {

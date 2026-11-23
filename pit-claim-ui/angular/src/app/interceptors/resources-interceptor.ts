@@ -9,7 +9,10 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {PitSnackbarComponent} from "../components/common/snackbars/pit-snackbar.component";
 import {displayErrorMessage, ErrorHandlingInstructions, getSnackbarConfig} from "../utils/user-feedback-utils";
 import {PIT_SNACKBAR_TYPES} from "../utils";
-import { AppConfigService, AuthenticationInterceptor, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, AuthenticationInterceptor, TokenService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
+import { AuthenticationInterceptor } from "src/lib/interceptors/authentication-interceptor";
 
 @Injectable()
 export class ResourcesInterceptor extends AuthenticationInterceptor implements HttpInterceptor {
@@ -194,20 +197,7 @@ export class ResourcesInterceptor extends AuthenticationInterceptor implements H
     refreshWindow(): Promise<string> {
         if ( this.refreshWindowPromise ) return this.refreshWindowPromise
 
-        let baseUrl = this.appConfig.getConfig().application.baseUrl;
-        let refreshPage = "refresh-token.html";
-        if (baseUrl && !baseUrl.endsWith("/")) {
-            refreshPage = `/${refreshPage}`;
-        }
-        let clientId = this.appConfig.getConfig().webade.clientId;
-        let authorizeUrl = this.appConfig.getConfig().webade.oauth2Url;
-        let authScopes = this.appConfig.getConfig().webade.authScopes;
-
-        let redirectUrl = `${baseUrl}${refreshPage}`;
-        
-        this.refreshWindowPromise = this.tokenService.initRefreshTokenImplicitFlow(
-            `${authorizeUrl}?response_type=token&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${authScopes}`, 
-            "pit-claim-token",
+        this.refreshWindowPromise = this.tokenService.refreshToken(
             (errorMessage) => {
                 this.displayRefreshErrorMessage(errorMessage);
             }

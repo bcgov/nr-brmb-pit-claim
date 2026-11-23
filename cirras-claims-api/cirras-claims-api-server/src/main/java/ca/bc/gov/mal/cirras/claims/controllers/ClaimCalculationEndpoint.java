@@ -18,14 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
-import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
-import ca.bc.gov.nrs.wfone.common.service.api.ConflictException;
-import ca.bc.gov.nrs.wfone.common.service.api.ForbiddenException;
-import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.service.api.ValidationFailureException;
+import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
+import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
+import ca.bc.gov.mal.pit.common.service.api.ConflictException;
+import ca.bc.gov.mal.pit.common.service.api.ForbiddenException;
+import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.pit.common.service.api.ValidationFailureException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -43,7 +42,7 @@ import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/calculations/{claimCalculationGuid}")
-public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
+public class ClaimCalculationEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClaimCalculationEndpoint.class);
 	
@@ -51,7 +50,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 	private CirrasClaimService cirrasClaimService;
 	
 	
-	@Operation(operationId = "Get the calculation.", summary = "Get the calculation", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.GET_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get the calculation.", summary = "Get the calculation", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.GET_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -74,7 +73,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.GET_CALCULATION)) {
+		if(!hasClaimAuthority(Scopes.GET_CALCULATION)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		
@@ -83,7 +82,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 					claimCalculationGuid,
 					toBoolean(doRefreshManualClaimData),
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 
 		} catch (NotFoundException e) {
@@ -98,7 +97,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Update calculation", summary = "Update claim", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.UPDATE_CALCULATION}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Update calculation", summary = "Update claim", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.UPDATE_CALCULATION}),  extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -129,7 +128,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.UPDATE_CALCULATION)) {
+		if(!hasClaimAuthority(Scopes.UPDATE_CALCULATION)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -138,7 +137,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 					claimCalculationGuid, 
 					false,
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			EntityTag currentTag = EntityTag.valueOf(currentClaimCalculation.getQuotedETag());
 
@@ -155,7 +154,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 						optimisticLock, 
 						claim, 
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						getClaimsPrincipal());
 				
 				response = Response.ok(result).tag(result.getUnquotedETag()).build();
 				
@@ -182,7 +181,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		return response;
 	}
 
-	@Operation(operationId = "Delete claim", summary = "Delete claim", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.DELETE_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Delete claim", summary = "Delete claim", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.DELETE_CLAIM}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -208,7 +207,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.DELETE_CLAIM)) {
+		if(!hasClaimAuthority(Scopes.DELETE_CLAIM)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 			
@@ -219,7 +218,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 						claimCalculationGuid, 
 						false,
 						getFactoryContext(), 
-						getWebAdeAuthentication());
+						getClaimsPrincipal());
 	
 				EntityTag currentTag = EntityTag.valueOf(current.getQuotedETag());
 	
@@ -233,7 +232,7 @@ public class ClaimCalculationEndpoint extends BaseEndpointsImpl {
 					cirrasClaimService.deleteClaimCalculation(
 							claimCalculationGuid, 
 							optimisticLock, 
-							getWebAdeAuthentication());
+							getClaimsPrincipal());
 	
 					response = Response.status(204).build();
 				} else {

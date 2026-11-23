@@ -23,13 +23,13 @@ public class CirrasUnderwritingServiceSpringConfig  {
 	}
 
 	@Value("${CIRRAS_CLAIMS_REST_CLIENT_ID}")
-	private String webadeOauth2ClientId;
+	private String keycloakClientId;
 
 	@Value("${CIRRAS_CLAIMS_REST_SECRET}")
-	private String webadeOauth2ClientSecret;
+	private String keycloakClientSecret;
 
-	@Value("${WEBADE_GET_TOKEN_URL}")
-	private String webadeOauth2TokenUrl;
+	@Value("${KEYCLOAK_TOKEN_ENDPOINT}")
+	private String keycloakTokenEndpoint;
 	
 	@Value("${CIRRAS_UNDERWRITING_API_URL}")
 	private String cirrasUnderwritingServiceTopLevelRestURL;
@@ -40,7 +40,7 @@ public class CirrasUnderwritingServiceSpringConfig  {
 	
 	@Bean
 	public CirrasUnderwritingService cirrasUnderwritingServiceImpl() {
-		CirrasUnderwritingService serviceImpl = new CirrasUnderwritingService(webadeOauth2ClientId, webadeOauth2ClientSecret, webadeOauth2TokenUrl, scopes);
+		CirrasUnderwritingService serviceImpl = new CirrasUnderwritingService(keycloakClientId, keycloakClientSecret, keycloakTokenEndpoint, scopes);
 		
 		serviceImpl.setTopLevelRestURL(cirrasUnderwritingServiceTopLevelRestURL);
 

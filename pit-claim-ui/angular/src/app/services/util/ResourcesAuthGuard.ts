@@ -5,7 +5,11 @@ import {mergeMap} from "rxjs/operators";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {displayErrorMessage} from "../../utils/user-feedback-utils";
 import {ResourcesRoutes} from "../../utils";
-import { AppConfigService, AuthGuard, TokenService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService, AuthGuard, TokenService } from "@bcgov/pit-common-core-lib";
+
+import { AppConfigService } from "src/lib/services/app-config.service";
+import { TokenService } from "src/lib/services/token.service";
+import { AuthGuard } from "src/lib/utils/auth-guard";
 
 @Injectable({
     providedIn: "root",

@@ -89,6 +89,11 @@ spec:
                 configMapKeyRef:
                   name: cirras-claims-listener-api-config-#{ENV}#
                   key: WEBADE_OAUTH2_AUTHORIZE_URL
+            - name: KEYCLOAK_TOKEN_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: cirras-claims-listener-api-config-#{ENV}#
+                  key: KEYCLOAK_TOKEN_ENDPOINT
             - name: POSTGRES_RESOURCE_NAME
               valueFrom:
                 configMapKeyRef:

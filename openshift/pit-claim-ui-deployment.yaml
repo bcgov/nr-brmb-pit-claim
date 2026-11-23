@@ -47,31 +47,31 @@ spec:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
                   key: PIT_UNDERWRITING_UI_URL
-            - name: WEBADE_OAUTH2_AUTHORIZE_URL
+            - name: KEYCLOAK_ISSUER_URI
               valueFrom:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
-                  key: WEBADE_OAUTH2_AUTHORIZE_URL
-            - name: WEBADE_OAUTH2_ENABLE_CHECKTOKEN
+                  key: KEYCLOAK_ISSUER_URI
+            - name: KEYCLOAK_AUTHORIZATION_ENDPOINT
               valueFrom:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
-                  key: WEBADE_OAUTH2_ENABLE_CHECKTOKEN
-            - name: UI_CHECKTOKEN_ENDPOINT
+                  key: KEYCLOAK_AUTHORIZATION_ENDPOINT
+            - name: KEYCLOAK_TOKEN_ENDPOINT
               valueFrom:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
-                  key: UI_CHECKTOKEN_ENDPOINT
-            - name: WEBADE_OAUTH2_SCOPES
+                  key: KEYCLOAK_TOKEN_ENDPOINT
+            - name: KEYCLOAK_LOGOUT_URL
               valueFrom:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
-                  key: WEBADE_OAUTH2_SCOPES
-            - name: WEBADE_OAUTH2_SITEMINDER_URL
+                  key: KEYCLOAK_LOGOUT_URL
+            - name: KEYCLOAK_CLIENT_ID
               valueFrom:
                 configMapKeyRef:
                   name: pit-claim-ui-config-#{ENV}#
-                  key: WEBADE_OAUTH2_SITEMINDER_URL
+                  key: KEYCLOAK_CLIENT_ID
             - name: APPLICATION_ENVIRONMENT_NAME      
               value: #{ENV}#
           livenessProbe:

@@ -12,10 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.bc.gov.nrs.common.wfone.rest.resource.HeaderConstants;
-import ca.bc.gov.nrs.common.wfone.rest.resource.MessageListRsrc;
-import ca.bc.gov.nrs.wfone.common.rest.endpoints.BaseEndpointsImpl;
-import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
+import ca.bc.gov.mal.pit.common.rest.resource.HeaderConstants;
+import ca.bc.gov.mal.pit.common.rest.resource.MessageListRsrc;
+import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -33,14 +32,14 @@ import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationRsrc;
 import ca.bc.gov.mal.cirras.claims.services.CirrasClaimService;
 
 @Path("/claims/{claimNumber}")
-public class ClaimEndpoint extends BaseEndpointsImpl {
+public class ClaimEndpoint extends ClaimsEndpointsImpl {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClaimEndpoint.class);
 	
 	@Autowired
 	private CirrasClaimService cirrasClaimService;
 	
-	@Operation(operationId = "Get the claim.", summary = "Get the claim", security = @SecurityRequirement(name = "Webade-OAUTH2", scopes = {Scopes.CREATE_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
+	@Operation(operationId = "Get the claim.", summary = "Get the claim", security = @SecurityRequirement(name = "KeycloakBearer", scopes = {Scopes.CREATE_CALCULATION}), extensions = {@Extension(properties = {@ExtensionProperty(name = "auth-type", value = "#{wso2.x-auth-type.none}"), @ExtensionProperty(name = "throttling-tier", value = "Unlimited") })})
 	@Parameters({
 		@Parameter(name = HeaderConstants.REQUEST_ID_HEADER, description = HeaderConstants.REQUEST_ID_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = String.class), in = ParameterIn.HEADER),
 		@Parameter(name = HeaderConstants.VERSION_HEADER, description = HeaderConstants.VERSION_HEADER_DESCRIPTION, required = false, schema = @Schema(implementation = Integer.class), in = ParameterIn.HEADER),
@@ -62,7 +61,7 @@ public class ClaimEndpoint extends BaseEndpointsImpl {
 		
 		logRequest();
 		
-		if(!hasAuthority(Scopes.CREATE_CALCULATION)) {
+		if(!hasClaimAuthority(Scopes.CREATE_CALCULATION)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 
@@ -71,7 +70,7 @@ public class ClaimEndpoint extends BaseEndpointsImpl {
 			ClaimCalculationRsrc result = (ClaimCalculationRsrc) cirrasClaimService.getClaim(
 					claimNumber, 
 					getFactoryContext(), 
-					getWebAdeAuthentication());
+					getClaimsPrincipal());
 
 			response = Response.ok(result).tag(result.getUnquotedETag()).build();
 

@@ -21,11 +21,11 @@ import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesDao;
 import ca.bc.gov.mal.cirras.claims.data.repositories.ClaimCalculationBerriesOutboxDao;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimCalculationSimpleRsrc;
 import ca.bc.gov.mal.cirras.claims.data.resources.ClaimEventTypes;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.DaoException;
-import ca.bc.gov.nrs.wfone.common.persistence.dao.NotFoundDaoException;
-import ca.bc.gov.nrs.wfone.common.service.api.NotFoundException;
-import ca.bc.gov.nrs.wfone.common.service.api.ServiceException;
-import ca.bc.gov.nrs.wfone.common.webade.authentication.WebAdeAuthentication;
+import ca.bc.gov.mal.pit.common.persistence.dao.DaoException;
+import ca.bc.gov.mal.pit.common.persistence.dao.NotFoundDaoException;
+import ca.bc.gov.mal.pit.common.service.api.NotFoundException;
+import ca.bc.gov.mal.pit.common.service.api.ServiceException;
+import ca.bc.gov.mal.cirras.claims.security.ClaimsPrincipal;
 
 public class CirrasClaimsOutboxService {
 
@@ -70,7 +70,7 @@ public class CirrasClaimsOutboxService {
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public List<ClaimCalculationBerriesOutbox> getNextClaimCalculationBerriesOutboxes(
 		Integer maxRecords, 
-		WebAdeAuthentication authentication
+		ClaimsPrincipal authentication
 	) throws ServiceException
 	{
 		logger.debug("<getNextClaimCalculationBerriesOutboxes");
@@ -93,7 +93,7 @@ public class CirrasClaimsOutboxService {
 	public void processClaimCalculationBerriesOutbox(
 			ClaimCalculationBerriesOutbox claimCalculationBerriesOutbox,
 		Boolean doPublishEvent,
-		WebAdeAuthentication authentication
+		ClaimsPrincipal authentication
 	) 
 	throws ServiceException
 	{

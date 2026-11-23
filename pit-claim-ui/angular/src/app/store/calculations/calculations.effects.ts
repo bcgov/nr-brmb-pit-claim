@@ -10,7 +10,9 @@ import {SEARCH_CALCULATIONS, SearchCalculationsAction, searchCalculationsSuccess
 import { getPageInfoRequestForSearchState} from "../../utils";
 import {initCalculationsPaging} from "./calculations.state";
 import {RootState} from "../index";
-import { TokenService, SortDirection } from "@bcgov/pit-common-core-lib";
+// import { TokenService, SortDirection } from "@bcgov/pit-common-core-lib";
+import { TokenService } from "src/lib/services/token.service";
+import { SortDirection } from "src/lib/search/models/sort/sort-direction";
 
 @Injectable()
 export class CalculationsEffects {

@@ -2,7 +2,11 @@ import {Action} from "@ngrx/store";
 import {SEARCH_CLAIMS, SearchClaimsAction} from "../claims/claims.actions";
 import {SEARCH_CALCULATIONS, SearchCalculationsAction} from "../calculations/calculations.actions";
 import deepEqual from "deep-equal";
-import { SearchActions, searchReducer, SearchState } from "@bcgov/pit-common-core-lib";
+// import { SearchActions, searchReducer, SearchState } from "@bcgov/pit-common-core-lib";
+import { SearchState } from "src/lib/search/store/state";
+import { SearchActions } from "src/lib/search/store/actions";
+import { searchReducer } from "src/lib/search/store/reducers";
+
 
 export function pageSearchReducer(state, action: Action): SearchState {
     if (action.type == SEARCH_CLAIMS) {
