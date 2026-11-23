@@ -1,14 +1,21 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   namespace: '#{NAMESPACE}#'
-  name: cirras-claims-listener-api-deployment-#{ENV}#
+  name: cirras-claims-listener-api-statefulset-#{ENV}#
   annotations: {}
 spec:
   selector:
     matchLabels:
       app: cirras-claims-listener-api-#{ENV}#
   replicas: 1
+  serviceName: cirras-claims-listener-api-service-#{ENV}#
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      partition: 0
   template:
     metadata:
       labels:
@@ -196,9 +203,3 @@ spec:
             limits:
               cpu: #{CLAIMS_LISTENER_API_CPU_LIMIT}#
               memory: #{CLAIMS_LISTENER_API_MEMORY_LIMIT}#
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-  paused: false
