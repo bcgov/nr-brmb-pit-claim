@@ -5,7 +5,8 @@ import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {environment} from "../environments/environment";
 import { Type } from '@angular/core';
 import { ModuleWithProviders } from '@angular/core';
-import { AppConfigService } from "@bcgov/pit-common-core-lib";
+// import { AppConfigService } from "@bcgov/pit-common-core-lib";
+import { AppConfigService } from "src/lib/services/app-config.service";
 
 /**
  * Function that initializes the Configuration injector with the application base url from the app config service.

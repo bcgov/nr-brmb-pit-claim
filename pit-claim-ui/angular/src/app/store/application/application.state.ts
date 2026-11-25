@@ -1,4 +1,5 @@
-import { SearchState } from "@bcgov/pit-common-core-lib";
+// import { SearchState } from "@bcgov/pit-common-core-lib";
+import { SearchState } from "src/lib/search/store/state";
 
 export enum ERROR_TYPE {
   VALIDATION,

@@ -1,6 +1,7 @@
 import {ErrorState, LoadState} from "./application.state";
 import {RootState} from "../index";
-import { SearchState } from "@bcgov/pit-common-core-lib";
+// import { SearchState } from "@bcgov/pit-common-core-lib";
+import { SearchState } from "src/lib/search/store/state";
 
 export const selectSearchState = (componentId) => (state: RootState): SearchState => ((state[componentId]) ? state[componentId] : undefined);
 export const selectClaimsLoadState = () => (state: RootState): LoadState => ((state.application.loadStates.claims) ? state.application.loadStates.claims : undefined);
