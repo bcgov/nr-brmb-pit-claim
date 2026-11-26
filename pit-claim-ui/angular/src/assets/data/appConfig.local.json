@@ -16,5 +16,12 @@
     "enableCheckToken": true,
     "checkTokenUrl": "dev-config/checkToken-OAUTHGOV1.json",
     "siteminderUrlPrefix": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl="    
+  },
+
+  "keycloak": {
+    "issuerUri": "https://dev.loginproxy.gov.bc.ca/auth",
+    "realm": "standard",
+    "clientId": "nr-brmb-pit-claim-ui-dev-prototype-6816"
   }
+
 }

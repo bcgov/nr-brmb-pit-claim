@@ -33,6 +33,7 @@
     "angular-oauth2-oidc": "21.0.3",
     "angular2-uuid": "1.1.1",
     "deep-equal": "2.2.3",
+    "keycloak-js": "^26.2.5",
     "moment": "2.30.1",
     "multiple-select": "1.7.0",
     "ngx-connection-service": "21.0.0",

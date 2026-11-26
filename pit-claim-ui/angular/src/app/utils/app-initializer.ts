@@ -1,9 +1,9 @@
 import {DefaultService as CirrasClaimsAPIService} from "@cirras/cirras-claims-api";
 
 import {Injector} from "@angular/core";
-import { HttpErrorResponse, HttpHandler } from "@angular/common/http";
-import {catchError, map, defaultIfEmpty} from "rxjs/operators";
-import {forkJoin, of} from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
+import {catchError, map} from "rxjs/operators";
+import {firstValueFrom, forkJoin, of} from "rxjs";
 import {UUID} from "angular2-uuid";
 import {CODE_TABLE_CACHE, DATE_FORMATS} from "./index";
 import {ApplicationStateService} from "../services/application-state.service";
@@ -12,29 +12,25 @@ import moment from "moment";
 import { AppConfigService } from "src/lib/services/app-config.service";
 import { TokenService } from "src/lib/services/token.service";
 
-export function appInitFn(httpHandler: HttpHandler, injector: Injector): () => Promise<any> {
+export function appInitFn(injector: Injector): () => Promise<void> {
   const appStateService = injector.get(ApplicationStateService);
   //initialize the app gutter space styling based on device resolution
   document.documentElement.style.setProperty("--cirras-claims-gutter-space", appStateService.getIsMobileResolution() ? "8px" : "16px");
 
-  //initialize token and code tables
   const appConfigService = injector.get(AppConfigService);
-  return (): Promise<any> => {
-      return new Promise((resolve, reject) => {
-          appConfigService.configEmitter.subscribe(config => {
-              const tokenService = injector.get(TokenService);
-              setTimeout(() => {
-                  if (tokenService.getOauthToken()) {
-                      tokenService.authTokenEmitter.subscribe((token) => {
-                          handleHasToken(token, appConfigService, tokenService, injector, resolve, reject);
-                      });
-                  } else {
-                    resolve(defaultIfEmpty(''));
-                  }
-              }, 1000);
-          });
+  const tokenService = injector.get(TokenService);
 
-      });
+  return async (): Promise<void> => {
+    await firstValueFrom(appConfigService.configEmitter);
+    const authenticated = await tokenService.init();
+    debugger
+    if (authenticated) {  
+      console.log("User is authenticated");
+      // getClaimsCodeTables()
+    } else {
+      console.log("User is not authenticated");
+      // potentially show authentication error message to user here
+    }
   };
 }
 

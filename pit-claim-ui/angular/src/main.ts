@@ -7,7 +7,7 @@ import { UpdateService } from "./app/services/update.service";
 import { Configuration as CirrasClaimsAPIServiceConfiguration, ApiModule as CirrasClaimsAPIServiceModule } from "@cirras/cirras-claims-api";
 import { Title, BrowserModule, bootstrapApplication } from "@angular/platform-browser";
 import { appInitFn } from "./app/utils/app-initializer";
-import { HttpHandler, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "./app/utils/custom-route-reuse-strategy";
 import { ResourcesInterceptor } from "./app/interceptors/resources-interceptor";
@@ -114,7 +114,7 @@ providers: [
     TokenService,
     Title,
     provideAppInitializer(() => {
-        const initializerFn = (appInitFn)(inject(HttpHandler), inject(Injector));
+        const initializerFn = appInitFn(inject(Injector));
         return initializerFn();
     }),
     {

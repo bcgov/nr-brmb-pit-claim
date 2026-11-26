@@ -4,6 +4,7 @@ import { OAuthService } from "angular-oauth2-oidc";
 import { AsyncSubject, Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { AppConfigService } from "./app-config.service";
+import Keycloak from 'keycloak-js';
 
 @Injectable({
     providedIn: 'root',
@@ -18,11 +19,35 @@ export class TokenService {
     public credentialsEmitter: Observable<any> = this.credentials.asObservable();
     public authTokenEmitter: Observable<string> = this.authToken.asObservable();
 
-    constructor(private injector: Injector, protected appConfigService: AppConfigService) {
+    // constructor(private injector: Injector, protected appConfigService: AppConfigService) {
+    //     this.checkForToken(undefined);
+    // }
 
-        this.checkForToken(undefined);
+    private keycloak = new Keycloak({
 
-    }
+        url: 'https://dev.loginproxy.gov.bc.ca/auth',
+
+        realm: 'standard',
+
+        clientId: 'nr-brmb-pit-claim-ui-dev-prototype-6816'
+
+    });
+	
+  async init(): Promise<boolean> {
+    return await this.keycloak.init({
+
+      onLoad: 'login-required',
+
+      flow: 'standard',
+
+      pkceMethod: 'S256',
+
+      checkLoginIframe: false
+
+    });
+
+  }
+    /////////////////////////////////////
 
     /*
      * Check window location hash fragment or local storage session for access token.
@@ -94,19 +119,19 @@ export class TokenService {
      * Set authentication configuration and initiate implicit flow
      */
     private initImplicitFlow(redirectUri?: string) {
-        const configuration = this.appConfigService.getConfig();
-        let authConfig = {
-            oidc: false,
-            issuer: configuration?.application.baseUrl,
-            loginUrl: configuration?.webade.oauth2Url,
-            redirectUri: redirectUri ? redirectUri : window.location.href,
-            clientId: configuration?.webade.clientId,
-            scope: configuration?.webade.authScopes
-        };
+        // const configuration = this.appConfigService.getConfig();
+        // let authConfig = {
+        //     oidc: false,
+        //     issuer: configuration?.application.baseUrl,
+        //     loginUrl: configuration?.webade.oauth2Url,
+        //     redirectUri: redirectUri ? redirectUri : window.location.href,
+        //     clientId: configuration?.webade.clientId,
+        //     scope: configuration?.webade.authScopes
+        // };
 
-        const oauthService = this.injector.get(OAuthService);
-        oauthService.configure(authConfig);
-        oauthService.initImplicitFlow();
+        // const oauthService = this.injector.get(OAuthService);
+        // oauthService.configure(authConfig);
+        // oauthService.initImplicitFlow();
     }
 
     /*
@@ -177,57 +202,57 @@ export class TokenService {
 
     private initAndEmit() {
         // console.log('init and emit', this.appConfigService.getConfig());
-        if (this.appConfigService.getConfig()?.webade.enableCheckToken) {
-            let baseUrl = this.appConfigService.getConfig()?.application.baseUrl;
-            if (baseUrl && !baseUrl.endsWith('/')) {
-                baseUrl = baseUrl.concat('/');
-            }
+        // if (this.appConfigService.getConfig()?.webade.enableCheckToken) {
+        //     let baseUrl = this.appConfigService.getConfig()?.application.baseUrl;
+        //     if (baseUrl && !baseUrl.endsWith('/')) {
+        //         baseUrl = baseUrl.concat('/');
+        //     }
             
-            // let checkTokenUrl = `${baseUrl}${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
-            let checkTokenUrl = `${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
+        //     // let checkTokenUrl = `${baseUrl}${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
+        //     let checkTokenUrl = `${this.appConfigService.getConfig()?.webade.checkTokenUrl}`;
 
-            const headers = new HttpHeaders({
-                'Authorization': `Bearer ${this.oauth.access_token}`,
-            });
+        //     const headers = new HttpHeaders({
+        //         'Authorization': `Bearer ${this.oauth.access_token}`,
+        //     });
 
-            setTimeout(() => {
-                let http = new HttpClient(this.injector.get(HttpHandler));
+        //     setTimeout(() => {
+        //         let http = new HttpClient(this.injector.get(HttpHandler));
 
-                http.get(checkTokenUrl, { headers }).toPromise()
-                    .then(
-                        (response: any) => {
-                            this.tokenDetails = response;
-                            // console.log('access_token', this.oauth.access_token);
-                            this.authToken.next(this.oauth.access_token);
-                            this.authToken.complete();
-                            // console.log('tokenDetails', this.tokenDetails);
-                            this.credentials.next(this.tokenDetails);
-                            this.credentials.complete();
-                        })
-                    , catchError(error => {
-                        console.log(error);
-                        alert(`App initialization Failed ${error.status}. Status(Check token failed)`);
-                        return error;
-                    }
-                    );
-            });
-        } else {
+        //         http.get(checkTokenUrl, { headers }).toPromise()
+        //             .then(
+        //                 (response: any) => {
+        //                     this.tokenDetails = response;
+        //                     // console.log('access_token', this.oauth.access_token);
+        //                     this.authToken.next(this.oauth.access_token);
+        //                     this.authToken.complete();
+        //                     // console.log('tokenDetails', this.tokenDetails);
+        //                     this.credentials.next(this.tokenDetails);
+        //                     this.credentials.complete();
+        //                 })
+        //             , catchError(error => {
+        //                 console.log(error);
+        //                 alert(`App initialization Failed ${error.status}. Status(Check token failed)`);
+        //                 return error;
+        //             }
+        //             );
+        //     });
+        // } else {
 
-            //Split for JWT
-            const oauthInfo: string[] = this.oauth.access_token.split('.');
-            // console.log('oauthInfo', oauthInfo);
+        //     //Split for JWT
+        //     const oauthInfo: string[] = this.oauth.access_token.split('.');
+        //     // console.log('oauthInfo', oauthInfo);
 
-            if (oauthInfo.length > 1) {
-                this.tokenDetails = JSON.parse(atob(oauthInfo[1]));
-            }
+        //     if (oauthInfo.length > 1) {
+        //         this.tokenDetails = JSON.parse(atob(oauthInfo[1]));
+        //     }
 
-            // console.log('access_token2', this.oauth.access_token);
-            this.authToken.next(this.oauth.access_token);
-            this.authToken.complete();
-            // console.log('tokenDetails2', this.tokenDetails);
-            this.credentials.next(this.tokenDetails);
-            this.credentials.complete();
-        }
+        //     // console.log('access_token2', this.oauth.access_token);
+        //     this.authToken.next(this.oauth.access_token);
+        //     this.authToken.complete();
+        //     // console.log('tokenDetails2', this.tokenDetails);
+        //     this.credentials.next(this.tokenDetails);
+        //     this.credentials.complete();
+        // }
     }
 
     updateToken(oauthToken: any) {

@@ -17,8 +17,15 @@ export interface WebADE {
     checkTokenUrl?: string;
 }
 
+export interface KeycloakConfig {
+    issuerUri: string;
+    realm: string;
+    clientId: string;
+}
+
 export interface ApplicationConfig {
     application: Application;
     rest: RestConfig;
     webade: WebADE;
+    keycloak?: KeycloakConfig;
 }
