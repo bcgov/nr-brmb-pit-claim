@@ -1,6 +1,6 @@
 {
   "name": "@cirras/cirras-claims-api",
-  "version": "2.5.3-SNAPSHOT",
+  "version": "2.6.0-SNAPSHOT",
   "peerDependencies": {
     "@angular/common": "^20.0.0 || ^21.0.0",
     "@angular/core": "^20.0.0 || ^21.0.0"
